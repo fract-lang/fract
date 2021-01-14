@@ -6,5 +6,5 @@ WIKI
 https://github.com/fract-lang/fract/wiki
 
 HOW TO COMPILE
-Fract is written in C++ and used Makefike for compilation. Execute Makefile in your local Fract directory.
+Fract is written in C++ and used Makefile for compilation. Execute Makefile in your local Fract directory.
 Command are usually like: make
