@@ -20,6 +20,12 @@
 
 #include <iostream>
 
+#include "../include/operating_system.hh"
+#include "../Utilities/shell.hh"
+#include "../Objects/color.hh"
+
+using namespace Fract::Utilities;
+
 /**
  * @fn main
  * @brief Entry point
@@ -28,5 +34,14 @@
  * @return Exit code
  */
 int main(int argc, char const* argv[]) {
-  return 0;
+  if (argc > 1) { // Started with arguments.
+    return EXIT_SUCCESS;
+  }
+
+  while(true) {
+    std::string input = shell::getInput();
+    if (input == "")
+      continue;
+  }
+  return EXIT_SUCCESS;
 }

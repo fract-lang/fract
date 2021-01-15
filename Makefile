@@ -33,12 +33,20 @@ NAME = Fract
 DIR_FRACT = $(NAME)
 # The "Include" directory.
 DIR_INCLUDE = Include
+# The "Objects" directory.
+DIR_OBJECTS = Objects
 # The "Utilities" directory.
 DIR_UTILITIES = Utilities
 
-# Source tree of "Utilities"
+# Include tree of "Objects"
+define TREE_OBJECTS
+$(DIR_OBJECTS)/color.o
+endef
+
+# Include tree of "Utilities"
 define TREE_UTILITIES
 $(DIR_UTILITIES)/file_system.o \
+$(DIR_UTILITIES)/shell.o \
 $(DIR_UTILITIES)/string.o
 endef
 
@@ -46,10 +54,14 @@ endef
 # All workflows of this makefile.
 all: headers compile
 # Headers works.
-headers: $(TREE_UTILITIES)
+headers: $(TREE_OBJECTS) $(TREE_UTILITIES)
 
 # SUB FLOWS
 # All works.
+# INCLUDE_OBJECTS
+color.o: $(DIR_OBJECTS)/color.cc
+	$(GCCH) $< $(OUT) $@
+
 # INCLUDE_UTILITIES
 string.o: $(DIR_UTILITIES)/string.cc
 	$(GCCH) $< $(OUT) $@
@@ -57,6 +69,9 @@ string.o: $(DIR_UTILITIES)/string.cc
 file_system.o: $(DIR_UTILITIES)/file_system.cc
 	$(GCCH) $< $(OUT) $@
 
+shell.o: $(DIR_UTILITIES)/shell.cc
+	$(GCCH) $< $(OUT) $@
+
 # Compile the Fract interpreter.
 compile: $(DIR_FRACT)/main.cc
-	$(GCC) $< $(TREE_UTILITIES) $(OUT) $(NAME)
+	$(GCC) $< $(TREE_OBJECTS) $(TREE_UTILITIES) $(OUT) $(NAME)

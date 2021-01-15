@@ -1,4 +1,4 @@
-#include "../include/Utilities/string.hh"
+#include "string.hh"
 
 using namespace Fract::Utilities;
 
@@ -31,4 +31,8 @@ std::vector<std::string> string::split(std::string value,
   if (last != value.length())
     lst.push_back(value.substr(last));
   return lst;
+}
+
+bool string::empty(std::string value) {
+  return value == "";
 }

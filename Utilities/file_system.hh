@@ -16,17 +16,15 @@
 #endif  // _WIN32
 
 namespace Fract::Utilities {
-/**
-  * @brief Utilities for file system.
-*/
+/// @brief Utilities for file system.
 class file_system {
   public:
-  /** @brief Working directory */
+  /// @brief Working directory
   static char* _WORKING_DIR_;
 
   static bool existFile(std::string path);
   static std::vector<std::string> getLinesOfFile(std::string path);
 };
-}  // namespace Fract::Utilities.
+}  // namespace Fract::Utilities
 
 #endif  // __FILE_SYSTEM_HH
