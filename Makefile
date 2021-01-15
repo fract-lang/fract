@@ -23,11 +23,10 @@ G++ = g++
 G++H = $(G++) -c
 OUT = -o
 
-DIR_INCLUDE = ./include
-DIR_SOURCE = ./src
+DIR_FRACT = ./Fract
 
 # WORKFLOW
 all: fract
 
-fract: $(DIR_SOURCE)/main.cc
+fract: $(DIR_FRACT)/main.cc
 	$(G++) $< $(OUT) $@
