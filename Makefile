@@ -38,7 +38,8 @@ DIR_UTILITIES = Utilities
 
 # Source tree of "Utilities"
 define TREE_UTILITIES
-$(DIR_UTILITIES)/file_system.o
+$(DIR_UTILITIES)/file_system.o \
+$(DIR_UTILITIES)/string.o
 endef
 
 # WORKFLOW
@@ -50,6 +51,9 @@ headers: $(TREE_UTILITIES)
 # SUB FLOWS
 # All works.
 # INCLUDE_UTILITIES
+string.o: $(DIR_UTILITIES)/string.cc
+	$(GCCH) $< $(OUT) $@
+
 file_system.o: $(DIR_UTILITIES)/file_system.cc
 	$(GCCH) $< $(OUT) $@
 

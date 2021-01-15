@@ -27,6 +27,6 @@ class file_system {
   static bool existFile(std::string path);
   static std::vector<std::string> getLinesOfFile(std::string path);
 };
-}  // namespace utils
+}  // namespace Fract::Utilities.
 
 #endif  // __FILE_SYSTEM_HH
