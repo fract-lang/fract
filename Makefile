@@ -19,14 +19,40 @@
 # SOFTWARE.
 
 # VARIABLES
-G++ = g++
-G++H = $(G++) -c
+# GNU GCC C++ compiler.
+GCC = g++
+# GNU GCC C++ compiler with -c argument for headers.
+GCCH = $(GCCH) -c
+# GNU GCC output parameter.
 OUT = -o
 
-DIR_FRACT = ./Fract
+# Name of output.
+NAME = Fract
+
+# The "Fract" directory.
+DIR_FRACT = $(NAME)
+# The "Include" directory.
+DIR_INCLUDE = Include
+# The "Utilities" directory.
+DIR_UTILITIES = Utilities
+
+# Source tree of "Utilities"
+define TREE_UTILITIES
+$(DIR_UTILITIES)/file_system.o
+endef
 
 # WORKFLOW
-all: fract
+# All workflows of this makefile.
+all: headers compile
+# Headers works.
+headers: $(TREE_UTILITIES)
 
-fract: $(DIR_FRACT)/main.cc
-	$(G++) $< $(OUT) $@
+# SUB FLOWS
+# All works.
+# INCLUDE_UTILITIES
+file_system.o: $(DIR_UTILITIES)/file_system.cc
+	$(GCCH) $< $(OUT) $@
+
+# Compile the Fract interpreter.
+compile: $(DIR_FRACT)/main.cc
+	$(GCC) $< $(TREE_UTILITIES) $(OUT) $(NAME)
