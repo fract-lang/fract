@@ -26,3 +26,8 @@ OUT = -o
 DIR_INCLUDE = ./include
 DIR_SOURCE = ./src
 
+# WORKFLOW
+all: fract
+
+fract: $(DIR_SOURCE)/main.cc
+	$(G++) $< $(OUT) $@
