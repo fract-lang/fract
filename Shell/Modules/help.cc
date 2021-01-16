@@ -4,7 +4,7 @@ using namespace Fract::Shell::Modules;
 using namespace Fract::Utilities;
 
 void help::process(std::string cmd) {
-  if (cmd == "") {
+  if (cmd != "") {
     std::cout << "This module can only be used!" << std::endl;
     return;
   }
