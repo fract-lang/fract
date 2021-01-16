@@ -20,7 +20,7 @@
 
 #include <iostream>
 
-#include "../include/operating_system.hh"
+#include "../Include/operating_system.hh"
 #include "../Shell/command_processor.hh"
 #include "../Shell/shell.hh"
 #include "../Shell/Modules/exit.hh"
