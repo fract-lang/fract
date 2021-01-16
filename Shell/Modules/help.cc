@@ -9,6 +9,7 @@ void help::process(std::string cmd) {
     return;
   }
   cli::printMapAsTable({
+    {"version", "Show version."},
     {"help", "Show help."},
     {"exit", "Exit."}
   });

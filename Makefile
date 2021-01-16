@@ -56,7 +56,8 @@ endef
 # Include tree of "Shell/Modules"
 define TREE_SHELL_MODULES
 $(DIR_SHELL_MODULES)/exit.cc \
-$(DIR_SHELL_MODULES)/help.cc
+$(DIR_SHELL_MODULES)/help.cc \
+$(DIR_SHELL_MODULES)/version.cc
 endef
 
 # Include tree of "Utilities"
