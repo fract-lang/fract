@@ -35,43 +35,41 @@ DIR_FRACT = $(NAME)
 DIR_INCLUDE = Include
 # The "Objects" directory.
 DIR_OBJECTS = Objects
+# The "Shell" directory.
+DIR_SHELL = Shell
+# The "Shell/Modules" directory.
+DIR_SHELL_MODULES = $(DIR_SHELL)/Modules
 # The "Utilities" directory.
 DIR_UTILITIES = Utilities
 
 # Include tree of "Objects"
 define TREE_OBJECTS
-$(DIR_OBJECTS)/color.o
+$(DIR_OBJECTS)/color.cc
+endef
+
+# Include tree of "Shell"
+define TREE_SHELL
+$(DIR_SHELL)/shell.cc
+endef
+
+# Include tree of "Shell/Modules"
+define TREE_SHELL_MODULES
+$(DIR_SHELL_MODULES)/exit.cc \
+$(DIR_SHELL_MODULES)/help.cc
 endef
 
 # Include tree of "Utilities"
 define TREE_UTILITIES
-$(DIR_UTILITIES)/file_system.o \
-$(DIR_UTILITIES)/shell.o \
-$(DIR_UTILITIES)/string.o
+$(DIR_UTILITIES)/cli.cc \
+$(DIR_UTILITIES)/file_system.cc \
+$(DIR_UTILITIES)/string.cc
 endef
 
 # WORKFLOW
 # All workflows of this makefile.
-all: headers compile
-# Headers works.
-headers: $(TREE_OBJECTS) $(TREE_UTILITIES)
-
-# SUB FLOWS
-# All works.
-# INCLUDE_OBJECTS
-color.o: $(DIR_OBJECTS)/color.cc
-	$(GCCH) $< $(OUT) $@
-
-# INCLUDE_UTILITIES
-string.o: $(DIR_UTILITIES)/string.cc
-	$(GCCH) $< $(OUT) $@
-
-file_system.o: $(DIR_UTILITIES)/file_system.cc
-	$(GCCH) $< $(OUT) $@
-
-shell.o: $(DIR_UTILITIES)/shell.cc
-	$(GCCH) $< $(OUT) $@
+all: compile
 
 # Compile the Fract interpreter.
 compile: $(DIR_FRACT)/main.cc
-	$(GCC) $< $(TREE_OBJECTS) $(TREE_UTILITIES) $(OUT) $(NAME)
+	$(GCC) $< $(TREE_OBJECTS) $(TREE_SHELL) $(TREE_SHELL_MODULES) \
+	$(TREE_UTILITIES) $(OUT) $(NAME)

@@ -47,11 +47,11 @@ struct color {
   static std::string toANSI(byte r, byte g, byte b);
 
   /// @brief Red.
-  byte r = max;
+  byte r;
   /// @brief Green.
-  byte g = max;
+  byte g;
   /// @brief Blue.
-  byte b = max;
+  byte b;
 
   /**
    * @brief Create new instance.

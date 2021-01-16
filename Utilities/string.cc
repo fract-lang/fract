@@ -21,7 +21,7 @@ std::string string::trim(std::string value) {
 }
 
 std::vector<std::string> string::split(std::string value,
-                                              char seperator) {
+                                       char seperator) {
   std::vector<std::string> lst;
   int last = 0, index = 0;
   while ((index = value.find(seperator, last)) != std::string::npos) {
@@ -33,6 +33,14 @@ std::vector<std::string> string::split(std::string value,
   return lst;
 }
 
-bool string::empty(std::string value) {
-  return value == "";
+std::string string::toLower(std::string value) {
+  std::transform(value.begin(), value.end(), value.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+  return value;
+}
+
+std::string string::toUpper(std::string value) {
+  std::transform(value.begin(), value.end(), value.begin(),
+                 [](unsigned char c) { return std::toupper(c); });
+  return value;
 }
