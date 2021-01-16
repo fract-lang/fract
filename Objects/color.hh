@@ -24,8 +24,6 @@ struct color {
   static std::string boldMagenta;
   static std::string boldCyan;
   static std::string reset;
-  static byte min;
-  static byte max;
 
   /// @brief Enable virtual terminal processing.
   static void enableVTP();
