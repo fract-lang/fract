@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include "../include/operating_system.hh"
+#include "../Shell/command_processor.hh"
 #include "../Shell/shell.hh"
 #include "../Shell/Modules/exit.hh"
 #include "../Shell/Modules/help.hh"
@@ -56,6 +57,8 @@ int main(int argc, char const* argv[]) {
     std::string input = shell::getInput();
     if (input == "")
       continue;
+    processCommand(command_processor::getNamespace(input),
+                   command_processor::removeNamespace(input));
   }
   return EXIT_SUCCESS;
 }

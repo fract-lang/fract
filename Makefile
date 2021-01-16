@@ -49,6 +49,7 @@ endef
 
 # Include tree of "Shell"
 define TREE_SHELL
+$(DIR_SHELL)/command_processor.cc \
 $(DIR_SHELL)/shell.cc
 endef
 
