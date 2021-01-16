@@ -57,6 +57,7 @@ endef
 define TREE_SHELL_MODULES
 $(DIR_SHELL_MODULES)/exit.cc \
 $(DIR_SHELL_MODULES)/help.cc \
+$(DIR_SHELL_MODULES)/make.cc \
 $(DIR_SHELL_MODULES)/version.cc
 endef
 

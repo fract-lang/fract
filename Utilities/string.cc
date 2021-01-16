@@ -44,3 +44,13 @@ std::string string::toUpper(std::string value) {
     value[index] = std::toupper(value[index]);
   return value;
 }
+
+bool string::startsWith(std::string value, std::string start) {
+  if(value.length() < start.length()) return false;
+  return value.substr(0, start.length()) == start;
+}
+
+bool string::endsWith(std::string value, std::string end) {
+  if(value.length() < end.length()) return false;
+  return value.substr(value.length() - end.length()) == end;
+}

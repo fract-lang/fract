@@ -3,7 +3,7 @@
 using namespace Fract::Shell::Modules;
 
 void version::process(std::string cmd) {
-  if (cmd != "") {
+  if(cmd != "") {
     std::cout << "This module can only be used!" << std::endl;
     return;
   }
