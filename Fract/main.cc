@@ -21,10 +21,24 @@
 #include <iostream>
 
 #include "../include/operating_system.hh"
-#include "../Utilities/shell.hh"
+#include "../Shell/shell.hh"
+#include "../Shell/Modules/exit.hh"
+#include "../Shell/Modules/help.hh"
 #include "../Objects/color.hh"
 
+using namespace Fract::Shell;
 using namespace Fract::Utilities;
+
+/**
+ * @brief Process command.
+ * @param ns Namespace of command.
+ * @param cmd Command without namespace.
+ */
+void processCommand(std::string ns, std::string cmd) {
+  if (ns == "help") Modules::help::process(cmd);
+  else if (ns == "exit") Modules::exit::process(cmd);
+  else std::cout << "There is no such command!" << std::endl;
+}
 
 /**
  * @fn main

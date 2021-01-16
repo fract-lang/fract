@@ -16,9 +16,6 @@ std::string color::boldMagenta = "\033[1;35m";
 std::string color::boldCyan = "\033[1;36m";
 std::string color::reset = "\033[0m";
 
-byte color::min = 0;
-byte color::max = 255;
-
 void color::enableVTP() {
 #if _WIN32
   HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);

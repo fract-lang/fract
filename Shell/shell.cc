@@ -1,5 +1,6 @@
 #include "shell.hh"
 
+using namespace Fract::Shell;
 using namespace Fract::Utilities;
 using namespace Fract::Objects;
 

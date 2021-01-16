@@ -4,13 +4,13 @@
 #include <iostream>
 
 #include "../Objects/color.hh"
-#include "string.hh"
+#include "../Utilities/string.hh"
 #include "../Include/operating_system.hh"
 
 /// @brief Mark of pwd line.
 #define pwd_mark ">"
 
-namespace Fract::Utilities {
+namespace Fract::Shell {
 ///  @brief Utilities for shell.
 class shell {
 public:
@@ -48,6 +48,6 @@ public:
    */
   static std::string getInput();
 };
-} // namespace Fract::Utilities
+} // namespace Fract::Shell
 
 #endif // __SHELL_HH

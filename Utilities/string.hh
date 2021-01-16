@@ -1,6 +1,7 @@
 #ifndef __STRING_HH
 #define __STRING_HH
 
+#include <algorithm>
 #include <iostream>
 #include <list>
 #include <vector>
@@ -13,7 +14,8 @@ class string {
   static std::string trimEnd(std::string value);
   static std::string trim(std::string value);
   static std::vector<std::string> split(std::string value, char seperator);
-  static bool empty(std::string value);
+  static std::string toLower(std::string value);
+  static std::string toUpper(std::string value);
 };
 }  // namespace Fract::Utilities
 
