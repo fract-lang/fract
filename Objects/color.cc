@@ -30,12 +30,12 @@ std::string color::toANSI(color color) {
   return color::toANSI(color.r, color.g, color.b);
 }
 
-std::string color::toANSI(byte r, byte g, byte b) {
+std::string color::toANSI(unsigned short r, unsigned short g, unsigned short b) {
   return "\033[38;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" +
          std::to_string(b) + "m";
 }
 
-color::color(byte r, byte g, byte b) {
+color::color(unsigned short r, unsigned short g, unsigned short b) {
   this->r = r;
   this->g = g;
   this->b = b;

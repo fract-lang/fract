@@ -44,14 +44,14 @@ struct color {
    * @param b Blue.
    * @return ANSI code of rgb values.
    */
-  static std::string toANSI(byte r, byte g, byte b);
+  static std::string toANSI(unsigned short r, unsigned short g, unsigned short b);
 
   /// @brief Red.
-  byte r;
+  unsigned short r;
   /// @brief Green.
-  byte g;
+  unsigned short g;
   /// @brief Blue.
-  byte b;
+  unsigned short b;
 
   /**
    * @brief Create new instance.
@@ -59,7 +59,7 @@ struct color {
    * @param g Green.
    * @param b Blue.
    */
-  color(byte r, byte g, byte b);
+  color(unsigned short r, unsigned short g, unsigned short b);
 };
 }  // namespace Fract::Objects
 
