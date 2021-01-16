@@ -27,7 +27,7 @@ GCCH = $(GCCH) -c
 OUT = -o
 
 # Name of output.
-NAME = Fract
+NAME = fract
 
 # The "Fract" directory.
 DIR_FRACT = $(NAME)

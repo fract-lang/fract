@@ -1,7 +1,6 @@
 #ifndef __STRING_HH
 #define __STRING_HH
 
-#include <algorithm>
 #include <iostream>
 #include <list>
 #include <vector>
