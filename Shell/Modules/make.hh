@@ -6,6 +6,7 @@
 #include "../../Include/fract.hh"
 #include "../../Utilities/string.hh"
 #include "../../Utilities/file_system.hh"
+#include "../../Parser/parser.hh"
 
 namespace Fract::Shell::Modules {
 /// @brief Interprete Fract code.

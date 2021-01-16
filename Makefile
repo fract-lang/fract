@@ -35,6 +35,8 @@ DIR_FRACT = Fract
 DIR_INCLUDE = Include
 # The "Objects" directory.
 DIR_OBJECTS = Objects
+# The "Parser" directory.
+DIR_PARSER = Parser
 # The "Shell" directory.
 DIR_SHELL = Shell
 # The "Shell/Modules" directory.
@@ -45,6 +47,11 @@ DIR_UTILITIES = Utilities
 # Include tree of "Objects"
 define TREE_OBJECTS
 $(DIR_OBJECTS)/color.cc
+endef
+
+# Include tree of "Parser"
+define TREE_PARSER
+$(DIR_PARSER)/parser.cc
 endef
 
 # Include tree of "Shell"
@@ -74,5 +81,5 @@ all: compile
 
 # Compile the Fract interpreter.
 compile: $(DIR_FRACT)/main.cc
-	$(GCC) $< $(TREE_OBJECTS) $(TREE_SHELL) $(TREE_SHELL_MODULES) \
+	$(GCC) $< $(TREE_OBJECTS) $(TREE_PARSER) $(TREE_SHELL) $(TREE_SHELL_MODULES) \
 	$(TREE_UTILITIES) $(OUT) $(NAME)
