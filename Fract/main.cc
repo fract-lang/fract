@@ -25,6 +25,7 @@
 #include "../Shell/shell.hh"
 #include "../Shell/Modules/exit.hh"
 #include "../Shell/Modules/help.hh"
+#include "../Shell/Modules/version.hh"
 #include "../Objects/color.hh"
 
 using namespace Fract::Shell;
@@ -38,6 +39,7 @@ using namespace Fract::Utilities;
 void processCommand(std::string ns, std::string cmd) {
   if (ns == "help") Modules::help::process(cmd);
   else if (ns == "exit") Modules::exit::process(cmd);
+  else if (ns == "version") Modules::version::process(cmd);
   else std::cout << "There is no such command!" << std::endl;
 }
 
