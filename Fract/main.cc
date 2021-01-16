@@ -50,6 +50,11 @@ void processCommand(std::string ns, std::string cmd) {
  */
 int main(int argc, char const* argv[]) {
   if (argc > 1) { // Started with arguments.
+    std::string command = argv[1];
+    for(int index = 2; index < argc;)
+      command = command + " " + argv[index++];
+    processCommand(command_processor::getNamespace(command),
+                   command_processor::removeNamespace(command));
     return EXIT_SUCCESS;
   }
 
