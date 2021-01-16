@@ -15,6 +15,8 @@ class string {
   static std::vector<std::string> split(std::string value, char seperator);
   static std::string toLower(std::string value);
   static std::string toUpper(std::string value);
+  static bool startsWith(std::string value, std::string start);
+  static bool endsWith(std::string value, std::string end);
 };
 }  // namespace Fract::Utilities
 

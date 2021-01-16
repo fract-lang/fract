@@ -25,8 +25,10 @@
 #include "../Shell/shell.hh"
 #include "../Shell/Modules/exit.hh"
 #include "../Shell/Modules/help.hh"
+#include "../Shell/Modules/make.hh"
 #include "../Shell/Modules/version.hh"
 #include "../Objects/color.hh"
+#include "../Utilities/file_system.hh"
 
 using namespace Fract::Shell;
 using namespace Fract::Utilities;
@@ -40,6 +42,8 @@ void processCommand(std::string ns, std::string cmd) {
   if (ns == "help") Modules::help::process(cmd);
   else if (ns == "exit") Modules::exit::process(cmd);
   else if (ns == "version") Modules::version::process(cmd);
+  else if (ns == "make") Modules::make::process(cmd);
+  else if (Modules::make::check(ns)) Modules::make::process(ns + cmd);
   else std::cout << "There is no such command!" << std::endl;
 }
 
@@ -60,10 +64,9 @@ int main(int argc, char const* argv[]) {
     return EXIT_SUCCESS;
   }
 
-  while(true) {
-    std::string input = shell::getInput();
-    if (input == "")
-      continue;
+  while(true)
+  { std::string input = shell::getInput();
+    if (input == "") continue;
     processCommand(command_processor::getNamespace(input),
                    command_processor::removeNamespace(input));
   }
