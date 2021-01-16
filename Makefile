@@ -30,7 +30,7 @@ OUT = -o
 NAME = fract
 
 # The "Fract" directory.
-DIR_FRACT = $(NAME)
+DIR_FRACT = Fract
 # The "Include" directory.
 DIR_INCLUDE = Include
 # The "Objects" directory.
