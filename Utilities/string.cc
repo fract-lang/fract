@@ -34,13 +34,13 @@ std::vector<std::string> string::split(std::string value,
 }
 
 std::string string::toLower(std::string value) {
-  std::transform(value.begin(), value.end(), value.begin(),
-                 [](unsigned char c) { return std::tolower(c); });
+  for(int index = 0; index < value.length(); index++)
+    value[index] = std::tolower(value[index]);
   return value;
 }
 
 std::string string::toUpper(std::string value) {
-  std::transform(value.begin(), value.end(), value.begin(),
-                 [](unsigned char c) { return std::toupper(c); });
+  for(int index = 0; index < value.length(); index++)
+    value[index] = std::toupper(value[index]);
   return value;
 }
