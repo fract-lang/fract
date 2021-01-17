@@ -20,6 +20,7 @@ std::vector<std::string> file_system::getLinesOfFile(std::string path) {
   std::vector<std::string> lines;
   std::string line;
   while (std::getline(file, line)) lines.push_back(line);
+  file.close();
   delete &file;
   return lines;
 }
