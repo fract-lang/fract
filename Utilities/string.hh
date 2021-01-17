@@ -17,6 +17,7 @@ class string {
   static std::string toUpper(std::string value);
   static bool startsWith(std::string value, std::string start);
   static bool endsWith(std::string value, std::string end);
+  static bool contains(std::string value, std::string check);
 };
 }  // namespace Fract::Utilities
 
