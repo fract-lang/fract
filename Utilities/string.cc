@@ -54,3 +54,7 @@ bool string::endsWith(std::string value, std::string end) {
   if(value.length() < end.length()) return false;
   return value.substr(value.length() - end.length()) == end;
 }
+
+bool string::contains(std::string value, std::string check) {
+  return value.find(check) != std::string::npos;
+}
