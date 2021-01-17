@@ -39,7 +39,7 @@ namespace Fract::Grammar {
 
 // DATA TYPES
 #define dt_byte "byte"
-#define dt_unsigned_byte "sbyte"
+#define dt_signed_byte "sbyte"
 #define dt_16bit_integer "int16"
 #define dt_32bit_integer "int32"
 #define dt_64bit_integer "int64"
