@@ -24,6 +24,9 @@ namespace Fract::Grammar {
 #define token_at "@"
 #define token_dot "."
 
+// MULTICHAR OPERATORS
+#define operator_sub (token_colon token_colon)
+
 // KEYWORDS
 #define kw_import "use"
 #define kw_function "fn"

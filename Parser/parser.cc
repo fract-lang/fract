@@ -18,6 +18,7 @@ std::vector<code_line> parser::readyLines(std::vector<std::string> lines) {
   return readyLines;
 }
 
-parser::parser(std::string path) {
+parser::parser(std::string path, int type) {
   file = parser::readyFile(path);
+  this->type = type;
 }
