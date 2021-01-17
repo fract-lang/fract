@@ -13,6 +13,8 @@ using namespace Fract::Objects;
 
 namespace Fract::Parser {
 
+#define type_entry_file 99
+#define type_imported_file 100
 #define type_comment 999
 #define type_function 1000
 #define type_equals 1001
@@ -67,11 +69,15 @@ public:
   /// @brief Parser of this file.
   code_file file;
 
+  /// @brief Type of file.
+  int type;
+
   /**
    * @brief Create new instance.
    * @param path Path of destination file.
+   * @param type Type of file.
   */
-  parser(std::string path);
+  parser(std::string path, int type);
 };
 } // namespace Fract::Parser
 
