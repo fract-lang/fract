@@ -1,10 +1,13 @@
 #ifndef __PARSER_HH
 #define __PARSER_HH
 
+#include <fstream>
+#include <iostream>
 #include <iostream>
 #include <vector>
 
-#include "../Objects/code_line.hh"
+#include "../Objects/code_file.hh"
+#include "../Utilities/file_system.hh"
 
 using namespace Fract::Objects;
 
@@ -48,11 +51,27 @@ namespace Fract::Parser {
 class parser {
 public:
   /**
+   * @brief Create instance of code file.
+   * @param path Path of file.
+   * @returns Ready file.
+  */
+  static code_file readyFile(std::string path);
+
+  /**
    * @brief Ready lines to process.
    * @param lines Lines to ready.
    * @returns Ready lines.
   */
   static std::vector<code_line> readyLines(std::vector<std::string> lines);
+
+  /// @brief Parser of this file.
+  code_file file;
+
+  /**
+   * @brief Create new instance.
+   * @param path Path of destination file.
+  */
+  parser(std::string path);
 };
 } // namespace Fract::Parser
 

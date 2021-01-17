@@ -6,7 +6,6 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include <list>
 #include <vector>
 
 #ifdef _WIN32

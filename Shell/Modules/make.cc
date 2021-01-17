@@ -14,8 +14,7 @@ void make::process(std::string cmd) {
   { std::cout << "The Fract file is not exists: " << cmd << std::endl;
     return;
   }
-  std::vector<code_line> lines = parser::readyLines(
-                                 file_system::getLinesOfFile(cmd));
+  parser entry(cmd);
 }
 
 bool make::check(std::string value) {
