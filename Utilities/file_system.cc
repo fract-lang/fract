@@ -4,14 +4,16 @@ using namespace Fract::Utilities;
 
 char* file_system::_WORKING_DIR_ = getcwd(NULL, 0);
 
-bool file_system::existFile(std::string path) {
+bool
+file_system::existFile(std::string path) {
   std::ifstream file(path);
   bool state = file.good();
   delete &file;
   return state;
 }
 
-std::vector<std::string> file_system::getLinesOfFile(std::string path) {
+std::vector<std::string>
+file_system::getLinesOfFile(std::string path) {
   std::ifstream file(path);
   if (!file.good()) {
     std::cout << "File is not found this path: " << path << std::endl;

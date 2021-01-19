@@ -3,7 +3,8 @@
 using namespace Fract::Objects;
 using namespace Fract::Utilities;
 
-void cli::printMapAsTable(std::map<std::string, std::string> map) {
+void
+cli::printMapAsTable(std::map<std::string, std::string> map) {
   int maxlen = 0;
   for (std::map<std::string, std::string>::iterator it = map.begin();
        it != map.end(); ++it) {

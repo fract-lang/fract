@@ -2,25 +2,29 @@
 
 using namespace Fract::Utilities;
 
-std::string string::trimStart(std::string value) {
+std::string
+string::trimStart(std::string value) {
   for (int index = 0; index < value.length(); ++index)
     if (value[index] != ' ')
       return value.substr(index);
   return value;
 }
 
-std::string string::trimEnd(std::string value) {
+std::string
+string::trimEnd(std::string value) {
   for (int index = value.length() - 1; index >= 0; --index)
     if (value[index] != ' ')
       return value.substr(0, index + 1);
   return value;
 }
 
-std::string string::trim(std::string value) {
+std::string
+string::trim(std::string value) {
   return trimEnd(trimStart(value));
 }
 
-std::vector<std::string> string::split(std::string value,
+std::vector<std::string>
+string::split(std::string value,
                                        char seperator) {
   std::vector<std::string> lst;
   int last = 0, index = 0;
@@ -33,28 +37,33 @@ std::vector<std::string> string::split(std::string value,
   return lst;
 }
 
-std::string string::toLower(std::string value) {
+std::string
+string::toLower(std::string value) {
   for(int index = 0; index < value.length(); index++)
     value[index] = std::tolower(value[index]);
   return value;
 }
 
-std::string string::toUpper(std::string value) {
+std::string
+string::toUpper(std::string value) {
   for(int index = 0; index < value.length(); index++)
     value[index] = std::toupper(value[index]);
   return value;
 }
 
-bool string::startsWith(std::string value, std::string start) {
+bool
+string::startsWith(std::string value, std::string start) {
   if(value.length() < start.length()) return false;
   return value.substr(0, start.length()) == start;
 }
 
-bool string::endsWith(std::string value, std::string end) {
+bool
+string::endsWith(std::string value, std::string end) {
   if(value.length() < end.length()) return false;
   return value.substr(value.length() - end.length()) == end;
 }
 
-bool string::contains(std::string value, std::string check) {
+bool
+string::contains(std::string value, std::string check) {
   return value.find(check) != std::string::npos;
 }
