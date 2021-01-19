@@ -4,17 +4,21 @@ using namespace Fract::Utilities;
 
 std::string
 string::trimStart(std::string value) {
-  for (int index = 0; index < value.length(); ++index)
-    if (value[index] != ' ')
+  for (int index = 0; index < value.length(); ++index) {
+    if (value[index] != ' ') {
       return value.substr(index);
+    }
+  }
   return value;
 }
 
 std::string
 string::trimEnd(std::string value) {
-  for (int index = value.length() - 1; index >= 0; --index)
-    if (value[index] != ' ')
+  for (int index = value.length() - 1; index >= 0; --index) {
+    if (value[index] != ' ') {
       return value.substr(0, index + 1);
+    }
+  }
   return value;
 }
 
@@ -32,34 +36,41 @@ string::split(std::string value,
     lst.push_back(value.substr(last, index - last));
     last = index + 1;
   }
-  if (last != value.length())
+  if (last != value.length()) {
     lst.push_back(value.substr(last));
+  }
   return lst;
 }
 
 std::string
 string::toLower(std::string value) {
-  for(int index = 0; index < value.length(); index++)
+  for(int index = 0; index < value.length(); index++) {
     value[index] = std::tolower(value[index]);
+  }
   return value;
 }
 
 std::string
 string::toUpper(std::string value) {
-  for(int index = 0; index < value.length(); index++)
+  for(int index = 0; index < value.length(); index++) {
     value[index] = std::toupper(value[index]);
+  }
   return value;
 }
 
 bool
 string::startsWith(std::string value, std::string start) {
-  if(value.length() < start.length()) return false;
+  if(value.length() < start.length()) {
+    return false;
+  }
   return value.substr(0, start.length()) == start;
 }
 
 bool
 string::endsWith(std::string value, std::string end) {
-  if(value.length() < end.length()) return false;
+  if(value.length() < end.length()) {
+    return false;
+  }
   return value.substr(value.length() - end.length()) == end;
 }
 

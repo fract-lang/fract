@@ -5,8 +5,8 @@ using namespace Fract::Utilities;
 
 void
 help::process(std::string cmd) {
-  if(cmd != "") {
-    std::cout << "This module can only be used!" << std::endl;
+  if(cmd != "")
+  { std::cout << "This module can only be used!" << std::endl;
     return;
   }
   cli::printMapAsTable({

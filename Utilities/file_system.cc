@@ -15,13 +15,15 @@ file_system::existFile(std::string path) {
 std::vector<std::string>
 file_system::getLinesOfFile(std::string path) {
   std::ifstream file(path);
-  if (!file.good()) {
-    std::cout << "File is not found this path: " << path << std::endl;
+  if (!file.good())
+  { std::cout << "File is not found this path: " << path << std::endl;
     exit(1);
   }
   std::vector<std::string> lines;
   std::string line;
-  while (std::getline(file, line)) lines.push_back(line);
+  while (std::getline(file, line)) {
+    lines.push_back(line);
+  }
   file.close();
   delete &file;
   return lines;
