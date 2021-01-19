@@ -41,12 +41,24 @@ using namespace Fract::Utilities;
  */
 void
 processCommand(std::string ns, std::string cmd) {
-  if (ns == "help") Modules::help::process(cmd);
-  else if (ns == "exit") Modules::exit::process(cmd);
-  else if (ns == "version") Modules::version::process(cmd);
-  else if (ns == "make") Modules::make::process(cmd);
-  else if (Modules::make::check(ns)) Modules::make::process(ns + cmd);
-  else std::cout << "There is no such command!" << std::endl;
+  if (ns == "help") {
+    Modules::help::process(cmd);
+  }
+  else if (ns == "exit") {
+    Modules::exit::process(cmd);
+  }
+  else if (ns == "version") {
+    Modules::version::process(cmd);
+  }
+  else if (ns == "make") {
+    Modules::make::process(cmd);
+  }
+  else if (Modules::make::check(ns)) {
+    Modules::make::process(ns + cmd);
+  }
+  else{
+    std::cout << "There is no such command!" << std::endl;
+  }
 }
 
 /**
@@ -58,12 +70,13 @@ processCommand(std::string ns, std::string cmd) {
  */
 int
 main(int argc, char const* argv[]) {
-  if (argc <= 1) // Not started with arguments.
+  if (argc <= 1) {// Not started with arguments.
     return EXIT_SUCCESS;
-  return EXIT_SUCCESS;
+  }
   std::string command = argv[1];
-  for(int index = 2; index < argc;)
+  for(int index = 2; index < argc;) {
     command = command + " " + argv[index++];
+  }
   processCommand(command_processor::getNamespace(command),
                  command_processor::removeNamespace(command));
   return EXIT_SUCCESS;

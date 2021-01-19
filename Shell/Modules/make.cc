@@ -20,8 +20,15 @@ make::process(std::string cmd) {
 
 bool
 make::check(std::string value) {
-  if(string::endsWith(value, fract_extension)) return true;
-  else value += fract_extension;
-  if(file_system::existFile(value)) return true;
+  if(string::endsWith(value, fract_extension)){
+    return true;
+  }
+  else {
+    value += fract_extension;
+  }
+  
+  if(file_system::existFile(value)) {
+    return true;
+  }
   return false;
 }

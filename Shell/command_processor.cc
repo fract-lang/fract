@@ -22,8 +22,8 @@ command_processor::getArguments(std::string cmd,
   while (
       std::regex_search(cmd, match, std::regex("(^|\\s+)-\\w+(?=($|\\s+))"))) {
     std::string arg = string::toLower(string::trim(match[0]));
-    if (std::find(dest->begin(), dest->end(), arg) != dest->end()) {
-      std::cout << "A argument cannot be written more than once!" << std::endl;
+    if (std::find(dest->begin(), dest->end(), arg) != dest->end())
+    { std::cout << "A argument cannot be written more than once!" << std::endl;
       return false;
     }
     dest->push_back(arg);
