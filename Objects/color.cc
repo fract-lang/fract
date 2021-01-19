@@ -16,7 +16,8 @@ std::string color::boldMagenta = "\033[1;35m";
 std::string color::boldCyan = "\033[1;36m";
 std::string color::reset = "\033[0m";
 
-void color::enableVTP() {
+void
+color::enableVTP() {
 #if _WIN32
   HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
   DWORD dwMode = 0;
@@ -26,11 +27,13 @@ void color::enableVTP() {
 #endif  // _WIN32
 }
 
-std::string color::toANSI(color color) {
+std::string
+color::toANSI(color color) {
   return color::toANSI(color.r, color.g, color.b);
 }
 
-std::string color::toANSI(unsigned short r, unsigned short g, unsigned short b) {
+std::string
+color::toANSI(unsigned short r, unsigned short g, unsigned short b) {
   return "\033[38;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" +
          std::to_string(b) + "m";
 }

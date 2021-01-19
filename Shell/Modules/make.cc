@@ -4,7 +4,8 @@ using namespace Fract::Shell::Modules;
 using namespace Fract::Utilities;
 using namespace Fract::Parser;
 
-void make::process(std::string cmd) {
+void
+make::process(std::string cmd) {
   if(cmd == "")
   { std::cout << "This module cannot only be used!" << std::endl;
     return;
@@ -17,7 +18,8 @@ void make::process(std::string cmd) {
   parser entry(cmd, type_entry_file);
 }
 
-bool make::check(std::string value) {
+bool
+make::check(std::string value) {
   if(string::endsWith(value, fract_extension)) return true;
   else value += fract_extension;
   if(file_system::existFile(value)) return true;

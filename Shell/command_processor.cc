@@ -3,17 +3,20 @@
 using namespace Fract::Shell;
 using namespace Fract::Utilities;
 
-std::string command_processor::getNamespace(std::string cmd) {
+std::string
+command_processor::getNamespace(std::string cmd) {
   std::size_t pos = cmd.find(" ");
   return pos == std::string::npos ? cmd : cmd.substr(0, pos);
 }
 
-std::string command_processor::removeNamespace(std::string cmd) {
+std::string
+command_processor::removeNamespace(std::string cmd) {
   std::size_t pos = cmd.find(" ");
   return pos == std::string::npos ? "" : cmd.substr(pos + 1);
 }
 
-bool command_processor::getArguments(std::string cmd,
+bool
+command_processor::getArguments(std::string cmd,
                                   std::vector<std::string>* dest) {
   std::smatch match;
   while (
@@ -29,6 +32,7 @@ bool command_processor::getArguments(std::string cmd,
   return true;
 }
 
-std::string command_processor::removeArguments(std::string cmd) {
+std::string
+command_processor::removeArguments(std::string cmd) {
   return std::regex_replace(cmd, std::regex("(^|\\s+)-\\w+(?=($|\\s+))"), "");
 }

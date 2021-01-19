@@ -38,7 +38,8 @@ using namespace Fract::Utilities;
  * @param ns Namespace of command.
  * @param cmd Command without namespace.
  */
-void processCommand(std::string ns, std::string cmd) {
+void
+processCommand(std::string ns, std::string cmd) {
   if (ns == "help") Modules::help::process(cmd);
   else if (ns == "exit") Modules::exit::process(cmd);
   else if (ns == "version") Modules::version::process(cmd);
@@ -54,7 +55,8 @@ void processCommand(std::string ns, std::string cmd) {
  * @param argv Arguments
  * @return Exit code
  */
-int main(int argc, char const* argv[]) {
+int
+main(int argc, char const* argv[]) {
   if (argc > 1) { // Started with arguments.
     std::string command = argv[1];
     for(int index = 2; index < argc;)
