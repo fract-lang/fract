@@ -44,6 +44,11 @@ DIR_SHELL_MODULES = $(DIR_SHELL)/Modules
 # The "Utilities" directory.
 DIR_UTILITIES = Utilities
 
+# Include tree of "Fract"
+define TREE_FRACT
+$(DIR_FRACT)/arithmetic.cc
+endef
+
 # Include tree of "Objects"
 define TREE_OBJECTS
 $(DIR_OBJECTS)/color.cc
@@ -81,5 +86,5 @@ all: compile
 
 # Compile the Fract interpreter.
 compile: $(DIR_FRACT)/main.cc
-	$(GCC) $< $(TREE_OBJECTS) $(TREE_PARSER) $(TREE_SHELL) $(TREE_SHELL_MODULES) \
-	$(TREE_UTILITIES) $(OUT) $(NAME)
+	$(GCC) $< $(TREE_FRACT) $(TREE_OBJECTS) $(TREE_PARSER) $(TREE_SHELL) \
+	$(TREE_SHELL_MODULES) $(TREE_UTILITIES) $(OUT) $(NAME)
