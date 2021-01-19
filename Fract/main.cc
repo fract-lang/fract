@@ -29,6 +29,7 @@
 #include "../Shell/Modules/version.hh"
 #include "../Objects/color.hh"
 #include "../Utilities/file_system.hh"
+#include "arithmetic.hh"
 
 using namespace Fract::Shell;
 using namespace Fract::Utilities;
@@ -57,20 +58,13 @@ processCommand(std::string ns, std::string cmd) {
  */
 int
 main(int argc, char const* argv[]) {
-  if (argc > 1) { // Started with arguments.
-    std::string command = argv[1];
-    for(int index = 2; index < argc;)
-      command = command + " " + argv[index++];
-    processCommand(command_processor::getNamespace(command),
-                   command_processor::removeNamespace(command));
+  if (argc <= 1) // Not started with arguments.
     return EXIT_SUCCESS;
-  }
-
-  while(true)
-  { std::string input = shell::getInput();
-    if (input == "") continue;
-    processCommand(command_processor::getNamespace(input),
-                   command_processor::removeNamespace(input));
-  }
+  return EXIT_SUCCESS;
+  std::string command = argv[1];
+  for(int index = 2; index < argc;)
+    command = command + " " + argv[index++];
+  processCommand(command_processor::getNamespace(command),
+                 command_processor::removeNamespace(command));
   return EXIT_SUCCESS;
 }
