@@ -23,5 +23,16 @@ parser::ready_lines(std::vector<std::string> lines) {
 
 parser::parser(std::string path, int type) {
   file = parser::ready_file(path);
+  _tokenizer = tokenizer(&file);
   this->type = type;
+}
+
+void
+parser::parse() {
+  while(!_tokenizer.finish) {
+    std::cout << "-----------------------" << std::endl;
+    for(auto _token : _tokenizer.tokenize_next()) {
+      std::cout << _token.type << " - "  << _token.value << std::endl;
+    }
+  }
 }

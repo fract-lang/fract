@@ -16,6 +16,7 @@ make::process(std::string cmd) {
     return;
   }
   parser entry(cmd, type_entry_file);
+  entry.parse();
 }
 
 bool
