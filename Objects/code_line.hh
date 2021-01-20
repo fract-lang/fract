@@ -5,7 +5,8 @@
 
 namespace Fract::Objects {
 /// @brief Code line instance.
-struct code_line {
+class code_line {
+public:
   /// @brief This line is x. line.
   int line;
   /// @brief Text of line.

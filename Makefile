@@ -56,7 +56,8 @@ endef
 
 # Include tree of "Parser"
 define TREE_PARSER
-$(DIR_PARSER)/parser.cc
+$(DIR_PARSER)/parser.cc \
+$(DIR_PARSER)/tokenizer.cc
 endef
 
 # Include tree of "Shell"

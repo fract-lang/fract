@@ -9,15 +9,16 @@
 
 namespace Fract::Objects {
 /// @brief Code file instance.
-struct code_file {
-/// @brief File stream.
-std::ifstream stream;
+class code_file {
+public:
+  /// @brief File stream.
+  std::ifstream stream;
 
-/// @brief Path of file.
-std::string path;
+  /// @brief Path of file.
+  std::string path;
 
-/// @brief Code lines of file.
-std::vector<code_line> lines;
+  /// @brief Code lines of file.
+  std::vector<code_line> lines;
 };
 }
 
