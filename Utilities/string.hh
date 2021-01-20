@@ -9,14 +9,14 @@ namespace Fract::Utilities {
 /// @brief Utilities of string.
 class string {
   public:
-  static std::string trimStart(std::string value);
-  static std::string trimEnd(std::string value);
+  static std::string trim_start(std::string value);
+  static std::string trim_end(std::string value);
   static std::string trim(std::string value);
   static std::vector<std::string> split(std::string value, char seperator);
-  static std::string toLower(std::string value);
-  static std::string toUpper(std::string value);
-  static bool startsWith(std::string value, std::string start);
-  static bool endsWith(std::string value, std::string end);
+  static std::string to_lower(std::string value);
+  static std::string to_upper(std::string value);
+  static bool starts_with(std::string value, std::string start);
+  static bool ends_with(std::string value, std::string end);
   static bool contains(std::string value, std::string check);
 };
 }  // namespace Fract::Utilities

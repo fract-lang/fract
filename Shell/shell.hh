@@ -25,7 +25,7 @@ public:
    * @brief Print error.
    * @param msg Error message.
    */
-  static void printError(std::string msg);
+  static void print_error(std::string msg);
 
   /**
    * @brief Get input with message and color.
@@ -33,20 +33,20 @@ public:
    * @param color Color.
    * @return Input.
    */
-  static std::string getInput(std::string msg, std::string color);
+  static std::string get_input(std::string msg, std::string color);
 
   /**
    * @brief Get input with message.
    * @param msg Message.
    * @return Input.
    */
-  static std::string getInput(std::string msg);
+  static std::string get_input(std::string msg);
 
   /**
    * @brief Get input with pwd.
    * @return Input.
    */
-  static std::string getInput();
+  static std::string get_input();
 };
 } // namespace Fract::Shell
 

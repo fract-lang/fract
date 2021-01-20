@@ -10,8 +10,8 @@ make::process(std::string cmd) {
   { std::cout << "This module cannot only be used!" << std::endl;
     return;
   }
-  cmd += !string::endsWith(cmd, fract_extension) ? fract_extension : "";
-  if(!file_system::existFile(cmd))
+  cmd += !string::ends_with(cmd, fract_extension) ? fract_extension : "";
+  if(!file_system::exist_file(cmd))
   { std::cout << "The Fract file is not exists: " << cmd << std::endl;
     return;
   }
@@ -20,14 +20,14 @@ make::process(std::string cmd) {
 
 bool
 make::check(std::string value) {
-  if(string::endsWith(value, fract_extension)){
+  if(string::ends_with(value, fract_extension)){
     return true;
   }
   else {
     value += fract_extension;
   }
   
-  if(file_system::existFile(value)) {
+  if(file_system::exist_file(value)) {
     return true;
   }
   return false;
