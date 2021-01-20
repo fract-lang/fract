@@ -12,12 +12,12 @@ shell::printc(std::string msg, std::string color) {
 }
 
 void
-shell::printError(std::string msg) {
-  shell::printc(msg + "\n", color::toANSI(230, 41, 79));
+shell::print_error(std::string msg) {
+  shell::printc(msg + "\n", color::to_ansi(230, 41, 79));
 }
 
 std::string
-shell::getInput(std::string msg, std::string color) {
+shell::get_input(std::string msg, std::string color) {
   shell::printc(msg, color);
   std::string input;
   std::getline(std::cin, input);
@@ -25,7 +25,7 @@ shell::getInput(std::string msg, std::string color) {
 }
 
 std::string
-shell::getInput(std::string msg) {
+shell::get_input(std::string msg) {
   std::string input;
   std::cout << msg;
   std::getline(std::cin, input);
@@ -33,6 +33,6 @@ shell::getInput(std::string msg) {
 }
 
 std::string
-shell::getInput() {
-  return shell::getInput(pwd_mark);
+shell::get_input() {
+  return shell::get_input(pwd_mark);
 }

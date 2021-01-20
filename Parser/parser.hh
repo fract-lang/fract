@@ -57,14 +57,14 @@ public:
    * @param path Path of file.
    * @returns Ready file.
   */
-  static code_file readyFile(std::string path);
+  static code_file ready_file(std::string path);
 
   /**
    * @brief Ready lines to process.
    * @param lines Lines to ready.
    * @returns Ready lines.
   */
-  static std::vector<code_line> readyLines(std::vector<std::string> lines);
+  static std::vector<code_line> ready_lines(std::vector<std::string> lines);
 
   /// @brief Parser of this file.
   code_file file;

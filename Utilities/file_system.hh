@@ -21,8 +21,8 @@ class file_system {
   /// @brief Working directory
   static char* _WORKING_DIR_;
 
-  static bool existFile(std::string path);
-  static std::vector<std::string> getLinesOfFile(std::string path);
+  static bool exist_file(std::string path);
+  static std::vector<std::string> get_lines_of_file(std::string path);
 };
 }  // namespace Fract::Utilities
 

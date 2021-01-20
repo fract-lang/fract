@@ -9,15 +9,15 @@ std::string color::yellow = "\033[0;33m";
 std::string color::blue = "\033[0;34m";
 std::string color::magenta = "\033[0;35m";
 std::string color::cyan = "\033[0;36m";
-std::string color::boldRed = "\033[1;31m";
-std::string color::boldGreen = "\033[1;32m";
-std::string color::boldYellow = "\033[01;33m";
-std::string color::boldMagenta = "\033[1;35m";
-std::string color::boldCyan = "\033[1;36m";
+std::string color::bold_red = "\033[1;31m";
+std::string color::bold_green = "\033[1;32m";
+std::string color::bold_yellow = "\033[01;33m";
+std::string color::bold_magenta = "\033[1;35m";
+std::string color::bold_cyan = "\033[1;36m";
 std::string color::reset = "\033[0m";
 
 void
-color::enableVTP() {
+color::enable_vtp() {
 #if _WIN32
   HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
   DWORD dwMode = 0;
@@ -28,12 +28,12 @@ color::enableVTP() {
 }
 
 std::string
-color::toANSI(color color) {
-  return color::toANSI(color.r, color.g, color.b);
+color::to_ansi(color color) {
+  return color::to_ansi(color.r, color.g, color.b);
 }
 
 std::string
-color::toANSI(unsigned short r, unsigned short g, unsigned short b) {
+color::to_ansi(unsigned short r, unsigned short g, unsigned short b) {
   return "\033[38;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" +
          std::to_string(b) + "m";
 }

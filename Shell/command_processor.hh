@@ -16,14 +16,14 @@ class command_processor {
    * @param cmd Command.
    * @return Namespace.
    */
-  static std::string getNamespace(std::string cmd);
+  static std::string get_namespace(std::string cmd);
 
   /**
    * @brief Remove namespace from command.
    * @param cmd Command.
    * @return Command without namespace.
    */
-  static std::string removeNamespace(std::string cmd);
+  static std::string remove_namespace(std::string cmd);
 
   /**
    * @brief Get arguments.
@@ -31,14 +31,14 @@ class command_processor {
    * @param dest Destination vector.
    * @return true if success, false if not.
    */
-  static bool getArguments(std::string cmd, std::vector<std::string>* dest);
+  static bool get_arguments(std::string cmd, std::vector<std::string>* dest);
 
   /**
    * @brief Remove arguments.
    * @param cmd Command.
    * @return Command without arguments.
    */
-  static std::string removeArguments(std::string cmd);
+  static std::string remove_arguments(std::string cmd);
 };
 }  // namespace Fract::Shell
 

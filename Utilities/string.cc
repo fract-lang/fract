@@ -3,7 +3,7 @@
 using namespace Fract::Utilities;
 
 std::string
-string::trimStart(std::string value) {
+string::trim_start(std::string value) {
   for (int index = 0; index < value.length(); ++index) {
     if (value[index] != ' ') {
       return value.substr(index);
@@ -13,7 +13,7 @@ string::trimStart(std::string value) {
 }
 
 std::string
-string::trimEnd(std::string value) {
+string::trim_end(std::string value) {
   for (int index = value.length() - 1; index >= 0; --index) {
     if (value[index] != ' ') {
       return value.substr(0, index + 1);
@@ -24,7 +24,7 @@ string::trimEnd(std::string value) {
 
 std::string
 string::trim(std::string value) {
-  return trimEnd(trimStart(value));
+  return trim_end(trim_start(value));
 }
 
 std::vector<std::string>
@@ -43,7 +43,7 @@ string::split(std::string value,
 }
 
 std::string
-string::toLower(std::string value) {
+string::to_lower(std::string value) {
   for(int index = 0; index < value.length(); index++) {
     value[index] = std::tolower(value[index]);
   }
@@ -51,7 +51,7 @@ string::toLower(std::string value) {
 }
 
 std::string
-string::toUpper(std::string value) {
+string::to_upper(std::string value) {
   for(int index = 0; index < value.length(); index++) {
     value[index] = std::toupper(value[index]);
   }
@@ -59,7 +59,7 @@ string::toUpper(std::string value) {
 }
 
 bool
-string::startsWith(std::string value, std::string start) {
+string::starts_with(std::string value, std::string start) {
   if(value.length() < start.length()) {
     return false;
   }
@@ -67,7 +67,7 @@ string::startsWith(std::string value, std::string start) {
 }
 
 bool
-string::endsWith(std::string value, std::string end) {
+string::ends_with(std::string value, std::string end) {
   if(value.length() < end.length()) {
     return false;
   }

@@ -40,7 +40,7 @@ using namespace Fract::Utilities;
  * @param cmd Command without namespace.
  */
 void
-processCommand(std::string ns, std::string cmd) {
+process_command(std::string ns, std::string cmd) {
   if (ns == "help") {
     Modules::help::process(cmd);
   }
@@ -77,7 +77,7 @@ main(int argc, char const* argv[]) {
   for(int index = 2; index < argc;) {
     command = command + " " + argv[index++];
   }
-  processCommand(command_processor::getNamespace(command),
-                 command_processor::removeNamespace(command));
+  process_command(command_processor::get_namespace(command),
+                 command_processor::remove_namespace(command));
   return EXIT_SUCCESS;
 }

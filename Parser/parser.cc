@@ -4,24 +4,24 @@ using namespace Fract::Parser;
 using namespace Fract::Utilities;
 
 code_file
-parser::readyFile(std::string path) {
+parser::ready_file(std::string path) {
   code_file file;
-  file.lines = parser::readyLines(file_system::getLinesOfFile(path));
+  file.lines = parser::ready_lines(file_system::get_lines_of_file(path));
   file.path = path;
   file.stream = std::ifstream(path);
   return file;
 }
 
 std::vector<code_line>
-parser::readyLines(std::vector<std::string> lines) {
-  std::vector<code_line> readyLines;
+parser::ready_lines(std::vector<std::string> lines) {
+  std::vector<code_line> ready_lines;
   for(int index = 0; index < lines.size(); index++) {
-    readyLines.push_back(code_line{index + 1, lines[index]});
+    ready_lines.push_back(code_line{index + 1, lines[index]});
   }
-  return readyLines;
+  return ready_lines;
 }
 
 parser::parser(std::string path, int type) {
-  file = parser::readyFile(path);
+  file = parser::ready_file(path);
   this->type = type;
 }

@@ -18,22 +18,22 @@ struct color {
   static std::string blue;
   static std::string magenta;
   static std::string cyan;
-  static std::string boldRed;
-  static std::string boldGreen;
-  static std::string boldYellow;
-  static std::string boldMagenta;
-  static std::string boldCyan;
+  static std::string bold_red;
+  static std::string bold_green;
+  static std::string bold_yellow;
+  static std::string bold_magenta;
+  static std::string bold_cyan;
   static std::string reset;
 
   /// @brief Enable virtual terminal processing.
-  static void enableVTP();
+  static void enable_vtp();
 
   /**
    * @brief Create ANSI color code by color.
    * @param color Color instance.
    * @return ANSI code of rgb values.
    */
-  static std::string toANSI(color color);
+  static std::string to_ansi(color color);
 
   /**
    * @brief Create ANSI color code by rgb.
@@ -42,7 +42,7 @@ struct color {
    * @param b Blue.
    * @return ANSI code of rgb values.
    */
-  static std::string toANSI(unsigned short r, unsigned short g, unsigned short b);
+  static std::string to_ansi(unsigned short r, unsigned short g, unsigned short b);
 
   /// @brief Red.
   unsigned short r;

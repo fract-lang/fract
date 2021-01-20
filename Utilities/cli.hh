@@ -14,7 +14,7 @@ class cli {
    * @brief Print map as table.
    * @param map Map to print.
    */
-  static void printMapAsTable(std::map<std::string, std::string> map);
+  static void print_map_as_table(std::map<std::string, std::string> map);
 };
 }  // namespace Fract::Utilities
 

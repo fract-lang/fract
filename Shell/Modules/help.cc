@@ -9,7 +9,7 @@ help::process(std::string cmd) {
   { std::cout << "This module can only be used!" << std::endl;
     return;
   }
-  cli::printMapAsTable({
+  cli::print_map_as_table({
     {"make", "Interprete Fract code."},
     {"version", "Show version."},
     {"help", "Show help."},
