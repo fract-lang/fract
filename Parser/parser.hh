@@ -8,6 +8,7 @@
 
 #include "tokenizer.hh"
 #include "../Objects/code_file.hh"
+#include "../Objects/value.hh"
 #include "../Utilities/file_system.hh"
 
 using namespace Fract::Objects;
@@ -22,7 +23,25 @@ private:
   /// @brief Tokenizer of parser.
   tokenizer _tokenizer;
 
+  /**
+   * @brief Print value to screen.
+   * @param _value Value to print.
+  */
+  void print_value(value _value);
+
+  /**
+   * @brief Process value from tokens.
+   * @param tokens Tokens.
+   * @param it Last iterator state.
+   * @returns Value instance.
+  */
+  value process_value(std::vector<token> tokens,
+                     std::vector<token>::iterator *it);
+
 public:
+  /// @brief Type of file.
+  int type;
+
   /**
    * @brief Create instance of code file.
    * @param path Path of file.
@@ -37,8 +56,12 @@ public:
   */
   static std::vector<code_line> ready_lines(std::vector<std::string> lines);
 
-  /// @brief Type of file.
-  int type;
+	/**
+	* @brief Exit as parser styled error.
+  * @param _token Token of error.
+	* @param message Message of error.
+	*/
+  static void exit_parser_error(token _token, std::string message);
 
   /**
    * @brief Create new instance.
