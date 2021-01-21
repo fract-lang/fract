@@ -56,11 +56,11 @@ public:
   */
   static std::vector<code_line> ready_lines(std::vector<std::string> lines);
 
-	/**
-	* @brief Exit as parser styled error.
+  /**
+  * @brief Exit as parser styled error.
   * @param _token Token of error.
-	* @param message Message of error.
-	*/
+  * @param message Message of error.
+  */
   static void exit_parser_error(token _token, std::string message);
 
   /**
