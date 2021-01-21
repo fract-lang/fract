@@ -25,10 +25,10 @@ parser::ready_lines(std::vector<std::string> lines) {
 void
 parser::exit_parser_error(token _token, std::string message) {
   std::cout << std::endl;
-	std::cout << "ERROR" << std::endl;
-	std::cout << "MESSAGE: " << message << std::endl;
-	std::cout << "LINE: " << _token.line << std::endl;
-	std::cout << "COLUMN: " << _token.column << std::endl;
+  std::cout << "ERROR" << std::endl;
+  std::cout << "MESSAGE: " << message << std::endl;
+  std::cout << "LINE: " << _token.line << std::endl;
+  std::cout << "COLUMN: " << _token.column << std::endl;
   exit(EXIT_FAILURE);
 }
 

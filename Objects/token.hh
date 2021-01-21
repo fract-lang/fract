@@ -6,17 +6,17 @@
 namespace Fract::Objects {
 /// @brief Token instance.
 struct token {
-/// @brief Value of token.
-std::string value;
+  /// @brief Value of token.
+  std::string value;
 
-/// @brief Type of token.
-int type;
+  /// @brief Type of token.
+  int type;
 
-/// Line of token.
-int line;
+  /// Line of token.
+  int line;
 
-/// @brief Column of token.
-int column;
+  /// @brief Column of token.
+  int column;
 };
 } // namespace Fract::Objects
 

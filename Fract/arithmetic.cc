@@ -11,7 +11,7 @@ arithmetic::is_integer_number(std::string value) {
   else if (value == ".") {
     return false;
   }
-	
+
   for(int index = 0; index < value.length(); index++)
   { if(!arithmetic::is_number(value[index])) {
       return false;
