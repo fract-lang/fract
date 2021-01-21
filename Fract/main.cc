@@ -56,7 +56,7 @@ process_command(std::string ns, std::string cmd) {
   else if (Modules::make::check(ns)) {
     Modules::make::process(ns + cmd);
   }
-  else{
+  else {
     std::cout << "There is no such command!" << std::endl;
   }
 }
@@ -70,14 +70,26 @@ process_command(std::string ns, std::string cmd) {
  */
 int
 main(int argc, char const* argv[]) {
+  while(true)
+  { std::string x;
+    std::string y;
+    std::cin >> x;
+    std::cin >> y;
+    std::cout << Fract::arithmetic::lower(x, y) << std::endl;
+  }
+
   if (argc <= 1) {// Not started with arguments.
     return EXIT_SUCCESS;
   }
+
   std::string command = argv[1];
+  
   for(int index = 2; index < argc;) {
     command = command + " " + argv[index++];
   }
+  
   process_command(command_processor::get_namespace(command),
                  command_processor::remove_namespace(command));
+  
   return EXIT_SUCCESS;
 }
