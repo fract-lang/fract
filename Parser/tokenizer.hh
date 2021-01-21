@@ -73,7 +73,7 @@ public:
 
 	/**
 	* @brief Exit as tokenizer styled error.
-	* param message Message of error.
+	* @param message Message of error.
 	*/
 	void exit_tokenizer_error(std::string message);
 

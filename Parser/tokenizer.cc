@@ -13,6 +13,7 @@ tokenizer::tokenizer(code_file *file) {
 
 void
 tokenizer::exit_tokenizer_error(std::string message) {
+	std::cout << std::endl;
 	std::cout << "ERROR" << std::endl;
 	std::cout << "MESSAGE: " << message << std::endl;
 	std::cout << "LINE: " << line_iterator->line << std::endl;
