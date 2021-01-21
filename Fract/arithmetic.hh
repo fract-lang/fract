@@ -11,6 +11,8 @@ public:
 	static bool is_integer_number(std::string value);
 	static bool is_floating_number(std::string value);
 	static bool is_number(char ch);
+	static bool bigger(char one, char two);
+	static unsigned short to_numberic(char ch);
 };
 } // namespace Fract
 

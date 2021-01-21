@@ -5,8 +5,12 @@ using namespace Fract::Grammar;
 
 bool
 arithmetic::is_integer_number(std::string value) {
-  if(value == "") return false;
-  else if (value == ".") return false;
+  if(value == "") {
+    return false;
+  }
+  else if (value == ".") {
+    return false;
+  }
 	
   for(int index = 0; index < value.length(); index++)
   { if(!arithmetic::is_number(value[index])) {
@@ -18,8 +22,12 @@ arithmetic::is_integer_number(std::string value) {
 
 bool
 arithmetic::is_floating_number(std::string value) {
-  if(value == "") return false;
-  else if (value == ".") return false;
+  if(value == "") {
+    return false;
+  }
+  else if (value == ".") {
+    return false;
+  }
 
   bool dotted = false;
   for(int index = 0; index < value.length(); index++)
@@ -49,4 +57,22 @@ arithmetic::is_number(char ch) {
          ch == '7' ||
          ch == '8' ||
          ch == '9';
+}
+
+unsigned short
+arithmetic::to_numberic(char ch) {
+  return ch == '0' ? 0 :
+         ch == '1' ? 1 :
+         ch == '2' ? 2 :
+         ch == '3' ? 3 :
+         ch == '4' ? 4 :
+         ch == '5' ? 5 :
+         ch == '6' ? 6 :
+         ch == '7' ? 7 :
+         ch == '8' ? 8 : 9;
+}
+
+bool
+arithmetic::bigger(char one, char two) {
+  return to_numberic(one) > to_numberic(two);
 }
