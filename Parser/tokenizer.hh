@@ -10,11 +10,6 @@
 #include "../Utilities/string.hh"
 #include "../Objects/code_file.hh"
 
-using namespace Fract::Objects;
-using namespace Fract::Utilities;
-
-namespace Fract::Parser {
-
 #define type_entry_file 99
 #define type_imported_file 100
 #define type_comment 999
@@ -50,7 +45,10 @@ namespace Fract::Parser {
 #define type_byte 1029
 #define type_signed_byte 1030
 
+using namespace Fract::Objects;
+using namespace Fract::Utilities;
 
+namespace Fract::Parser {
 /// @brief Tokenizer of Fract.
 class tokenizer {
 private:
