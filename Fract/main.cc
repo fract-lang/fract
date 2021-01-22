@@ -75,7 +75,7 @@ main(int argc, char const* argv[]) {
     std::string y;
     std::cin >> x;
     std::cin >> y;
-    std::cout << Fract::arithmetic::lower(x, y) << std::endl;
+    std::cout << Fract::arithmetic::equals(x, y) << std::endl;
   }
 
   if (argc <= 1) {// Not started with arguments.

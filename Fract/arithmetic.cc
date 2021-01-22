@@ -131,7 +131,7 @@ arithmetic::bigger(std::string one, std::string two) {
   first =
     first_is_floating ? one.substr(one.find(token_dot) + 1) : "";
   second =
-    second_is_floating ? second = two.substr(two.find(token_dot) + 1) : "";
+    second_is_floating ? two.substr(two.find(token_dot) + 1) : "";
 
   std::size_t first_len = first.length();
   std::size_t second_len = second.length();
@@ -226,7 +226,7 @@ arithmetic::lower(std::string one, std::string two) {
   first =
     first_is_floating ? one.substr(one.find(token_dot) + 1) : "";
   second =
-    second_is_floating ? second = two.substr(two.find(token_dot) + 1) : "";
+    second_is_floating ? two.substr(two.find(token_dot) + 1) : "";
 
   std::size_t first_len = first.length();
   std::size_t second_len = second.length();
@@ -270,4 +270,85 @@ arithmetic::lower(std::string one, std::string two) {
   }
 
   return false;
+}
+
+bool
+arithmetic::equals(std::string one, std::string two) {
+  bool first_is_floating =
+    one.find(token_dot) != std::string::npos;
+  bool second_is_floating =
+    two.find(token_dot) != std::string::npos;
+
+  std::string first = one;
+  std::string second = two;
+
+  if(first_is_floating) {
+    first = one.substr(0, one.find(token_dot));
+  }
+  if(second_is_floating) {
+    second = two.substr(0, two.find(token_dot));
+  }
+
+  if(!first_is_floating && !second_is_floating) {
+    return first == second;
+  }
+  else
+  { if(first != second) {
+      return false;
+    }
+  }
+
+  // *************
+  //  FLOAT CHECK
+  // *************
+
+  first =
+    first_is_floating ? one.substr(one.find(token_dot) + 1) : "";
+  second =
+    second_is_floating ? two.substr(two.find(token_dot) + 1) : "";
+
+  std::size_t first_len = first.length();
+  std::size_t second_len = second.length();
+
+  if(first_is_floating && !second_is_floating)
+  { for(int index = 0; index < first_len; index++)
+    { if(first[index] != '0') {
+        return false;
+      }
+    }
+    return true;
+  }
+  else if(!first_is_floating && second_is_floating)
+  { for(int index = 0; index < second_len; index++)
+    { if(second[index] != '0') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if(first_len != second_len)
+  { if(first_len > second_len)
+    { for(int index = second_len; index < first_len; index++)
+      { if(first[index] != '0') {
+          return false;
+        }
+      }
+    }
+    else
+    { for(int index = first_len; index < second_len; index++)
+      { if(second[index] != '0') {
+          return false;
+        }
+      }
+    }
+  }
+
+  for(int index = first_len; index < first_len; index++)
+  { if(first[index] != second[index]) {
+      return false;
+    }
+  }
+
+  return true;
 }

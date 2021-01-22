@@ -16,6 +16,7 @@ public:
   static bool lower(char one, char two);
   static bool bigger(std::string one, std::string two);
   static bool lower(std::string one, std::string two);
+  static bool equals(std::string one, std::string two);
 };
 } // namespace Fract
 
