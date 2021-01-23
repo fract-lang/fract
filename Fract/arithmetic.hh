@@ -21,7 +21,7 @@ public:
   static double to_double(std::string value);
   static bool is_integer_number(std::string value);
   static bool is_floating_number(std::string value);
-  static bool is_number(char ch);
+  static bool is_numberic(char ch);
   static unsigned short to_numeric(char ch);
   static bool bigger(char one, char two);
   static bool lower(char one, char two);
