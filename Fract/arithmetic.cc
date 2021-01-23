@@ -3,6 +3,62 @@
 using namespace Fract;
 using namespace Fract::Grammar;
 
+unsigned short
+arithmetic::to_uint16(std::string value) {
+  unsigned short x = integer_default;
+  sscanf(value.c_str(), "%hu", &x); 
+  return x; 
+}
+
+unsigned int
+arithmetic::to_uint32(std::string value) {
+  unsigned int x = integer_default;
+  sscanf(value.c_str(), "%u", &x); 
+  return x; 
+}
+
+unsigned long
+arithmetic::to_uint64(std::string value) {
+  unsigned long x = integer_default;
+  sscanf(value.c_str(), "%lu", &x); 
+  return x; 
+}
+
+short
+arithmetic::to_int16(std::string value) {
+  short x = integer_default;
+  sscanf(value.c_str(), "%hd", &x); 
+  return x; 
+}
+
+int
+arithmetic::to_int32(std::string value) {
+  int x = integer_default;
+  sscanf(value.c_str(), "%d", &x);
+  return x; 
+}
+
+long
+arithmetic::to_int64(std::string value) {
+  long x = integer_default;
+  sscanf(value.c_str(), "%ld", &x); 
+  return x; 
+}
+
+float
+arithmetic::to_float(std::string value) {
+  float x = float_default;
+  sscanf(value.c_str(), "%f", &x);
+  return x; 
+}
+
+double
+arithmetic::to_double(std::string value) {
+  double x = float_default;
+  sscanf(value.c_str(), "%lf", &x);
+  return x; 
+}
+
 bool
 arithmetic::is_integer_number(std::string value) {
   if(value == "") {
@@ -352,3 +408,5 @@ arithmetic::equals_str(std::string one, std::string two) {
 
   return true;
 }
+
+

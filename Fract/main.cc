@@ -70,12 +70,17 @@ process_command(std::string ns, std::string cmd) {
  */
 int
 main(int argc, char const* argv[]) {
-  while(true)
+  /*while(true)
   { std::string x;
     std::string y;
     std::cin >> x;
     std::cin >> y;
     std::cout << Fract::arithmetic::lower_str(x, y) << std::endl;
+  }*/
+  while(true)
+  { std::string x;
+    std::cin >> x;
+    std::cout << Fract::arithmetic::to_double(x) << std::endl;
   }
 
   if (argc <= 1) {// Not started with arguments.
