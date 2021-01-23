@@ -46,13 +46,10 @@ namespace Fract::Grammar {
 #define dt_16bit_integer "int16"
 #define dt_32bit_integer "int32"
 #define dt_64bit_integer "int64"
-#define dt_6464bit_integer "int64_64"
 #define dt_unsigned_16bit_integer "int16"
 #define dt_unsigned_32bit_integer "int32"
 #define dt_unsigned_64bit_integer "int64"
-#define dt_unsigned_6464bit_integer "int64_64"
 #define dt_boolean "bool"
 #define dt_float "float"
-#define dt_double "double"
 }
 #endif  // __TOKENS_HH
