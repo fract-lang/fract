@@ -5,12 +5,20 @@
 #include <limits>
 
 #include "../Grammar/tokens.hh"
+#include "../Grammar/values.hh"
 
 namespace Fract {
-
 /// @brief Arithmetic processor.
 class arithmetic {
 public:
+  static unsigned short to_uint16(std::string value);
+  static unsigned int to_uint32(std::string value);
+  static unsigned long to_uint64(std::string value);
+  static short to_int16(std::string value);
+  static int to_int32(std::string value);
+  static long to_int64(std::string value);
+  static float to_float(std::string value);
+  static double to_double(std::string value);
   static bool is_integer_number(std::string value);
   static bool is_floating_number(std::string value);
   static bool is_number(char ch);
