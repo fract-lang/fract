@@ -62,16 +62,13 @@ parser::print_value(value _value) {
     _value.type == type_int16             ||
     _value.type == type_int32             ||
     _value.type == type_int64             ||
-    _value.type == type_int64_64          ||
     _value.type == type_byte              ||
     _value.type == type_signed_byte       ||
     _value.type == type_unsigned_int16    ||
     _value.type == type_unsigned_int32    ||
     _value.type == type_unsigned_int32    ||
     _value.type == type_unsigned_int64    ||
-    _value.type == type_unsigned_int64_64 ||
-    _value.type == type_float             ||
-    _value.type == type_double
+    _value.type == type_float
     ) {
     std::cout << _value.content << std::endl;
   }
@@ -90,7 +87,7 @@ parser::process_value(std::vector<token> tokens,
   }
   else if(arithmetic::is_floating_number((*it)->value))
   { _value.content = (*it)->value;
-    _value.type = type_double;
+    _value.type = type_float;
   }
   return _value;
 }
