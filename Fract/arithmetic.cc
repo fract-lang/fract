@@ -83,7 +83,7 @@ arithmetic::lower(char one, char two) {
 }
 
 bool
-arithmetic::bigger(std::string one, std::string two) {
+arithmetic::bigger_str(std::string one, std::string two) {
   bool first_is_floating =
     one.find(token_dot) != std::string::npos;
   bool second_is_floating =
@@ -178,7 +178,7 @@ arithmetic::bigger(std::string one, std::string two) {
 }
 
 bool
-arithmetic::lower(std::string one, std::string two) {
+arithmetic::lower_str(std::string one, std::string two) {
   bool first_is_floating =
     one.find(token_dot) != std::string::npos;
   bool second_is_floating =
@@ -273,7 +273,7 @@ arithmetic::lower(std::string one, std::string two) {
 }
 
 bool
-arithmetic::equals(std::string one, std::string two) {
+arithmetic::equals_str(std::string one, std::string two) {
   bool first_is_floating =
     one.find(token_dot) != std::string::npos;
   bool second_is_floating =
