@@ -11,6 +11,12 @@
 #include "../Objects/value.hh"
 #include "../Utilities/file_system.hh"
 
+#define ptype_none -1
+#define ptype_addition 0
+#define ptype_multiplication 1
+#define ptype_division 2
+#define ptype_subtraction 3
+
 using namespace Fract::Objects;
 
 namespace Fract::Parser {
@@ -35,7 +41,7 @@ private:
    * @param it Last iterator state.
    * @returns Value instance.
   */
-  value process_value(std::vector<token> tokens,
+  value process_value(std::vector<token> *tokens,
                      std::vector<token>::iterator *it);
 
 public:

@@ -38,9 +38,11 @@
 #define type_unsigned_int32 1022
 #define type_unsigned_int64 1023
 #define type_float 1024
-#define type_boolean 1025
-#define type_byte 1026
-#define type_signed_byte 1027
+#define type_double 1025
+#define type_boolean 1026
+#define type_byte 1027
+#define type_signed_byte 1028
+#define type_operator 1029
 
 using namespace Fract::Objects;
 using namespace Fract::Utilities;
