@@ -3,6 +3,30 @@
 using namespace Fract;
 using namespace Fract::Grammar;
 
+bool
+arithmetic::is_types_compatible(int type0, int type1) {
+  return is_integer_type(type0) ?
+           is_integer_type(type1) :
+           is_float_type(type0) ?
+             is_float_type(type1) : false;
+}
+
+bool
+arithmetic::is_integer_type(int type) {
+  return type == type_unsigned_int16 ||
+         type == type_unsigned_int32 ||
+         type == type_unsigned_int64 ||
+         type == type_int16          ||
+         type == type_int32          ||
+         type == type_int64;
+}
+
+bool
+arithmetic::is_float_type(int type) {
+  return type == type_float ||
+         type == type_double;
+}
+
 unsigned short
 arithmetic::to_uint16(std::string value) {
   unsigned short x = integer_default;
@@ -69,7 +93,7 @@ arithmetic::is_integer_number(std::string value) {
   }
 
   for(int index = 0; index < value.length(); index++)
-  { if(!arithmetic::is_numberic(value[index])) {
+  { if(!arithmetic::is_numeric(value[index])) {
       return false;
     }
   }
@@ -94,7 +118,7 @@ arithmetic::is_floating_number(std::string value) {
     } else if (ch == token_dot[0] && dotted) {
       return false;
     }
-    if(!arithmetic::is_numberic(value[index])) {
+    if(!arithmetic::is_numeric(value[index])) {
       return false;
     }
   }
@@ -102,7 +126,7 @@ arithmetic::is_floating_number(std::string value) {
 }
 
 bool
-arithmetic::is_numberic(char ch) {
+arithmetic::is_numeric(char ch) {
   return ch == '0' ||
          ch == '1' ||
          ch == '2' ||

@@ -77,24 +77,24 @@ main(int argc, char const* argv[]) {
     std::cin >> y;
     std::cout << Fract::arithmetic::lower_str(x, y) << std::endl;
   }*/
-  while(true)
+  /*while(true)
   { std::string x;
     std::cin >> x;
     std::cout << Fract::arithmetic::to_double(x) << std::endl;
-  }
+  }*/
 
   if (argc <= 1) {// Not started with arguments.
     return EXIT_SUCCESS;
   }
 
   std::string command = argv[1];
-  
+
   for(int index = 2; index < argc;) {
     command = command + " " + argv[index++];
   }
-  
+
   process_command(command_processor::get_namespace(command),
                  command_processor::remove_namespace(command));
-  
+
   return EXIT_SUCCESS;
 }

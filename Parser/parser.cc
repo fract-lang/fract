@@ -25,7 +25,7 @@ parser::ready_lines(std::vector<std::string> lines) {
 void
 parser::exit_parser_error(token _token, std::string message) {
   std::cout << std::endl;
-  std::cout << "ERROR" << std::endl;
+  std::cout << "PARSER ERROR" << std::endl;
   std::cout << "MESSAGE: " << message << std::endl;
   std::cout << "LINE: " << _token.line << std::endl;
   std::cout << "COLUMN: " << _token.column << std::endl;
@@ -40,19 +40,15 @@ parser::parser(std::string path, int type) {
 
 void
 parser::parse() {
-  while(!_tokenizer.finish) {
-    std::vector<token> tokens = _tokenizer.tokenize_next();
+  while(!_tokenizer.finish)
+  { std::vector<token> tokens = _tokenizer.tokenize_next();
     std::vector<token>::iterator first = tokens.begin();
     if(first->type == type_value) {
-      print_value(process_value(tokens, &first));
+      print_value(process_value(&tokens, &first));
     }
     else {
       exit_parser_error(*first, "What the?:" + first->value);
     }
-    /*std::cout << "-----------------------" << std::endl;
-    for(auto _token : _tokenizer.tokenize_next()) {
-      std::cout << _token.type << " - "  << _token.value << std::endl;
-    }*/
   }
 }
 
@@ -78,16 +74,82 @@ parser::print_value(value _value) {
 }
 
 value
-parser::process_value(std::vector<token> tokens,
+parser::process_value(std::vector<token> *tokens,
                       std::vector<token>::iterator *it) {
   value _value;
-  if(arithmetic::is_integer_number((*it)->value))
-  { _value.content = (*it)->value;
-    _value.type = type_int32;
+  int type = ptype_none;
+  for(; *it < (*tokens).end(); (*it)++)
+  { std::string _cache_value = _value.content;
+    int _cache_type = _value.type;
+
+    /* Check operators. */
+    if((*it)->value == token_plus)
+    { type = ptype_addition;
+      continue;
+    }
+    else if((*it)->value == token_minus)
+    { type = ptype_subtraction;
+      continue;
+    }
+    else if((*it)->value == token_star)
+    { type = ptype_multiplication;
+      continue;
+    }
+    else if((*it)->value == token_slash)
+    { type = ptype_division;
+      continue;
+    }
+
+    if(arithmetic::is_integer_number((*it)->value))
+    { _value.content = (*it)->value;
+      _value.type = type_int32;
+    }
+    else if(arithmetic::is_floating_number((*it)->value))
+    { _value.content = (*it)->value;
+      _value.type = type_float;
+    }
+    else {
+      exit_parser_error(**it, "What the?: " + (*it)->value);
+    }
+
+    /* If not exists any operator. */
+    if(type == ptype_none) {
+      continue;
+    }
+
+    /* If data types are not compatible! */
+    if(!arithmetic::is_types_compatible(_cache_type, _value.type)) {
+      exit_parser_error(**it, "Data types is not compatible!");
+    }
+
+    double _arithmetic_value = arithmetic::to_double(_cache_value);
+    double _cache_arithmetic_value = arithmetic::to_double(_value.content);
+
+    if(type == ptype_addition) {
+      _value.content =
+        std::to_string(_arithmetic_value + _cache_arithmetic_value);
+    }
+    else if(type == ptype_subtraction) {
+      _value.content =
+        std::to_string(_arithmetic_value - _cache_arithmetic_value);
+    }
+    else if(type == ptype_division) {
+      _value.content =
+        std::to_string(_arithmetic_value / _cache_arithmetic_value);
+    }
+    else if(type == ptype_multiplication) {
+      _value.content =
+        std::to_string(_arithmetic_value * _cache_arithmetic_value);
+    }
+
+    /* Reset type. */
+    type = ptype_none;
   }
-  else if(arithmetic::is_floating_number((*it)->value))
-  { _value.content = (*it)->value;
-    _value.type = type_float;
+
+  /* If exists unprocessed operator? */
+  if(type != ptype_none) {
+    exit_parser_error(*((*it) - 1), "Unused operator?");
   }
+
   return _value;
 }

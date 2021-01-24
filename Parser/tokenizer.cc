@@ -14,7 +14,7 @@ tokenizer::tokenizer(code_file *file) {
 void
 tokenizer::exit_tokenizer_error(std::string message) {
   std::cout << std::endl;
-  std::cout << "ERROR" << std::endl;
+  std::cout << "TOKENIZER ERROR" << std::endl;
   std::cout << "MESSAGE: " << message << std::endl;
   std::cout << "LINE: " << line_iterator->line << std::endl;
   std::cout << "COLUMN: " << column << std::endl;
@@ -27,18 +27,48 @@ tokenizer::next_token() {
   _token.line = line_iterator->line;
   _token.column = column;
 
-  for(int index = 0; index < line_iterator->text.length(); index++)
-  { if(line_iterator->text[index] == ' ') {
-      column++;
-    }
-  }
-
-  if(column == line_iterator->text.length()) {
+  /* Return empty token is statement is finished. */
+  if(column >= line_iterator->text.length()) {
     return _token;
   }
 
   std::string statement = line_iterator->text.substr(column - 1);
 
+  /* Ignore whitespaces and tabs. */
+  for(int index = 0; index < statement.length(); index++)
+  { char ch = statement[index];
+    if(
+      ch == ' ' ||
+      ch == '\t'
+      ) {
+      column++;
+    }
+    else {
+      statement = statement.substr(index);
+      break;
+    }
+  }
+
+  /* Return empty token is statement is empty. */
+  if(statement == "") {
+    return _token;
+  }
+
+  /* If numeric? */
+  if(arithmetic::is_numeric(statement[0]))
+  { for(int index = 0; index < statement.length(); index++)
+    { char ch = statement[index];
+      if(ch == token_dot[0]) {
+        continue;
+      }
+      else if(!arithmetic::is_numeric(ch))
+      { statement = statement.substr(0, index);
+        break;
+      }
+    }
+  }
+
+  /* Check anothers. */
   if(arithmetic::is_integer_number(statement))
   { _token.type = type_value;
     _token.value = statement;
@@ -50,11 +80,28 @@ tokenizer::next_token() {
   else if(string::starts_with(statement, kw_variable))
   { _token.type = type_let;
     _token.value = kw_variable;
-  } else {
-    exit_tokenizer_error("What the?: '" + line_iterator->text + "'");
+  }
+  else if(string::starts_with(statement, token_plus))
+  { _token.type = type_operator;
+    _token.value = token_plus;
+  }
+  else if(string::starts_with(statement, token_minus))
+  { _token.type = type_operator;
+    _token.value = token_minus;
+  }
+  else if(string::starts_with(statement, token_star))
+  { _token.type = type_operator;
+    _token.value = token_star;
+  }
+  else if(string::starts_with(statement, token_slash))
+  { _token.type = type_operator;
+    _token.value = token_slash;
+  }
+  else {
+    exit_tokenizer_error("What the?: '" + statement + "'");
   }
 
-  column += _token.value.length() - 1;
+  column += _token.value.length();
 
   return _token;
 }
