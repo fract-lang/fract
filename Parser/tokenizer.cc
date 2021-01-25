@@ -97,6 +97,14 @@ tokenizer::next_token() {
   { _token.type = type_operator;
     _token.value = token_slash;
   }
+  else if(string::starts_with(statement, token_lparenthes))
+  { _token.type = type_open_parenthes;
+    _token.value = token_lparenthes;
+  }
+  else if(string::starts_with(statement, token_rparenthes))
+  { _token.type = type_close_parenthes;
+    _token.value = token_rparenthes;
+  }
   else {
     exit_tokenizer_error("What the?: '" + statement + "'");
   }

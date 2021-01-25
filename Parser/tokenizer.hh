@@ -43,6 +43,8 @@
 #define type_byte 1027
 #define type_signed_byte 1028
 #define type_operator 1029
+#define type_open_parenthes 1030
+#define type_close_parenthes 1031
 
 using namespace Fract::Objects;
 using namespace Fract::Utilities;
