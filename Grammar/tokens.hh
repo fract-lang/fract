@@ -23,6 +23,8 @@ namespace Fract::Grammar {
 #define token_amper "&"
 #define token_at "@"
 #define token_dot "."
+#define token_lparenthes "("
+#define token_rparenthes ")"
 
 // MULTICHAR OPERATORS
 #define operator_sub (token_colon token_colon)
@@ -51,5 +53,6 @@ namespace Fract::Grammar {
 #define dt_unsigned_64bit_integer "int64"
 #define dt_boolean "bool"
 #define dt_float "float"
+#define dt_double "double"
 }
 #endif  // __TOKENS_HH
