@@ -44,6 +44,12 @@ private:
   value process_value(std::vector<token> *tokens,
                      std::vector<token>::iterator *it);
 
+  /*
+  * @brief Check parentheses.
+  * @param tokens Tokens to check.
+  */
+  void check_parentheses(std::vector<token> *tokens);
+
 public:
   /// @brief Type of file.
   int type;

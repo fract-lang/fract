@@ -17,7 +17,7 @@ std::vector<code_line>
 parser::ready_lines(std::vector<std::string> lines) {
   std::vector<code_line> ready_lines;
   for(int index = 0; index < lines.size(); index++) {
-    ready_lines.push_back(code_line{index + 1, lines[index]});
+    ready_lines.push_back(code_line{index + 1, lines[index] + " "});
   }
   return ready_lines;
 }
@@ -43,6 +43,7 @@ parser::parse() {
   while(!_tokenizer.finish)
   { std::vector<token> tokens = _tokenizer.tokenize_next();
     std::vector<token>::iterator first = tokens.begin();
+    check_parentheses(&tokens);
     if(first->type == type_value) {
       print_value(process_value(&tokens, &first));
     }
@@ -152,4 +153,25 @@ parser::process_value(std::vector<token> *tokens,
   }
 
   return _value;
+}
+
+void
+parser::check_parentheses(std::vector<token> *tokens) {
+  int count = 0;
+  std::vector<token>::iterator lastOpen;
+  for(std::vector<token>::iterator it = tokens->begin(); it < tokens->end(); it++)
+  { if((*it).type == type_open_parenthes) {
+      lastOpen = it;
+      count++;
+    }
+    else if((*it).type == type_close_parenthes)
+    { if(count == 0) {
+        exit_parser_error(*it, "The extra parentheses are closed!");
+      }
+      count--;
+    }
+  }
+  if(count > 0) {
+    exit_parser_error(*lastOpen, "The parentheses are opened but not closed!");
+  }
 }
