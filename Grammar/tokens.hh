@@ -1,8 +1,6 @@
 #ifndef __TOKENS_HH
 #define __TOKENS_HH
 
-namespace Fract::Grammar {
-
 // GENERIC TOKENS
 #define token_sharp "#"
 #define token_plus "+"
@@ -54,5 +52,5 @@ namespace Fract::Grammar {
 #define dt_boolean "bool"
 #define dt_float "float"
 #define dt_double "double"
-}
+
 #endif  // __TOKENS_HH

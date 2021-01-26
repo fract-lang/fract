@@ -77,6 +77,16 @@ parser::print_value(value _value) {
 value
 parser::process_value(std::vector<token> *tokens,
                       std::vector<token>::iterator *it) {
+
+  /* Check parenheses range */
+  rmlx_range_result range_result = formatter::rmlx_range(tokens);
+  if(range_result.found)
+  { std::vector<token>::iterator first = range_result.range.begin();
+    std::vector<token>::iterator it = tokens->begin() + range_result.index;
+    it->value = process_value(&range_result.range, &first).content;
+    it->type = type_value;
+  }
+
   value _value;
   int type = ptype_none;
   for(; *it < (*tokens).end(); (*it)++)
@@ -100,7 +110,7 @@ parser::process_value(std::vector<token> *tokens,
     { type = ptype_division;
       continue;
     }
-
+    /* End of operator checking */
     if(arithmetic::is_integer_number((*it)->value))
     { _value.content = (*it)->value;
       _value.type = type_int32;
@@ -160,8 +170,8 @@ parser::check_parentheses(std::vector<token> *tokens) {
   int count = 0;
   std::vector<token>::iterator lastOpen;
   for(std::vector<token>::iterator it = tokens->begin(); it < tokens->end(); it++)
-  { if((*it).type == type_open_parenthes) {
-      lastOpen = it;
+  { if((*it).type == type_open_parenthes)
+    { lastOpen = it;
       count++;
     }
     else if((*it).type == type_close_parenthes)

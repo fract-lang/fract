@@ -1,7 +1,6 @@
 #include "arithmetic.hh"
 
 using namespace Fract;
-using namespace Fract::Grammar;
 
 bool
 arithmetic::is_types_compatible(int type0, int type1) {
