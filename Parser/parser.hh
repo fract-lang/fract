@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+#include "formatter.hh"
+#include "rmlx_range_result.hh"
 #include "tokenizer.hh"
 #include "../Objects/code_file.hh"
 #include "../Objects/value.hh"
