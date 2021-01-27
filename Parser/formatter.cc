@@ -12,10 +12,11 @@ formatter::rmlx_range(std::vector<token> *tokens) {
   std::vector<token>::iterator last; /* After iterator of close parentheses */
 
   /* Find open parentheses */
-  for(std::vector<token>::iterator it = tokens->begin(); it < tokens->end(); it++)
-  { _result.index++;
-    if(it->value == token_lparenthes)
-    { first = ++it;
+  for(int index = 0; index < tokens->size(); index++)
+  { std::vector<token>::iterator it = tokens->begin() + index;
+    if(it->type == type_open_parenthes) {
+      first = ++it;
+      _result.index = index;
       _result.found = true;
       break;
     }
@@ -23,24 +24,31 @@ formatter::rmlx_range(std::vector<token> *tokens) {
 
   /* Skip find close parentheses and result ready steps */
   if(!_result.found) {
-    goto result;
+    return _result;
   }
 
   /* Find close parentheses */
-  for(std::vector<token>::iterator it = first; it < tokens->end(); it++)
-  { if(it->value == token_rparenthes)
-    { last = ++it;
-      break;
+  int count = 1;
+  for(int index = _result.index + 1; index < tokens->size(); index++)
+  { std::vector<token>::iterator it = tokens->begin() + index;
+    if(it->type == type_close_parenthes)
+    { count--;
+      if(count == 0)
+      { last = it;
+        break;
+      }
     }
+    else if(it->type == type_open_parenthes) {
+      count++;
+    }
+    _result.range.push_back(*it);
   }
 
-  /* Set range of result */
-  _result.range = std::vector<token>(first, last - 1);
-
+  /* Remove range from original tokens */
   for(int counter = 0; counter <= _result.range.size(); counter++) {
-    tokens->erase(last);
+    tokens->erase(tokens->begin() + _result.index);
   }
+  tokens->erase(tokens->begin() + _result.index);
 
-  result:
   return _result;
 }

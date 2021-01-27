@@ -79,13 +79,19 @@ parser::process_value(std::vector<token> *tokens,
                       std::vector<token>::iterator *it) {
 
   /* Check parenheses range */
-  rmlx_range_result range_result = formatter::rmlx_range(tokens);
-  if(range_result.found)
-  { std::vector<token>::iterator first = range_result.range.begin();
-    std::vector<token>::iterator it = tokens->begin() + range_result.index;
-    it->value = process_value(&range_result.range, &first).content;
-    it->type = type_value;
-  }
+  do
+  {  rmlx_range_result range_result = formatter::rmlx_range(tokens);
+    if(range_result.found)
+    { std::vector<token>::iterator first = range_result.range.begin();
+      token _token;
+      _token.value = process_value(&range_result.range, &first).content;
+      _token.type = type_value;
+      tokens->insert(tokens->begin() + range_result.index, _token);
+    }
+    else {
+      break;
+    }
+  } while(true);
 
   value _value;
   int type = ptype_none;

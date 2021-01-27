@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "rmlx_range_result.hh"
+#include "../Include/parser.hh"
 #include "../Grammar/tokens.hh"
 
 namespace Fract::Parser {
