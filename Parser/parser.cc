@@ -93,6 +93,9 @@ parser::process_value(std::vector<token> *tokens,
     }
   } while(true);
 
+  /*
+  * VALUE PROCESS
+  */
   value _value;
   int type = ptype_none;
   for(; *it < (*tokens).end(); (*it)++)
@@ -117,9 +120,15 @@ parser::process_value(std::vector<token> *tokens,
       continue;
     }
     /* End of operator checking */
+
+    if(_value.content != "" && type == ptype_none) {
+      exit_parser_error(**it, "You're write side-by-side two value!");
+    }
+
+    /* Value checking */
     if(arithmetic::is_integer_number((*it)->value))
     { _value.content = (*it)->value;
-      _value.type = type_int32;
+      //_value.type = type_int32;
     }
     else if(arithmetic::is_floating_number((*it)->value))
     { _value.content = (*it)->value;
@@ -135,9 +144,9 @@ parser::process_value(std::vector<token> *tokens,
     }
 
     /* If data types are not compatible! */
-    if(!arithmetic::is_types_compatible(_cache_type, _value.type)) {
+    /*if(!arithmetic::is_types_compatible(_cache_type, _value.type)) {
       exit_parser_error(**it, "Data types is not compatible!");
-    }
+    }*/
 
     double _arithmetic_value = arithmetic::to_double(_cache_value);
     double _cache_arithmetic_value = arithmetic::to_double(_value.content);
