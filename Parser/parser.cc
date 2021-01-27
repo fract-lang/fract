@@ -77,7 +77,6 @@ parser::print_value(value _value) {
 value
 parser::process_value(std::vector<token> *tokens,
                       std::vector<token>::iterator *it) {
-
   /* Check parenheses range */
   do
   {  rmlx_range_result range_result = formatter::rmlx_range(tokens);
@@ -102,14 +101,24 @@ parser::process_value(std::vector<token> *tokens,
   { std::string _cache_value = _value.content;
     int _cache_type = _value.type;
 
+    if(type == ptype_negative_value) {
+      goto val_check;
+    }
+
     /* Check operators. */
     if((*it)->value == token_plus)
     { type = ptype_addition;
       continue;
     }
     else if((*it)->value == token_minus)
-    { type = ptype_subtraction;
-      continue;
+    { if(type != ptype_none)
+      { type = ptype_negative_value;
+        //continue;
+      }
+      else
+      { type = ptype_subtraction;
+        continue;
+      }
     }
     else if((*it)->value == token_star)
     { type = ptype_multiplication;
@@ -121,18 +130,27 @@ parser::process_value(std::vector<token> *tokens,
     }
     /* End of operator checking */
 
-    if(_value.content != "" && type == ptype_none) {
+    /* Check errors */
+    if(type == ptype_negative_value) {
+      exit_parser_error(**it, "The operator doesn't know what to do!");
+    }
+    else if(_value.content != "" && type == ptype_none) {
       exit_parser_error(**it, "You're write side-by-side two value!");
     }
 
     /* Value checking */
+    val_check:
     if(arithmetic::is_integer_number((*it)->value))
-    { _value.content = (*it)->value;
+    { _value.content =
+        type == ptype_negative_value ? token_minus + (*it)->value : (*it)->value;
       //_value.type = type_int32;
+      type = type == ptype_negative_value ? ptype_none : type;
     }
     else if(arithmetic::is_floating_number((*it)->value))
-    { _value.content = (*it)->value;
+    { _value.content =
+        type == ptype_negative_value ? token_minus + (*it)->value : (*it)->value;
       _value.type = type_float;
+      type = type == ptype_negative_value ? ptype_none : type;
     }
     else {
       exit_parser_error(**it, "What the?: " + (*it)->value);

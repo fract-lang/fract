@@ -12,7 +12,6 @@
 #include "../Objects/code_file.hh"
 
 using namespace Fract::Objects;
-using namespace Fract::Utilities;
 
 namespace Fract::Parser {
 /// @brief Tokenizer of Fract.
