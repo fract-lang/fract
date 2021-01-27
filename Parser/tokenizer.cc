@@ -1,6 +1,7 @@
 #include "tokenizer.hh"
 
 using namespace Fract::Parser;
+using namespace Fract::Utilities;
 
 tokenizer::tokenizer() { /**/ }
 
@@ -84,22 +85,18 @@ tokenizer::next_token() {
   else if(string::starts_with(statement, token_plus))
   { _token.type = type_operator;
     _token.value = token_plus;
-    column++;
   }
   else if(string::starts_with(statement, token_minus))
   { _token.type = type_operator;
     _token.value = token_minus;
-    column++;
   }
   else if(string::starts_with(statement, token_star))
   { _token.type = type_operator;
     _token.value = token_star;
-    column++;
   }
   else if(string::starts_with(statement, token_slash))
   { _token.type = type_operator;
     _token.value = token_slash;
-    column++;
   }
   else if(string::starts_with(statement, token_lparenthes))
   { _token.type = type_open_parenthes;

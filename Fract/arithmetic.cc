@@ -91,7 +91,7 @@ arithmetic::is_integer_number(std::string value) {
     return false;
   }
 
-  for(int index = 0; index < value.length(); index++)
+  for(int index = value[0] == token_minus[0] ? 1 : 0; index < value.length(); index++)
   { if(!arithmetic::is_numeric(value[index])) {
       return false;
     }
@@ -109,7 +109,7 @@ arithmetic::is_floating_number(std::string value) {
   }
 
   bool dotted = false;
-  for(int index = 0; index < value.length(); index++)
+  for(int index = value[0] == token_minus[0] ? 1 : 0; index < value.length(); index++)
   { char ch = value[index];
     if(ch == token_dot[0] && !dotted)
     { dotted = true;
