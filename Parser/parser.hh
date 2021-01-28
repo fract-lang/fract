@@ -13,13 +13,11 @@
 #include "../Objects/value.hh"
 #include "../Utilities/file_system.hh"
 
-#define ptype_operator_spam -1000
 #define ptype_none -1
 #define ptype_addition 0
 #define ptype_multiplication 1
 #define ptype_division 2
 #define ptype_subtraction 3
-#define ptype_negative_value 4
 
 using namespace Fract::Objects;
 
