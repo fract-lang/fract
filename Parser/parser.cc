@@ -160,6 +160,9 @@ parser::process_value(std::vector<token> *tokens,
         std::to_string(_arithmetic_value - _cache_arithmetic_value);
     }
     else if(type == ptype_division) {
+      if(_arithmetic_value == 0 || _cache_arithmetic_value == 0) {
+        exit_parser_error(**it, "Divide by zero!");
+      }
       _value.content =
         std::to_string(_arithmetic_value / _cache_arithmetic_value);
     }
