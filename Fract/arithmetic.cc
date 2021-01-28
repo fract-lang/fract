@@ -26,6 +26,11 @@ arithmetic::is_float_type(int type) {
          type == type_double;
 }
 
+bool
+arithmetic::is_negative(std::string value) {
+  return value[0] == token_minus[0];
+}
+
 unsigned short
 arithmetic::to_uint16(std::string value) {
   unsigned short x = integer_default;
@@ -84,44 +89,12 @@ arithmetic::to_double(std::string value) {
 
 bool
 arithmetic::is_integer_number(std::string value) {
-  if(value == "") {
-    return false;
-  }
-  else if (value == ".") {
-    return false;
-  }
-
-  for(int index = value[0] == token_minus[0] ? 1 : 0; index < value.length(); index++)
-  { if(!arithmetic::is_numeric(value[index])) {
-      return false;
-    }
-  }
-  return true;
+  return std::regex_match(value, std::regex("^(-|)\\s*[0-9]+$"));
 }
 
 bool
 arithmetic::is_floating_number(std::string value) {
-  if(value == "") {
-    return false;
-  }
-  else if (value == ".") {
-    return false;
-  }
-
-  bool dotted = false;
-  for(int index = value[0] == token_minus[0] ? 1 : 0; index < value.length(); index++)
-  { char ch = value[index];
-    if(ch == token_dot[0] && !dotted)
-    { dotted = true;
-      continue;
-    } else if (ch == token_dot[0] && dotted) {
-      return false;
-    }
-    if(!arithmetic::is_numeric(value[index])) {
-      return false;
-    }
-  }
-  return true;
+  return std::regex_match(value, std::regex("^(-|)\\s*[0-9]+(\\.[0-9]+)?$"));
 }
 
 bool

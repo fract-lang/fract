@@ -22,6 +22,9 @@ tokenizer::exit_tokenizer_error(std::string message) {
   exit(EXIT_FAILURE);
 }
 
+/* Last putted token */
+token last_token;
+
 token
 tokenizer::next_token() {
   token _token;
@@ -55,17 +58,26 @@ tokenizer::next_token() {
     return _token;
   }
 
-  /* If numeric? */
-  if(arithmetic::is_numeric(statement[0]))
-  { for(int index = 0; index < statement.length(); index++)
-    { char ch = statement[index];
-      if(ch == token_dot[0]) {
-        continue;
+  /* Arithmetic value check */
+  if(statement[0] == token_minus[0] || arithmetic::is_numeric(statement[0])) {
+    std::string value = statement[0] == token_minus[0] ? token_minus : "";
+    if(
+      value == "" ||
+      (value != "" && (
+        last_token.type == type_operator          ||
+        last_token.type == type_open_parenthes    ||
+        last_token.type == type_close_parenthes
+      ))
+    )
+    { int index = value.length();
+      for(; index < statement.size(); index++)
+      { char ch = statement[index];
+        if(!arithmetic::is_numeric(ch) && ch != token_dot[0]) {
+          break;
+        }
+        value += ch;
       }
-      else if(!arithmetic::is_numeric(ch))
-      { statement = statement.substr(0, index);
-        break;
-      }
+      statement = value;
     }
   }
 
@@ -111,7 +123,6 @@ tokenizer::next_token() {
   }
 
   column += _token.value.length();
-
   return _token;
 }
 
@@ -127,10 +138,15 @@ tokenizer::tokenize_next() {
     return tokens;
   }
 
+  /* Reset to defaults */
   column = 1;
+  last_token.type = type_none;
+  last_token.value = "";
+
   token _token;
   while((_token = next_token()).value != "") {
     tokens.push_back(_token);
+    last_token = _token;
   }
 
   if(line_iterator == file->lines.end()) {

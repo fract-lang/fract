@@ -1,6 +1,7 @@
 #ifndef __INCLUDE_PARSER_HH
 #define __INCLUDE_PARSER_HH
 
+#define type_none -1
 #define type_entry_file 99
 #define type_imported_file 100
 #define type_comment 999

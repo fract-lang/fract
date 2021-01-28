@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <limits>
+#include <regex>
 
 #include "../Grammar/tokens.hh"
 #include "../Grammar/values.hh"
@@ -15,6 +16,7 @@ public:
   static bool is_types_compatible(int type0, int type1);
   static bool is_integer_type(int type);
   static bool is_float_type(int type);
+  static bool is_negative(std::string value);
   static unsigned short to_uint16(std::string value);
   static unsigned int to_uint32(std::string value);
   static unsigned long to_uint64(std::string value);
