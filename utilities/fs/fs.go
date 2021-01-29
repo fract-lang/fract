@@ -11,8 +11,8 @@ import (
 // newName New name of path.
 func Rename(path string, newName string) {
 	stat, _ := os.Stat(path)
-	NewPath := path[0:len(path)-len(stat.Name())] + newName
-	os.Rename(path, NewPath)
+	newPath := path[0:len(path)-len(stat.Name())] + newName
+	os.Rename(path, newPath)
 }
 
 // ExistsPath Returns true if path is exits, returns false if not.
