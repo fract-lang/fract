@@ -24,13 +24,47 @@ import (
 	"fmt"
 	"os"
 
+	"../shell/commands"
+	ModuleExit "../shell/modules/exit"
+	ModuleHelp "../shell/modules/help"
+	ModuleVersion "../shell/modules/version"
 	"../utilities/cli"
 )
 
-func main() {
-	for arg := range os.Args {
-		fmt.Println(os.Args[arg])
+func processCommand(ns string, cmd string) {
+	if ns == "help" {
+		ModuleHelp.Process(cmd)
+	} else if ns == "exit" {
+		ModuleExit.Process(cmd)
+	} else if ns == "version" {
+		ModuleVersion.Process(cmd)
+	} else {
+		fmt.Println("There is no such command!")
 	}
+}
+
+func main() {
+	// not started with arguments.
+	if len(os.Args) < 2 {
+		os.Exit(0)
+	}
+
+	var command string = ""
+	var skipped bool = false
+	for arg := range os.Args {
+		if !skipped {
+			skipped = true
+			continue
+		}
+		if command == "" {
+			command += os.Args[arg]
+			continue
+		}
+		command += " " + os.Args[arg]
+	}
+
+	processCommand(commands.GetNamespace(command),
+		commands.RemoveNamespace(command))
 
 	cli.Input("Press enter for exit...")
 }
