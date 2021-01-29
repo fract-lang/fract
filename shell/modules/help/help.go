@@ -3,7 +3,7 @@ package help
 import (
 	"fmt"
 
-	"../../utilities/cli"
+	"../../../utilities/cli"
 )
 
 // Process Process command in module.

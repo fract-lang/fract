@@ -29,7 +29,7 @@ func RemoveNamespace(command string) string {
 // GetArguments Get arguments of command.
 // command Command.
 func GetArguments(command string) list.List {
-	args := list.New()
+	var args list.List
 	pattern := regexp.MustCompile("(^|\\s+)-\\w+(?=($|\\s+))")
 	for arg := range pattern.FindAllString(command, -1) {
 		args.PushBack(arg)
