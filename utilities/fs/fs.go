@@ -19,30 +19,21 @@ func Rename(path string, newName string) {
 // path Path to check.
 func ExistsPath(path string) bool {
 	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	return false
+	return !os.IsNotExist(err)
 }
 
 // ExistsFile Returns true if file is exits, returns false if not.
 // path Path to check.
 func ExistsFile(path string) bool {
-	_, err := ioutil.ReadFile(path)
-	if err == nil {
-		return true
-	}
-	return false
+	info, err := os.Stat(path)
+	return os.IsNotExist(err) && !info.IsDir()
 }
 
 // ExistsDirectory Returns true if folder is exits, returns false if not.
 // path Path to check.
 func ExistsDirectory(path string) bool {
-	_, err := ioutil.ReadDir(path)
-	if err == nil {
-		return true
-	}
-	return false
+	info, err := os.Stat(path)
+	return os.IsNotExist(err) && info.IsDir()
 }
 
 // ReadAllText Read all text from file by path.
@@ -58,7 +49,7 @@ func ReadAllText(path string) string {
 // ReadAllLines Read all lines from file by path.
 // path Path to read.
 func ReadAllLines(path string) []string {
-	return strings.Split(ReadAllText(path), '\n')
+	return strings.Split(ReadAllText(path), "\n")
 }
 
 // WriteText Append to content.

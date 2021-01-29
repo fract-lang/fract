@@ -14,11 +14,11 @@ func Process(command string) {
 		fmt.Println("This module cannot only be used!")
 		return
 	}
-	if strings.HasSuffix(command, ".fract") {
+	if !strings.HasSuffix(command, ".fract") {
 		command += ".fract"
 	}
-	if !fs.ExistsFile(command) {
-		fmt.Println("The Fract file is not exists: " + command)
+	if !fs.ExistsPath(command) {
+		fmt.Println("The Fract file is not exists:" + command)
 		return
 	}
 	/* Parser commands */
@@ -32,5 +32,5 @@ func Check(value string) bool {
 		return true
 	}
 	value += ".fract"
-	return fs.ExitsFile(value)
+	return fs.ExistsFile(value)
 }
