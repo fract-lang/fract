@@ -1,4 +1,4 @@
-package tokenizer
+package fract
 
 const (
 	// TypeNone NA

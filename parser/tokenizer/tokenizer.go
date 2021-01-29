@@ -5,24 +5,22 @@ import (
 	"os"
 	"strings"
 
-	arithmeric "../../fract/arithmetic"
+	"../../fract"
+	arithmetic "../../fract/arithmetic"
 	"../../grammar"
 	"../../objects"
 )
 
 // Tokenizer Tokenizer of Fract.
 type Tokenizer struct {
-	/* PRIVITE */
-
-	// Source file.
-	file *objects.CodeFile
-	// Last column.
-	column int
-	// Index of last line.
-	index int
-
 	/* PUBLIC */
 
+	// Source file.
+	File *objects.CodeFile
+	// Last column.
+	Column int
+	// Index of last line.
+	Index int
 	// Finished destination file.
 	Finish bool
 }
@@ -31,8 +29,8 @@ type Tokenizer struct {
 // file Destination file.
 func New(file *objects.CodeFile) *Tokenizer {
 	var _tokenizer *Tokenizer = new(Tokenizer)
-	_tokenizer.column = 1
-	_tokenizer.file = file
+	_tokenizer.Column = 1
+	_tokenizer.File = file
 	return _tokenizer
 }
 
@@ -42,8 +40,8 @@ func (t *Tokenizer) ExitError(message string) {
 	fmt.Println()
 	fmt.Println("TOKENIZER ERROR")
 	fmt.Println("MESSAGE: " + message)
-	fmt.Printf("LINE: %d", t.file.Lines[t.index].Line)
-	fmt.Printf("COLUMN: %d", t.index)
+	fmt.Printf("LINE: %d\n", t.File.Lines[t.Index].Line)
+	fmt.Printf("COLUMN: %d\n", t.Index)
 	os.Exit(1)
 }
 
@@ -53,23 +51,23 @@ var lastToken objects.Token
 // NextToken Tokenize next token from statement.
 func (t *Tokenizer) NextToken() objects.Token {
 	var _token objects.Token
-	_token.Line = t.index + 1
-	_token.Column = t.column
+	_token.Line = t.Index + 1
+	_token.Column = t.Column
 
-	var cline objects.CodeLine = t.file.Lines[t.index]
+	var cline objects.CodeLine = t.File.Lines[t.Index]
 
 	/* Return empty token is statement finished. */
-	if t.column >= len(cline.Text) {
+	if t.Column >= len(cline.Text) {
 		return _token
 	}
 
-	var statement string = cline.Text[t.column-1:]
+	var statement string = cline.Text[t.Column-1:]
 
 	/* Ignore whitespaces and tabs */
 	for index := 0; index < len(statement); index++ {
 		var ch byte = statement[index]
 		if ch == ' ' || ch == 't' {
-			t.column++
+			t.Column++
 		} else {
 			statement = statement[index:]
 			break
@@ -82,61 +80,58 @@ func (t *Tokenizer) NextToken() objects.Token {
 	}
 
 	/* Arithmetic value check. */
-	if statement[0] == grammar.TokenMinus[0] || arithmeric.IsNumeric(statement[0]) {
+	if statement[0] == grammar.TokenMinus[0] || arithmetic.IsNumeric(statement[0]) {
 		var value string = ""
 		if statement[0] == grammar.TokenMinus[0] {
 			value = grammar.TokenMinus
 		}
-		if value == "" || (
-			value != "" && (
-				lastToken.Type == TypeOperator      ||
-				lastToken.Type == TypeOpenParenthes ||
-				lastToken.Type == TypeCloseParenthes
-			)
-		) {
-			for char := range statement[index:] {
-				if !arithmeric.IsNumeric(char) && char != grammar.TokenDot[0] {
+		if value == "" || (value != "" && (lastToken.Type == fract.TypeOperator ||
+			lastToken.Type == fract.TypeOpenParenthes ||
+			lastToken.Type == fract.TypeCloseParenthes)) {
+			for index := t.Index; index < len(statement); index++ {
+				var char byte = statement[index]
+				if !arithmetic.IsNumeric(char) && char != grammar.TokenDot[0] {
 					break
 				}
-				value += char
+				value += arithmetic.ByteToString(char)
 			}
-			stastatement = value
+			statement = value
 		}
 	}
 
 	/* Check anothers. */
 	if arithmetic.IsInteger(statement) {
-		_token.Type = TypeValue
+		_token.Type = fract.TypeValue
 		_token.Value = statement
 	} else if arithmetic.IsFloat(statement) {
-		_token.Type = TypeValue
+		_token.Type = fract.TypeValue
 		_token.Value = statement
 	} else if strings.HasPrefix(statement, grammar.KwVariable) {
-		_token.Type = TypeLet
+		_token.Type = fract.TypeLet
 		_token.Value = grammar.KwVariable
 	} else if strings.HasPrefix(statement, grammar.TokenPlus) {
-		_token.Type = TypeOperator
+		_token.Type = fract.TypeOperator
 		_token.Value = grammar.TokenPlus
 	} else if strings.HasPrefix(statement, grammar.TokenMinus) {
-		_token.Type = TypeOperator
+		_token.Type = fract.TypeOperator
 		_token.Value = grammar.TokenMinus
 	} else if strings.HasPrefix(statement, grammar.TokenStar) {
-		_token.Type = TypeOperator
+		_token.Type = fract.TypeOperator
 		_token.Value = grammar.TokenStar
 	} else if strings.HasPrefix(statement, grammar.TokenSlash) {
-		_token.Type = TypeOperator
+		_token.Type = fract.TypeOperator
 		_token.Value = grammar.TokenSlash
 	} else if strings.HasPrefix(statement, grammar.TokenLParenthes) {
-		_token.Type = TypeOpenParenthes
+		_token.Type = fract.TypeOpenParenthes
 		_token.Value = grammar.TokenLParenthes
 	} else if strings.HasPrefix(statement, grammar.TokenRParenthes) {
-		_token.Type = TypeCloseParenthes
+		_token.Type = fract.TypeCloseParenthes
 		_token.Value = grammar.TokenRParenthes
 	} else {
 		t.ExitError("What the?: '" + statement + "'")
 	}
 
-	t.column += len(_token.Value)
+	t.Column += len(_token.Value)
 	return _token
 }
 
@@ -148,13 +143,13 @@ func (t *Tokenizer) TokenizeNext() []objects.Token {
 		return tokens
 	}
 
-	if t.file.Lines[t.index].Text == "" {
+	if t.File.Lines[t.Index].Text == "" {
 		return tokens
 	}
 
 	/* Reset to defaults */
-	t.column = 1
-	lastToken.Type = TypeNone
+	t.Column = 1
+	lastToken.Type = fract.TypeNone
 	lastToken.Value = ""
 
 	var _token objects.Token = t.NextToken()
@@ -164,10 +159,10 @@ func (t *Tokenizer) TokenizeNext() []objects.Token {
 		_token = t.NextToken()
 	}
 
-	if t.index == len(t.file.Lines)-1 {
+	if t.Index == len(t.File.Lines)-1 {
 		t.Finish = true
 	}
 
-	t.index++
+	t.Index++
 	return tokens
 }

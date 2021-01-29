@@ -1,30 +1,28 @@
 package formatter
 
 import (
+	"../../fract"
 	"../../objects"
-	"../../utilities/array"
-	"../parser"
-	"../tokenizer"
 )
 
 // LexRange Returns range tokens and remove from original list.
 // tokens Tokens to process.
-func LexRange(tokens *[]objects.Token) parser.RangeResult {
+func LexRange(tokens *[]objects.Token) RangeResult {
 	var (
-		_result parser.RangeResult
+		_result RangeResult
 
 		first int
 	)
 
 	/* Skip find close parentheses and result ready steps */
-	if !_result.found {
+	if !_result.Found {
 		return _result
 	}
 
 	/* Find open parentheses */
 	for index := 0; index < len(*tokens); index++ {
 		var _token objects.Token = (*tokens)[index]
-		if _token.Type == tokenizer.TypeOpenParenthes {
+		if _token.Type == fract.TypeOpenParenthes {
 			first = index
 			_result.Index = index
 			_result.Found = true
@@ -34,21 +32,23 @@ func LexRange(tokens *[]objects.Token) parser.RangeResult {
 
 	/* Find close parentheses */
 	var count int = 1
-	for index := _result.index + 1; index < len(*tokens); index++ {
+	for index := _result.Index + 1; index < len(*tokens); index++ {
 		var _token objects.Token = (*tokens)[index]
-		if _token.Type == tokenizer.TypeCloseParenthes {
+		if _token.Type == fract.TypeCloseParenthes {
 			count = count - 1
 			if count == 0 {
 				break
 			}
-		} else if _token.Type == tokenizer.TypeOpenParenthes {
+		} else if _token.Type == fract.TypeOpenParenthes {
 			count = count + 1
 		}
-		_result.Tokens.PushBack(_token)
+		_result.Range = append(_result.Range, _token)
 	}
 
 	/* Remove range from original tokens */
-	array.Remove(tokens, first, len(_result.tokens))
+	copy((*tokens)[first:], (*tokens)[first+len(_result.Range):])
+	(*tokens)[len(*tokens)-1] = *new(objects.Token)
+	*tokens = (*tokens)[:len(*tokens)-1]
 
 	return _result
 }

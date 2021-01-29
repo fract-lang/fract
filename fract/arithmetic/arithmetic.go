@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"../../grammar/tokens"
-	"../../parser/tokenizer"
+	"../../fract"
+	"../../grammar"
 )
 
 // IsTypesCompatible Check types are compatible?
@@ -22,25 +22,25 @@ func IsTypesCompatible(type0 int, type1 int) bool {
 // IsIntegerType Type is integer?
 // _type Type to check.
 func IsIntegerType(_type int) bool {
-	return _type == tokenizer.TypeShort ||
-		_type == tokenizer.TypeInt ||
-		_type == tokenizer.TypeLong ||
-		_type == tokenizer.TypeUShort ||
-		_type == tokenizer.TypeUInt ||
-		_type == tokenizer.TypeULong
+	return _type == fract.TypeShort ||
+		_type == fract.TypeInt ||
+		_type == fract.TypeLong ||
+		_type == fract.TypeUShort ||
+		_type == fract.TypeUInt ||
+		_type == fract.TypeULong
 }
 
 // IsFloatType Type is float?
 // _type Type to check.
 func IsFloatType(_type int) bool {
-	return _type == tokenizer.TypeFloat ||
-		_type == tokenizer.TypeDouble
+	return _type == fract.TypeFloat ||
+		_type == fract.TypeDouble
 }
 
 // IsNegative Is negative number?
 // value Value to check.
 func IsNegative(value string) bool {
-	return value[0] == tokens.TokenMinus[0]
+	return value[0] == grammar.TokenMinus[0]
 }
 
 // IsNumeric Char is numeric?
@@ -172,4 +172,16 @@ func ToULong(value string) (uint64, error) {
 // value Value to parse.
 func FloatToString(value float64) string {
 	return fmt.Sprintf("%f", value)
+}
+
+// IntToString Integer to string.
+// value Value to parse.
+func IntToString(value int) string {
+	return fmt.Sprintf("%d", value)
+}
+
+// ByteToString Byte to string.
+// value Value to parse.
+func ByteToString(value byte) string {
+	return fmt.Sprintf("%d", value)
 }
