@@ -3,139 +3,139 @@ package grammar
 // GENERIC TOKENS
 
 // TokenSharp Sharp.
-const TokenSharp string = "#"
+ TokenSharp string = "#"
 
 // TokenPlus Plus.
-const TokenPlus string = "+"
+ TokenPlus string = "+"
 
 // TokenMinus Minus.
-const TokenMinus string = "-"
+ TokenMinus string = "-"
 
 // TokenStar Star.
-const TokenStar string = "*"
+ TokenStar string = "*"
 
 // TokenPercent Percent.
-const TokenPercent string = "%"
+ TokenPercent string = "%"
 
 // TokenSlash Slash.
-const TokenSlash string = "/"
+ TokenSlash string = "/"
 
 // TokenReverseSlash Rever slash.
-const TokenReverseSlash string = "\\"
+ TokenReverseSlash string = "\\"
 
 // TokenEquals Equals.
-const TokenEquals string = "="
+ TokenEquals string = "="
 
 // TokenQuestion Question mark.
-const TokenQuestion string = "?"
+ TokenQuestion string = "?"
 
 // TokenVerticalBar Vertical bar.
-const TokenVerticalBar string = "|"
+ TokenVerticalBar string = "|"
 
 // TokenGreat Greater then.
-const TokenGreat string = ">"
+ TokenGreat string = ">"
 
 // TokenLess Less then.
-const TokenLess string = "<"
+ TokenLess string = "<"
 
 // TokenSemicolon Semicolon.
-const TokenSemicolon string = ";"
+ TokenSemicolon string = ";"
 
 // TokenColon Colon.
-const TokenColon string = ":"
+ TokenColon string = ":"
 
 // TokenComma Comma.
-const TokenComma string = ","
+ TokenComma string = ","
 
 // TokenExclamation Exclamation.
-const TokenExclamation string = "!"
+ TokenExclamation string = "!"
 
 // TokenAmper Amper.
-const TokenAmper string = "&"
+ TokenAmper string = "&"
 
 // TokenAt At.
-const TokenAt string = "@"
+ TokenAt string = "@"
 
 // TokenDot Dot.
-const TokenDot string = "."
+ TokenDot string = "."
 
 // TokenLParenthes Left parentheses.
-const TokenLParenthes string = "("
+ TokenLParenthes string = "("
 
 // TokenRParenthes Right parentheses.
-const TokenRParenthes string = ")"
+ TokenRParenthes string = ")"
 
 // MULTICHAR OPERATORS
 
 // SeperatorSub Sub element seperator.
-const SeperatorSub string = TokenColon + TokenColon
+ SeperatorSub string = TokenColon + TokenColon
 
 // KEYWORDS
 
 // KwImport Import packages.
-const KwImport string = "use"
+ KwImport string = "use"
 
 // KwFunction Function define.
-const KwFunction string = "fn"
+ KwFunction string = "fn"
 
 // KwDelete Delete variable.
-const KwDelete string = "del"
+ KwDelete string = "del"
 
 // KwVariable Variable define.
-const KwVariable string = "var"
+ KwVariable string = "var"
 
 // KwBlockFinal Block terminator.
-const KwBlockFinal string = "end"
+ KwBlockFinal string = "end"
 
 // KwReturn Returns.
-const KwReturn string = "ret"
+ KwReturn string = "ret"
 
 // KwForLoop For loop.
-const KwForLoop string = "for"
+ KwForLoop string = "for"
 
 // KwWhileLoop While loop.
-const KwWhileLoop string = "while"
+ KwWhileLoop string = "while"
 
 // KwIf If condition.
-const KwIf string = "if"
+ KwIf string = "if"
 
 // KwElseIf Else-If alternate.
-const KwElseIf string = "elif"
+ KwElseIf string = "elif"
 
 // KwElse Else.
-const KwElse string = "else"
+ KwElse string = "else"
 
 // DATA TYPES
 
 // DtByte byte.
-const DtByte string = "byte"
+ DtByte string = "byte"
 
 // DtSignedByte sbyte.
-const DtSignedByte string = "sbyte"
+ DtSignedByte string = "sbyte"
 
 // Dt16BitInteger short.
-const Dt16BitInteger string = "int16"
+ Dt16BitInteger string = "int16"
 
 // Dt32BitInteger int.
-const Dt32BitInteger string = "int32"
+ Dt32BitInteger string = "int32"
 
 // Dt64BitInteger long.
-const Dt64BitInteger string = "int64"
+ Dt64BitInteger string = "int64"
 
 // DtUnsigned16BitInteger ushort.
-const DtUnsigned16BitInteger string = "int16"
+ DtUnsigned16BitInteger string = "int16"
 
 // DtUnsigned32BitInteger uint.
-const DtUnsigned32BitInteger string = "int32"
+ DtUnsigned32BitInteger string = "int32"
 
 // DtUnsigned64BitInteger ulong.
-const DtUnsigned64BitInteger string = "int64"
+ DtUnsigned64BitInteger string = "int64"
 
 // DtBoolean boolean.
-const DtBoolean string = "bool"
+ DtBoolean string = "bool"
 
 // DtFloat float.
-const DtFloat string = "float"
+ DtFloat string = "float"
 
 // DtDouble double.
-const DtDouble string = "double"
+ DtDouble string = "double"

@@ -1,38 +1,76 @@
 package tokenizer
 
-const TypeNone int = -1
-const TypeEntryFile int = 99
-const TypeImportedFile int = 100
-const TypeComment int = 999
-const TypeFunction int = 1000
-const TypeEquals int = 1001
-const TypeLet int = 1002
-const TypeName int = 1003
-const TypeDottedName int = 1004
-const TypeValueSetter int = 1005
-const TypeValue int = 1006
-const TypeDataType int = 1007
-const TypeEndType int = 1008
-const TypeReturn int = 1009
-const TypeImport int = 1010
-const TypeStdImport int = 1011
-const TypeIf int = 1012
-const TypeElseIf int = 1013
-const TypeElse int = 1014
-const TypeFor int = 1015
-const TypeWhile int = 1016
-const TypeDelete int = 1017
-const TypeShort int = 1018
-const TypeInt int = 1019
-const TypeLong int = 1020
-const TypeUShort int = 1021
-const TypeUInt int = 1022
-const TypeULong int = 1023
-const TypeFloat int = 1024
-const TypeDouble int = 1025
-const TypeBoolean int = 1026
-const TypeByte int = 1027
-const TypeSByte int = 1028
-const TypeOperator int = 1029
-const TypeOpenParenthes int = 1030
-const TypeCloseParenthes int = 1031
+const (
+	// TypeNone NA
+	TypeNone int = -1
+	// TypeEntryFile Entry file.
+	TypeEntryFile int = 99
+	// TypeImportedFile Imported file.
+	TypeImportedFile int = 100
+	// TypeComment Comment.
+	TypeComment int = 999
+	// TypeFunction Function.
+	TypeFunction int = 1000
+	// TypeEquals Equals.
+	TypeEquals int = 1001
+	// TypeLet Let.
+	TypeLet int = 1002
+	// TypeName Name.
+	TypeName int = 1003
+	// TypeDottedName Dotted name.
+	TypeDottedName int = 1004
+	// TypeValueSetter Value setter.
+	TypeValueSetter int = 1005
+	// TypeValue Value.
+	TypeValue int = 1006
+	// TypeDataType Data type.
+	TypeDataType int = 1007
+	// TypeEndType End type.
+	TypeEndType int = 1008
+	// TypeReturn Return.
+	TypeReturn int = 1009
+	// TypeImport Import.
+	TypeImport int = 1010
+	// TypeStdImport Standard library import.
+	TypeStdImport int = 1011
+	// TypeIf If condition.
+	TypeIf int = 1012
+	// TypeElseIf Else-If condition.
+	TypeElseIf int = 1013
+	// TypeElse Else condition.
+	TypeElse int = 1014
+	// TypeFor For loop.
+	TypeFor int = 1015
+	// TypeWhile While loop.
+	TypeWhile int = 1016
+	// TypeDelete Delete.
+	TypeDelete int = 1017
+	// TypeShort 16Bit integer.
+	TypeShort int = 1018
+	// TypeInt 32Bit integer.
+	TypeInt int = 1019
+	// TypeLong 64Bit integer.
+	TypeLong int = 1020
+	// TypeUShort Unsigned 16Bit integer.
+	TypeUShort int = 1021
+	// TypeUInt Unsigned 32Bit integer.
+	TypeUInt int = 1022
+	// TypeULong Unsigned 64Bit integer.
+	TypeULong int = 1023
+	// TypeFloat 16Bit float.
+	TypeFloat int = 1024
+	// TypeDouble 32Bit float.
+	TypeDouble int = 1025
+	// TypeBoolean Boolean.
+	TypeBoolean int = 1026
+	// TypeByte Unsigned 8Bit integer.
+	TypeByte int = 1027
+	// TypeSByte 8Bit integer.
+	TypeSByte int = 1028
+	// TypeOperator Operator.
+	TypeOperator int = 1029
+	// TypeOpenParenthes Open parenthes.
+	TypeOpenParenthes int = 1030
+	// TypeCloseParenthes Close parenthes.
+	TypeCloseParenthes int = 1031
+)
