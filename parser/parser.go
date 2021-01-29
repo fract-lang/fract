@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"../../../utilities/fs"
-	"../../grammar"
-	"../../objects"
-	"../../utilities/array"
+	"../fract"
+	arithmetic "../fract/arithmetic"
+	"../grammar"
 	"../objects"
-	"../utilities/array"
 	"../utilities/fs"
 	"./formatter"
 	"./tokenizer"
@@ -46,15 +44,17 @@ func (p *Parser) printValue(value objects.Value) {
 func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value {
 	/* Check parentheses range. */
 	for true {
-		var result RangeResult = formatter.LexRange(tokens)
+		var result formatter.RangeResult = formatter.LexRange(tokens)
 		if result.Found {
 			var (
 				first  int = 0
 				_token objects.Token
 			)
-			_token.Value = p.processValue(&result.Range, &first)
-			_token.Type = TypeValue
-			array.Insert(tokens, first+result.Index, _token)
+			_token.Value = p.processValue(&result.Range, &first).Content
+			_token.Type = fract.TypeValue
+			*tokens = append(*tokens, *new(objects.Token))
+			copy((*tokens)[first+result.Index+1:], (*tokens)[first+result.Index:])
+			(*tokens)[first+result.Index] = _token
 		} else {
 			break
 		}
@@ -65,13 +65,13 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 	 */
 	var (
 		_value objects.Value
-		_type  int = PtypeNone
+		_type  int = PTypeNone
 	)
 	for ; *index < len(*tokens); (*index)++ {
 		var (
-			_token     objects.Token = (*tokens)[index]
+			_token     objects.Token = (*tokens)[*index]
 			cacheValue string        = _value.Content
-			cacheType  int           = _value.Type
+			// cacheType  int           = _value.Type
 		)
 
 		/* Check operators. */
@@ -81,7 +81,7 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 		} else if _token.Value == grammar.TokenMinus {
 			_type = PTypeSubtraction
 			continue
-		} else if _token.Value == grammar.TokenStart {
+		} else if _token.Value == grammar.TokenStar {
 			_type = PTypeMultiplication
 			continue
 		} else if _token.Value == grammar.TokenSlash {
@@ -101,7 +101,7 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 			//_value.type = type_int32;
 		} else if arithmetic.IsFloat(_token.Value) {
 			_value.Content = _token.Value
-			_value.Type = tokenizer.TypeFloat
+			_value.Type = fract.TypeFloat
 		} else {
 			ExitError(_token, "What the?: "+_token.Value)
 		}
@@ -116,17 +116,21 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 		  exit_parser_error(**it, "Data types is not compatible!");
 		}*/
 
-		var (
-			arithmeticValue      float64 = arithmetic.ToDouble(cacheValue)
-			cacheArithmeticValue float64 = arithmetic.ToDouble(value.Content)
-		)
+		arithmeticValue, err := arithmetic.ToDouble(cacheValue)
+		if err != nil {
+			ExitError(_token, "Value is not arithmetic!")
+		}
+		cacheArithmeticValue, err := arithmetic.ToDouble(_value.Content)
+		if err != nil {
+			ExitError(_token, "Value is not arithmetic!")
+		}
 
 		if _type == PTypeAddition {
 			_value.Content = arithmetic.FloatToString(arithmeticValue + cacheArithmeticValue)
 		} else if _type == PTypeSubtraction {
 			_value.Content = arithmetic.FloatToString(arithmeticValue - cacheArithmeticValue)
 		} else if _type == PTypeDivision {
-			if arithmeticValue == 0 || CacheArithmeticValue == 0 {
+			if arithmeticValue == 0 || cacheArithmeticValue == 0 {
 				ExitError(_token, "Divide by zero!")
 			}
 			_value.Content = arithmetic.FloatToString(arithmeticValue / cacheArithmeticValue)
@@ -139,7 +143,7 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 	}
 
 	/* If exists unprocessed operator? */
-	if _type != PtypeNone {
+	if _type != PTypeNone {
 		ExitError((*tokens)[(*index)-1], "Unused operator?")
 	}
 
@@ -154,11 +158,12 @@ func (p *Parser) checkParentheses(tokens *[]objects.Token) {
 		lastOpen objects.Token
 	)
 
-	for _token := range *tokens {
-		if _token.Type == tokenizer.TypeOpenParenthes {
+	for index := 0; index < len(*tokens); index++ {
+		var _token objects.Token = (*tokens)[index]
+		if _token.Type == fract.TypeOpenParenthes {
 			lastOpen = _token
 			count++
-		} else if _token.Type == tokenizer.TypeCloseParenthes {
+		} else if _token.Type == fract.TypeCloseParenthes {
 			if count == 0 {
 				ExitError(_token, "The extra parentheses are closed!")
 			}
@@ -202,8 +207,8 @@ func ExitError(token objects.Token, message string) {
 	fmt.Println()
 	fmt.Println("PARSER ERROR")
 	fmt.Println("MESSAGE: " + message)
-	fmt.Printf("LINE: %d", token.Line)
-	fmt.Printf("COLUMN: %d", token.Column)
+	fmt.Printf("LINE: %d\n", token.Line)
+	fmt.Printf("COLUMN: %d\n", token.Column)
 	os.Exit(1)
 }
 
@@ -212,8 +217,9 @@ func ExitError(token objects.Token, message string) {
 // type Type of file.
 func New(path string, _type int) *Parser {
 	var parser *Parser = new(Parser)
-	parser.file = ReadyFile(path)
-	parser.tokenizer = tokenizer.New(&parser.file)
+	var file objects.CodeFile = ReadyFile(path)
+	parser.tokenizer = *tokenizer.New(&file)
+	parser.file = *parser.tokenizer.File
 	parser.Type = _type
 	return parser
 }
@@ -226,7 +232,7 @@ func (p *Parser) Parse() {
 		p.checkParentheses(&tokens)
 
 		var first objects.Token = tokens[0]
-		if first.Type == tokenizer.TypeValue {
+		if first.Type == fract.TypeValue {
 			var index int = 0
 			p.printValue(p.processValue(&tokens, &index))
 		} else {

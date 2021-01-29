@@ -1,6 +1,6 @@
-package parser
+package formatter
 
-import "../objects"
+import "../../objects"
 
 // RangeResult Result instance of LexRange function.
 type RangeResult struct {
@@ -9,5 +9,5 @@ type RangeResult struct {
 	// Tokens of range.
 	Range []objects.Token
 	// Index of replace index of original list.
-	Index int32
+	Index int
 }

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"../../../fract"
+	"../../../parser"
 	"../../../utilities/fs"
 )
 
@@ -22,8 +23,9 @@ func Process(command string) {
 		fmt.Println("The Fract file is not exists: " + command)
 		return
 	}
-	/* Parser commands */
-	fmt.Println("Success!")
+
+	var _parser = parser.New(command, fract.TypeEntryFile)
+	_parser.Parse()
 }
 
 // Check Check invalid state of value.
