@@ -13,4 +13,4 @@ N/A
 ### Checks
 - [ ] I accept that the contributions be published under this [license](https://github.com/fract-lang/fract/blob/main/LICENSE)
 - [ ] Tested code
-- [ ] Added documentations for code - [see](https://www.headerbrowser.org/doc/c_tags.html)
+- [ ] Added documentations for code.
