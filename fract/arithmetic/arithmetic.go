@@ -1,6 +1,7 @@
 package arithmeric
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 
@@ -165,4 +166,10 @@ func ToULong(value string) (uint64, error) {
 		return 0, err
 	}
 	return uint64(result), err
+}
+
+// FloatToString Float to string.
+// value Value to parse.
+func FloatToString(value float64) string {
+	return fmt.Sprintf("%f", value)
 }
