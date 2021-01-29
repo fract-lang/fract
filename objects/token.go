@@ -3,11 +3,11 @@ package objects
 // Token Token instance.
 type Token struct {
 	// Value of token.
-	value string
+	Value string
 	// Type of token.
-	group int
+	Type int
 	// Line of token.
-	line int
+	Line int
 	// Column of token.
-	column int
+	Column int
 }

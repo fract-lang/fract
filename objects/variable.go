@@ -3,9 +3,9 @@ package objects
 // Variable Variable instance.
 type Variable struct {
 	// Name of variable.
-	name string
+	Name string
 	// Value of variable.
-	value string
+	Value string
 	// Type of variable.
-	group int
+	Group int
 }

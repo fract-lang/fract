@@ -3,7 +3,7 @@ package objects
 // Value Value intance.
 type Value struct {
 	// Content of value.
-	content string
+	Content string
 	// Type of value.
-	group int
+	Group int
 }
