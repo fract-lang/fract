@@ -23,5 +23,5 @@
 
 #!bin/bash
 
-@go build Fract/main.go
+@go build main.go
 @./main

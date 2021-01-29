@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"../../../Fract/fract"
+	"../../../fract"
 	"../../../utilities/fs"
 )
 

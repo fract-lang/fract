@@ -3,7 +3,7 @@ package version
 import (
 	"fmt"
 
-	"../../../Fract/fract"
+	"../../../fract"
 )
 
 // Process Process command in module.

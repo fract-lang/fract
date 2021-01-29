@@ -24,11 +24,12 @@ import (
 	"fmt"
 	"os"
 
-	"../shell/commands"
-	ModuleExit "../shell/modules/exit"
-	ModuleHelp "../shell/modules/help"
-	ModuleMake "../shell/modules/make"
-	ModuleVersion "../shell/modules/version"
+	"./shell/commands"
+
+	ModuleExit "./shell/modules/exit"
+	ModuleHelp "./shell/modules/help"
+	ModuleMake "./shell/modules/make"
+	ModuleVersion "./shell/modules/version"
 )
 
 func processCommand(ns string, cmd string) {
