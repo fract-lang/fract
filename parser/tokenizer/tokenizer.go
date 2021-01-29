@@ -93,7 +93,7 @@ func (t *Tokenizer) NextToken() objects.Token {
 				if !arithmetic.IsNumeric(char) && char != grammar.TokenDot[0] {
 					break
 				}
-				value += arithmetic.ByteToString(char)
+				value += string(char)
 			}
 			statement = value
 		}
