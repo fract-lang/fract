@@ -1,7 +1,9 @@
 package fract
 
-// FractVersion Version of Fract.
- FractVersion string = "0.0.1"
+const (
+	// FractVersion Version of Fract.
+	FractVersion string = "0.0.1"
 
-// FractExtension File extension of Fract.
- FractExtension string = ".fract"
+	// FractExtension File extension of Fract.
+	FractExtension string = ".fract"
+)
