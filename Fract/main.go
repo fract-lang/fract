@@ -28,7 +28,6 @@ import (
 	ModuleExit "../shell/modules/exit"
 	ModuleHelp "../shell/modules/help"
 	ModuleVersion "../shell/modules/version"
-	"../utilities/cli"
 )
 
 func processCommand(ns string, cmd string) {
@@ -65,6 +64,4 @@ func main() {
 
 	processCommand(commands.GetNamespace(command),
 		commands.RemoveNamespace(command))
-
-	cli.Input("Press enter for exit...")
 }
