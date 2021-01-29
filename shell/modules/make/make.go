@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"../../../Fract/fract"
 	"../../../utilities/fs"
 )
 
@@ -14,8 +15,8 @@ func Process(command string) {
 		fmt.Println("This module cannot only be used!")
 		return
 	}
-	if !strings.HasSuffix(command, ".fract") {
-		command += ".fract"
+	if !strings.HasSuffix(command, fract.FractExtension) {
+		command += fract.FractExtension
 	}
 	if !fs.ExistFile(command) {
 		fmt.Println("The Fract file is not exists: " + command)
@@ -28,7 +29,7 @@ func Process(command string) {
 // Check Check invalid state of value.
 // value Value to check.
 func Check(value string) bool {
-	if strings.HasSuffix(value, ".fract") {
+	if strings.HasSuffix(value, fract.FractExtension) {
 		return true
 	}
 	value += ".fract"

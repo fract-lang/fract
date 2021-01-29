@@ -1,6 +1,10 @@
 package version
 
-import "fmt"
+import (
+	"fmt"
+
+	"../../../Fract/fract"
+)
 
 // Process Process command in module.
 // command Command to process.
@@ -9,5 +13,5 @@ func Process(command string) {
 		fmt.Println("This module can only be used!")
 		return
 	}
-	fmt.Println("Fract Version [0.0.1]")
+	fmt.Println("Fract Version [" + fract.FractVersion + "]")
 }
