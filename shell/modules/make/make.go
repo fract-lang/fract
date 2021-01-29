@@ -8,6 +8,7 @@ import (
 )
 
 // Process Process command in module.
+// command Command to process.
 func Process(command string) {
 	if command == "" {
 		fmt.Println("This module cannot only be used!")
@@ -22,4 +23,14 @@ func Process(command string) {
 	}
 	/* Parser commands */
 	fmt.Println("Success!")
+}
+
+// Check Check invalid state of value.
+// value Value to check.
+func Check(value string) bool {
+	if strings.HasSuffix(value, ".fract") {
+		return true
+	}
+	value += ".fract"
+	return fs.ExitsFile(value)
 }
