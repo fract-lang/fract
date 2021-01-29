@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+// *********************
+//       PRIVATE
+// *********************
+
 // Returns string whitespace by count.
 // count Count of whitespace.
 func getws(count int) string {
@@ -15,6 +19,10 @@ func getws(count int) string {
 	}
 	return str
 }
+
+// *********************
+//        PUBLIC
+// *********************
 
 // PrintMapAsTable Print map to cli screen as table.
 // dict Map to print.
