@@ -8,9 +8,9 @@ import (
 // CodeFile Code file instance.
 type CodeFile struct {
 	// Path of file.
-	path string
+	Path string
 	// File instance of file.
-	file *os.File
+	File *os.File
 	// Lines of file.
-	lines list.List
+	Lines list.List
 }

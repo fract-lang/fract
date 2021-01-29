@@ -5,9 +5,9 @@ import "container/list"
 // RangeResult Result instance of LexRange function.
 type RangeResult struct {
 	// Range is found.
-	found bool
+	Found bool
 	// Tokens of range.
-	tokens list.List
+	Tokens list.List
 	// Index of replace index of original list.
-	index int
+	Index int
 }

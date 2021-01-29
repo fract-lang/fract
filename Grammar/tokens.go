@@ -2,6 +2,7 @@ package grammar
 
 const (
 	// GENERIC TOKENS
+
 	// TokenSharp Sharp.
 	TokenSharp string = "#"
 	// TokenPlus Plus.
@@ -46,10 +47,12 @@ const (
 	TokenRParenthes string = ")"
 
 	// MULTICHAR OPERATORS
+
 	// SeperatorSub Sub element seperator.
 	SeperatorSub string = TokenColon + TokenColon
 
 	// KEYWORDS
+
 	// KwImport Import packages.
 	KwImport string = "use"
 	// KwFunction Function define.
@@ -74,6 +77,7 @@ const (
 	KwElse string = "else"
 
 	// DATA TYPES
+
 	// DtByte byte.
 	DtByte string = "byte"
 	// DtSignedByte sbyte.
