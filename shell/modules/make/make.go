@@ -17,8 +17,8 @@ func Process(command string) {
 	if !strings.HasSuffix(command, ".fract") {
 		command += ".fract"
 	}
-	if !fs.ExistsPath(command) {
-		fmt.Println("The Fract file is not exists:" + command)
+	if !fs.ExistFile(command) {
+		fmt.Println("The Fract file is not exists: " + command)
 		return
 	}
 	/* Parser commands */
@@ -32,5 +32,5 @@ func Check(value string) bool {
 		return true
 	}
 	value += ".fract"
-	return fs.ExistsFile(value)
+	return fs.ExistFile(value)
 }

@@ -15,25 +15,25 @@ func Rename(path string, newName string) {
 	os.Rename(path, newPath)
 }
 
-// ExistsPath Returns true if path is exits, returns false if not.
+// ExistPath Returns true if path is exist, returns false if not.
 // path Path to check.
-func ExistsPath(path string) bool {
+func ExistPath(path string) bool {
 	_, err := os.Stat(path)
-	return !os.IsNotExist(err)
+	return err != nil
 }
 
-// ExistsFile Returns true if file is exits, returns false if not.
+// ExistFile Returns true if file is exist, returns false if not.
 // path Path to check.
-func ExistsFile(path string) bool {
+func ExistFile(path string) bool {
 	info, err := os.Stat(path)
-	return os.IsNotExist(err) && !info.IsDir()
+	return err == nil && !info.IsDir()
 }
 
-// ExistsDirectory Returns true if folder is exits, returns false if not.
+// ExistDirectory Returns true if folder is exist, returns false if not.
 // path Path to check.
-func ExistsDirectory(path string) bool {
+func ExistDirectory(path string) bool {
 	info, err := os.Stat(path)
-	return os.IsNotExist(err) && info.IsDir()
+	return err == nil && info.IsDir()
 }
 
 // ReadAllText Read all text from file by path.
