@@ -5,5 +5,5 @@ type Value struct {
 	// Content of value.
 	Content string
 	// Type of value.
-	Group int
+	Type int
 }

@@ -7,5 +7,5 @@ type Variable struct {
 	// Value of variable.
 	Value string
 	// Type of variable.
-	Group int
+	Type int
 }

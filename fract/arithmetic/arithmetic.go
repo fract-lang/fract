@@ -42,6 +42,21 @@ func IsNegative(value string) bool {
 	return value[0] == tokens.TokenMinus[0]
 }
 
+// IsNumeric Char is numeric?
+// char Char to check.
+func IsNumeric(char byte) bool {
+	return char == '0' ||
+		char == '1' ||
+		char == '2' ||
+		char == '3' ||
+		char == '4' ||
+		char == '5' ||
+		char == '6' ||
+		char == '7' ||
+		char == '8' ||
+		char == '9'
+}
+
 // IsInteger Value is an integer?
 // value Value to check.
 func IsInteger(value string) bool {

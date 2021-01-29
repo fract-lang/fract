@@ -1,7 +1,6 @@
 package objects
 
 import (
-	"container/list"
 	"os"
 )
 
@@ -12,5 +11,5 @@ type CodeFile struct {
 	// File instance of file.
 	File *os.File
 	// Lines of file.
-	Lines list.List
+	Lines []CodeLine
 }

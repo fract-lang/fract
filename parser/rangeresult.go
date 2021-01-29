@@ -9,5 +9,5 @@ type RangeResult struct {
 	// Tokens of range.
 	Tokens list.List
 	// Index of replace index of original list.
-	Index int
+	Index int32
 }
