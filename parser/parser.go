@@ -195,7 +195,7 @@ func ReadyFile(path string) objects.CodeFile {
 func ReadyLines(lines []string) []objects.CodeLine {
 	var readyLines []objects.CodeLine
 	for index := 0; index < len(lines); index++ {
-		readyLines = append(readyLines, objects.CodeLine{index + 1, lines[index] + " "})
+		readyLines = append(readyLines, objects.CodeLine{Line: index + 1, Text: lines[index]})
 	}
 	return readyLines
 }

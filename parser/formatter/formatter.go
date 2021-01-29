@@ -49,6 +49,5 @@ func LexRange(tokens *[]objects.Token) RangeResult {
 	copy((*tokens)[first:], (*tokens)[first+len(_result.Range):])
 	(*tokens)[len(*tokens)-1] = *new(objects.Token)
 	*tokens = (*tokens)[:len(*tokens)-1]
-
 	return _result
 }
