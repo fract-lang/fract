@@ -23,7 +23,7 @@ func RemoveNamespace(command string) string {
 	if position == -1 {
 		return ""
 	}
-	return command[position:]
+	return command[position+1:]
 }
 
 // GetArguments Get arguments of command.
