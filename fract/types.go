@@ -13,4 +13,6 @@ const (
 	TypeOperator int = 1101
 	// TypePrint Print.
 	TypePrint int = 1102
+	// TypeValue Value.
+	TypeValue int = 1103
 )
