@@ -9,6 +9,7 @@ import (
 	"../../fract/arithmetic"
 	"../../grammar"
 	"../../objects"
+	"../../utilities/list"
 )
 
 // Tokenizer Tokenizer of Fract.
@@ -136,8 +137,8 @@ func (t *Tokenizer) NextToken() objects.Token {
 }
 
 // TokenizeNext Tokenize all statement.
-func (t *Tokenizer) TokenizeNext() []objects.Token {
-	var tokens []objects.Token
+func (t *Tokenizer) TokenizeNext() list.List {
+	var tokens list.List = *list.New()
 
 	if t.Finish {
 		return tokens
@@ -154,7 +155,7 @@ func (t *Tokenizer) TokenizeNext() []objects.Token {
 
 	var _token objects.Token = t.NextToken()
 	for _token.Value != "" {
-		tokens = append(tokens, _token)
+		tokens.Append(_token)
 		lastToken = _token
 		_token = t.NextToken()
 	}
