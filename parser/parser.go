@@ -9,7 +9,6 @@ import (
 	"../grammar"
 	"../objects"
 	"../utilities/fs"
-	"./formatter"
 	"./tokenizer"
 )
 
@@ -42,24 +41,6 @@ func (p *Parser) printValue(value objects.Value) {
 // tokens Tokens.
 // index Last index.
 func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value {
-	/* Check parentheses range. */
-	for true {
-		var result formatter.RangeResult = formatter.LexRange(tokens)
-		if result.Found {
-			var (
-				first  int = 0
-				_token objects.Token
-			)
-			_token.Value = p.processValue(&result.Range, &first).Content
-			_token.Type = fract.TypeValue
-			*tokens = append(*tokens, *new(objects.Token))
-			copy((*tokens)[first+result.Index+1:], (*tokens)[first+result.Index:])
-			(*tokens)[first+result.Index] = _token
-		} else {
-			break
-		}
-	}
-
 	/*
 	* VALUE PROCESS
 	 */

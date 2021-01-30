@@ -159,10 +159,11 @@ func (t *Tokenizer) TokenizeNext() []objects.Token {
 		_token = t.NextToken()
 	}
 
-	if t.Index == len(t.File.Lines)-1 {
+	t.Index++
+
+	if t.Index >= len(t.File.Lines)-1 {
 		t.Finish = true
 	}
 
-	t.Index++
 	return tokens
 }
