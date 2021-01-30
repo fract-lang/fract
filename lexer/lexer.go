@@ -76,9 +76,11 @@ func (l *Lexer) Generate() objects.Token {
 		return token
 	}
 
+	/* Set token values. */
 	token.Column = l.Column
 	token.Line = l.Line
 
+	/* Tokenize. */
 	var arithmeticCheck string = strings.TrimSpace(regexp.MustCompile(
 		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln))
 	if arithmeticCheck != "" { // Numeric value.
@@ -100,6 +102,7 @@ func (l *Lexer) Generate() objects.Token {
 		l.Error("What is this?: " + ln)
 	}
 
+	/* Add length to column. */
 	var tokenvallen int = len(token.Value)
 	if tokenvallen == 1 {
 		l.Column++
