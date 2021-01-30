@@ -9,6 +9,7 @@ import (
 	"../grammar"
 	"../objects"
 	"../utilities/fs"
+	"../utilities/list"
 	"./tokenizer"
 )
 
@@ -40,7 +41,7 @@ func (p *Parser) printValue(value objects.Value) {
 // processValue Process value from tokens.
 // tokens Tokens.
 // index Last index.
-func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value {
+func (p *Parser) processValue(tokens *list.List, index *int) objects.Value {
 	/*
 	* VALUE PROCESS
 	 */
@@ -48,9 +49,9 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 		_value objects.Value
 		_type  int = PTypeNone
 	)
-	for ; *index < len(*tokens); (*index)++ {
+	for ; *index < tokens.Len(); (*index)++ {
 		var (
-			_token     objects.Token = (*tokens)[*index]
+			_token     objects.Token = tokens.At(*index).(objects.Token)
 			cacheValue string        = _value.Content
 			// cacheType  int           = _value.Type
 		)
@@ -125,7 +126,7 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 
 	/* If exists unprocessed operator? */
 	if _type != PTypeNone {
-		ExitError((*tokens)[(*index)-1], "Unused operator?")
+		ExitError(tokens.At((*index)-1).(objects.Token), "Unused operator?")
 	}
 
 	return _value
@@ -133,14 +134,14 @@ func (p *Parser) processValue(tokens *[]objects.Token, index *int) objects.Value
 
 // checkParentheses Check parentheses.
 // tokens Tokens to check.
-func (p *Parser) checkParentheses(tokens *[]objects.Token) {
+func (p *Parser) checkParentheses(tokens *list.List) {
 	var (
 		count    int = 0
 		lastOpen objects.Token
 	)
 
-	for index := 0; index < len(*tokens); index++ {
-		var _token objects.Token = (*tokens)[index]
+	for index := 0; index < tokens.Len(); index++ {
+		var _token objects.Token = tokens.At(index).(objects.Token)
 		if _token.Type == fract.TypeOpenParenthes {
 			lastOpen = _token
 			count++
@@ -208,11 +209,11 @@ func New(path string, _type int) *Parser {
 // Parse Parse code.
 func (p *Parser) Parse() {
 	for !p.tokenizer.Finish {
-		var tokens []objects.Token = p.tokenizer.TokenizeNext()
+		var tokens list.List = p.tokenizer.TokenizeNext()
 
 		p.checkParentheses(&tokens)
 
-		var first objects.Token = tokens[0]
+		var first objects.Token = tokens.At(0).(objects.Token)
 		if first.Type == fract.TypeValue {
 			var index int = 0
 			p.printValue(p.processValue(&tokens, &index))
