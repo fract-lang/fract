@@ -1,16 +1,20 @@
 package interpreter
 
 import (
+	"fmt"
+
+	"../lexer"
 	"../objects"
 	"../utilities/fs"
+	"../utilities/list"
 )
 
-// Interprater Interprater of Fract.
-type Interprater struct {
+// Interpreter Interprater of Fract.
+type Interpreter struct {
 	/* PRIVATE */
 
 	// Parser of this file.
-	file objects.CodeFile
+	lexer *lexer.Lexer
 
 	/* PUBLIC */
 
@@ -45,9 +49,24 @@ func ReadyLines(lines []string) []objects.CodeLine {
 // New Create new instance of Parser.
 // path Path of destination file.
 // type Type of file.
-func New(path string, _type int) *Interprater {
-	var parser *Interprater = new(Interprater)
-	parser.file = ReadyFile(path)
-	parser.Type = _type
-	return parser
+func New(path string, _type int) *Interpreter {
+	var preter *Interpreter = new(Interpreter)
+	preter.lexer = lexer.New(ReadyFile(path))
+	preter.Type = _type
+	return preter
+}
+
+// Interpret Interpret file.
+func (i *Interpreter) Interpret() {
+	// Lexer is finished.
+	if i.lexer.Finished {
+		return
+	}
+
+	for !i.lexer.Finished {
+		var tokens list.List = i.lexer.Next()
+		for index := 0; index < tokens.Len(); index++ {
+			fmt.Println(tokens.At(index).(objects.Token).Value)
+		}
+	}
 }
