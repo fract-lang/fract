@@ -66,7 +66,8 @@ func (i *Interpreter) Interpret() {
 	for !i.lexer.Finished {
 		var tokens list.List = i.lexer.Next()
 		for index := 0; index < tokens.Len(); index++ {
-			fmt.Println(tokens.At(index).(objects.Token).Value)
+			fmt.Print(tokens.At(index).(objects.Token).Value)
 		}
+		fmt.Println()
 	}
 }
