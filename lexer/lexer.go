@@ -74,7 +74,8 @@ func (l *Lexer) Generate() objects.Token {
 	token.Column = l.Column
 	token.Line = l.Line
 
-	var arithmeticCheck string = regexp.MustCompile("^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln)
+	var arithmeticCheck string = regexp.MustCompile(
+		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln)
 	if arithmeticCheck != "" {
 		token.Value = arithmeticCheck
 		token.Type = fract.TypeValue
