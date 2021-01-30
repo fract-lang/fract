@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"../fract"
+	"../grammar"
 	"../objects"
 	"../utilities/list"
 )
@@ -40,6 +42,9 @@ func (l *Lexer) Error(message string) {
 	os.Exit(1)
 }
 
+// Last putted token.
+var lastToken objects.Token
+
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
 	var (
@@ -48,7 +53,7 @@ func (l *Lexer) Generate() objects.Token {
 	)
 
 	/* Line is finished. */
-	if l.Column > len(ln) {
+	if l.Column >= len(ln) {
 		return token
 	}
 
@@ -57,9 +62,9 @@ func (l *Lexer) Generate() objects.Token {
 
 	/* Skip spaces. */
 	for index := 0; index < len(ln); index++ {
-		l.Column++
 		var char byte = ln[index]
 		if char == ' ' || char == '\t' {
+			l.Column++
 			continue
 		}
 		ln = ln[index:]
@@ -74,16 +79,33 @@ func (l *Lexer) Generate() objects.Token {
 	token.Column = l.Column
 	token.Line = l.Line
 
-	var arithmeticCheck string = regexp.MustCompile(
-		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln)
-	if arithmeticCheck != "" {
+	var arithmeticCheck string = strings.TrimSpace(regexp.MustCompile(
+		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln))
+	if arithmeticCheck != "" { // Numeric value.
 		token.Value = arithmeticCheck
 		token.Type = fract.TypeValue
+	} else if strings.HasPrefix(ln, grammar.TokenPlus) { // Addition.
+		token.Value = grammar.TokenPlus
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenMinus) { // Subtraction.
+		token.Value = grammar.TokenMinus
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenStar) { // Multiplication.
+		token.Value = grammar.TokenStar
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenSlash) { // Division.
+		token.Value = grammar.TokenSlash
+		token.Type = fract.TypeOperator
 	} else {
 		l.Error("What is this?: " + ln)
 	}
 
-	l.Column += len(token.Value) - 1
+	var tokenvallen int = len(token.Value)
+	if tokenvallen == 1 {
+		l.Column++
+	} else {
+		l.Column += tokenvallen - 1
+	}
 
 	return token
 }
@@ -99,6 +121,10 @@ func (l *Lexer) Next() list.List {
 
 	// Restore to defaults.
 	l.Column = 1
+	lastToken.Type = fract.TypeNone
+	lastToken.Line = 0
+	lastToken.Column = 0
+	lastToken.Value = ""
 
 	// Tokenize line.
 	var token objects.Token = l.Generate()
