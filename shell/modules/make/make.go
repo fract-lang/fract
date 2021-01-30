@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"../../../fract"
-	"../../../parser"
 	"../../../utilities/fs"
 )
 
@@ -24,8 +23,7 @@ func Process(command string) {
 		return
 	}
 
-	var _parser = parser.New(command, fract.TypeEntryFile)
-	_parser.Parse()
+	//var preter = interprater.New(command, fract.TypeEntryFile)
 }
 
 // Check Check invalid state of value.
