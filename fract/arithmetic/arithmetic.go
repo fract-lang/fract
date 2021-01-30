@@ -1,4 +1,4 @@
-package arithmeric
+package arithmetic
 
 import (
 	"fmt"

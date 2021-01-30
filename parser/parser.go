@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"../fract"
-	arithmetic "../fract/arithmetic"
+	"../fract/arithmetic"
 	"../grammar"
 	"../objects"
 	"../utilities/fs"

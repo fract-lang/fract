@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"../../fract"
-	arithmetic "../../fract/arithmetic"
+	"../../fract/arithmetic"
 	"../../grammar"
 	"../../objects"
 )
