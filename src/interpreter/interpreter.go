@@ -47,10 +47,10 @@ func (i *Interpreter) processValue(tokens *list.List) objects.Value {
 		operation := operations.Vals[index].(objects.ArithmeticProcess)
 
 		/* Check values. */
-		if !arithmetic.IsNumeric(operation.First.Value[0]) {
+		if !arithmetic.IsFloat(operation.First.Value) {
 			fract.Error(operation.First,
 				"This is not a arithmetic value!: "+operation.First.Value)
-		} else if !arithmetic.IsNumeric(operation.Second.Value[0]) {
+		} else if !arithmetic.IsFloat(operation.Second.Value) {
 			fract.Error(operation.Second,
 				"This is not a arithmetic value!: "+operation.Second.Value)
 		}

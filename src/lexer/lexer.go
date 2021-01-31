@@ -37,7 +37,7 @@ func New(file objects.CodeFile) *Lexer {
 // Error Exit with error.
 // message Message of error.
 func (l *Lexer) Error(message string) {
-	fmt.Printf("ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
+	fmt.Printf("LEXER ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
 		message, l.Line, l.Column)
 	os.Exit(1)
 }
@@ -51,7 +51,7 @@ func (l *Lexer) Generate() objects.Token {
 	ln := l.File.Lines[l.Line-1].Text
 
 	/* Line is finished. */
-	if l.Column >= len(ln) {
+	if l.Column > len(ln) {
 		return token
 	}
 
@@ -79,9 +79,14 @@ func (l *Lexer) Generate() objects.Token {
 	token.Line = l.Line
 
 	/* Tokenize. */
-	var arithmeticCheck string = strings.TrimSpace(regexp.MustCompile(
-		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln))
-	if arithmeticCheck != "" { // Numeric value.
+	arithmeticCheck := strings.TrimSpace(regexp.MustCompile(
+		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+||\\W+|$)").FindString(ln))
+	if arithmeticCheck != "" &&
+		(lastToken.Value == "" || lastToken.Value == grammar.TokenMinus) { // Numeric value.
+		match, _ := regexp.MatchString("\\W+$", arithmeticCheck)
+		if match {
+			arithmeticCheck = arithmeticCheck[:len(arithmeticCheck)-1]
+		}
 		token.Value = arithmeticCheck
 		token.Type = fract.TypeValue
 	} else if strings.HasPrefix(ln, grammar.TokenPlus) { // Addition.
@@ -108,7 +113,7 @@ func (l *Lexer) Generate() objects.Token {
 
 // Next Lex next line.
 func (l *Lexer) Next() list.List {
-	var tokens *list.List = list.New()
+	tokens := list.New()
 
 	// If file is finished?
 	if l.Finished {
@@ -123,9 +128,10 @@ func (l *Lexer) Next() list.List {
 	lastToken.Value = ""
 
 	// Tokenize line.
-	var token objects.Token = l.Generate()
+	token := l.Generate()
 	for token.Value != "" {
 		tokens.Append(token)
+		lastToken = token
 		token = l.Generate()
 	}
 
