@@ -19,7 +19,7 @@ const (
 // token Token of error.
 // message Message of error.
 func Error(token objects.Token, message string) {
-	fmt.Printf("ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
+	fmt.Printf("RUNTIME ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
 		message, token.Line, token.Column)
 	os.Exit(1)
 }

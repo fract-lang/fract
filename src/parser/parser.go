@@ -1,7 +1,10 @@
 package parser
 
 import (
+	"strings"
+
 	"../fract"
+	"../grammar"
 	"../objects"
 	"../utilities/list"
 )
@@ -30,6 +33,10 @@ func DecomposeArithmeticProcesses(tokens *list.List) list.List {
 			}
 			process.Operator = _token
 			continue
+		}
+		if process.Operator.Value == grammar.TokenMinus &&
+			strings.HasPrefix(_token.Value, grammar.TokenMinus) {
+			fract.Error(_token, "Negative numbers cannot be given to subtraction!")
 		}
 		process.Second = _token
 		processes.Append(process)
