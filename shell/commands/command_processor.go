@@ -9,7 +9,7 @@ import (
 // GetNamespace Get namespace of command.
 // command Command.
 func GetNamespace(command string) string {
-	var position int = strings.Index(command, " ")
+	position := strings.Index(command, " ")
 	if position == -1 {
 		return command
 	}
@@ -19,7 +19,7 @@ func GetNamespace(command string) string {
 // RemoveNamespace Remove namespace from command.
 // command Command.
 func RemoveNamespace(command string) string {
-	var position int = strings.Index(command, " ")
+	position := strings.Index(command, " ")
 	if position == -1 {
 		return ""
 	}

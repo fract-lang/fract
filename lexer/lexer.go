@@ -28,7 +28,7 @@ type Lexer struct {
 
 // New Create new instance.
 func New(file objects.CodeFile) *Lexer {
-	var lexer *Lexer = new(Lexer)
+	lexer := new(Lexer)
 	lexer.File = &file
 	lexer.Line = 1
 	return lexer
@@ -47,10 +47,8 @@ var lastToken objects.Token
 
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
-	var (
-		token objects.Token
-		ln    string = l.File.Lines[l.Line-1].Text
-	)
+	var token objects.Token
+	ln := l.File.Lines[l.Line-1].Text
 
 	/* Line is finished. */
 	if l.Column >= len(ln) {
@@ -62,7 +60,7 @@ func (l *Lexer) Generate() objects.Token {
 
 	/* Skip spaces. */
 	for index := 0; index < len(ln); index++ {
-		var char byte = ln[index]
+		char := ln[index]
 		if char == ' ' || char == '\t' {
 			l.Column++
 			continue

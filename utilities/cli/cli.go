@@ -27,7 +27,7 @@ func getws(count int) string {
 // PrintMapAsTable Print map to cli screen as table.
 // dict Map to print.
 func PrintMapAsTable(dict map[string]string) {
-	var maxlen int = 0
+	maxlen := 0
 	for key := range dict {
 		if maxlen < len(key) {
 			maxlen = len(key)

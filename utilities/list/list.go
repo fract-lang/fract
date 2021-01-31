@@ -86,9 +86,9 @@ func (l *List) Exist(value interface{}) bool {
 
 // Reverse Reverse list elements.
 func (l *List) Reverse() {
-	var len int = len(l.Vals)
+	len := len(l.Vals)
 	for index := 0; index < len/2; index++ {
-		var cache interface{} = l.Vals[index]
+		cache := l.Vals[index]
 		l.Vals[index] = l.Vals[len-index-1]
 		l.Vals[len-index-1] = cache
 	}

@@ -24,7 +24,7 @@ func Process(command string) {
 		return
 	}
 
-	var preter = interpreter.New(command, fract.TypeEntryFile)
+	preter := interpreter.New(command, fract.TypeEntryFile)
 	preter.Interpret()
 }
 
