@@ -37,7 +37,7 @@ func New(file objects.CodeFile) *Lexer {
 // Error Exit with error.
 // message Message of error.
 func (l *Lexer) Error(message string) {
-	fmt.Printf("LEXER ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
+	fmt.Printf("ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
 		message, l.Line, l.Column)
 	os.Exit(1)
 }
@@ -103,12 +103,7 @@ func (l *Lexer) Generate() objects.Token {
 	}
 
 	/* Add length to column. */
-	var tokenvallen int = len(token.Value)
-	if tokenvallen == 1 {
-		l.Column++
-	} else {
-		l.Column += tokenvallen - 1
-	}
+	l.Column += len(token.Value)
 
 	return token
 }
