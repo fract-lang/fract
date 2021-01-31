@@ -7,6 +7,7 @@ const (
 	TypeEntryFile int = 1000
 	// TypeImportedFile Imported file.
 	TypeImportedFile int = 1001
+
 	// TypeComment Comment.
 	TypeComment int = 1100
 	// TypeOperator Operator.
@@ -15,4 +16,9 @@ const (
 	TypePrint int = 1102
 	// TypeValue Value.
 	TypeValue int = 1103
+
+	// VTInteger Integer value type.
+	VTInteger int = 0
+	// VTFloat Float value type.
+	VTFloat int = 1
 )

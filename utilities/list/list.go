@@ -110,3 +110,13 @@ func (l *List) Any() bool {
 func (l *List) Sublist(pos int, len int) List {
 	return List{Vals: l.Vals[pos : len+1]}
 }
+
+// First Returns first element of list.
+func (l *List) First() interface{} {
+	return l.Vals[0]
+}
+
+// Last Returns last element of list.
+func (l *List) Last() interface{} {
+	return l.Vals[len(l.Vals)-1]
+}

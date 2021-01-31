@@ -5,37 +5,10 @@ import (
 	"regexp"
 	"strconv"
 
-	"../../fract"
+	fract ".."
 	"../../grammar"
+	"../../objects"
 )
-
-// IsTypesCompatible Check types are compatible?
-// type0 Primary type.
-// type1 Secondary type.
-func IsTypesCompatible(type0 int, type1 int) bool {
-	if IsIntegerType(type0) {
-		return IsIntegerType(type1)
-	}
-	return IsFloatType(type1)
-}
-
-// IsIntegerType Type is integer?
-// _type Type to check.
-func IsIntegerType(_type int) bool {
-	return _type == fract.TypeShort ||
-		_type == fract.TypeInt ||
-		_type == fract.TypeLong ||
-		_type == fract.TypeUShort ||
-		_type == fract.TypeUInt ||
-		_type == fract.TypeULong
-}
-
-// IsFloatType Type is float?
-// _type Type to check.
-func IsFloatType(_type int) bool {
-	return _type == fract.TypeFloat ||
-		_type == fract.TypeDouble
-}
 
 // IsNegative Is negative number?
 // value Value to check.
@@ -170,18 +143,41 @@ func ToULong(value string) (uint64, error) {
 
 // FloatToString Float to string.
 // value Value to parse.
-func FloatToString(value float64) string {
+func FloatToString(value interface{}) string {
 	return fmt.Sprintf("%f", value)
 }
 
 // IntToString Integer to string.
 // value Value to parse.
-func IntToString(value int) string {
+func IntToString(value interface{}) string {
 	return fmt.Sprintf("%d", value)
 }
 
-// ByteToString Byte to string.
-// value Value to parse.
-func ByteToString(value byte) string {
-	return fmt.Sprintf("%d", value)
+// SolveArithmeticProcess Solve arithmetic process.
+// process Process to solve.
+func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
+	var result float64
+
+	first, _ := ToDouble(process.First.Value)
+	second, _ := ToDouble(process.Second.Value)
+
+	if process.Operator.Value == grammar.TokenPlus {
+		result = first + second
+	} else if process.Operator.Value == grammar.TokenMinus {
+		result = first - second
+	} else if process.Operator.Value == grammar.TokenStar {
+		result = first * second
+	} else if process.Operator.Value == grammar.TokenSlash {
+		if first == 0 {
+			fract.Error(process.First, "Divide by zero!")
+		} else if second == 0 {
+			fract.Error(process.Second, "Divide by zero!")
+		}
+		result = first / second
+	} else {
+		fract.Error(process.Operator,
+			"Operator is invalid!: "+process.Operator.Value)
+	}
+
+	return result
 }
