@@ -82,7 +82,7 @@ func (l *Lexer) Generate() objects.Token {
 	arithmeticCheck := strings.TrimSpace(regexp.MustCompile(
 		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+||\\W+|$)").FindString(ln))
 	if arithmeticCheck != "" &&
-		(lastToken.Value == "" || lastToken.Value == grammar.TokenMinus) { // Numeric value.
+		(lastToken.Value == "" || lastToken.Type == fract.TypeOperator) { // Numeric value.
 		match, _ := regexp.MatchString("\\W+$", arithmeticCheck)
 		if match {
 			arithmeticCheck = arithmeticCheck[:len(arithmeticCheck)-1]
