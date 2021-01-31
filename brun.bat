@@ -21,5 +21,5 @@
 :: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 :: SOFTWARE.
 
-@go build main.go
+@go build src/main.go
 @main.exe %*
