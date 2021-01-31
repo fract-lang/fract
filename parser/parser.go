@@ -8,14 +8,12 @@ import (
 
 // DecomposeArithmeticProcesses Decompose and returns arithmetic processes by operators.
 func DecomposeArithmeticProcesses(tokens *list.List) list.List {
-	var (
-		processes list.List = *list.New()
-		process   objects.ArithmeticProcess
-		new       bool = true
-	)
+	var process objects.ArithmeticProcess
+	processes := *list.New()
+	new := true
 
 	for index := 0; index < tokens.Len(); index++ {
-		var _token objects.Token = tokens.Vals[index].(objects.Token)
+		_token := tokens.Vals[index].(objects.Token)
 
 		if _token.Type != fract.TypeOperator && _token.Type != fract.TypeValue {
 			fract.Error(_token, "This is not a invalid statement!: "+_token.Value)

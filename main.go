@@ -54,8 +54,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	var command string = ""
-	var skipped bool = false
+	command := ""
+	skipped := false
 	for arg := range os.Args {
 		if !skipped {
 			skipped = true
