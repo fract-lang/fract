@@ -23,5 +23,5 @@
 
 #!bin/bash
 
-@go build main.go
+@go build src/main.go
 @./main
