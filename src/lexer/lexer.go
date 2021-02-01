@@ -102,12 +102,13 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenSlash) { // Division.
 		token.Value = grammar.TokenSlash
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) {
+	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
 		token.Value = grammar.TokenLParenthes
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) {
+	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 	} else {
 		l.Error("What is this?: " + ln)
 	}
