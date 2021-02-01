@@ -6,16 +6,16 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../utilities/list"
+	"../utilities/vector"
 )
 
 // DecomposeArithmeticProcesses Decompose and returns arithmetic processes by operators.
-func DecomposeArithmeticProcesses(tokens *list.List) list.List {
+func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 	var (
 		operator bool
 		last     objects.Token
 	)
-	processes := *list.New()
+	processes := *vector.New()
 	len := len(tokens.Vals)
 
 	for index := 0; index < len; index++ {

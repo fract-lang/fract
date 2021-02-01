@@ -9,7 +9,7 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../utilities/list"
+	"../utilities/vector"
 )
 
 // Lexer of Fract.
@@ -112,8 +112,8 @@ func (l *Lexer) Generate() objects.Token {
 }
 
 // Next Lex next line.
-func (l *Lexer) Next() list.List {
-	tokens := list.New()
+func (l *Lexer) Next() vector.Vector {
+	tokens := vector.New()
 
 	// If file is finished?
 	if l.Finished {
