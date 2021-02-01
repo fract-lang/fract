@@ -137,7 +137,12 @@ func (v *Vector) Any() bool {
 // pos Start position to take.
 // len Count of taken elements.
 func (v *Vector) Sublist(pos int, len int) Vector {
-	return Vector{Vals: v.Vals[pos : pos+len]}
+	sub := New()
+	for counter := 1; counter <= len; counter++ {
+		sub.Append(v.Vals[pos])
+		pos++
+	}
+	return *sub
 }
 
 // First Returns first element.

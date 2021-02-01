@@ -16,6 +16,8 @@ const (
 	TypePrint int = 1102
 	// TypeValue Value.
 	TypeValue int = 1103
+	// TypeBrace Bracket type.
+	TypeBrace int = 1104
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
