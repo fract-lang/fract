@@ -111,10 +111,10 @@ func ReadyFile(path string) objects.CodeFile {
 
 // ReadyLines Ready lines to process.
 // lines Lines to ready.
-func ReadyLines(lines []string) []objects.CodeLine {
-	var readyLines []objects.CodeLine
+func ReadyLines(lines []string) *vector.Vector {
+	readyLines := vector.New()
 	for index := 0; index < len(lines); index++ {
-		readyLines = append(readyLines, objects.CodeLine{Line: index + 1, Text: lines[index]})
+		readyLines.Append(objects.CodeLine{Line: index + 1, Text: lines[index]})
 	}
 	return readyLines
 }

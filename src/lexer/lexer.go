@@ -48,7 +48,7 @@ var lastToken objects.Token
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
 	var token objects.Token
-	ln := l.File.Lines[l.Line-1].Text
+	ln := l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text
 
 	/* Line is finished. */
 	if l.Column > len(ln) {
@@ -147,7 +147,7 @@ func (l *Lexer) Next() vector.Vector {
 	l.Line++
 
 	// Line equals to or bigger then last line.
-	l.Finished = l.Line > len(l.File.Lines)
+	l.Finished = l.Line > len(l.File.Lines.Vals)
 
 	return *tokens
 }

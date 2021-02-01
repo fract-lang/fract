@@ -2,6 +2,8 @@ package objects
 
 import (
 	"os"
+
+	"../utilities/vector"
 )
 
 // CodeFile Code file instance.
@@ -11,5 +13,5 @@ type CodeFile struct {
 	// File instance of file.
 	File *os.File
 	// Lines of file.
-	Lines []CodeLine
+	Lines *vector.Vector
 }
