@@ -11,7 +11,7 @@ import (
 	"../objects"
 	"../parser"
 	"../utilities/fs"
-	"../utilities/list"
+	"../utilities/vector"
 )
 
 // Interpreter Interprater of Fract.
@@ -33,7 +33,7 @@ type Interpreter struct {
 
 // processValue Process value.
 // tokens Tokens.
-func (i *Interpreter) processValue(tokens *list.List) objects.Value {
+func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	var (
 		value     objects.Value
 		operation objects.ArithmeticProcess
