@@ -34,6 +34,21 @@ type Interpreter struct {
 // processValue Process value.
 // tokens Tokens.
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
+	/* Check parentheses range. */
+	for true {
+		_range, found := parser.DecomposeBrace(tokens)
+
+		/* Parentheses are not found! */
+		if found == -1 || len(_range.Vals) == 0 {
+			break
+		}
+
+		var _token objects.Token
+		_token.Value = i.processValue(&_range).Content
+		_token.Type = fract.TypeValue
+		tokens.Insert(found, _token)
+	}
+
 	var (
 		value     objects.Value
 		operation objects.ArithmeticProcess
@@ -129,6 +144,9 @@ func (i *Interpreter) Interpret() {
 		if first.Type == fract.TypeValue {
 			fmt.Println(i.processValue(&tokens).Content)
 		} else {
+			if first.Type == fract.TypeBrace {
+				fract.Error(first, "Statement are don't starts with brackets!")
+			}
 			fract.Error(first, "What is this?: "+first.Value)
 		}
 	}
