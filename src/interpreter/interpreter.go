@@ -35,34 +35,47 @@ type Interpreter struct {
 // tokens Tokens.
 func (i *Interpreter) processValue(tokens *list.List) objects.Value {
 	var (
-		value  objects.Value
-		avalue float64 = 0
+		value     objects.Value
+		operation objects.ArithmeticProcess
+		avalue    float64 = 0
 	)
 	value.Content = ""
 	value.Type = fract.VTInteger
 
 	// Decompose arithmetic operations
 	operations := parser.DecomposeArithmeticProcesses(tokens)
-	for index := 0; index < operations.Len(); index++ {
-		operation := operations.Vals[index].(objects.ArithmeticProcess)
-
-		/* Check values. */
-		if !arithmetic.IsFloat(operation.First.Value) {
-			fract.Error(operation.First,
-				"This is not a arithmetic value!: "+operation.First.Value)
-		} else if !arithmetic.IsFloat(operation.Second.Value) {
-			fract.Error(operation.Second,
-				"This is not a arithmetic value!: "+operation.Second.Value)
+	for index := 0; index < len(operations.Vals); index++ {
+		_token := operations.Vals[index].(objects.Token)
+		if operation.First.Value == "" {
+			operation.First = _token
+			continue
+		} else if operation.Operator.Value == "" {
+			operation.Operator = _token
+			continue
 		}
+		operation.Second = _token
+		avalue = arithmetic.SolveArithmeticProcess(operation)
 
-		if strings.Index(operation.First.Value, grammar.TokenDot) != -1 ||
-			strings.Index(operation.Second.Value, grammar.TokenDot) != -1 {
-			value.Type = fract.VTFloat
-		}
-
-		avalue += arithmetic.SolveArithmeticProcess(operation)
+		/* Reset to defaults. */
+		operation.First = operation.Second
+		operation.First.Value = arithmetic.FloatToString(avalue)
+		operation.Operator.Value = ""
+		operation.Second.Value = ""
 	}
+	// If only one value.
+	if operations.Len() == 1 {
+		avalue, _ = arithmetic.ToDouble(operations.First().(objects.Token).Value)
+	}
+
+	// Set value.
 	value.Content = arithmetic.FloatToString(avalue)
+
+	/* Set type to float if... */
+	if value.Type != fract.VTFloat &&
+		(strings.Index(value.Content, grammar.TokenDot) != -1 ||
+			strings.Index(value.Content, grammar.TokenDot) != -1) {
+		value.Type = fract.VTFloat
+	}
 
 	return value
 }
