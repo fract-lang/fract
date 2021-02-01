@@ -11,49 +11,37 @@ import (
 
 // DecomposeArithmeticProcesses Decompose and returns arithmetic processes by operators.
 func DecomposeArithmeticProcesses(tokens *list.List) list.List {
-	var process objects.ArithmeticProcess
+	var (
+		operator bool
+		last     objects.Token
+	)
 	processes := *list.New()
-	new := true
+	len := len(tokens.Vals)
 
-	for index := 0; index < tokens.Len(); index++ {
+	for index := 0; index < len; index++ {
 		_token := tokens.Vals[index].(objects.Token)
-
-		if _token.Type != fract.TypeOperator && _token.Type != fract.TypeValue {
-			fract.Error(_token, "This is not a invalid statement!: "+_token.Value)
-		}
-
-		if new {
-			new = false
-			process.First = _token
-			continue
-		}
-		if process.Operator.Value == "" {
-			if _token.Type != fract.TypeOperator {
-				fract.Error(_token, "Operator is not found!: "+_token.Value)
+		if _token.Type == fract.TypeOperator {
+			if !operator {
+				fract.Error(_token, "Operator spam!")
 			}
-			process.Operator = _token
-			continue
+			last = _token
+			processes.Append(_token)
+			operator = false
+		} else if _token.Type == fract.TypeValue {
+			if last.Type == fract.TypeOperator && last.Value == grammar.TokenMinus &&
+				strings.HasPrefix(_token.Value, grammar.TokenMinus) {
+				fract.Error(_token, "Negative number declare after subtraction!")
+			}
+			last = _token
+			processes.Append(_token)
+			operator = index < len-1
+		} else {
+			fract.Error(_token, "Invalid value!")
 		}
-		if process.Operator.Value == grammar.TokenMinus &&
-			strings.HasPrefix(_token.Value, grammar.TokenMinus) {
-			fract.Error(_token, "Negative numbers cannot be given to subtraction!")
-		}
-		process.Second = _token
-		processes.Append(process)
-
-		/* Reset to defaults. */
-		process.First.Value = ""
-		process.Second.Value = ""
-		process.Operator.Value = ""
-		new = true
 	}
 
-	if process.First.Value != "" {
-		if process.Operator.Value == "" {
-			fract.Error(tokens.Last().(objects.Token), "Operator is not found!")
-		} else if process.Second.Value == "" {
-			fract.Error(tokens.Last().(objects.Token), "Second value is not found!")
-		}
+	if last.Type == fract.TypeOperator {
+		fract.Error(processes.Last().(objects.Token), "Operator defined, but for what?")
 	}
 
 	return processes
