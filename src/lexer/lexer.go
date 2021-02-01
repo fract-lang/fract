@@ -43,7 +43,10 @@ func (l *Lexer) Error(message string) {
 }
 
 // Last putted token.
-var lastToken objects.Token
+var (
+	lastToken  objects.Token
+	braceCount int
+)
 
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
@@ -103,9 +106,14 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = grammar.TokenSlash
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
+		braceCount++
 		token.Value = grammar.TokenLParenthes
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
+		braceCount--
+		if braceCount < 0 {
+			l.Error("The extra parentheses are closed!")
+		}
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
@@ -134,6 +142,7 @@ func (l *Lexer) Next() vector.Vector {
 	lastToken.Line = 0
 	lastToken.Column = 0
 	lastToken.Value = ""
+	braceCount = 0
 
 	// Tokenize line.
 	token := l.Generate()
@@ -141,6 +150,11 @@ func (l *Lexer) Next() vector.Vector {
 		tokens.Append(token)
 		lastToken = token
 		token = l.Generate()
+	}
+
+	/* Check parentheses. */
+	if braceCount > 0 {
+		l.Error("Bracket is expected to close...")
 	}
 
 	// Go next line.
