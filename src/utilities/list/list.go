@@ -8,8 +8,11 @@ type List struct {
 }
 
 // New Create new instance.
-func New() *List {
-	return new(List)
+// values Base values.
+func New(values ...interface{}) *List {
+	list := new(List)
+	list.Vals = values
+	return list
 }
 
 // Len Returns length of list.
@@ -19,8 +22,8 @@ func (l *List) Len() int {
 
 // Append Append value to list.
 // value Value to append.
-func (l *List) Append(value interface{}) {
-	l.Vals = append(l.Vals, value)
+func (l *List) Append(value ...interface{}) {
+	l.Vals = append(l.Vals, value...)
 }
 
 // RemoveFirst Remove first element from list.
@@ -36,10 +39,14 @@ func (l *List) RemoveLast() {
 // Insert Insert value to list by position.
 // pos Position to insert.
 // value Value to insert.
-func (l *List) Insert(pos int, value interface{}) {
-	l.Vals = append(l.Vals, 0)
-	copy(l.Vals[pos+1:], l.Vals[pos:])
-	l.Vals[pos] = value
+func (l *List) Insert(pos int, value ...interface{}) {
+	len := len(value)
+	l.Vals = append(l.Vals, len)
+	copy(l.Vals[pos+len:], l.Vals[pos:])
+	for counter := 0; counter < len; counter++ {
+		l.Vals[pos] = value[counter]
+		pos++
+	}
 }
 
 // At Get element by index.
@@ -54,11 +61,33 @@ func (l *List) Set(pos int, value interface{}) {
 	l.Vals[pos] = value
 }
 
-// Remove Remove range from list.
+// RemoveRange Remove range from list.
 // pos Start position of removing.
 // len Count of removing elements.
-func (l *List) Remove(pos int, len int) {
+func (l *List) RemoveRange(pos int, len int) {
 	l.Vals = append(l.Vals[:pos], l.Vals[pos+len:]...)
+}
+
+// Remove Remove first matched element.
+// value Value instance to remove.
+func (l *List) Remove(value interface{}) bool {
+	for index := 0; index < len(l.Vals); index++ {
+		if l.Vals[index] == value {
+			l.Vals = append(l.Vals[:index], l.Vals[index+1:]...)
+			return true
+		}
+	}
+	return false
+}
+
+// RemoveAll Remove all matched elements.
+// value Value instance to remove.
+func (l *List) RemoveAll(value interface{}) bool {
+	result := false
+	for l.Remove(value) {
+		result = true
+	}
+	return result
 }
 
 // Find Find element.
@@ -108,7 +137,7 @@ func (l *List) Any() bool {
 // pos Start position to take.
 // len Count of taken elements.
 func (l *List) Sublist(pos int, len int) List {
-	return List{Vals: l.Vals[pos : len+1]}
+	return List{Vals: l.Vals[pos : pos+len]}
 }
 
 // First Returns first element of list.
@@ -119,4 +148,42 @@ func (l *List) First() interface{} {
 // Last Returns last element of list.
 func (l *List) Last() interface{} {
 	return l.Vals[len(l.Vals)-1]
+}
+
+// Join Concatenate lists.
+// list List to concat.
+func (l *List) Join(list List) {
+	l.Vals = append(l.Vals, list.Vals...)
+}
+
+// Equals Equals all elements and order to list?
+// list List to check.
+func (l *List) Equals(list List) bool {
+	xlen := len(l.Vals)
+	ylen := len(list.Vals)
+
+	if xlen != ylen {
+		return false
+	}
+
+	for index := 0; index < xlen; index++ {
+		if l.Vals[index] != list.Vals[index] {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Unique Remove copies of repeated elements.
+func (l *List) Unique() {
+	lst := New()
+	for index := 0; index < len(l.Vals); index++ {
+		current := l.Vals[index]
+		if lst.Exist(current) {
+			continue
+		}
+		lst.Append(current)
+	}
+	l.Vals = lst.Vals
 }
