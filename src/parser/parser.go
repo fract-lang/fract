@@ -135,6 +135,5 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 		}
 	}*/
 
-	// Not found.
 	return 1
 }
