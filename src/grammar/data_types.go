@@ -5,26 +5,26 @@
 package grammar
 
 const (
-	// DtByte byte.
-	DtByte string = "uint8"
-	// DtSignedByte sbyte.
-	DtSignedByte string = "int8"
-	// Dt16BitInteger short.
-	Dt16BitInteger string = "int16"
-	// Dt32BitInteger int.
-	Dt32BitInteger string = "int32"
-	// Dt64BitInteger long.
-	Dt64BitInteger string = "int64"
-	// DtUnsigned16BitInteger ushort.
-	DtUnsigned16BitInteger string = "uint16"
-	// DtUnsigned32BitInteger uint.
-	DtUnsigned32BitInteger string = "uint32"
-	// DtUnsigned64BitInteger ulong.
-	DtUnsigned64BitInteger string = "uint64"
+	// DtInt8 8-bit integer.
+	DtInt8 string = "int8"
+	// DtInt16 16-bit integer.
+	DtInt16 string = "int16"
+	// DtInt32 32-bit integer.
+	DtInt32 string = "int32"
+	// DtInt64 64-bit integer.
+	DtInt64 string = "int64"
+	// DtUInt8 Unsigned 8-bit integer.
+	DtUInt8 string = "uint8"
+	// DtUInt16 Unsigned 16-bit integer.
+	DtUInt16 string = "uint16"
+	// DtUInt32 Unsigned 32-bit integer.
+	DtUInt32 string = "uint32"
+	// DtUInt64 Unsigned 64-bit integer.
+	DtUInt64 string = "uint64"
+	// DtFloat32 32-bit float.
+	DtFloat32 string = "float32"
+	// DtFloat64 64-bit float.
+	DtFloat64 string = "float64"
 	// DtBoolean boolean.
 	DtBoolean string = "bool"
-	// DtFloat float.
-	DtFloat string = "float"
-	// DtDouble double.
-	DtDouble string = "double"
 )

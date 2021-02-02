@@ -38,9 +38,9 @@ func IsFloat(value string) bool {
 	return state
 }
 
-// ToFloat String to float.
+// ToFloat32 String to float.
 // value Value to parse.
-func ToFloat(value string) (float32, error) {
+func ToFloat32(value string) (float32, error) {
 	result, err := strconv.ParseFloat(value, 32)
 	if err != nil {
 		return 0, err
@@ -48,8 +48,8 @@ func ToFloat(value string) (float32, error) {
 	return float32(result), err
 }
 
-// ToDouble String to double.
+// ToFloat64 String to double.
 // value Value to parse.
-func ToDouble(value string) (float64, error) {
+func ToFloat64(value string) (float64, error) {
 	return strconv.ParseFloat(value, 64)
 }
