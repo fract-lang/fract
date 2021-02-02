@@ -2,6 +2,7 @@ package arithmetic
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -162,19 +163,21 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
 	first, _ := ToDouble(process.First.Value)
 	second, _ := ToDouble(process.Second.Value)
 
-	if process.Operator.Value == grammar.TokenPlus {
+	if process.Operator.Value == grammar.TokenPlus { // Addition.
 		result = first + second
-	} else if process.Operator.Value == grammar.TokenMinus {
+	} else if process.Operator.Value == grammar.TokenMinus { // Subtraction.
 		result = first - second
-	} else if process.Operator.Value == grammar.TokenStar {
+	} else if process.Operator.Value == grammar.TokenStar { // Multiply.
 		result = first * second
-	} else if process.Operator.Value == grammar.TokenSlash {
+	} else if process.Operator.Value == grammar.TokenSlash { // Division.
 		if first == 0 {
 			fract.Error(process.First, "Divide by zero!")
 		} else if second == 0 {
 			fract.Error(process.Second, "Divide by zero!")
 		}
 		result = first / second
+	} else if process.Operator.Value == grammar.TokenCaret { // Power.
+		result = math.Pow(first, second)
 	} else {
 		fract.Error(process.Operator,
 			"Operator is invalid!: "+process.Operator.Value)
