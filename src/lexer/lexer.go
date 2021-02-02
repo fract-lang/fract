@@ -53,7 +53,7 @@ func (l *Lexer) Error(message string) {
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
 	var token objects.Token
-	ln := l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text
+	ln := l.File.Lines.At(l.Line - 1).(objects.CodeLine).Text
 
 	/* Line is finished. */
 	if l.Column > len(ln) {

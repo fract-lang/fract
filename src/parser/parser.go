@@ -23,7 +23,7 @@ func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
 
 	/* Find open parentheses. */
 	for index := 0; index < len; index++ {
-		current := tokens.Vals[index].(objects.Token)
+		current := tokens.At(index).(objects.Token)
 		if current.Type == fract.TypeBrace {
 			first = index
 			break
@@ -42,7 +42,7 @@ func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
 	count := 1
 	length := 0
 	for index := first + 1; index < len; index++ {
-		current := tokens.Vals[index].(objects.Token)
+		current := tokens.At(index).(objects.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == grammar.TokenLParenthes {
 				count++
@@ -74,7 +74,7 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 	processes := *vector.New()
 
 	for index := 0; index < tokens.Len(); index++ {
-		_token := tokens.Vals[index].(objects.Token)
+		_token := tokens.At(index).(objects.Token)
 		if _token.Type == fract.TypeOperator {
 			if !operator {
 				fract.Error(_token, "Operator spam!")
@@ -114,21 +114,21 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 
 	/* Find exponentiation. */
 	for index := 0; index < len(tokens.Vals); index++ {
-		if tokens.Vals[index].(objects.Token).Value == grammar.TokenCaret {
+		if tokens.At(index).(objects.Token).Value == grammar.TokenCaret {
 			return index
 		}
 	}
 
 	/* Find mod. */
 	for index := 0; index < len(tokens.Vals); index++ {
-		if tokens.Vals[index].(objects.Token).Value == grammar.TokenPercent {
+		if tokens.At(index).(objects.Token).Value == grammar.TokenPercent {
 			return index
 		}
 	}
 
 	/* Find multipy or divide. */
 	for index := 0; index < len(tokens.Vals); index++ {
-		_token := tokens.Vals[index].(objects.Token)
+		_token := tokens.At(index).(objects.Token)
 		if _token.Value == grammar.TokenStar ||
 			_token.Value == grammar.TokenSlash ||
 			_token.Value == grammar.TokenReverseSlash ||
@@ -140,7 +140,7 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 
 	/* Addition or subtraction. */
 	/*for index := 0; index < len(tokens.Vals); index++ {
-		_token := tokens.Vals[index].(objects.Token)
+		_token := tokens.At(index).(objects.Token)
 		if _token.Value == grammar.TokenPlus || _token.Value == grammar.TokenMinus {
 			return index
 		}
