@@ -66,8 +66,9 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 
 		_token := operations.Vals[priorityIndex-1].(objects.Token)
 		operations.RemoveRange(priorityIndex-1, 3)
-		_token.Value =
-			arithmetic.FloatToString(arithmetic.SolveArithmeticProcess(operation))
+		_type, result := arithmetic.SolveArithmeticProcess(operation)
+		value.Type = _type
+		_token.Value = arithmetic.TypeToString(_type, result)
 		operations.Insert(priorityIndex-1, _token)
 
 		// Find next operator.
@@ -76,7 +77,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 
 	// Set value.
 	_value, _ := arithmetic.ToDouble(operations.First().(objects.Token).Value)
-	value.Content = arithmetic.FloatToString(_value)
+	value.Content = arithmetic.TypeToString(value.Type, _value)
 
 	/* Set type to float if... */
 	if value.Type != fract.VTFloat &&

@@ -155,9 +155,20 @@ func IntToString(value interface{}) string {
 	return fmt.Sprintf("%d", value)
 }
 
+// TypeToString Parse type to string.
+// _type Type.
+// value Value to parse.
+func TypeToString(_type int, value interface{}) string {
+	if _type == fract.VTFloat {
+		return FloatToString(value)
+	}
+	str := FloatToString(value)
+	return str[:strings.Index(str, grammar.TokenDot)]
+}
+
 // SolveArithmeticProcess Solve arithmetic process.
 // process Process to solve.
-func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
+func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
 	var result float64
 
 	first, _ := ToDouble(process.First.Value)
@@ -205,5 +216,12 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
 			"Operator is invalid!: "+process.Operator.Value)
 	}
 
-	return result
+	/* Check type. */
+	_type := fract.VTInteger
+	if strings.Index(process.First.Value, grammar.TokenDot) != -1 ||
+		strings.Index(process.Second.Value, grammar.TokenDot) != -1 {
+		_type = fract.VTFloat
+	}
+
+	return _type, result
 }
