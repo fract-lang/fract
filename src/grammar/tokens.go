@@ -51,7 +51,10 @@ const (
 	// MULTICHAR OPERATORS
 
 	// SeperatorSub Sub element seperator.
-	SeperatorSub string = TokenColon + TokenColon
+	SeperatorSub string = "::"
+
+	// IntegerDivision Integer divide.
+	IntegerDivision string = "//"
 
 	// KEYWORDS
 
