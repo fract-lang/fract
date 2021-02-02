@@ -14,6 +14,14 @@ import (
 
 // Lexer of Fract.
 type Lexer struct {
+	/* PRIVITE */
+
+	// Last generated token.
+	lastToken objects.Token
+
+	// Bracket count.
+	braceCount int
+
 	/* PUBLIC */
 
 	// Destination file.
@@ -41,12 +49,6 @@ func (l *Lexer) Error(message string) {
 		message, l.Line, l.Column)
 	os.Exit(1)
 }
-
-// Last putted token.
-var (
-	lastToken  objects.Token
-	braceCount int
-)
 
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
@@ -85,8 +87,8 @@ func (l *Lexer) Generate() objects.Token {
 	arithmeticCheck := strings.TrimSpace(regexp.MustCompile(
 		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+||\\W|$)").FindString(ln))
 	if arithmeticCheck != "" &&
-		(lastToken.Value == "" || lastToken.Type == fract.TypeOperator ||
-			lastToken.Type == fract.TypeBrace) { // Numeric value.
+		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
+			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
 		match, _ := regexp.MatchString("\\W$", arithmeticCheck)
 		if match {
 			arithmeticCheck = arithmeticCheck[:len(arithmeticCheck)-1]
@@ -121,12 +123,12 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = grammar.TokenReverseSlash
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
-		braceCount++
+		l.braceCount++
 		token.Value = grammar.TokenLParenthes
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
-		braceCount--
-		if braceCount < 0 {
+		l.braceCount--
+		if l.braceCount < 0 {
 			l.Error("The extra parentheses are closed!")
 		}
 		token.Value = grammar.TokenRParenthes
@@ -153,22 +155,22 @@ func (l *Lexer) Next() vector.Vector {
 
 	// Restore to defaults.
 	l.Column = 1
-	lastToken.Type = fract.TypeNone
-	lastToken.Line = 0
-	lastToken.Column = 0
-	lastToken.Value = ""
-	braceCount = 0
+	l.lastToken.Type = fract.TypeNone
+	l.lastToken.Line = 0
+	l.lastToken.Column = 0
+	l.lastToken.Value = ""
+	l.braceCount = 0
 
 	// Tokenize line.
 	token := l.Generate()
 	for token.Value != "" {
 		tokens.Append(token)
-		lastToken = token
+		l.lastToken = token
 		token = l.Generate()
 	}
 
 	/* Check parentheses. */
-	if braceCount > 0 {
+	if l.braceCount > 0 {
 		l.Error("Bracket is expected to close...")
 	}
 
