@@ -134,7 +134,7 @@ func (i *Interpreter) Interpret() {
 		tokens := i.lexer.Next()
 		first := tokens.Vals[0].(objects.Token)
 
-		if first.Type == fract.TypeValue {
+		if first.Type == fract.TypeValue || first.Type == fract.TypeBrace {
 			fmt.Println(i.processValue(&tokens).Content)
 		} else {
 			if first.Type == fract.TypeBrace {
