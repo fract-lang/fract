@@ -112,7 +112,7 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 		return -1
 	}
 
-	/* Find power. */
+	/* Find exponentiation. */
 	for index := 0; index < len(tokens.Vals); index++ {
 		if tokens.Vals[index].(objects.Token).Value == grammar.TokenCaret {
 			return index
