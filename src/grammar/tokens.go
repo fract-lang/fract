@@ -56,6 +56,9 @@ const (
 	// IntegerDivision Integer divide.
 	IntegerDivision string = "//"
 
+	// IntegerDivideWithBigger Integer division with bigger.
+	IntegerDivideWithBigger string = "\\\\"
+
 	// KEYWORDS
 
 	// KwImport Import packages.

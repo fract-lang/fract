@@ -30,4 +30,12 @@
     <td align="center"><b>\</b></td>
     <td>Divide with bigger.</td>
   </tr>
+  <tr>
+    <td align="center"><b>//</b></td>
+    <td>Integer division.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>\\</b></td>
+    <td>Integer division with bigger.</td>
+  </tr>
 </table>
