@@ -129,7 +129,9 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 	/* Find multipy or divide. */
 	for index := 0; index < len(tokens.Vals); index++ {
 		_token := tokens.Vals[index].(objects.Token)
-		if _token.Value == grammar.TokenStar || _token.Value == grammar.TokenSlash {
+		if _token.Value == grammar.TokenStar ||
+			_token.Value == grammar.TokenSlash ||
+			_token.Value == grammar.TokenReverseSlash {
 			return index
 		}
 	}
