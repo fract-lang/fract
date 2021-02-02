@@ -45,6 +45,8 @@ const (
 	TokenLParenthes string = "("
 	// TokenRParenthes Right parentheses.
 	TokenRParenthes string = ")"
+	// TokenCaret Caret.
+	TokenCaret string = "^"
 
 	// MULTICHAR OPERATORS
 

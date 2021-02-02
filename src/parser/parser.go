@@ -72,9 +72,8 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 		last     objects.Token
 	)
 	processes := *vector.New()
-	len := len(tokens.Vals)
 
-	for index := 0; index < len; index++ {
+	for index := 0; index < tokens.Len(); index++ {
 		_token := tokens.Vals[index].(objects.Token)
 		if _token.Type == fract.TypeOperator {
 			if !operator {
@@ -90,7 +89,7 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 			}
 			last = _token
 			processes.Append(_token)
-			operator = index < len-1
+			operator = index < tokens.Len()-1
 		} else {
 			fract.Error(_token, "Invalid value!")
 		}
@@ -101,4 +100,41 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 	}
 
 	return processes
+}
+
+// IndexProcessPriority Find index of priority operator.
+// Returns index of operator if found, returns -1 if not.
+//
+// tokens Tokens to search.
+func IndexProcessPriority(tokens *vector.Vector) int {
+	// Returns -1 if vector contains one value.
+	if len(tokens.Vals) == 1 {
+		return -1
+	}
+
+	/* Find power. */
+	for index := 0; index < len(tokens.Vals); index++ {
+		if tokens.Vals[index].(objects.Token).Value == grammar.TokenCaret {
+			return index
+		}
+	}
+
+	/* Find multipy or divide. */
+	for index := 0; index < len(tokens.Vals); index++ {
+		_token := tokens.Vals[index].(objects.Token)
+		if _token.Value == grammar.TokenStar || _token.Value == grammar.TokenSlash {
+			return index
+		}
+	}
+
+	/* Addition or subtraction. */
+	for index := 0; index < len(tokens.Vals); index++ {
+		_token := tokens.Vals[index].(objects.Token)
+		if _token.Value == grammar.TokenPlus || _token.Value == grammar.TokenMinus {
+			return index
+		}
+	}
+
+	// Not found.
+	return -1
 }
