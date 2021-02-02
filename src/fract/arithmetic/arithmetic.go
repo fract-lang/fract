@@ -163,8 +163,14 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
 	first, _ := ToDouble(process.First.Value)
 	second, _ := ToDouble(process.Second.Value)
 
-	if process.Operator.Value == grammar.TokenReverseSlash { // Divide with bigger.
-		process.Operator.Value = grammar.TokenSlash
+	if process.Operator.Value == grammar.TokenReverseSlash ||
+		process.Operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
+		if process.Operator.Value == grammar.TokenReverseSlash {
+			process.Operator.Value = grammar.TokenSlash
+		} else {
+			process.Operator.Value = grammar.IntegerDivision
+		}
+
 		if first < second {
 			cache := first
 			first = second
