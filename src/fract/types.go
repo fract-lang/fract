@@ -1,3 +1,7 @@
+/*
+	TYPES OF FRACT
+*/
+
 package fract
 
 const (
