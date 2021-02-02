@@ -1,15 +1,14 @@
+/*
+	GENERIC
+*/
+
 package arithmetic
 
 import (
-	"fmt"
-	"math"
-	"regexp"
-	"strconv"
 	"strings"
 
 	fract ".."
 	"../../grammar"
-	"../../objects"
 )
 
 // IsNegative Is negative number?
@@ -33,128 +32,6 @@ func IsNumeric(char byte) bool {
 		char == '9'
 }
 
-// IsInteger Value is an integer?
-// value Value to check.
-func IsInteger(value string) bool {
-	state, _ := regexp.MatchString("^(-|)\\s*[0-9]+$", value)
-	return state
-}
-
-// IsFloat Value is an float?
-// value Value to check.
-func IsFloat(value string) bool {
-	state, _ := regexp.MatchString("^(-|)\\s*[0-9]+(\\.[0-9]+)?$", value)
-	return state
-}
-
-// ToFloat String to float.
-// value Value to parse.
-func ToFloat(value string) (float32, error) {
-	result, err := strconv.ParseFloat(value, 32)
-	if err != nil {
-		return 0, err
-	}
-	return float32(result), err
-}
-
-// ToDouble String to double.
-// value Value to parse.
-func ToDouble(value string) (float64, error) {
-	return strconv.ParseFloat(value, 64)
-}
-
-// ToSByte String to 8bit integer.
-// value Value to parse.
-func ToSByte(value string) (int8, error) {
-	result, err := strconv.ParseInt(value, 10, 8)
-	if err != nil {
-		return 0, err
-	}
-	return int8(result), err
-}
-
-// ToShort String to 16bit integer.
-// value Value to parse.
-func ToShort(value string) (int16, error) {
-	result, err := strconv.ParseInt(value, 10, 16)
-	if err != nil {
-		return 0, err
-	}
-	return int16(result), err
-}
-
-// ToInt String to 32bit integer.
-// value Value to parse.
-func ToInt(value string) (int32, error) {
-	result, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return 0, err
-	}
-	return int32(result), err
-}
-
-// ToLong String to 64bit integer.
-// value Value to parse.
-func ToLong(value string) (int64, error) {
-	result, err := strconv.ParseInt(value, 10, 64)
-	if err != nil {
-		return 0, err
-	}
-	return int64(result), err
-}
-
-// ToByte String to 8bit unsigned integer.
-// value Value to parse.
-func ToByte(value string) (uint8, error) {
-	result, err := strconv.ParseUint(value, 10, 8)
-	if err != nil {
-		return 0, err
-	}
-	return uint8(result), err
-}
-
-// ToUShort String to 16bit unsigned integer.
-// value Value to parse.
-func ToUShort(value string) (uint16, error) {
-	result, err := strconv.ParseUint(value, 10, 16)
-	if err != nil {
-		return 0, err
-	}
-	return uint16(result), err
-}
-
-// ToUInt String to 32bit integer.
-// value Value to parse.
-func ToUInt(value string) (uint32, error) {
-	result, err := strconv.ParseUint(value, 10, 32)
-	if err != nil {
-		return 0, err
-	}
-	return uint32(result), err
-}
-
-// ToULong String to 64bit unsigned integer.
-// value Value to parse.
-func ToULong(value string) (uint64, error) {
-	result, err := strconv.ParseUint(value, 10, 64)
-	if err != nil {
-		return 0, err
-	}
-	return uint64(result), err
-}
-
-// FloatToString Float to string.
-// value Value to parse.
-func FloatToString(value interface{}) string {
-	return fmt.Sprintf("%f", value)
-}
-
-// IntToString Integer to string.
-// value Value to parse.
-func IntToString(value interface{}) string {
-	return fmt.Sprintf("%d", value)
-}
-
 // TypeToString Parse type to string.
 // _type Type.
 // value Value to parse.
@@ -164,82 +41,4 @@ func TypeToString(_type int, value interface{}) string {
 	}
 	str := FloatToString(value)
 	return str[:strings.Index(str, grammar.TokenDot)]
-}
-
-// IsFloatValue Value is float?
-// value Value to check.
-func IsFloatValue(value string) bool {
-	return strings.Index(value, grammar.TokenDot) != -1
-}
-
-// CheckFloat Check float value validate.
-// value Value to check.
-func CheckFloat(value string) bool {
-	return len(value[strings.Index(value, grammar.TokenDot)+1:]) <= 6
-}
-
-// SolveArithmeticProcess Solve arithmetic process.
-// process Process to solve.
-func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
-	/* Check type. */
-	_type := fract.VTInteger
-	if IsFloatValue(process.First.Value) || IsFloatValue(process.Second.Value) {
-		_type = fract.VTFloat
-
-		if IsFloatValue(process.First.Value) && !CheckFloat(process.First.Value) {
-			fract.Error(process.First, "Decimal limit exceeded!")
-		}
-		if IsFloatValue(process.Second.Value) && !CheckFloat(process.Second.Value) {
-			fract.Error(process.Second, "Decimal limit exceeded!")
-		}
-	}
-
-	var result float64
-
-	first, _ := ToDouble(process.First.Value)
-	second, _ := ToDouble(process.Second.Value)
-
-	if process.Operator.Value == grammar.TokenReverseSlash ||
-		process.Operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
-		if process.Operator.Value == grammar.TokenReverseSlash {
-			process.Operator.Value = grammar.TokenSlash
-		} else {
-			process.Operator.Value = grammar.IntegerDivision
-		}
-
-		if first < second {
-			cache := first
-			first = second
-			second = cache
-		}
-	}
-
-	if process.Operator.Value == grammar.TokenPlus { // Addition.
-		result = first + second
-	} else if process.Operator.Value == grammar.TokenMinus { // Subtraction.
-		result = first - second
-	} else if process.Operator.Value == grammar.TokenStar { // Multiply.
-		result = first * second
-	} else if process.Operator.Value == grammar.TokenSlash ||
-		process.Operator.Value == grammar.IntegerDivision { // Division.
-		if first == 0 {
-			fract.Error(process.First, "Divide by zero!")
-		} else if second == 0 {
-			fract.Error(process.Second, "Divide by zero!")
-		}
-		result = first / second
-
-		if process.Operator.Value == grammar.IntegerDivision {
-			result = math.RoundToEven(result)
-		}
-	} else if process.Operator.Value == grammar.TokenCaret { // Exponentiation.
-		result = math.Pow(first, second)
-	} else if process.Operator.Value == grammar.TokenPercent { // Mod.
-		result = math.Mod(first, second)
-	} else {
-		fract.Error(process.Operator,
-			"Operator is invalid!: "+process.Operator.Value)
-	}
-
-	return _type, result
 }

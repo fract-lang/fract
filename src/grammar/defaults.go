@@ -1,3 +1,7 @@
+/*
+	DEFAULT VALUES OF DATA TYPES
+*/
+
 package grammar
 
 const (
