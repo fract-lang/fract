@@ -128,13 +128,13 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 	}
 
 	/* Addition or subtraction. */
-	for index := 0; index < len(tokens.Vals); index++ {
+	/*for index := 0; index < len(tokens.Vals); index++ {
 		_token := tokens.Vals[index].(objects.Token)
 		if _token.Value == grammar.TokenPlus || _token.Value == grammar.TokenMinus {
 			return index
 		}
-	}
+	}*/
 
 	// Not found.
-	return -1
+	return 1
 }
