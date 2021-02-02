@@ -131,7 +131,8 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 		_token := tokens.Vals[index].(objects.Token)
 		if _token.Value == grammar.TokenStar ||
 			_token.Value == grammar.TokenSlash ||
-			_token.Value == grammar.TokenReverseSlash {
+			_token.Value == grammar.TokenReverseSlash ||
+			_token.Value == grammar.IntegerDivision {
 			return index
 		}
 	}

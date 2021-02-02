@@ -93,6 +93,9 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = arithmeticCheck
 		token.Type = fract.TypeValue
+	} else if strings.HasPrefix(ln, grammar.IntegerDivision) { // Integer division.
+		token.Value = grammar.IntegerDivision
+		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenPlus) { // Addition.
 		token.Value = grammar.TokenPlus
 		token.Type = fract.TypeOperator

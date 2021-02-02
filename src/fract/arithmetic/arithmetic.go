@@ -178,13 +178,18 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
 		result = first - second
 	} else if process.Operator.Value == grammar.TokenStar { // Multiply.
 		result = first * second
-	} else if process.Operator.Value == grammar.TokenSlash { // Division.
+	} else if process.Operator.Value == grammar.TokenSlash ||
+		process.Operator.Value == grammar.IntegerDivision { // Division.
 		if first == 0 {
 			fract.Error(process.First, "Divide by zero!")
 		} else if second == 0 {
 			fract.Error(process.Second, "Divide by zero!")
 		}
 		result = first / second
+
+		if process.Operator.Value == grammar.IntegerDivision {
+			result = math.RoundToEven(result)
+		}
 	} else if process.Operator.Value == grammar.TokenCaret { // Exponentiation.
 		result = math.Pow(first, second)
 	} else if process.Operator.Value == grammar.TokenPercent { // Mod.
