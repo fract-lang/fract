@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 
 	fract ".."
 	"../../grammar"
@@ -13,7 +14,7 @@ import (
 // IsNegative Is negative number?
 // value Value to check.
 func IsNegative(value string) bool {
-	return value[0] == grammar.TokenMinus[0]
+	return strings.HasPrefix(value, grammar.TokenMinus)
 }
 
 // IsNumeric Char is numeric?
