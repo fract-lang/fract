@@ -172,9 +172,28 @@ func IsFloatValue(value string) bool {
 	return strings.Index(value, grammar.TokenDot) != -1
 }
 
+// CheckFloat Check float value validate.
+// value Value to check.
+func CheckFloat(value string) bool {
+	return len(value[strings.Index(value, grammar.TokenDot)+1:]) <= 6
+}
+
 // SolveArithmeticProcess Solve arithmetic process.
 // process Process to solve.
 func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
+	/* Check type. */
+	_type := fract.VTInteger
+	if IsFloatValue(process.First.Value) || IsFloatValue(process.Second.Value) {
+		_type = fract.VTFloat
+
+		if IsFloatValue(process.First.Value) && !CheckFloat(process.First.Value) {
+			fract.Error(process.First, "Decimal limit exceeded!")
+		}
+		if IsFloatValue(process.Second.Value) && !CheckFloat(process.Second.Value) {
+			fract.Error(process.Second, "Decimal limit exceeded!")
+		}
+	}
+
 	var result float64
 
 	first, _ := ToDouble(process.First.Value)
@@ -220,12 +239,6 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
 	} else {
 		fract.Error(process.Operator,
 			"Operator is invalid!: "+process.Operator.Value)
-	}
-
-	/* Check type. */
-	_type := fract.VTInteger
-	if IsFloatValue(process.First.Value) || IsFloatValue(process.Second.Value) {
-		_type = fract.VTFloat
 	}
 
 	return _type, result
