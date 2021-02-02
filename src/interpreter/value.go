@@ -60,7 +60,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	}
 
 	// Set value.
-	_value, _ := arithmetic.ToDouble(operations.First().(objects.Token).Value)
+	_value, _ := arithmetic.ToFloat64(operations.First().(objects.Token).Value)
 	value.Content = arithmetic.TypeToString(value.Type, _value)
 
 	/* Set type to float if... */
