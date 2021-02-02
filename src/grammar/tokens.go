@@ -87,9 +87,9 @@ const (
 	// DATA TYPES
 
 	// DtByte byte.
-	DtByte string = "byte"
+	DtByte string = "uint8"
 	// DtSignedByte sbyte.
-	DtSignedByte string = "sbyte"
+	DtSignedByte string = "int8"
 	// Dt16BitInteger short.
 	Dt16BitInteger string = "int16"
 	// Dt32BitInteger int.
@@ -97,11 +97,11 @@ const (
 	// Dt64BitInteger long.
 	Dt64BitInteger string = "int64"
 	// DtUnsigned16BitInteger ushort.
-	DtUnsigned16BitInteger string = "int16"
+	DtUnsigned16BitInteger string = "uint16"
 	// DtUnsigned32BitInteger uint.
-	DtUnsigned32BitInteger string = "int32"
+	DtUnsigned32BitInteger string = "uint32"
 	// DtUnsigned64BitInteger ulong.
-	DtUnsigned64BitInteger string = "int64"
+	DtUnsigned64BitInteger string = "uint64"
 	// DtBoolean boolean.
 	DtBoolean string = "bool"
 	// DtFloat float.
