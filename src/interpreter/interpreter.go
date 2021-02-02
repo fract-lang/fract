@@ -39,7 +39,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		_range, found := parser.DecomposeBrace(tokens)
 
 		/* Parentheses are not found! */
-		if found == -1 || len(_range.Vals) == 0 {
+		if found == -1 {
 			break
 		}
 
