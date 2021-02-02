@@ -166,6 +166,12 @@ func TypeToString(_type int, value interface{}) string {
 	return str[:strings.Index(str, grammar.TokenDot)]
 }
 
+// IsFloatValue Value is float?
+// value Value to check.
+func IsFloatValue(value string) bool {
+	return strings.Index(value, grammar.TokenDot) != -1
+}
+
 // SolveArithmeticProcess Solve arithmetic process.
 // process Process to solve.
 func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
@@ -218,8 +224,7 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
 
 	/* Check type. */
 	_type := fract.VTInteger
-	if strings.Index(process.First.Value, grammar.TokenDot) != -1 ||
-		strings.Index(process.Second.Value, grammar.TokenDot) != -1 {
+	if IsFloatValue(process.First.Value) || IsFloatValue(process.Second.Value) {
 		_type = fract.VTFloat
 	}
 
