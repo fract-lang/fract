@@ -132,6 +132,12 @@ func (i *Interpreter) Interpret() {
 	/* Interpret all lines. */
 	for !i.lexer.Finished {
 		tokens := i.lexer.Next()
+
+		// Skip this loop if tokens are empty.
+		if tokens.Len() == 0 {
+			continue
+		}
+
 		first := tokens.Vals[0].(objects.Token)
 
 		if first.Type == fract.TypeValue || first.Type == fract.TypeBrace {
