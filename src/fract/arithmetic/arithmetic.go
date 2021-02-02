@@ -178,6 +178,8 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
 		result = first / second
 	} else if process.Operator.Value == grammar.TokenCaret { // Power.
 		result = math.Pow(first, second)
+	} else if process.Operator.Value == grammar.TokenPercent { // Mod.
+		result = math.Mod(first, second)
 	} else {
 		fract.Error(process.Operator,
 			"Operator is invalid!: "+process.Operator.Value)
