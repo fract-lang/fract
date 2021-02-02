@@ -49,41 +49,34 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		tokens.Insert(found, _token)
 	}
 
-	var (
-		value     objects.Value
-		operation objects.ArithmeticProcess
-		avalue    float64 = 0
-	)
+	var value objects.Value
 	value.Content = ""
 	value.Type = fract.VTInteger
 
-	// Decompose arithmetic operations
+	// Decompose arithmetic operations.
 	operations := parser.DecomposeArithmeticProcesses(tokens)
-	for index := 0; index < len(operations.Vals); index++ {
-		_token := operations.Vals[index].(objects.Token)
-		if operation.First.Value == "" {
-			operation.First = _token
-			continue
-		} else if operation.Operator.Value == "" {
-			operation.Operator = _token
-			continue
-		}
-		operation.Second = _token
-		avalue = arithmetic.SolveArithmeticProcess(operation)
 
-		/* Reset to defaults. */
-		operation.First = operation.Second
-		operation.First.Value = arithmetic.FloatToString(avalue)
-		operation.Operator.Value = ""
-		operation.Second.Value = ""
-	}
-	// If only one value.
-	if operations.Len() == 1 {
-		avalue, _ = arithmetic.ToDouble(operations.First().(objects.Token).Value)
+	// Process arithmetic operation.
+	priorityIndex := parser.IndexProcessPriority(&operations)
+	for priorityIndex != -1 {
+		var operation objects.ArithmeticProcess
+		operation.First = operations.Vals[priorityIndex-1].(objects.Token)
+		operation.Operator = operations.Vals[priorityIndex].(objects.Token)
+		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
+
+		_token := operations.Vals[priorityIndex-1].(objects.Token)
+		operations.RemoveRange(priorityIndex-1, 3)
+		_token.Value =
+			arithmetic.FloatToString(arithmetic.SolveArithmeticProcess(operation))
+		operations.Insert(priorityIndex-1, _token)
+
+		// Find next operator.
+		priorityIndex = parser.IndexProcessPriority(&operations)
 	}
 
 	// Set value.
-	value.Content = arithmetic.FloatToString(avalue)
+	_value, _ := arithmetic.ToDouble(operations.First().(objects.Token).Value)
+	value.Content = arithmetic.FloatToString(_value)
 
 	/* Set type to float if... */
 	if value.Type != fract.VTFloat &&
