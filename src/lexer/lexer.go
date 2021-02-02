@@ -108,6 +108,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenCaret) { // Power.
 		token.Value = grammar.TokenCaret
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenPercent) { // Mod.
+		token.Value = grammar.TokenPercent
+		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
 		braceCount++
 		token.Value = grammar.TokenLParenthes

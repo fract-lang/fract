@@ -119,6 +119,13 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 		}
 	}
 
+	/* Find mod. */
+	for index := 0; index < len(tokens.Vals); index++ {
+		if tokens.Vals[index].(objects.Token).Value == grammar.TokenPercent {
+			return index
+		}
+	}
+
 	/* Find multipy or divide. */
 	for index := 0; index < len(tokens.Vals); index++ {
 		_token := tokens.Vals[index].(objects.Token)
