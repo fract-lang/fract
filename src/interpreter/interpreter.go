@@ -60,11 +60,11 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	priorityIndex := parser.IndexProcessPriority(&operations)
 	for priorityIndex != -1 {
 		var operation objects.ArithmeticProcess
-		operation.First = operations.Vals[priorityIndex-1].(objects.Token)
-		operation.Operator = operations.Vals[priorityIndex].(objects.Token)
-		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
+		operation.First = operations.At(priorityIndex - 1).(objects.Token)
+		operation.Operator = operations.At(priorityIndex).(objects.Token)
+		operation.Second = operations.At(priorityIndex + 1).(objects.Token)
 
-		_token := operations.Vals[priorityIndex-1].(objects.Token)
+		_token := operations.At(priorityIndex - 1).(objects.Token)
 		operations.RemoveRange(priorityIndex-1, 3)
 		_type, result := arithmetic.SolveArithmeticProcess(operation)
 		value.Type = _type
@@ -139,7 +139,7 @@ func (i *Interpreter) Interpret() {
 			continue
 		}
 
-		first := tokens.Vals[0].(objects.Token)
+		first := tokens.At(0).(objects.Token)
 
 		if first.Type == fract.TypeValue || first.Type == fract.TypeBrace {
 			fmt.Println(i.processValue(&tokens).Content)
