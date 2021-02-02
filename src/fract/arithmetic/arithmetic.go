@@ -185,7 +185,7 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) float64 {
 			fract.Error(process.Second, "Divide by zero!")
 		}
 		result = first / second
-	} else if process.Operator.Value == grammar.TokenCaret { // Power.
+	} else if process.Operator.Value == grammar.TokenCaret { // Exponentiation.
 		result = math.Pow(first, second)
 	} else if process.Operator.Value == grammar.TokenPercent { // Mod.
 		result = math.Mod(first, second)

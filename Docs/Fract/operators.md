@@ -24,7 +24,7 @@
   </tr>
   <tr>
     <td align="center"><b>^</b></td>
-    <td>Power.</td>
+    <td>Exponentiation.</td>
   </tr>
   <tr>
     <td align="center"><b>\</b></td>

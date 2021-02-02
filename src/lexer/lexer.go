@@ -105,7 +105,7 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenSlash) { // Division.
 		token.Value = grammar.TokenSlash
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenCaret) { // Power.
+	} else if strings.HasPrefix(ln, grammar.TokenCaret) { // Exponentiation.
 		token.Value = grammar.TokenCaret
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenPercent) { // Mod.
