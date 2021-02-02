@@ -1,5 +1,5 @@
 /*
-	GRAMMAR FUNCTIONS
+	DecomposeBrace Function
 */
 
 package parser
