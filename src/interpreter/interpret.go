@@ -45,6 +45,8 @@ func (i *Interpreter) Interpret() {
 			fmt.Println(i.processValue(&tokens).Content)
 		} else if first.Type == fract.TypeVariable { // Variable definition.
 			i.processVariableDefinition(&tokens)
+		} else if first.Type == fract.TypeDelete { // Delete from memory.
+			i.processDelete(&tokens)
 		} else {
 			fract.Error(first, "What is this?: "+first.Value)
 		}
