@@ -8,6 +8,9 @@ const (
 	// SeperatorSub Sub element seperator.
 	SeperatorSub string = "::"
 
+	// Setter X setter.
+	Setter string = ":="
+
 	// IntegerDivision Integer divide.
 	IntegerDivision string = "//"
 

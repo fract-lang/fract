@@ -49,4 +49,6 @@ const (
 	TokenRParenthes string = ")"
 	// TokenCaret Caret.
 	TokenCaret string = "^"
+	// TokenUnderscore Unserscore.
+	TokenUnderscore string = "_"
 )

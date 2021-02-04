@@ -47,16 +47,18 @@ func (l *Lexer) Generate() objects.Token {
 	token.Line = l.Line
 
 	/* Tokenize. */
-	arithmeticCheck := strings.TrimSpace(regexp.MustCompile(
+
+	/* Check arithmetic value? */
+	check := strings.TrimSpace(regexp.MustCompile(
 		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+||\\W|$)").FindString(ln))
-	if arithmeticCheck != "" &&
+	if check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
-		match, _ := regexp.MatchString("\\W$", arithmeticCheck)
+		match, _ := regexp.MatchString("\\W$", check)
 		if match {
-			arithmeticCheck = arithmeticCheck[:len(arithmeticCheck)-1]
+			check = check[:len(check)-1]
 		}
-		token.Value = arithmeticCheck
+		token.Value = check
 		token.Type = fract.TypeValue
 	} else if strings.HasPrefix(ln, grammar.IntegerDivision) { // Integer division.
 		token.Value = grammar.IntegerDivision
@@ -96,9 +98,56 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.Setter) {
+		token.Value = grammar.Setter
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.KwVariable) { // Variable.
+		token.Value = grammar.KwVariable
+		token.Type = fract.TypeVariable
+	} else if strings.HasPrefix(ln, grammar.DtInt8) { // int8.
+		token.Value = grammar.DtInt8
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtInt16) { // int16.
+		token.Value = grammar.DtInt16
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtInt32) { // int32.
+		token.Value = grammar.DtInt32
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtInt64) { // int64.
+		token.Value = grammar.DtInt64
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtUInt8) { // uint8.
+		token.Value = grammar.DtUInt8
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtUInt16) { // uint16.
+		token.Value = grammar.DtUInt16
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtUInt32) { // uint32.
+		token.Value = grammar.DtUInt32
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtUInt64) { // uint64.
+		token.Value = grammar.DtUInt64
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtFloat32) { // float32.
+		token.Value = grammar.DtFloat32
+		token.Type = fract.TypeDataType
+	} else if strings.HasPrefix(ln, grammar.DtFloat64) { // float64.
+		token.Value = grammar.DtFloat64
+		token.Type = fract.TypeDataType
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
-	} else {
-		l.Error("What is this?: " + ln)
+	} else { // Alternates
+		/* Check variable name. */
+		check = strings.TrimSpace(regexp.MustCompile(
+			"^([A-z])([a-zA-Z1-9" + grammar.TokenUnderscore + grammar.TokenDot +
+				".]+)?\\s+").FindString(ln))
+		if check != "" && !strings.HasSuffix(check, grammar.TokenDot) &&
+			!strings.HasSuffix(check, grammar.TokenUnderscore) { // Name.
+			token.Value = strings.TrimSpace(check)
+			token.Type = fract.TypeName
+		} else { // Error exactly
+			l.Error("What is this?: " + ln)
+		}
+
 	}
 
 	/* Add length to column. */

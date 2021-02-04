@@ -31,8 +31,9 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 			last = _token
 			processes.Append(_token)
 			operator = false
-		} else if _token.Type == fract.TypeValue {
-			if last.Type == fract.TypeOperator && last.Value == grammar.TokenMinus &&
+		} else if _token.Type == fract.TypeValue || _token.Type == fract.TypeName {
+			if _token.Type == fract.TypeName && last.Type == fract.TypeOperator &&
+				last.Value == grammar.TokenMinus &&
 				strings.HasPrefix(_token.Value, grammar.TokenMinus) {
 				fract.Error(_token, "Negative number declare after subtraction!")
 			}

@@ -29,12 +29,12 @@ func (i *Interpreter) Interpret() {
 
 		first := tokens.At(0).(objects.Token)
 
-		if first.Type == fract.TypeValue || first.Type == fract.TypeBrace {
+		if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
+			first.Type == fract.TypeName {
 			fmt.Println(i.processValue(&tokens).Content)
+		} else if first.Type == fract.TypeVariable {
+			i.processVariableDefinition(&tokens)
 		} else {
-			if first.Type == fract.TypeBrace {
-				fract.Error(first, "Statement are don't starts with brackets!")
-			}
 			fract.Error(first, "What is this?: "+first.Value)
 		}
 	}

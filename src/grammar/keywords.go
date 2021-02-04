@@ -19,8 +19,6 @@ const (
 	KwReturn string = "ret"
 	// KwForLoop For loop.
 	KwForLoop string = "for"
-	// KwWhileLoop While loop.
-	KwWhileLoop string = "while"
 	// KwIf If condition.
 	KwIf string = "if"
 	// KwElseIf Else-If alternate.
