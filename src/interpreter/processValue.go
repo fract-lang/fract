@@ -54,7 +54,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 			index := name.VarIndexByName(i.vars, operation.First.Value)
 			if index == -1 {
 				fract.Error(operation.First,
-					"Variable is not exist in this name!: "+operation.First.Value)
+					"Name is not defined!: "+operation.First.Value)
 			}
 			operation.First.Value = i.vars.At(index).(objects.Variable).Value
 		}
@@ -64,7 +64,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 			index := name.VarIndexByName(i.vars, operation.Second.Value)
 			if index == -1 {
 				fract.Error(operation.Second,
-					"Variable is not exist in this name!: "+operation.Second.Value)
+					"Name is not defined!: "+operation.Second.Value)
 			}
 			operation.Second.Value = i.vars.At(index).(objects.Variable).Value
 		}

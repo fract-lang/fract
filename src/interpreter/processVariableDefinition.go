@@ -26,7 +26,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	_name := tokens.At(1).(objects.Token)
 
 	if name.VarIndexByName(i.vars, _name.Value) != -1 {
-		fract.Error(_name, "Already exist variable in this name!: "+_name.Value)
+		fract.Error(_name, "Already defined this name!: "+_name.Value)
 	}
 
 	dataType := tokens.At(2).(objects.Token)
@@ -39,7 +39,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	setter := tokens.At(3).(objects.Token)
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter {
-		fract.Error(setter, "This is not a setter operator("+grammar.Setter+")!")
+		fract.Error(setter, "This is not a setter operator!"+setter.Value)
 	}
 
 	variable.Name = _name.Value
