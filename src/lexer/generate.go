@@ -50,14 +50,10 @@ func (l *Lexer) Generate() objects.Token {
 
 	/* Check arithmetic value? */
 	check := strings.TrimSpace(regexp.MustCompile(
-		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+||\\W|$)").FindString(ln))
+		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s+|$)").FindString(ln))
 	if check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
-		match, _ := regexp.MatchString("\\W$", check)
-		if match {
-			check = check[:len(check)-1]
-		}
 		token.Value = check
 		token.Type = fract.TypeValue
 	} else if strings.HasPrefix(ln, grammar.IntegerDivision) { // Integer division.
@@ -139,7 +135,7 @@ func (l *Lexer) Generate() objects.Token {
 		/* Check variable name. */
 		check = strings.TrimSpace(regexp.MustCompile(
 			"^([A-z])([a-zA-Z1-9" + grammar.TokenUnderscore + grammar.TokenDot +
-				".]+)?(\\s+|$)").FindString(ln))
+				"]+)?(\\s+|$)").FindString(ln))
 		if check != "" && !strings.HasSuffix(check, grammar.TokenDot) &&
 			!strings.HasSuffix(check, grammar.TokenUnderscore) { // Name.
 			token.Value = strings.TrimSpace(check)
