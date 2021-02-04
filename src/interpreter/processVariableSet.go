@@ -16,11 +16,6 @@ import (
 // ProcessVariableSet Process variable set statement.
 // tokens Tokens to process.
 func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
-	/* Check size. */
-	if tokens.Len() < 3 {
-		fract.Error(tokens.Last().(objects.Token), "")
-	}
-
 	_name := tokens.At(0).(objects.Token)
 
 	index := name.VarIndexByName(i.vars, _name.Value)
@@ -29,9 +24,16 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	}
 
 	setter := tokens.At(1).(objects.Token)
+
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter {
 		fract.Error(setter, "This is not a setter operator!"+setter.Value)
+	}
+
+	// Value are not defined?
+	if tokens.Len() < 3 {
+		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value),
+			"Value is not defined!")
 	}
 
 	variable := i.vars.At(index).(objects.Variable)
