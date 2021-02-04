@@ -1,2 +1,3 @@
-var a int32 := 4
-5 + a
+var a float32 := 4
+var b float32 := 4
+b + a
