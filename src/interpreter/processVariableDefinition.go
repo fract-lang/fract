@@ -17,16 +17,26 @@ import (
 // tokens Tokens to process.
 func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	var variable objects.Variable
+	length := tokens.Len()
 
-	/* Check size. */
-	if tokens.Len() < 5 {
-		fract.Error(tokens.Last().(objects.Token), "")
+	// Name is not defined?
+	if length < 2 {
+		first := tokens.First().(objects.Token)
+		fract.ErrorCustom(first.Line, first.Column+len(first.Value),
+			"Name is not found!")
 	}
 
 	_name := tokens.At(1).(objects.Token)
 
+	// Name is already defined?
 	if name.VarIndexByName(i.vars, _name.Value) != -1 {
 		fract.Error(_name, "Already defined this name!: "+_name.Value)
+	}
+
+	// Data type is not defined?
+	if length < 3 {
+		fract.ErrorCustom(_name.Line, _name.Column+len(_name.Value),
+			"Data type is not found!")
 	}
 
 	dataType := tokens.At(2).(objects.Token)
@@ -36,10 +46,22 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 		fract.Error(dataType, "This is not a data type!")
 	}
 
+	// Setter is not defined?
+	if length < 4 {
+		fract.ErrorCustom(dataType.Line, dataType.Column+len(dataType.Value),
+			"Setter is not found!")
+	}
+
 	setter := tokens.At(3).(objects.Token)
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter {
 		fract.Error(setter, "This is not a setter operator!"+setter.Value)
+	}
+
+	// Value is not defined?
+	if length < 5 {
+		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value),
+			"Value is not defined!")
 	}
 
 	variable.Name = _name.Value

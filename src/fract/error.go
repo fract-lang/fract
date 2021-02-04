@@ -15,7 +15,15 @@ import (
 // token Token of error.
 // message Message of error.
 func Error(token objects.Token, message string) {
+	ErrorCustom(token.Line, token.Column, message)
+}
+
+// ErrorCustom Exit with error.
+// line Line of error.
+// column Column of error.
+// message Message of error.
+func ErrorCustom(line int, column int, message string) {
 	fmt.Printf("RUNTIME ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
-		message, token.Line, token.Column)
+		message, line, column)
 	os.Exit(1)
 }
