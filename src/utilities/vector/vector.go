@@ -55,6 +55,15 @@ func (v *Vector) At(pos int) interface{} {
 	return v.Vals[pos]
 }
 
+// AtCheck Get element by index and check.
+// pos Index of element.
+func (v *Vector) AtCheck(pos int) (interface{}, bool) {
+	if pos < 0 || pos >= len(v.Vals) {
+		return nil, false
+	}
+	return v.Vals[pos], true
+}
+
 // Set Set value by index.
 // pos Index to set.
 func (v *Vector) Set(pos int, value interface{}) {
