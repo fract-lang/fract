@@ -1,9 +1,9 @@
 <table>
   <tr>
-    <td colspan="2" align="center"><b>Arithmetic Operators</b></td>
+    <td colspan="2" align="center"><b>Operators</b></td>
   </tr>
   <tr>
-    <td width="5" align="center"><b>+</b></td>
+    <td align="center"><b>+</b></td>
     <td>Addition.</td>
   </tr>
   <tr>
@@ -37,5 +37,9 @@
   <tr>
     <td align="center"><b>\\</b></td>
     <td>Integer division with bigger.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>:=</b></td>
+    <td>Setter.</td>
   </tr>
 </table>
