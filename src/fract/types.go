@@ -22,6 +22,12 @@ const (
 	TypeValue int = 1103
 	// TypeBrace Bracket type.
 	TypeBrace int = 1104
+	// TypeVariable Variable define type.
+	TypeVariable int = 1105
+	// TypeName Name type.
+	TypeName int = 1106
+	// TypeDataType Data type type.
+	TypeDataType int = 1107
 
 	// VTInteger Integer value type.
 	VTInteger int = 0

@@ -6,6 +6,7 @@ package interpreter
 
 import (
 	"../lexer"
+	"../utilities/vector"
 )
 
 // Interpreter Interprater of Fract.
@@ -14,6 +15,8 @@ type Interpreter struct {
 
 	// Parser of this file.
 	lexer *lexer.Lexer
+	// Variables.
+	vars *vector.Vector
 
 	/* PUBLIC */
 

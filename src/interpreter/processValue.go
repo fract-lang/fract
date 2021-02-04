@@ -9,6 +9,7 @@ import (
 
 	"../fract"
 	"../fract/arithmetic"
+	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -48,6 +49,26 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		operation.Operator = operations.At(priorityIndex).(objects.Token)
 		operation.Second = operations.At(priorityIndex + 1).(objects.Token)
 
+		// First value is a name?
+		if operation.First.Type == fract.TypeName {
+			index := name.VarIndexByName(i.vars, operation.First.Value)
+			if index == -1 {
+				fract.Error(operation.First,
+					"Variable is not exist in this name!: "+operation.First.Value)
+			}
+			operation.First.Value = i.vars.At(index).(objects.Variable).Value
+		}
+
+		// Second value is a name?
+		if operation.Second.Type == fract.TypeName {
+			index := name.VarIndexByName(i.vars, operation.Second.Value)
+			if index == -1 {
+				fract.Error(operation.Second,
+					"Variable is not exist in this name!: "+operation.Second.Value)
+			}
+			operation.Second.Value = i.vars.At(index).(objects.Variable).Value
+		}
+
 		_token := operations.At(priorityIndex - 1).(objects.Token)
 		operations.RemoveRange(priorityIndex-1, 3)
 		_type, result := arithmetic.SolveArithmeticProcess(operation)
@@ -60,7 +81,11 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	}
 
 	// Set value.
-	_value, _ := arithmetic.ToFloat64(operations.First().(objects.Token).Value)
+	first := operations.First().(objects.Token)
+	_value, _ := arithmetic.ToFloat64(first.Value)
+	if arithmetic.IsFloatValue(first.Value) {
+		value.Type = fract.VTFloat
+	}
 	value.Content = arithmetic.TypeToString(value.Type, _value)
 
 	/* Set type to float if... */
