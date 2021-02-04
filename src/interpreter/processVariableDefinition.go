@@ -28,6 +28,11 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	_name := tokens.At(1).(objects.Token)
 
+	// Name is not name?
+	if _name.Type != fract.TypeName {
+		fract.Error(_name, "This is not a valid name!")
+	}
+
 	// Name is already defined?
 	if name.VarIndexByName(i.vars, _name.Value) != -1 {
 		fract.Error(_name, "Already defined this name!: "+_name.Value)

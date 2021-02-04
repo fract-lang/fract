@@ -18,6 +18,11 @@ import (
 func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	_name := tokens.At(0).(objects.Token)
 
+	// Name is not name?
+	if _name.Type != fract.TypeName {
+		fract.Error(_name, "This is not a valid name!")
+	}
+
 	index := name.VarIndexByName(i.vars, _name.Value)
 	if index == -1 {
 		fract.Error(_name, "Name is not defined!: "+_name.Value)
