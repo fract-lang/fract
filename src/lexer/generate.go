@@ -94,12 +94,18 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.Setter) {
+	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
+		token.Value = grammar.TokenComma
+		token.Type = fract.TypeComma
+	} else if strings.HasPrefix(ln, grammar.Setter) { // Setter.
 		token.Value = grammar.Setter
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.KwVariable) { // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
+	} else if strings.HasPrefix(ln, grammar.KwDelete) { // Delete.
+		token.Value = grammar.KwDelete
+		token.Type = fract.TypeDelete
 	} else if strings.HasPrefix(ln, grammar.DtInt8) { // int8.
 		token.Value = grammar.DtInt8
 		token.Type = fract.TypeDataType

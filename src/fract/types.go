@@ -28,6 +28,10 @@ const (
 	TypeName int = 1106
 	// TypeDataType Data type type.
 	TypeDataType int = 1107
+	// TypeDelete Delete from memory type.
+	TypeDelete int = 1108
+	// TypeComma Comma type.
+	TypeComma int = 1109
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
