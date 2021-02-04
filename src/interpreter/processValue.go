@@ -82,6 +82,17 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 
 	// Set value.
 	first := operations.First().(objects.Token)
+
+	// First value is a name?
+	if first.Type == fract.TypeName && tokens.Len() == 1 {
+		index := name.VarIndexByName(i.vars, first.Value)
+		if index == -1 {
+			fract.Error(first,
+				"Name is not defined!: "+first.Value)
+		}
+		first.Value = i.vars.At(index).(objects.Variable).Value
+	}
+
 	_value, _ := arithmetic.ToFloat64(first.Value)
 	if arithmetic.IsFloatValue(first.Value) {
 		value.Type = fract.VTFloat
