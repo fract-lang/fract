@@ -11,9 +11,10 @@ Fract is written in C++ and used Makefile for compilation. Execute Makefile in y
 Command are usually like: make
 
 
-
 EXAMPLE CODE
 
 var variable.1 int32 := 4
 var variable.1 int32 := 4
 variable.1 + variable.2 # Printed 8
+
+Quick Start To Fract: https://github.com/fract-lang/fract/blob/main/Docs/Fract/quick_start.md
