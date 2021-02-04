@@ -139,7 +139,7 @@ func (l *Lexer) Generate() objects.Token {
 		/* Check variable name. */
 		check = strings.TrimSpace(regexp.MustCompile(
 			"^([A-z])([a-zA-Z1-9" + grammar.TokenUnderscore + grammar.TokenDot +
-				".]+)?\\s+").FindString(ln))
+				".]+)?(\\s+|$)").FindString(ln))
 		if check != "" && !strings.HasSuffix(check, grammar.TokenDot) &&
 			!strings.HasSuffix(check, grammar.TokenUnderscore) { // Name.
 			token.Value = strings.TrimSpace(check)
