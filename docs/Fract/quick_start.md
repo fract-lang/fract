@@ -1,5 +1,9 @@
 # QUICK START TO FRACT
 
++ [Keywords](https://github.com/fract-lang/fract/blob/main/docs/Fract/keywords.md)
++ [DataTypes](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
++ [Operators](https://github.com/fract-lang/fract/blob/main/docs/Fract/operators.md)
+
 ## Comments
 Fract does not support multiline comments. ``#`` Is used for comments.
 ### Examples

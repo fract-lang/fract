@@ -17,4 +17,4 @@ var variable.1 int32 := 4
 var variable.1 int32 := 4
 variable.1 + variable.2 # Printed 8
 
-Quick Start To Fract: https://github.com/fract-lang/fract/blob/main/Docs/Fract/quick_start.md
+Quick Start To Fract: https://github.com/fract-lang/fract/blob/main/docs/Fract/quick_start.md
