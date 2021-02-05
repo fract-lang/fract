@@ -149,7 +149,6 @@ func (l *Lexer) Generate() objects.Token {
 		} else { // Error exactly
 			l.Error("What is this?: " + ln)
 		}
-
 	}
 
 	/* Add length to column. */

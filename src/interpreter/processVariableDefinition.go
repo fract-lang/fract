@@ -6,6 +6,7 @@ package interpreter
 
 import (
 	"../fract"
+	"../fract/arithmetic"
 	"../fract/dt"
 	"../fract/name"
 	"../grammar"
@@ -79,7 +80,11 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
-	variable.Value = value.Content
+	result, err := arithmetic.ValueToTypeValue(variable.Type, value.Content)
+	if err != "" {
+		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value), err)
+	}
+	variable.Value = result
 
 	i.vars.Append(variable)
 }
