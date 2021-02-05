@@ -57,4 +57,9 @@
     <td>64Bit float.</td>
     <td>-1.797693134862315708145274237317043567981e+308 to 1.797693134862315708145274237317043567981e+308</td>
   </tr>
+  <tr align="center">
+    <td><b>bool</b></td>
+    <td>Boolean.</td>
+    <td>true(1), false(0), 0 or 1</td>
+  </tr>
 </table>
