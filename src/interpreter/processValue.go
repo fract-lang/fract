@@ -74,6 +74,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		_type, result := arithmetic.SolveArithmeticProcess(operation)
 		value.Type = _type
 		_token.Value = arithmetic.TypeToString(_type, result)
+		_token.Type = fract.TypeValue
 		operations.Insert(priorityIndex-1, _token)
 
 		// Find next operator.
