@@ -51,8 +51,8 @@ var Fibonacci.First int32 := 1
 ```
 #### Examples
 ```
-var a int32 := 45 # Value is 45
-a := 1 # Value is 1
+var a int32 := 45    # Value is 45
+a := 1               # Value is 1
 ```
 
 ### Deletion Defines
