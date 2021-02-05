@@ -1,4 +1,5 @@
 var a int32 := 4
 var b int32 := 4
 var c bool := false
+c :=true
 b + a + c
