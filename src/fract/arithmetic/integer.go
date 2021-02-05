@@ -17,9 +17,9 @@ func IsInteger(value string) bool {
 	return state
 }
 
-// ToSByte String to 8bit integer.
+// ToInt8 String to 8bit integer.
 // value Value to parse.
-func ToSByte(value string) (int8, error) {
+func ToInt8(value string) (int8, error) {
 	result, err := strconv.ParseInt(value, 10, 8)
 	if err != nil {
 		return 0, err
@@ -27,9 +27,9 @@ func ToSByte(value string) (int8, error) {
 	return int8(result), err
 }
 
-// ToShort String to 16bit integer.
+// ToInt16 String to 16bit integer.
 // value Value to parse.
-func ToShort(value string) (int16, error) {
+func ToInt16(value string) (int16, error) {
 	result, err := strconv.ParseInt(value, 10, 16)
 	if err != nil {
 		return 0, err
@@ -37,9 +37,9 @@ func ToShort(value string) (int16, error) {
 	return int16(result), err
 }
 
-// ToInt String to 32bit integer.
+// ToInt32 String to 32bit integer.
 // value Value to parse.
-func ToInt(value string) (int32, error) {
+func ToInt32(value string) (int32, error) {
 	result, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
 		return 0, err
@@ -47,9 +47,9 @@ func ToInt(value string) (int32, error) {
 	return int32(result), err
 }
 
-// ToLong String to 64bit integer.
+// ToInt64 String to 64bit integer.
 // value Value to parse.
-func ToLong(value string) (int64, error) {
+func ToInt64(value string) (int64, error) {
 	result, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		return 0, err
@@ -57,9 +57,9 @@ func ToLong(value string) (int64, error) {
 	return int64(result), err
 }
 
-// ToByte String to 8bit unsigned integer.
+// ToUInt8 String to 8bit unsigned integer.
 // value Value to parse.
-func ToByte(value string) (uint8, error) {
+func ToUInt8(value string) (uint8, error) {
 	result, err := strconv.ParseUint(value, 10, 8)
 	if err != nil {
 		return 0, err
@@ -67,9 +67,9 @@ func ToByte(value string) (uint8, error) {
 	return uint8(result), err
 }
 
-// ToUShort String to 16bit unsigned integer.
+// ToUInt16 String to 16bit unsigned integer.
 // value Value to parse.
-func ToUShort(value string) (uint16, error) {
+func ToUInt16(value string) (uint16, error) {
 	result, err := strconv.ParseUint(value, 10, 16)
 	if err != nil {
 		return 0, err
@@ -77,9 +77,9 @@ func ToUShort(value string) (uint16, error) {
 	return uint16(result), err
 }
 
-// ToUInt String to 32bit integer.
+// ToUInt32 String to 32bit integer.
 // value Value to parse.
-func ToUInt(value string) (uint32, error) {
+func ToUInt32(value string) (uint32, error) {
 	result, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
 		return 0, err
@@ -87,9 +87,9 @@ func ToUInt(value string) (uint32, error) {
 	return uint32(result), err
 }
 
-// ToULong String to 64bit unsigned integer.
+// ToUInt64 String to 64bit unsigned integer.
 // value Value to parse.
-func ToULong(value string) (uint64, error) {
+func ToUInt64(value string) (uint64, error) {
 	result, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
 		return 0, err
