@@ -15,75 +15,65 @@ import (
 func ValueToTypeValue(_type string, value string) (string, string) {
 	switch _type {
 	case grammar.DtInt8:
-		result, _ := arithmetic.ToInt8(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToInt8(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtInt16:
-		result, _ := arithmetic.ToInt16(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToInt16(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtInt32:
-		result, _ := arithmetic.ToInt32(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToInt32(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtInt64:
-		result, _ := arithmetic.ToInt64(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToInt64(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtUInt8:
-		result, _ := arithmetic.ToUInt8(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToUInt8(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtUInt16:
-		result, _ := arithmetic.ToUInt16(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToUInt16(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtUInt32:
-		result, _ := arithmetic.ToUInt32(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToUInt32(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtUInt64:
-		result, _ := arithmetic.ToUInt64(value)
-		rresult := arithmetic.IntToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToUInt64(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.IntToString(result), ""
 	case grammar.DtFloat32:
-		result, _ := arithmetic.ToFloat32(value)
-		rresult := arithmetic.FloatToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToFloat32(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.FloatToString(result), ""
 	case grammar.DtFloat64:
-		result, _ := arithmetic.ToFloat64(value)
-		rresult := arithmetic.FloatToString(result)
-		if rresult != value {
-			return "", "The value data type was out of range!"
+		result, err := arithmetic.ToFloat64(value)
+		if err != nil {
+			return "", "Value out of range!"
 		}
-		return rresult, ""
+		return arithmetic.FloatToString(result), ""
 	case grammar.DtBoolean:
 		if value != grammar.KwTrue && value != grammar.KwFalse &&
 			value != "0" && value != "1" {

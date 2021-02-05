@@ -80,7 +80,8 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	result, err := parser.ValueToTypeValue(variable.Type, value.Content)
 	if err != "" {
-		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value), err)
+		fract.ErrorCustom(setter.File.Path, setter.Line,
+			setter.Column+len(setter.Value), err)
 	}
 	variable.Value = result
 
