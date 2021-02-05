@@ -38,7 +38,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 
 	// Value are not defined?
 	if tokens.Len() < 3 {
-		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value),
+		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
@@ -53,7 +53,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 
 	result, err := parser.ValueToTypeValue(variable.Type, value.Content)
 	if err != "" {
-		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value), err)
+		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value), err)
 	}
 	variable.Value = result
 	i.vars.Set(index, variable)

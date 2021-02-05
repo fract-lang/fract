@@ -23,7 +23,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	// Name is not defined?
 	if length < 2 {
 		first := tokens.First().(objects.Token)
-		fract.ErrorCustom(first.Line, first.Column+len(first.Value),
+		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
 			"Name is not found!")
 	}
 
@@ -41,7 +41,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	// Data type is not defined?
 	if length < 3 {
-		fract.ErrorCustom(_name.Line, _name.Column+len(_name.Value),
+		fract.ErrorCustom(_name.File.Path, _name.Line, _name.Column+len(_name.Value),
 			"Data type is not found!")
 	}
 
@@ -54,7 +54,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	// Setter is not defined?
 	if length < 4 {
-		fract.ErrorCustom(dataType.Line, dataType.Column+len(dataType.Value),
+		fract.ErrorCustom(dataType.File.Path, dataType.Line, dataType.Column+len(dataType.Value),
 			"Setter is not found!")
 	}
 
@@ -66,7 +66,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	// Value is not defined?
 	if length < 5 {
-		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value),
+		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
@@ -82,7 +82,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	result, err := parser.ValueToTypeValue(variable.Type, value.Content)
 	if err != "" {
-		fract.ErrorCustom(setter.Line, setter.Column+len(setter.Value), err)
+		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value), err)
 	}
 	variable.Value = result
 

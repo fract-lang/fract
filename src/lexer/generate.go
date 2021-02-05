@@ -16,6 +16,7 @@ import (
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
 	var token objects.Token
+	token.File = l.File
 	ln := l.File.Lines.At(l.Line - 1).(objects.CodeLine).Text
 
 	/* Line is finished. */
