@@ -101,40 +101,40 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.Setter) { // Setter.
 		token.Value = grammar.Setter
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.KwVariable) { // Variable.
+	} else if isKeywordToken(ln, grammar.KwVariable) { // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
-	} else if strings.HasPrefix(ln, grammar.KwDelete) { // Delete.
+	} else if isKeywordToken(ln, grammar.KwDelete) { // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete
-	} else if strings.HasPrefix(ln, grammar.DtInt8) { // int8.
+	} else if isKeywordToken(ln, grammar.DtInt8) { // int8.
 		token.Value = grammar.DtInt8
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtInt16) { // int16.
+	} else if isKeywordToken(ln, grammar.DtInt16) { // int16.
 		token.Value = grammar.DtInt16
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtInt32) { // int32.
+	} else if isKeywordToken(ln, grammar.DtInt32) { // int32.
 		token.Value = grammar.DtInt32
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtInt64) { // int64.
+	} else if isKeywordToken(ln, grammar.DtInt64) { // int64.
 		token.Value = grammar.DtInt64
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtUInt8) { // uint8.
+	} else if isKeywordToken(ln, grammar.DtUInt8) { // uint8.
 		token.Value = grammar.DtUInt8
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtUInt16) { // uint16.
+	} else if isKeywordToken(ln, grammar.DtUInt16) { // uint16.
 		token.Value = grammar.DtUInt16
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtUInt32) { // uint32.
+	} else if isKeywordToken(ln, grammar.DtUInt32) { // uint32.
 		token.Value = grammar.DtUInt32
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtUInt64) { // uint64.
+	} else if isKeywordToken(ln, grammar.DtUInt64) { // uint64.
 		token.Value = grammar.DtUInt64
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtFloat32) { // float32.
+	} else if isKeywordToken(ln, grammar.DtFloat32) { // float32.
 		token.Value = grammar.DtFloat32
 		token.Type = fract.TypeDataType
-	} else if strings.HasPrefix(ln, grammar.DtFloat64) { // float64.
+	} else if isKeywordToken(ln, grammar.DtFloat64) { // float64.
 		token.Value = grammar.DtFloat64
 		token.Type = fract.TypeDataType
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
