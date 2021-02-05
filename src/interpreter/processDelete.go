@@ -17,7 +17,8 @@ func (i *Interpreter) processDelete(tokens *vector.Vector) {
 	// Value is not defined?
 	if tokens.Len() < 2 {
 		del := tokens.First().(objects.Token)
-		fract.ErrorCustom(del.Line, del.Column+len(del.Value), "Value is not found!")
+		fract.ErrorCustom(del.File.Path, del.Line, del.Column+len(del.Value),
+			"Value is not found!")
 	}
 
 	for index := 1; index < tokens.Len(); index++ {

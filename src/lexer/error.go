@@ -12,7 +12,7 @@ import (
 // Error Exit with error.
 // message Message of error.
 func (l *Lexer) Error(message string) {
-	fmt.Printf("LEXER ERROR\nMessage: %s\nLINE: %d\nCOLUMN: %d",
-		message, l.Line, l.Column)
+	fmt.Printf("LEXER ERROR\nFILE: %s\nMessage: %s\nLINE: %d\nCOLUMN: %d",
+		l.File.Path, message, l.Line, l.Column)
 	os.Exit(1)
 }
