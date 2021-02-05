@@ -38,7 +38,6 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	if name.VarIndexByName(i.vars, _name.Value) != -1 {
 		fract.Error(_name, "Already defined this name!: "+_name.Value)
 	}
-
 	// Data type is not defined?
 	if length < 3 {
 		fract.ErrorCustom(_name.File.Path, _name.Line, _name.Column+len(_name.Value),
@@ -51,7 +50,6 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	if dataType.Type != fract.TypeDataType {
 		fract.Error(dataType, "This is not a data type!")
 	}
-
 	// Setter is not defined?
 	if length < 4 {
 		fract.ErrorCustom(dataType.File.Path, dataType.Line, dataType.Column+len(dataType.Value),

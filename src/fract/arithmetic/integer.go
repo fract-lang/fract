@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"../../grammar"
 )
 
 // IsInteger Value is an integer?
@@ -20,6 +22,11 @@ func IsInteger(value string) bool {
 // ToInt8 String to 8bit integer.
 // value Value to parse.
 func ToInt8(value string) (int8, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseInt(value, 10, 8)
 	if err != nil {
 		return 0, err
@@ -30,6 +37,11 @@ func ToInt8(value string) (int8, error) {
 // ToInt16 String to 16bit integer.
 // value Value to parse.
 func ToInt16(value string) (int16, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseInt(value, 10, 16)
 	if err != nil {
 		return 0, err
@@ -40,6 +52,11 @@ func ToInt16(value string) (int16, error) {
 // ToInt32 String to 32bit integer.
 // value Value to parse.
 func ToInt32(value string) (int32, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
 		return 0, err
@@ -50,6 +67,11 @@ func ToInt32(value string) (int32, error) {
 // ToInt64 String to 64bit integer.
 // value Value to parse.
 func ToInt64(value string) (int64, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		return 0, err
@@ -60,6 +82,11 @@ func ToInt64(value string) (int64, error) {
 // ToUInt8 String to 8bit unsigned integer.
 // value Value to parse.
 func ToUInt8(value string) (uint8, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseUint(value, 10, 8)
 	if err != nil {
 		return 0, err
@@ -70,6 +97,11 @@ func ToUInt8(value string) (uint8, error) {
 // ToUInt16 String to 16bit unsigned integer.
 // value Value to parse.
 func ToUInt16(value string) (uint16, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseUint(value, 10, 16)
 	if err != nil {
 		return 0, err
@@ -80,6 +112,11 @@ func ToUInt16(value string) (uint16, error) {
 // ToUInt32 String to 32bit integer.
 // value Value to parse.
 func ToUInt32(value string) (uint32, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
 		return 0, err
@@ -90,6 +127,11 @@ func ToUInt32(value string) (uint32, error) {
 // ToUInt64 String to 64bit unsigned integer.
 // value Value to parse.
 func ToUInt64(value string) (uint64, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
 		return 0, err

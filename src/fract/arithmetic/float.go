@@ -41,6 +41,11 @@ func IsFloat(value string) bool {
 // ToFloat32 String to float.
 // value Value to parse.
 func ToFloat32(value string) (float32, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	result, err := strconv.ParseFloat(value, 32)
 	if err != nil {
 		return 0, err
@@ -51,5 +56,10 @@ func ToFloat32(value string) (float32, error) {
 // ToFloat64 String to double.
 // value Value to parse.
 func ToFloat64(value string) (float64, error) {
+	if value == grammar.KwTrue {
+		return 1, nil
+	} else if value == grammar.KwFalse {
+		return 0, nil
+	}
 	return strconv.ParseFloat(value, 64)
 }
