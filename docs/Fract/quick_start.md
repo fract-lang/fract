@@ -31,6 +31,8 @@ x # Print 5
 
 > A value must be given when defining a variable!
 
+> Variable names are must comply to [naming conventions](https://github.com/fract-lang/fract/blob/main/docs/Fract/naming_conventions.md).
+
 #### Syntax
 ```
 var [NAME] [DATA_TYPE] := [VALUE]
