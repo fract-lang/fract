@@ -56,7 +56,7 @@ func (l *Lexer) Generate() objects.Token {
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
 		// Remove punct.
-		result, _ := regexp.MatchString("\\s|[[:punct:]]", check)
+		result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
 		if result {
 			check = check[:len(check)-1]
 		}
@@ -160,7 +160,7 @@ func (l *Lexer) Generate() objects.Token {
 		// Remove punct.
 		if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
 			!strings.HasSuffix(check, grammar.TokenDot) {
-			result, _ := regexp.MatchString("\\s|[[:punct:]]", check)
+			result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
 			if result {
 				check = check[:len(check)-1]
 			}
