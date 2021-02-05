@@ -31,7 +31,8 @@ func (i *Interpreter) Interpret() {
 		first := tokens.At(0).(objects.Token)
 
 		if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
-			first.Type == fract.TypeName {
+			first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
+			first.Type == fract.TypeBooleanFalse {
 			if first.Type == fract.TypeName && tokens.Len() > 1 {
 				second := tokens.At(1).(objects.Token)
 				if second.Type == fract.TypeOperator &&

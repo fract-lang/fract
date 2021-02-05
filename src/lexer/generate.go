@@ -137,6 +137,15 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.DtFloat64) { // float64.
 		token.Value = grammar.DtFloat64
 		token.Type = fract.TypeDataType
+	} else if isKeywordToken(ln, grammar.DtBoolean) { // Boolean.
+		token.Value = grammar.DtBoolean
+		token.Type = fract.TypeDataType
+	} else if isKeywordToken(ln, grammar.KwTrue) { // True.
+		token.Value = grammar.KwTrue
+		token.Type = fract.TypeBooleanTrue
+	} else if isKeywordToken(ln, grammar.KwFalse) { // False.
+		token.Value = grammar.KwFalse
+		token.Type = fract.TypeBooleanFalse
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 	} else { // Alternates
 		/* Check variable name. */

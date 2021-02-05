@@ -18,5 +18,6 @@ func IsDataType(value string) bool {
 		value == grammar.DtUInt8 ||
 		value == grammar.DtUInt16 ||
 		value == grammar.DtUInt32 ||
-		value == grammar.DtUInt64
+		value == grammar.DtUInt64 ||
+		value == grammar.DtBoolean
 }

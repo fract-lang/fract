@@ -84,6 +84,16 @@ func ValueToTypeValue(_type string, value string) (string, string) {
 			return "", "The value data type was out of range!"
 		}
 		return rresult, ""
+	case grammar.DtBoolean:
+		if value != grammar.KwTrue && value != grammar.KwFalse &&
+			value != "0" && value != "1" {
+			return "", "Boolean value is not valid!"
+		}
+		result := grammar.KwFalse
+		if value == "1" || value == grammar.KwTrue {
+			result = grammar.KwTrue
+		}
+		return result, ""
 	default:
 		return "", "Data type is not found!"
 	}

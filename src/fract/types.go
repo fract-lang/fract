@@ -32,6 +32,10 @@ const (
 	TypeDelete int = 1108
 	// TypeComma Comma type.
 	TypeComma int = 1109
+	// TypeBooleanTrue Boolean true type.
+	TypeBooleanTrue int = 1110
+	// TypeBooleanFalse Boolean false type.
+	TypeBooleanFalse int = 1111
 
 	// VTInteger Integer value type.
 	VTInteger int = 0

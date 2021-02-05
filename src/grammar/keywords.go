@@ -25,4 +25,8 @@ const (
 	KwElseIf string = "elif"
 	// KwElse Else.
 	KwElse string = "else"
+	// KwTrue Boolean true value.
+	KwTrue string = "true"
+	// KwFalse Boolean false value.
+	KwFalse string = "false"
 )
