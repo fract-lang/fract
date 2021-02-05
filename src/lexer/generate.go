@@ -51,7 +51,7 @@ func (l *Lexer) Generate() objects.Token {
 
 	/* Check arithmetic value? */
 	check := strings.TrimSpace(regexp.MustCompile(
-		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln))
+		"^(-|^)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln))
 	if check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
@@ -157,15 +157,21 @@ func (l *Lexer) Generate() objects.Token {
 		check = strings.TrimSpace(regexp.MustCompile(
 			"^([A-z])([a-zA-Z1-9" + grammar.TokenUnderscore + grammar.TokenDot +
 				"]+)?([[:punct:]]|\\s|$)").FindString(ln))
-		// Remove punct.
-		if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
-			!strings.HasSuffix(check, grammar.TokenDot) {
-			result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
-			if result {
-				check = check[:len(check)-1]
+		if check != "" { // Name.
+			// Remove punct.
+			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
+				!strings.HasSuffix(check, grammar.TokenDot) {
+				result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
+				if result {
+					check = check[:len(check)-1]
+				}
 			}
-		}
-		if check != "" && !strings.HasSuffix(check, grammar.TokenDot) { // Name.
+
+			// Name is finished with dot?
+			if strings.HasSuffix(check, grammar.TokenDot) {
+				l.Error("What is this?: " + ln)
+			}
+
 			token.Value = strings.TrimSpace(check)
 			token.Type = fract.TypeName
 		} else { // Error exactly
