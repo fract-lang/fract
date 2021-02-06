@@ -40,9 +40,6 @@ func ReadyLines(lines []string) *vector.Vector {
 	readyLines := vector.New()
 	for index := 0; index < len(lines); index++ {
 		text := strings.TrimSpace(lines[index])
-		if text == "" {
-			continue
-		}
 		readyLines.Append(objects.CodeLine{Line: index + 1, Text: text})
 	}
 	return readyLines
