@@ -8,15 +8,13 @@ const (
 	// KwImport Import packages.
 	KwImport string = "use"
 	// KwFunction Function define.
-	KwFunction string = "fn"
+	KwFunction string = "func"
 	// KwDelete Delete variable.
 	KwDelete string = "del"
 	// KwVariable Variable define.
 	KwVariable string = "var"
 	// KwConstVariable Const variable define.
 	KwConstVariable string = "const"
-	// KwBlockFinal Block terminator.
-	KwBlockFinal string = "end"
 	// KwReturn Returns.
 	KwReturn string = "ret"
 	// KwForLoop For loop.
