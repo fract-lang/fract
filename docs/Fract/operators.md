@@ -51,6 +51,22 @@
     <td>Not equals to.</td>
   </tr>
   <tr>
+    <td align="center"><b><</b></td>
+    <td>Less than.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>></b></td>
+    <td>Greater than.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>>=</b></td>
+    <td>Greater than or equals to.</td>
+  </tr>
+  <tr>
+    <td align="center"><b><=</b></td>
+    <td>Less than or equals to.</td>
+  </tr>
+  <tr>
     <td align="center"><b>|</b></td>
     <td>Logical or.</td>
   </tr>
