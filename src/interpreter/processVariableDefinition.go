@@ -85,5 +85,8 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	}
 	variable.Value = result
 
+	// Set const state.
+	variable.Const = tokens.First().(objects.Token).Value == grammar.KwConstVariable
+
 	i.vars.Append(variable)
 }
