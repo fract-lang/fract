@@ -23,6 +23,8 @@ func compare(value0 float64, value1 float64, operator string) bool {
 		return value0 == value1
 	case grammar.NotEquals: // Not equals.
 		return value0 != value1
+	case grammar.TokenGreat: // Greater.
+		return value0 > value1
 	default:
 		return false
 	}
