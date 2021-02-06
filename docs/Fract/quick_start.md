@@ -33,17 +33,23 @@ x # Print 5
 
 > Variable names are must comply to [naming conventions](https://github.com/fract-lang/fract/blob/main/docs/Fract/naming_conventions.md).
 
+> Cannot change values of const variables!
+
 #### Syntax
 ```
 var [NAME] [DATA_TYPE] := [VALUE]
 ```
+```
+const [NAME] [DATA_TYPE] := [VALUE]
+```
 #### Examples
 ```
-var Pi float32 := 3.14
+const Pi float32 := 3.14
 ```
 ```
 var Fibonacci.First int32 := 1
 ```
+
 ### Set Defined
 #### Syntax
 ```
