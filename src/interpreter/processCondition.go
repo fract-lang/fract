@@ -47,7 +47,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 	}
 
 	// Process condition.
-	ors := parser.DecomposeOrConditionalProcess(tokens)
+	ors := parser.DecomposeConditionalProcess(tokens, grammar.TokenVerticalBar)
 	for index := 0; index < ors.Len(); index++ {
 		current := ors.At(index).(vector.Vector)
 		operatorIndex, operator := parser.FindConditionOperator(&current)
