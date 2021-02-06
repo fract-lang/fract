@@ -13,6 +13,21 @@ import (
 	"../utilities/vector"
 )
 
+// compare Compare values by operator.
+// value0 First value of comparison.
+// value1 Second value of comparison.
+// operator Operator of comparison.
+func compare(value0 float64, value1 float64, operator string) bool {
+	switch operator {
+	case grammar.TokenEquals: // Equals.
+		return value0 == value1
+	case grammar.NotEquals: // Not equals.
+		return value0 != value1
+	default:
+		return false
+	}
+}
+
 // processCondition Process conditional expression and return result.
 // tokens Tokens to process.
 func (i *Interpreter) processCondition(tokens *vector.Vector) int {
@@ -40,7 +55,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		// Operator is not found?
 		if operatorIndex == -1 {
 			value, _ := arithmetic.ToFloat64(current.First().(objects.Token).Value)
-			if value == 1 {
+			if compare(value, 1, operator) {
 				return grammar.TRUE
 			}
 			continue
@@ -57,11 +72,8 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		val1L := current.Sublist(operatorIndex+1, current.Len()-operatorIndex-1)
 		val0, _ := arithmetic.ToFloat64(i.processValue(&val0L).Content)
 		val1, _ := arithmetic.ToFloat64(i.processValue(&val1L).Content)
-		switch operator {
-		case grammar.TokenEquals:
-			if val0 == val1 {
-				return grammar.TRUE
-			}
+		if compare(val0, val1, operator) {
+			return grammar.TRUE
 		}
 	}
 	return grammar.FALSE
