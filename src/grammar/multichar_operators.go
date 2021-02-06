@@ -16,4 +16,7 @@ const (
 
 	// IntegerDivideWithBigger Integer division with bigger.
 	IntegerDivideWithBigger string = "\\\\"
+
+	// NotEquals to.
+	NotEquals = "<>"
 )
