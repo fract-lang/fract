@@ -20,7 +20,7 @@ const (
 	TypePrint int = 1102
 	// TypeValue Value.
 	TypeValue int = 1103
-	// TypeBrace Bracket type.
+	// TypeBrace Curly bracket type.
 	TypeBrace int = 1104
 	// TypeVariable Variable define type.
 	TypeVariable int = 1105
@@ -36,6 +36,8 @@ const (
 	TypeBooleanTrue int = 1110
 	// TypeBooleanFalse Boolean false type.
 	TypeBooleanFalse int = 1111
+	// TypeParentheses Parentheses  type.
+	TypeParentheses int = 1112
 
 	// VTInteger Integer value type.
 	VTInteger int = 0

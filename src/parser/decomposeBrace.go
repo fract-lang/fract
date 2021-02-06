@@ -26,7 +26,7 @@ func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
 	/* Find open parentheses. */
 	for index := 0; index < len; index++ {
 		current := tokens.At(index).(objects.Token)
-		if current.Type == fract.TypeBrace {
+		if current.Type == fract.TypeParentheses {
 			first = index
 			break
 		}
@@ -45,7 +45,7 @@ func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
 	length := 0
 	for index := first + 1; index < len; index++ {
 		current := tokens.At(index).(objects.Token)
-		if current.Type == fract.TypeBrace {
+		if current.Type == fract.TypeParentheses {
 			if current.Value == grammar.TokenLParenthes {
 				count++
 			} else {
