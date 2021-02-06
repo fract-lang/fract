@@ -56,6 +56,12 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 		fract.ErrorCustom(setter.File.Path, setter.Line,
 			setter.Column+len(setter.Value), err)
 	}
+
+	// Check const state
+	if variable.Const {
+		fract.Error(setter, "Values is can not changed of const defines!")
+	}
+
 	variable.Value = result
 	i.vars.Set(index, variable)
 }

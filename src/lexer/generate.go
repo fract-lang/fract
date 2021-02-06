@@ -133,6 +133,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.KwVariable) { // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
+	} else if isKeywordToken(ln, grammar.KwConstVariable) { // Const variable.
+		token.Value = grammar.KwConstVariable
+		token.Type = fract.TypeVariable
 	} else if isKeywordToken(ln, grammar.KwDelete) { // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete

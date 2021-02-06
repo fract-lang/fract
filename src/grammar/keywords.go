@@ -13,6 +13,8 @@ const (
 	KwDelete string = "del"
 	// KwVariable Variable define.
 	KwVariable string = "var"
+	// KwConstVariable Const variable define.
+	KwConstVariable string = "const"
 	// KwBlockFinal Block terminator.
 	KwBlockFinal string = "end"
 	// KwReturn Returns.

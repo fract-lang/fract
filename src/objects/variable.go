@@ -8,4 +8,6 @@ type Variable struct {
 	Value string
 	// Type of variable.
 	Type string
+	// Is const variable.
+	Const bool
 }
