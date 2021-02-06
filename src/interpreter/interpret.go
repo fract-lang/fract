@@ -24,7 +24,7 @@ func (i *Interpreter) Interpret() {
 		tokens := i.lexer.Next()
 
 		// Skip this loop if tokens are empty.
-		if tokens.Len() == 0 {
+		if !tokens.Any() {
 			continue
 		}
 
