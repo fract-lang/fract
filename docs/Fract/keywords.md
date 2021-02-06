@@ -7,6 +7,10 @@
     <td>Define variable.</td>
   </tr>
   <tr>
+    <td align="center"><b>const</b></td>
+    <td>Define const variable.</td>
+  </tr>
+  <tr>
     <td align="center"><b>del</b></td>
     <td>Delete from memory.</td>
   </tr>
