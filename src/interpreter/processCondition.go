@@ -50,7 +50,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 	ors := parser.DecomposeOrConditionalProcess(tokens)
 	for index := 0; index < ors.Len(); index++ {
 		current := ors.At(index).(vector.Vector)
-		operatorIndex, operator := findConditionOperator(&current)
+		operatorIndex, operator := parser.FindConditionOperator(&current)
 
 		// Operator is not found?
 		if operatorIndex == -1 {
