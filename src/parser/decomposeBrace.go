@@ -6,7 +6,6 @@ package parser
 
 import (
 	"../fract"
-	"../grammar"
 	"../objects"
 	"../utilities/vector"
 )
@@ -15,7 +14,9 @@ import (
 // Remove range tokens from original tokens.
 //
 // tokens Tokens to process.
-func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
+// open Open bracket.
+// close Close bracket.
+func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Vector, int) {
 	var (
 		first int = -1
 		last  int
@@ -26,7 +27,7 @@ func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
 	/* Find open parentheses. */
 	for index := 0; index < len; index++ {
 		current := tokens.At(index).(objects.Token)
-		if current.Type == fract.TypeParentheses {
+		if current.Type == fract.TypeBrace && current.Value == open {
 			first = index
 			break
 		}
@@ -45,10 +46,10 @@ func DecomposeBrace(tokens *vector.Vector) (vector.Vector, int) {
 	length := 0
 	for index := first + 1; index < len; index++ {
 		current := tokens.At(index).(objects.Token)
-		if current.Type == fract.TypeParentheses {
-			if current.Value == grammar.TokenLParenthes {
+		if current.Type == fract.TypeBrace {
+			if current.Value == open {
 				count++
-			} else {
+			} else if current.Value == close {
 				count--
 			}
 			if count == 0 {

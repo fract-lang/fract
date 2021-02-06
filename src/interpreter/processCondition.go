@@ -41,7 +41,8 @@ func compare(value0 float64, value1 float64, operator string) bool {
 func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 	/* Check parentheses range. */
 	for true {
-		_range, found := parser.DecomposeBrace(tokens)
+		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
+			grammar.TokenRParenthes)
 
 		/* Parentheses are not found! */
 		if found == -1 {
