@@ -48,7 +48,7 @@ tokenize:
 	if l.braceCount > 0 {
 		if l.Finished {
 			l.Line-- // Subtract for correct line number.
-			l.Error("Bracket is expected to close...")
+			l.Error("Parentheses is expected to close...")
 		}
 		goto tokenize
 	}
