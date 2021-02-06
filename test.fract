@@ -1,5 +1,7 @@
 var a int32 := 4
 var b float32 := 4.0
-var c bool := false
-c :=true
-b + a + c
+#var c bool := false
+#c :=true
+#b + a + c
+
+((b + b = 1) | (b+b) = 8)

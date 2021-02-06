@@ -35,8 +35,13 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	}
 
 	var value objects.Value
-	value.Content = ""
 	value.Type = fract.VTInteger
+
+	// Is conditional expression?
+	if i.isConditional(tokens) {
+		value.Content = arithmetic.IntToString(i.processCondition(tokens))
+		return value
+	}
 
 	// Decompose arithmetic operations.
 	operations := parser.DecomposeArithmeticProcesses(tokens)

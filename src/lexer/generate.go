@@ -106,6 +106,15 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.Setter) { // Setter.
 		token.Value = grammar.Setter
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenAmper) { // Amper (&).
+		token.Value = grammar.TokenAmper
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenVerticalBar) { // Vertical bar (|).
+		token.Value = grammar.TokenVerticalBar
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenEquals) { // Equals to (=).
+		token.Value = grammar.TokenEquals
+		token.Type = fract.TypeOperator
 	} else if isKeywordToken(ln, grammar.KwVariable) { // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
