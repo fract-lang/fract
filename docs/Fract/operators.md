@@ -42,4 +42,20 @@
     <td align="center"><b>:=</b></td>
     <td>Setter.</td>
   </tr>
+  <tr>
+    <td align="center"><b>=</b></td>
+    <td>Equals to.</td>
+  </tr>
+  <tr>
+    <td align="center"><b><></b></td>
+    <td>Not equals to.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>|</b></td>
+    <td>Logical or.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>&</b></td>
+    <td>Logical and.</td>
+  </tr>
 </table>
