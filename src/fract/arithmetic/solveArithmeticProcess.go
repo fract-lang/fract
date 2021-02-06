@@ -30,8 +30,14 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
 
 	var result float64
 
-	first, _ := ToFloat64(process.First.Value)
-	second, _ := ToFloat64(process.Second.Value)
+	first, err := ToFloat64(process.First.Value)
+	if err != nil {
+		fract.Error(process.First, "Value out of range!")
+	}
+	second, err := ToFloat64(process.Second.Value)
+	if err != nil {
+		fract.Error(process.Second, "Value out of range!")
+	}
 
 	if process.Operator.Value == grammar.TokenReverseSlash ||
 		process.Operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.

@@ -100,7 +100,10 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		first.Value = i.vars.At(index).(objects.Variable).Value
 	}
 
-	_value, _ := arithmetic.ToFloat64(first.Value)
+	_value, err := arithmetic.ToFloat64(first.Value)
+	if err != nil {
+		fract.Error(first, "Value out of range!")
+	}
 	if arithmetic.IsFloatValue(first.Value) {
 		value.Type = fract.VTFloat
 	}
