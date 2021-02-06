@@ -18,7 +18,7 @@ func FindConditionOperator(tokens *vector.Vector) (int, string) {
 		current := tokens.At(index).(objects.Token)
 		if current.Type == fract.TypeOperator && (current.Value == grammar.TokenEquals ||
 			current.Value == grammar.NotEquals || current.Value == grammar.TokenGreat ||
-			current.Value == grammar.TokenLess) {
+			current.Value == grammar.TokenLess || current.Value == grammar.GreaterEquals) {
 			return index, current.Value
 		}
 	}
