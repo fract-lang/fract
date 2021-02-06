@@ -50,6 +50,21 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 	ors := parser.DecomposeConditionalProcess(tokens, grammar.TokenVerticalBar)
 	for index := 0; index < ors.Len(); index++ {
 		current := ors.At(index).(vector.Vector)
+
+		// Decompose and conditions.
+		ands := parser.DecomposeConditionalProcess(&current, grammar.TokenAmper)
+		// Is and statement?
+		if ands.Len() > 1 {
+			for aindex := 0; aindex < ands.Len(); aindex++ {
+				acurrent := ands.At(aindex).(vector.Vector)
+				value, _ := arithmetic.ToFloat64(i.processValue(&acurrent).Content)
+				if !compare(value, 1, grammar.TokenEquals) {
+					return grammar.FALSE
+				}
+			}
+			return grammar.TRUE
+		}
+
 		operatorIndex, operator := parser.FindConditionOperator(&current)
 
 		// Operator is not found?
