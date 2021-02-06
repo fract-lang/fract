@@ -20,7 +20,7 @@ func (i *Interpreter) isConditional(tokens *vector.Vector) bool {
 		if current.Type == fract.TypeOperator &&
 			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
 				current.Value == grammar.TokenEquals || current.Value == grammar.NotEquals ||
-				current.Value == grammar.TokenGreat) {
+				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess) {
 			return true
 		}
 	}
