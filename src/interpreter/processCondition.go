@@ -54,8 +54,8 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			value, _ := arithmetic.ToFloat64(current.First().(objects.Token).Value)
-			if compare(value, 1, operator) {
+			value, _ := arithmetic.ToFloat64(i.processValue(&current).Content)
+			if compare(value, 1, grammar.TokenEquals) {
 				return grammar.TRUE
 			}
 			continue
@@ -76,5 +76,6 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 			return grammar.TRUE
 		}
 	}
+
 	return grammar.FALSE
 }
