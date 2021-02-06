@@ -121,6 +121,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenGreat) { // Greater than (>).
 		token.Value = grammar.TokenGreat
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenLess) { // Less than (<).
+		token.Value = grammar.TokenLess
+		token.Type = fract.TypeOperator
 	} else if isKeywordToken(ln, grammar.KwVariable) { // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
