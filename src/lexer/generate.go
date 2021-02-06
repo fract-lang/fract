@@ -54,7 +54,7 @@ func (l *Lexer) Generate() objects.Token {
 		"^(-|^)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln))
 	if check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
-			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
+			l.lastToken.Type == fract.TypeParentheses) { // Numeric value.
 		// Remove punct.
 		result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
 		if result {
@@ -92,14 +92,14 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
 		l.braceCount++
 		token.Value = grammar.TokenLParenthes
-		token.Type = fract.TypeBrace
+		token.Type = fract.TypeParentheses
 	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
 		l.braceCount--
 		if l.braceCount < 0 {
 			l.Error("The extra parentheses are closed!")
 		}
 		token.Value = grammar.TokenRParenthes
-		token.Type = fract.TypeBrace
+		token.Type = fract.TypeParentheses
 	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
 		token.Value = grammar.TokenComma
 		token.Type = fract.TypeComma
