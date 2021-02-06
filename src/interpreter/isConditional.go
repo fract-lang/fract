@@ -21,7 +21,7 @@ func (i *Interpreter) isConditional(tokens *vector.Vector) bool {
 			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
 				current.Value == grammar.TokenEquals || current.Value == grammar.NotEquals ||
 				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
-				current.Value == grammar.GreaterEquals) {
+				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
 			return true
 		}
 	}

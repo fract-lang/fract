@@ -115,6 +115,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.GreaterEquals) { // Greater than or equals to (>=).
 		token.Value = grammar.GreaterEquals
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.LessEquals) { // Less than or equals to (<=).
+		token.Value = grammar.LessEquals
+		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenEquals) { // Equals to (=).
 		token.Value = grammar.TokenEquals
 		token.Type = fract.TypeOperator

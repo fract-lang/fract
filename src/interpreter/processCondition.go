@@ -29,6 +29,8 @@ func compare(value0 float64, value1 float64, operator string) bool {
 		return value0 < value1
 	case grammar.GreaterEquals: // Greater or equals.
 		return value0 >= value1
+	case grammar.LessEquals: // Less or equals.
+		return value0 <= value1
 	default:
 		return false
 	}
