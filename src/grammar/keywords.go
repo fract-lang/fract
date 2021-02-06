@@ -17,6 +17,8 @@ const (
 	KwConstVariable string = "const"
 	// KwReturn Returns.
 	KwReturn string = "ret"
+	//KwBlockEnd End of block.
+	KwBlockEnd string = "end"
 	// KwForLoop For loop.
 	KwForLoop string = "for"
 	// KwIf If condition.
