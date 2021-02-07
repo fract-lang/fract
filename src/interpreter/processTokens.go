@@ -42,7 +42,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector) {
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
 		i.processDelete(tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
-		i.processIf(tokens)
+		i.processIf(tokens, true)
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}
