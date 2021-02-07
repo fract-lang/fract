@@ -25,8 +25,6 @@ const (
 	KwIf string = "if"
 	// KwElseIf Else-If alternate.
 	KwElseIf string = "elif"
-	// KwElse Else.
-	KwElse string = "else"
 	// KwTrue Boolean true value.
 	KwTrue string = "true"
 	// KwFalse Boolean false value.
