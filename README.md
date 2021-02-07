@@ -7,7 +7,7 @@ Say hello to Fract!
 
 ## HOW TO COMPILE
 Fract is written in Go and entry point file is 'src/main.go'.
-Command are usually like: go build src/main.go
+Command are usually like: ``go build src/main.go``
 
 ## EXAMPLE CODE
 ```
