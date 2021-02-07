@@ -11,6 +11,14 @@ Fract does not support multiline comments. ``#`` Is used for comments.
 555 + 5 # Comment
 ```
 
+## Process Priority
+Fract adheres to transaction priority!
+## Examples
+```
+5 + 2 * 2     # 9
+(5 + 2) * 2   # 14
+```
+
 ## Print
 Fract uses nothing to print. Just write the value and print it out.
 
