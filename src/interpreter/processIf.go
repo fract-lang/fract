@@ -28,6 +28,11 @@ func (i *Interpreter) processIf(tokens *vector.Vector) {
 
 	/* Interpret/skip block. */
 	for !i.lexer.Finished {
+		// Skip this loop if tokens are empty.
+		if !tokens.Any() {
+			return
+		}
+
 		// Check block is ended?
 		first := tokens.First().(objects.Token)
 		if first.Type == fract.TypeBlockEnd {
