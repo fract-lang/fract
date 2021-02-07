@@ -7,5 +7,5 @@ var b float32 := 4.0
 if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
   if true:
     5
-  end
+  
 end

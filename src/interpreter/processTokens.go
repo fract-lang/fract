@@ -16,10 +16,11 @@ import (
 // processTokens Process tokens and returns true if block end, returns false if not.
 // tokens Tokens to process.
 func (i *Interpreter) processTokens(tokens *vector.Vector) {
-	// Skip this loop if tokens are empty.v
+	// Skip this loop if tokens are empty.
 	if !tokens.Any() {
 		return
 	}
+
 	first := tokens.At(0).(objects.Token)
 
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
