@@ -44,14 +44,15 @@ tokenize:
 	// Line equals to or bigger then last line.
 	l.Finished = l.Line > len(l.File.Lines.Vals)
 
-	// Lexer file is finished?
-	if l.Finished {
-		/* Check parentheses. */
-		if l.braceCount > 0 {
+	/* Check parentheses. */
+	if l.braceCount > 0 {
+		if l.Finished {
 			l.Line-- // Subtract for correct line number.
 			l.Error("Parentheses is expected to close...")
-			goto tokenize
-		} else if l.BlockCount > 0 {
+		}
+		goto tokenize
+	} else if l.BlockCount > 0 {
+		if l.Finished {
 			l.Line--
 			l.Error("Block is expected ending...")
 		}
