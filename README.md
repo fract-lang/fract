@@ -6,7 +6,7 @@ Say hello to Fract!
 [Quick Start](https://github.com/fract-lang/fract/blob/main/docs/Fract/quick_start.md)
 
 ## HOW TO COMPILE
-Fract is written in Go and entry point file is 'src/main.go'.
+Fract is written in Go and entry point file is 'src/main.go'. <br>
 Command are usually like: ``go build src/main.go``
 
 ## EXAMPLE CODE
