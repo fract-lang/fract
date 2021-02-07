@@ -4,4 +4,8 @@ var b float32 := 4.0
 #c :=true
 #b + a + c
 
-((b + b <> 8) & false) | (b + b = 8 & 2 = 2)
+if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
+  if true:
+    5
+  end
+end

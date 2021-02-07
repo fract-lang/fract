@@ -14,7 +14,6 @@ type Lexer struct {
 
 	// Last generated token.
 	lastToken objects.Token
-
 	// Bracket count.
 	braceCount int
 
@@ -28,4 +27,6 @@ type Lexer struct {
 	Line int
 	// Finished file.
 	Finished bool
+	// BlockCount Count of declared not ended blocks.
+	BlockCount int
 }

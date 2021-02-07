@@ -45,7 +45,6 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	}
 
 	dataType := tokens.At(2).(objects.Token)
-
 	// Data type is not data type token?
 	if dataType.Type != fract.TypeDataType {
 		fract.Error(dataType, "This is not a data type!")
