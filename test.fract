@@ -5,7 +5,10 @@ var b float32 := 4.0
 #b + a + c
 
 if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
-  if true:
+  3
+  if true = false:
     5
-  
+  elif false = false:
+    10
+  end
 end
