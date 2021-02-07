@@ -22,4 +22,12 @@
     <td align="center"><b>true</b></td>
     <td>Declare one(1).</td>
   </tr>
+  <tr>
+    <td align="center"><b>if</b></td>
+    <td>Conditional expression.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>elif</b></td>
+    <td>Alternative conditional expression or else.</td>
+  </tr>
 </table>
