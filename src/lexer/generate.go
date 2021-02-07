@@ -130,6 +130,17 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenLess) { // Less than (<).
 		token.Value = grammar.TokenLess
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenColon) { // Block start.
+		l.BlockCount++
+		token.Value = grammar.TokenColon
+		token.Type = fract.TypeBlock
+	} else if isKeywordToken(ln, grammar.KwBlockEnd) { // End of block.
+		l.BlockCount--
+		if l.BlockCount < 0 {
+			l.Error("The extra block end defined!")
+		}
+		token.Value = grammar.KwBlockEnd
+		token.Type = fract.TypeBlockEnd
 	} else if isKeywordToken(ln, grammar.KwVariable) { // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
@@ -139,6 +150,15 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.KwDelete) { // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete
+	} else if isKeywordToken(ln, grammar.KwIf) { // If.
+		token.Value = grammar.KwIf
+		token.Type = fract.TypeIf
+	} else if isKeywordToken(ln, grammar.KwElseIf) { // Else if.
+		token.Value = grammar.KwElseIf
+		token.Type = fract.TypeElseIf
+	} else if isKeywordToken(ln, grammar.KwElse) { // Else.
+		token.Value = grammar.KwElse
+		token.Type = fract.TypeElse
 	} else if isKeywordToken(ln, grammar.DtInt8) { // int8.
 		token.Value = grammar.DtInt8
 		token.Type = fract.TypeDataType

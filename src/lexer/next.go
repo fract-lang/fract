@@ -10,12 +10,12 @@ import (
 )
 
 // Next Lex next line.
-func (l *Lexer) Next() vector.Vector {
+func (l *Lexer) Next() *vector.Vector {
 	tokens := vector.New()
 
 	// If file is finished?
 	if l.Finished {
-		return *tokens
+		return tokens
 	}
 
 	// Reset bracket counter.
@@ -44,14 +44,18 @@ tokenize:
 	// Line equals to or bigger then last line.
 	l.Finished = l.Line > len(l.File.Lines.Vals)
 
-	/* Check parentheses. */
-	if l.braceCount > 0 {
-		if l.Finished {
+	// Lexer file is finished?
+	if l.Finished {
+		/* Check parentheses. */
+		if l.braceCount > 0 {
 			l.Line-- // Subtract for correct line number.
 			l.Error("Parentheses is expected to close...")
+			goto tokenize
+		} else if l.BlockCount > 0 {
+			l.Line--
+			l.Error("Block is expected ending...")
 		}
-		goto tokenize
 	}
 
-	return *tokens
+	return tokens
 }

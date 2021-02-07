@@ -36,6 +36,16 @@ const (
 	TypeBooleanTrue int = 1110
 	// TypeBooleanFalse Boolean false type.
 	TypeBooleanFalse int = 1111
+	// TypeBlock Block start type.
+	TypeBlock int = 1112
+	// TypeBlockEnd End of block type.
+	TypeBlockEnd int = 1113
+	// TypeIf If declare.
+	TypeIf int = 1114
+	// TypeElseIf Else if declare.
+	TypeElseIf int = 1115
+	// TypeElse Else declare.
+	TypeElse int = 1116
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
