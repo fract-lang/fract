@@ -13,10 +13,21 @@ Fract does not support multiline comments. ``#`` Is used for comments.
 
 ## Process Priority
 Fract adheres to transaction priority!
-## Examples
+### Examples
 ```
 5 + 2 * 2     # 9
 (5 + 2) * 2   # 14
+```
+
+## Range Decomposition
+Until the brackets are closed, they are tokenized.
+
+> For example, if you have endless long conditions in conditional statements, you can use parentheses to use the bottom lines!
+
+### Examples
+```
+(4 +
+4)        # Tokenizer Result: (4 + 4)
 ```
 
 ## Print
