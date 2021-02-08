@@ -3,6 +3,10 @@
     <td colspan="2" align="center"><b>Operators</b></td>
   </tr>
   <tr>
+    <td align="center"><b>;</b></td>
+    <td>Statement Terminator.</td>
+  </tr>
+  <tr>
     <td align="center"><b>+</b></td>
     <td>Addition.</td>
   </tr>
