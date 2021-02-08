@@ -19,17 +19,6 @@ Fract adheres to transaction priority!
 (5 + 2) * 2   # 14
 ```
 
-## Range Decomposition
-Until the brackets are closed, they are tokenized.
-
-> For example, if you have endless long conditions in conditional statements, you can use parentheses to use the bottom lines!
-
-### Examples
-```
-(4 +
-4)        # Tokenizer Result: (4 + 4)
-```
-
 ## Print
 Fract uses nothing to print. Just write the value and print it out.
 
@@ -39,10 +28,28 @@ Fract uses nothing to print. Just write the value and print it out.
 ```
 5555 + 1 # Print 5556
 ```
-
 ```
 var x int32 := 5
 x # Print 5
+```
+
+## Statement Terminator
+With the Statement terminator, you can perform multiple operations on the same line without moving to a new line.
+
+### Examples
+```
+5; 2   # Print 5 and 2
+```
+
+## Range Decomposition
+Until the brackets are closed, they are tokenized.
+
+> For example, if you have endless long conditions in conditional statements, you can use parentheses to use the bottom lines!
+
+### Examples
+```
+(4 +
+4)        # Tokenizer Result: (4 + 4)
 ```
 
 ## Variables
