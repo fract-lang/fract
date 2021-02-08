@@ -9,6 +9,6 @@ if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
   if true = false:
     5
   elif false = false:
-    10
+    10; 4
   end
 end

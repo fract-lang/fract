@@ -23,20 +23,24 @@ func (l *Lexer) Next() *vector.Vector {
 
 tokenize:
 
-	// Restore to defaults.
-	l.Column = 1
-	l.lastToken.Type = fract.TypeNone
-	l.lastToken.Line = 0
-	l.lastToken.Column = 0
-	l.lastToken.Value = ""
+	if l.lastToken.Type != fract.TypeStatementTerminator {
+		// Restore to defaults.
+		l.Column = 1
+		l.lastToken.Type = fract.TypeNone
+		l.lastToken.Line = 0
+		l.lastToken.Column = 0
+		l.lastToken.Value = ""
+	}
 
 	// Tokenize line.
 	token := l.Generate()
-	for token.Value != "" {
+	for token.Value != "" && token.Type != fract.TypeStatementTerminator {
 		tokens.Append(token)
 		l.lastToken = token
 		token = l.Generate()
 	}
+
+	l.lastToken = token
 
 	// Go next line.
 	l.Line++
