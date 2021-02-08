@@ -106,3 +106,42 @@ var b int32 := 0
 del a b                # Remove 'a' and 'b'
                        # No defined variables
 ```
+
+### Conditional Expressions
+You can let the algorithm flow with the conditions. Fract offers the If-Else If-Else structure like most programming languages.
+"If" is the main condition, the alternative conditions that will come later are shown as "Else If".
+When one condition is fulfilled, other conditions do not. Therefore, "If" must be rewritten each time to create a different order of conditions.
+#### Syntax
+```
+if [CONDITION]:
+end
+```
+```
+if [CONDITION]:
+  # ...
+elif [CONDITION]:
+  # ...
+elif [CONDITION]:
+  # ...
+end
+```
+
+The term "Else" has not been identified as a direct keyword by Fract. For "Else", a condition set to "true" should always be written at the bottom of the condition row.
+```
+if [CONDITION]:
+  # ...
+elif [CONDITION]:
+  # ...
+elif true:
+  # ...
+end
+```
+
+A condition can be given any kind of value, but it only works with true(1) and false(0).
+Unlike most languages, you won't get an error even if you only enter an integer value in the condition. It looks at the value and if it is 1 it fulfills the condition.
+```
+var example int32 := 0
+if example:
+  # ...
+end
+```
