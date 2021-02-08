@@ -8,6 +8,7 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
+	"../parser"
 	"../utilities/vector"
 )
 
@@ -16,23 +17,25 @@ import (
 // do Do processes?
 func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 	/* IF */
-	last := tokens.Last().(objects.Token)
+	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
-	if last.Type != fract.TypeBlock {
-		fract.Error(last, "Where is the block declare!?")
+	if index == -1 {
+		fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
 	}
-	conditionList := tokens.Sublist(1, tokens.Len()-2)
+	conditionList := tokens.Sublist(1, index-1)
 	state := i.processCondition(&conditionList)
 	actioned := state == grammar.TRUE
 
-	// Go next line.
-	tokens = i.lexer.Next()
+	// Get after block tokens with used @conditionList as cache.
+	conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
+	tokens = &conditionList
 
 	/* Interpret/skip block. */
 	for !i.lexer.Finished {
 		// Skip this loop if tokens are empty.
 		if !tokens.Any() {
-			return
+			tokens = i.lexer.Next()
+			continue
 		}
 
 		first := tokens.First().(objects.Token)
@@ -43,20 +46,24 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			i.lexer.BlockCount--
 
-			last = tokens.Last().(objects.Token)
+			index = parser.IndexBlockDeclare(tokens)
 			// Block declare is not defined?
-			if last.Type != fract.TypeBlock {
-				fract.Error(last, "Where is the block declare!?")
+			if index == -1 {
+				fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
 			}
-			conditionList := tokens.Sublist(1, tokens.Len()-2)
+			conditionList := tokens.Sublist(1, index-1)
 			state = i.processCondition(&conditionList)
 
-			tokens = i.lexer.Next()
+			// Get after block tokens with used @conditionList as cache.
+			conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
+			tokens = &conditionList
+
 			/* Interpret/skip block. */
 			for !i.lexer.Finished {
 				// Skip this loop if tokens are empty.
 				if !tokens.Any() {
-					return
+					tokens = i.lexer.Next()
+					continue
 				}
 
 				first := tokens.First().(objects.Token)
