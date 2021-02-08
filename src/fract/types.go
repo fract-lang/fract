@@ -44,8 +44,8 @@ const (
 	TypeIf int = 1114
 	// TypeElseIf Else if declare.
 	TypeElseIf int = 1115
-	// TypeElse Else declare.
-	TypeElse int = 1116
+	// TypeStatementTerminator Statement terminator.
+	TypeStatementTerminator int = 1116
 
 	// VTInteger Integer value type.
 	VTInteger int = 0

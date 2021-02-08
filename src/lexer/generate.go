@@ -50,11 +50,11 @@ func (l *Lexer) Generate() objects.Token {
 	/* Tokenize. */
 
 	/* Check arithmetic value? */
-	check := strings.TrimSpace(regexp.MustCompile(
-		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln))
-	if check != "" &&
+	if check := strings.TrimSpace(regexp.MustCompile(
+		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln)); check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
-			l.lastToken.Type == fract.TypeBrace) { // Numeric value.
+			l.lastToken.Type == fract.TypeBrace ||
+			l.lastToken.Type == fract.TypeStatementTerminator) { // Numeric value.
 		// Remove punct.
 		result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
 		if result {
@@ -62,6 +62,10 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = check
 		token.Type = fract.TypeValue
+	} else if strings.HasPrefix(ln, grammar.TokenSemicolon) { // Statement terminator.
+		token.Value = grammar.TokenSemicolon
+		token.Type = fract.TypeStatementTerminator
+		l.Line--
 	} else if strings.HasPrefix(ln, grammar.IntegerDivision) { // Integer division.
 		token.Value = grammar.IntegerDivision
 		token.Type = fract.TypeOperator
@@ -198,10 +202,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 	} else { // Alternates
 		/* Check variable name. */
-		check = strings.TrimSpace(regexp.MustCompile(
+		if check = strings.TrimSpace(regexp.MustCompile(
 			"^([A-z])([a-zA-Z1-9" + grammar.TokenUnderscore + grammar.TokenDot +
-				"]+)?([[:punct:]]|\\s|$)").FindString(ln))
-		if check != "" { // Name.
+				"]+)?([[:punct:]]|\\s|$)").FindString(ln)); check != "" { // Name.
 			// Remove punct.
 			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
 				!strings.HasSuffix(check, grammar.TokenDot) {
