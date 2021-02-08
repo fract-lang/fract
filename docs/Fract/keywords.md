@@ -30,4 +30,8 @@
     <td align="center"><b>elif</b></td>
     <td>Alternative conditional expression or else.</td>
   </tr>
+  <tr>
+    <td align="center"><b>end</b></td>
+    <td>Block breaker.</td>
+  </tr>
 </table>
