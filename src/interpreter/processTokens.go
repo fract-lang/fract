@@ -15,7 +15,8 @@ import (
 
 // processTokens Process tokens and returns true if block end, returns false if not.
 // tokens Tokens to process.
-func (i *Interpreter) processTokens(tokens *vector.Vector) {
+// do Do processes?
+func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
 	// Skip this loop if tokens are empty.
 	if !tokens.Any() {
 		return
@@ -42,7 +43,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector) {
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
 		i.processDelete(tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
-		i.processIf(tokens, true)
+		i.processIf(tokens, do)
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}
