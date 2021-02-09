@@ -23,7 +23,7 @@ const (
 	KwForLoop string = "for"
 	// KwIf If condition.
 	KwIf string = "if"
-	// KwElseIf Else-If alternate.
+	// KwElseIf Else-If alternate or else.
 	KwElseIf string = "elif"
 	// KwTrue Boolean true value.
 	KwTrue string = "true"
