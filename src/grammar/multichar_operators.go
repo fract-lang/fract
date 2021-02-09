@@ -25,4 +25,7 @@ const (
 
 	// LessEquals Less than or equals to.
 	LessEquals string = "<="
+
+	// ArrayDeclare Array declare.
+	ArrayDeclare string = "[]"
 )
