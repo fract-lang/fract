@@ -19,7 +19,8 @@ func (l *Lexer) Next() *vector.Vector {
 	}
 
 	// Reset bracket counter.
-	l.braceCount = 0
+	l.parenthesCount = 0
+	l.bracketCount = 0
 
 tokenize:
 
@@ -48,14 +49,19 @@ tokenize:
 	// Line equals to or bigger then last line.
 	l.Finished = l.Line > len(l.File.Lines.Vals)
 
-	/* Check parentheses. */
-	if l.braceCount > 0 {
+	if l.parenthesCount > 0 { // Check parentheses.
 		if l.Finished {
 			l.Line-- // Subtract for correct line number.
 			l.Error("Parentheses is expected to close...")
 		}
 		goto tokenize
-	} else if l.BlockCount > 0 {
+	} else if l.bracketCount > 0 { // Check brackets.
+		if l.Finished {
+			l.Line-- // Subtract for correct line number.
+			l.Error("Brackets is expected to close...")
+		}
+		goto tokenize
+	} else if l.BlockCount > 0 { // Check blocks.
 		if l.Finished {
 			l.Line--
 			l.Error("Block is expected ending...")
