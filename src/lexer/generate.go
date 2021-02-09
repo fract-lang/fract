@@ -94,15 +94,26 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = grammar.TokenReverseSlash
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
-		l.braceCount++
+		l.parenthesCount++
 		token.Value = grammar.TokenLParenthes
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
-		l.braceCount--
-		if l.braceCount < 0 {
+		l.parenthesCount--
+		if l.parenthesCount < 0 {
 			l.Error("The extra parentheses are closed!")
 		}
 		token.Value = grammar.TokenRParenthes
+		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.TokenLBracket) { // Open bracket.
+		l.bracketCount++
+		token.Value = grammar.TokenLBracket
+		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.TokenRBracket) { // Close bracket.
+		l.bracketCount--
+		if l.bracketCount < 0 {
+			l.Error("The extra brackets are closed!")
+		}
+		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
 		token.Value = grammar.TokenComma
