@@ -41,8 +41,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 		first := tokens.First().(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			return
-		} else if first.Type == fract.TypeIf { // If block.
-			i.processIf(tokens, state == grammar.TRUE && do)
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			i.lexer.BlockCount--
 
@@ -77,7 +75,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 
 				// Condition is true?
 				if state == grammar.TRUE && !actioned && do {
-					i.processTokens(tokens)
+					i.processTokens(tokens, true)
 				}
 
 				tokens = i.lexer.Next()
@@ -91,7 +89,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 
 		// Condition is true?
 		if state == grammar.TRUE && do {
-			i.processTokens(tokens)
+			i.processTokens(tokens, do)
 		}
 
 		tokens = i.lexer.Next()

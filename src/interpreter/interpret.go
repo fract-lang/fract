@@ -14,6 +14,6 @@ func (i *Interpreter) Interpret() {
 	/* Interpret all lines. */
 	for !i.lexer.Finished {
 		tokens := i.lexer.Next()
-		i.processTokens(tokens)
+		i.processTokens(tokens, true)
 	}
 }
