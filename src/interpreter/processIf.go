@@ -23,6 +23,14 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 		fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
 	}
 	conditionList := tokens.Sublist(1, index-1)
+
+	// Condition is empty?
+	if !conditionList.Any() {
+		first := tokens.First().(objects.Token)
+		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
+			"Condition is empty?")
+	}
+
 	state := i.processCondition(&conditionList)
 	actioned := state == grammar.TRUE
 
@@ -50,6 +58,14 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 				fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
 			}
 			conditionList := tokens.Sublist(1, index-1)
+
+			// Condition is empty?
+			if !conditionList.Any() {
+				first := tokens.First().(objects.Token)
+				fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
+					"Condition is empty?")
+			}
+
 			state = i.processCondition(&conditionList)
 
 			// Get after block tokens with used @conditionList as cache.

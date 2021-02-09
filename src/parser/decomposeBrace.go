@@ -62,7 +62,7 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Ve
 	_range := tokens.Sublist(first+1, length)
 
 	// Bracket content is empty?
-	if _range.Len() == 0 {
+	if !_range.Any() {
 		fract.Error(tokens.At(first).(objects.Token), "Brackets content are empty!")
 	}
 

@@ -42,7 +42,7 @@ const (
 	TypeBlockEnd int = 1113
 	// TypeIf If declare.
 	TypeIf int = 1114
-	// TypeElseIf Else if declare.
+	// TypeElseIf Else if/else declare.
 	TypeElseIf int = 1115
 	// TypeStatementTerminator Statement terminator.
 	TypeStatementTerminator int = 1116
