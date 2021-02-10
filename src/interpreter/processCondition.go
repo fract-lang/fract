@@ -50,7 +50,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		}
 
 		var _token objects.Token
-		_token.Value = i.processValue(&_range).Content
+		_token.Value = i.processValue(&_range).Content[0]
 		_token.Type = fract.TypeValue
 		tokens.Insert(found, _token)
 	}
@@ -66,7 +66,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		if ands.Len() > 1 {
 			for aindex := 0; aindex < ands.Len(); aindex++ {
 				acurrent := ands.At(aindex).(vector.Vector)
-				value, _ := arithmetic.ToFloat64(i.processValue(&acurrent).Content)
+				value, _ := arithmetic.ToFloat64(i.processValue(&acurrent).Content[0])
 				if !compare(value, 1, grammar.TokenEquals) {
 					return grammar.FALSE
 				}
@@ -78,7 +78,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			value, _ := arithmetic.ToFloat64(i.processValue(&current).Content)
+			value, _ := arithmetic.ToFloat64(i.processValue(&current).Content[0])
 			if compare(value, 1, grammar.TokenEquals) {
 				return grammar.TRUE
 			}
@@ -94,8 +94,8 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		val0L := current.Sublist(0, operatorIndex)
 		val1L := current.Sublist(operatorIndex+1, current.Len()-operatorIndex-1)
-		val0, _ := arithmetic.ToFloat64(i.processValue(&val0L).Content)
-		val1, _ := arithmetic.ToFloat64(i.processValue(&val1L).Content)
+		val0, _ := arithmetic.ToFloat64(i.processValue(&val0L).Content[0])
+		val1, _ := arithmetic.ToFloat64(i.processValue(&val1L).Content[0])
 		if compare(val0, val1, operator) {
 			return grammar.TRUE
 		}

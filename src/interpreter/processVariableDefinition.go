@@ -73,7 +73,8 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	value := i.processValue(&valtokens)
 
 	// Check value and data type compatibility.
-	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger {
+	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger &&
+		value.Type != fract.VTIntegerArray {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 

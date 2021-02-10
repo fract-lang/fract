@@ -5,7 +5,7 @@ type Variable struct {
 	// Name of variable.
 	Name string
 	// Value of variable.
-	Value string
+	Value []string
 	// Type of variable.
 	Type string
 	// Is const variable.

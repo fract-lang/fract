@@ -19,6 +19,12 @@ import (
 // processValue Process value.
 // tokens Tokens.
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
+	// Is array expression?
+	first := tokens.First().(objects.Token)
+	if first.Type == fract.TypeBrace && first.Value == grammar.TokenLBracket {
+		return i.processArrayValue(tokens)
+	}
+
 	/* Check parentheses range. */
 	for true {
 		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
@@ -30,7 +36,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		}
 
 		var _token objects.Token
-		_token.Value = i.processValue(&_range).Content
+		_token.Value = i.processValue(&_range).Content[0]
 		_token.Type = fract.TypeValue
 		tokens.Insert(found, _token)
 	}
@@ -40,7 +46,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 
 	// Is conditional expression?
 	if i.isConditional(tokens) {
-		value.Content = arithmetic.IntToString(i.processCondition(tokens))
+		value.Content = []string{arithmetic.IntToString(i.processCondition(tokens))}
 		return value
 	}
 
@@ -62,7 +68,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 				fract.Error(operation.First,
 					"Name is not defined!: "+operation.First.Value)
 			}
-			operation.First.Value = i.vars.At(index).(objects.Variable).Value
+			operation.First.Value = i.vars.At(index).(objects.Variable).Value[0]
 		}
 
 		// Second value is a name?
@@ -72,7 +78,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 				fract.Error(operation.Second,
 					"Name is not defined!: "+operation.Second.Value)
 			}
-			operation.Second.Value = i.vars.At(index).(objects.Variable).Value
+			operation.Second.Value = i.vars.At(index).(objects.Variable).Value[0]
 		}
 
 		_token := operations.At(priorityIndex - 1).(objects.Token)
@@ -88,7 +94,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	}
 
 	// Set value.
-	first := operations.First().(objects.Token)
+	first = operations.First().(objects.Token)
 
 	// First value is a name?
 	if first.Type == fract.TypeName && tokens.Len() == 1 {
@@ -97,7 +103,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 			fract.Error(first,
 				"Name is not defined!: "+first.Value)
 		}
-		first.Value = i.vars.At(index).(objects.Variable).Value
+		first.Value = i.vars.At(index).(objects.Variable).Value[0]
 	}
 
 	_value, err := arithmetic.ToFloat64(first.Value)
@@ -107,12 +113,12 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	if arithmetic.IsFloatValue(first.Value) {
 		value.Type = fract.VTFloat
 	}
-	value.Content = arithmetic.TypeToString(value.Type, _value)
+	value.Content = []string{arithmetic.TypeToString(value.Type, _value)}
 
 	/* Set type to float if... */
 	if value.Type != fract.VTFloat &&
-		(strings.Index(value.Content, grammar.TokenDot) != -1 ||
-			strings.Index(value.Content, grammar.TokenDot) != -1) {
+		(strings.Index(value.Content[0], grammar.TokenDot) != -1 ||
+			strings.Index(value.Content[0], grammar.TokenDot) != -1) {
 		value.Type = fract.VTFloat
 	}
 

@@ -37,7 +37,12 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
 		}
 
 		// Println
-		fmt.Println(i.processValue(tokens).Content)
+		value := i.processValue(tokens)
+		if value.Type == fract.VTIntegerArray || value.Type == fract.VTFloatArray {
+			fmt.Println(value.Content)
+		} else {
+			fmt.Println(value.Content[0])
+		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
