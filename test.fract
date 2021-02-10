@@ -4,6 +4,9 @@ var b float32 := 4.0
 #c :=true
 #b + a + c
 
+var test int32 := { 2, 2, 4, 2 }
+test
+
 if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
   3
   if true = false:
