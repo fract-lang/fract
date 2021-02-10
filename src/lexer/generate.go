@@ -105,6 +105,17 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.TokenLBrace) { // Open brace.
+		l.braceCount++
+		token.Value = grammar.TokenLBrace
+		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.TokenRBrace) { // Close brace.
+		l.braceCount--
+		if l.braceCount < 0 {
+			l.Error("The extra brace are closed!")
+		}
+		token.Value = grammar.TokenRBrace
+		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenLBracket) { // Open bracket.
 		l.bracketCount++
 		token.Value = grammar.TokenLBracket
@@ -112,7 +123,7 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenRBracket) { // Close bracket.
 		l.bracketCount--
 		if l.bracketCount < 0 {
-			l.Error("The extra brackets are closed!")
+			l.Error("The extra bracket are closed!")
 		}
 		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace

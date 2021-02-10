@@ -20,6 +20,7 @@ func (l *Lexer) Next() *vector.Vector {
 
 	// Reset bracket counter.
 	l.parenthesCount = 0
+	l.braceCount = 0
 	l.bracketCount = 0
 
 tokenize:
@@ -55,10 +56,16 @@ tokenize:
 			l.Error("Parentheses is expected to close...")
 		}
 		goto tokenize
-	} else if l.bracketCount > 0 { // Check brackets.
+	} else if l.braceCount > 0 { // Check braces.
 		if l.Finished {
 			l.Line-- // Subtract for correct line number.
-			l.Error("Brackets is expected to close...")
+			l.Error("Brace is expected to close...")
+		}
+		goto tokenize
+	} else if l.bracketCount > 0 { // Check brackets.
+		if l.Finished {
+			l.Line-- // Subrract for correct line number.
+			l.Error("Bracket is expected to close...")
 		}
 		goto tokenize
 	} else if l.BlockCount > 0 { // Check blocks.

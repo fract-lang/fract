@@ -14,7 +14,9 @@ type Lexer struct {
 
 	// Last generated token.
 	lastToken objects.Token
-	// Bracket count.
+	// Brace count.
+	braceCount int
+	// Bracket cout.
 	bracketCount int
 	// Parenthes count.
 	parenthesCount int

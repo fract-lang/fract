@@ -22,7 +22,8 @@ import (
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	// Is array expression?
 	first := tokens.First().(objects.Token)
-	if first.Type == fract.TypeBrace && first.Value == grammar.TokenLBracket {
+	if first.Type == fract.TypeBrace && (first.Value == grammar.TokenLBrace ||
+		first.Value == grammar.TokenLBracket) {
 		return i.processArrayValue(tokens)
 	}
 

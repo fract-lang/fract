@@ -47,10 +47,15 @@ const (
 	TokenLParenthes string = "("
 	// TokenRParenthes Right parentheses.
 	TokenRParenthes string = ")"
+	// TokenLBrace Left brace.
+	TokenLBrace string = "{"
+	// TokenRBrace Right brace.
+	TokenRBrace string = "}"
 	// TokenLBracket Left bracket.
-	TokenLBracket string = "{"
+	TokenLBracket string = "["
 	// TokenRBracket Right bracket.
-	TokenRBracket string = "}"
+	TokenRBracket string = "]"
+
 	// TokenCaret Caret.
 	TokenCaret string = "^"
 	// TokenUnderscore Unserscore.
