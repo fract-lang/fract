@@ -46,8 +46,6 @@ const (
 	TypeElseIf int = 1115
 	// TypeStatementTerminator Statement terminator.
 	TypeStatementTerminator int = 1116
-	// TypeArrayDataType Array datatype type.
-	TypeArrayDataType int = 1117
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
