@@ -90,10 +90,11 @@ func valueToTypeValue(_type string, value string) ([]string, string) {
 }
 
 // ValueToTypeValue Value to type value by limit checks.
+// array Is array?
 // _type Type to parse.
 // value Value to parse.
-func ValueToTypeValue(_type string, value []string) ([]string, string) {
-	if len(value) > 1 {
+func ValueToTypeValue(array bool, _type string, value []string) ([]string, string) {
+	if array {
 		for index := range value {
 			result, err := valueToTypeValue(_type, value[index])
 			if err != "" {

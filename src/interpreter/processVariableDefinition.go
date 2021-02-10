@@ -78,11 +78,14 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
-	result, err := parser.ValueToTypeValue(variable.Type, value.Content)
+	variable.Array = dt.TypeIsArray(value.Type)
+
+	result, err := parser.ValueToTypeValue(variable.Array, variable.Type, value.Content)
 	if err != "" {
 		fract.ErrorCustom(setter.File.Path, setter.Line,
 			setter.Column+len(setter.Value), err)
 	}
+
 	variable.Value = result
 
 	// Set const state.
