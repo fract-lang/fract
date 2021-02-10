@@ -9,6 +9,7 @@ import (
 
 	"../fract"
 	"../fract/arithmetic"
+	"../fract/dt"
 	"../fract/name"
 	"../grammar"
 	"../objects"
@@ -103,7 +104,18 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 			fract.Error(first,
 				"Name is not defined!: "+first.Value)
 		}
-		first.Value = i.vars.At(index).(objects.Variable).Value[0]
+		variable := i.vars.At(index).(objects.Variable)
+		// Is Array?
+		if len(variable.Value) > 1 {
+			value.Content = variable.Value
+			if dt.IsFloatType(variable.Type) {
+				value.Type = fract.VTFloatArray
+			} else {
+				value.Type = fract.VTIntegerArray
+			}
+			return value
+		}
+		first.Value = variable.Value[0]
 	}
 
 	_value, err := arithmetic.ToFloat64(first.Value)
