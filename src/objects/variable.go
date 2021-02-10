@@ -10,4 +10,6 @@ type Variable struct {
 	Type string
 	// Is const variable.
 	Const bool
+	// Is array variable.
+	Array bool
 }

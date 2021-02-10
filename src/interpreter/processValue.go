@@ -106,7 +106,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		}
 		variable := i.vars.At(index).(objects.Variable)
 		// Is Array?
-		if len(variable.Value) > 1 {
+		if variable.Array {
 			value.Content = variable.Value
 			if dt.IsFloatType(variable.Type) {
 				value.Type = fract.VTFloatArray

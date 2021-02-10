@@ -46,13 +46,19 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	valtokens := tokens.Sublist(2, tokens.Len()-2)
 	value := i.processValue(&valtokens)
 
+	if variable.Array && !dt.TypeIsArray(value.Type) {
+		fract.Error(setter, "This variable is array, cannot set nonarray value!")
+	} else if !variable.Array && dt.TypeIsArray(value.Type) {
+		fract.Error(setter, "This variable is not array, cannot set array value!")
+	}
+
 	// Check value and data type compatibility.
 	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger &&
 		value.Type != fract.VTIntegerArray {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
-	result, err := parser.ValueToTypeValue(variable.Type, value.Content)
+	result, err := parser.ValueToTypeValue(variable.Array, variable.Type, value.Content)
 	if err != "" {
 		fract.ErrorCustom(setter.File.Path, setter.Line,
 			setter.Column+len(setter.Value), err)
