@@ -55,6 +55,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 				setIndex = position
 				tokens.RemoveRange(1, cindex)
 				setter = tokens.At(1).(objects.Token)
+				break
 			}
 		}
 	}
