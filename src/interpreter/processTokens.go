@@ -27,12 +27,15 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
-		if first.Type == fract.TypeName && tokens.Len() > 1 {
-			second := tokens.At(1).(objects.Token)
-			if second.Type == fract.TypeOperator &&
-				second.Value == grammar.Setter { // Variable setting.
-				i.processVariableSet(tokens)
-				return
+		// Check variable set statement?
+		if first.Type == fract.TypeName {
+			for index := 1; index < tokens.Len(); index++ {
+				current := tokens.At(index).(objects.Token)
+				if current.Type == fract.TypeOperator &&
+					current.Value == grammar.Setter { // Variable setting.
+					i.processVariableSet(tokens)
+					return
+				}
 			}
 		}
 
