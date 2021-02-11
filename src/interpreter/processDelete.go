@@ -21,8 +21,17 @@ func (i *Interpreter) processDelete(tokens *vector.Vector) {
 			"Value is not found!")
 	}
 
+	comma := false
 	for index := 1; index < tokens.Len(); index++ {
 		current := tokens.At(index).(objects.Token)
+
+		if comma {
+			if current.Type != fract.TypeComma {
+				fract.Error(current, "Comma is not found!")
+			}
+			comma = false
+			continue
+		}
 
 		// Token is not a deletable object?
 		if current.Type != fract.TypeName {
@@ -37,5 +46,10 @@ func (i *Interpreter) processDelete(tokens *vector.Vector) {
 		}
 
 		i.vars.RemoveRange(position, 1)
+		comma = true
+	}
+	//
+	if !comma {
+		fract.Error(tokens.Last().(objects.Token), "The extra comma defined!")
 	}
 }
