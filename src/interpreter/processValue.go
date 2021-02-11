@@ -17,6 +17,18 @@ import (
 	"../utilities/vector"
 )
 
+// processVariableName Process value is variable name?
+// token Token to process.
+func (i *Interpreter) processVariableName(token *objects.Token) {
+	if token.Type == fract.TypeName {
+		index := name.VarIndexByName(i.vars, token.Value)
+		if index == -1 {
+			fract.Error(*token, "Name is not defined!: "+token.Value)
+		}
+		token.Value = i.vars.At(index).(objects.Variable).Value[0]
+	}
+}
+
 // processValue Process value.
 // tokens Tokens.
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
@@ -64,24 +76,10 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		operation.Second = operations.At(priorityIndex + 1).(objects.Token)
 
 		// First value is a name?
-		if operation.First.Type == fract.TypeName {
-			index := name.VarIndexByName(i.vars, operation.First.Value)
-			if index == -1 {
-				fract.Error(operation.First,
-					"Name is not defined!: "+operation.First.Value)
-			}
-			operation.First.Value = i.vars.At(index).(objects.Variable).Value[0]
-		}
+		i.processVariableName(&operation.First)
 
 		// Second value is a name?
-		if operation.Second.Type == fract.TypeName {
-			index := name.VarIndexByName(i.vars, operation.Second.Value)
-			if index == -1 {
-				fract.Error(operation.Second,
-					"Name is not defined!: "+operation.Second.Value)
-			}
-			operation.Second.Value = i.vars.At(index).(objects.Variable).Value[0]
-		}
+		i.processVariableName(&operation.Second)
 
 		_token := operations.At(priorityIndex - 1).(objects.Token)
 		operations.RemoveRange(priorityIndex-1, 3)
