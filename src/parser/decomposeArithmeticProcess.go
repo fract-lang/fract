@@ -32,7 +32,9 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 			processes.Append(_token)
 			operator = false
 		} else if _token.Type == fract.TypeValue || _token.Type == fract.TypeName ||
-			_token.Type == fract.TypeBooleanTrue || _token.Type == fract.TypeBooleanFalse {
+			_token.Type == fract.TypeBooleanTrue || _token.Type == fract.TypeBooleanFalse ||
+			(_token.Type == fract.TypeBrace && (_token.Value == grammar.TokenLBracket ||
+				_token.Value == grammar.TokenRBracket)) {
 			if _token.Type == fract.TypeName && last.Type == fract.TypeOperator &&
 				last.Value == grammar.TokenMinus &&
 				strings.HasPrefix(_token.Value, grammar.TokenMinus) {
