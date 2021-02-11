@@ -42,6 +42,10 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 				}
 
 				valueList := operations.Sublist(index+2, cindex-index-2)
+				// Index value is empty?
+				if !valueList.Any() {
+					fract.Error(*token, "Index is not defined!")
+				}
 				position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
 				if err != nil {
 					fract.Error(operations.At(cindex).(objects.Token), "Value out of range!")
@@ -77,6 +81,10 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 			fract.Error(*token, "Name is not defined!: "+nameToken.Value)
 		}
 		valueList := operations.Sublist(oindex+1, index-oindex-1)
+		// Index value is empty?
+		if !valueList.Any() {
+			fract.Error(nameToken, "Index is not defined!")
+		}
 		position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
 		if err != nil {
 			fract.Error(operations.At(oindex).(objects.Token), "Value out of range!")
