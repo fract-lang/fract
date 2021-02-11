@@ -22,7 +22,7 @@ import (
 // operations All operations.
 // index Index of token.
 func (i *Interpreter) processVariableName(token *objects.Token,
-	operations *vector.Vector, index int) {
+	operations *vector.Vector, index int) int {
 	if token.Type == fract.TypeName {
 		vindex := name.VarIndexByName(i.vars, token.Value)
 		if vindex == -1 {
@@ -40,10 +40,7 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 						break
 					}
 				}
-				// Finished?
-				if cindex == 0 {
-					fract.Error(operations.First().(objects.Token), "Index error!")
-				}
+
 				valueList := operations.Sublist(index+2, cindex-index-2)
 				position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
 				if err != nil {
@@ -55,12 +52,44 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 				}
 				operations.RemoveRange(index, cindex-index)
 				token.Value = variable.Value[position]
-				return
+				return valueList.Len() - 1
 			}
 		}
 
 		token.Value = i.vars.At(vindex).(objects.Variable).Value[0]
+	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBracket {
+		// Find close bracket.
+		oindex := index - 1
+		for ; oindex >= 0; oindex-- {
+			current := operations.At(oindex).(objects.Token)
+			if current.Type == fract.TypeBrace && current.Value == grammar.TokenLBracket {
+				break
+			}
+		}
+		// Finished?
+		if oindex == 0 {
+			fract.Error(operations.First().(objects.Token), "Index error!")
+		}
+
+		nameToken := operations.At(oindex - 1).(objects.Token)
+		vindex := name.VarIndexByName(i.vars, nameToken.Value)
+		if vindex == -1 {
+			fract.Error(*token, "Name is not defined!: "+nameToken.Value)
+		}
+		valueList := operations.Sublist(oindex+1, index-oindex-1)
+		position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
+		if err != nil {
+			fract.Error(operations.At(oindex).(objects.Token), "Value out of range!")
+		}
+		variable := i.vars.At(vindex).(objects.Variable)
+		if position < 0 || position >= int64(len(variable.Value)) {
+			fract.Error(operations.At(oindex).(objects.Token), "Index is out of range!")
+		}
+		operations.RemoveRange(oindex-1, index-oindex+1)
+		token.Value = variable.Value[position]
+		return index - oindex + 1
 	}
+	return 0
 }
 
 // processValue Process value.
@@ -108,13 +137,13 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		var operation objects.ArithmeticProcess
 		operation.First = operations.At(priorityIndex - 1).(objects.Token)
 		// First value is a name?
-		i.processVariableName(&operation.First, &operations, priorityIndex-1)
+		priorityIndex -= i.processVariableName(&operation.First, &operations, priorityIndex-1)
 
 		operation.Operator = operations.At(priorityIndex).(objects.Token)
 
 		operation.Second = operations.At(priorityIndex + 1).(objects.Token)
 		// Second value is a name?
-		i.processVariableName(&operation.Second, &operations, priorityIndex+1)
+		priorityIndex -= i.processVariableName(&operation.Second, &operations, priorityIndex+1)
 
 		_token := operations.At(priorityIndex - 1).(objects.Token)
 		operations.RemoveRange(priorityIndex-1, 3)
