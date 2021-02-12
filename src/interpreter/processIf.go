@@ -12,7 +12,7 @@ import (
 	"../utilities/vector"
 )
 
-// processIf Process if-elif-else blocks.
+// processIf Process if-elif-else blocks and returns loop keyword state.
 // tokens Tokens to process.
 // do Do processes?
 func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {

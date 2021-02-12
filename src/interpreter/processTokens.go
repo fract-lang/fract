@@ -14,12 +14,14 @@ import (
 )
 
 // processTokens Process tokens and returns true if block end, returns false if not.
+// and returns loop keyword state.
+//
 // tokens Tokens to process.
 // do Do processes?
-func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
+func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 	// Skip this loop if tokens are empty.
 	if !tokens.Any() {
-		return
+		return -1
 	}
 
 	first := tokens.At(0).(objects.Token)
@@ -34,7 +36,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
 				if current.Type == fract.TypeOperator &&
 					current.Value == grammar.Setter { // Variable setting.
 					i.processVariableSet(tokens)
-					return
+					return -1
 				}
 			}
 		}
@@ -54,7 +56,10 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
 		i.processIf(tokens, do)
 	} else if first.Type == fract.TypeLoop { // Loop.
 		i.processLoop(tokens, do)
+	} else if first.Type == fract.TypeBreak { // Break loop.
+		return fract.LOOPBreak
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}
+	return -1
 }

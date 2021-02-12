@@ -50,6 +50,8 @@ const (
 	TypeLoop int = 1117
 	// TypeIn In type.
 	TypeIn int = 1118
+	// TypeBreak Break loop type.
+	TypeBreak int = 1119
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
@@ -59,4 +61,7 @@ const (
 	VTFloat int = 2
 	// VTFloatArray Float array value type.
 	VTFloatArray int = 3
+
+	// LOOPBreak Break loop.
+	LOOPBreak int = 1
 )
