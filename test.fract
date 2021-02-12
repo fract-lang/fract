@@ -1,20 +1,24 @@
-var a int32 := 4
-var b float32 := 4.0
+#var a int32 := 4
+#var b float32 := 4.0
 #var c bool := false
 #c :=true
 #b + a + c
 
-var test int32 := [4]
-test[3] := 1
-test
-test[3] := [4]
+#var test int32 := [4]
+#test[3] := 1
+#test
+#test[3] := [4]
 
-if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
-  3
-  if true = false:
-    5
-  elif false = false:
-    10
-    4
-  end
-end
+#if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
+#  3
+#  if true = false:
+#    5
+#  elif false = false:
+#    10
+#    4
+#  end
+#end
+
+#var t1 int32 := { 0, 4, 4, 2 }
+#var t2 int32 := { }
+#t1 = t2
