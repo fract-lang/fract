@@ -137,6 +137,9 @@ array[index] := value
 You can let the algorithm flow with the conditions. Fract offers the If-Else If-Else structure like most programming languages.
 "If" is the main condition, the alternative conditions that will come later are shown as "Else If".
 When one condition is fulfilled, other conditions do not. Therefore, "If" must be rewritten each time to create a different order of conditions.
+
+> Only the first element of arrays is used in conditions. Represents 0 if the array is empty.
+
 #### Syntax
 ```
 if [CONDITION]:
