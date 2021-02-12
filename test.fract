@@ -23,13 +23,15 @@
 #var t2 int32 := { }
 #t1 = t2
 
-#var counter int32 := 0
-#for counter:
-#  counter
-#  counter := counter + 1
-#end
+var counter int32 := 0
+for counter <= 10:
+  counter
+  break
+  counter := counter + 1
+end
 
-#for index in { 0, 1, 2, 3, 4.0 }:
-#  var test float64 := index
-#  index
-#end
+for index in { 0, 1, 2, 3, 4.0 }:
+  var test float64 := index
+  index
+  break
+end

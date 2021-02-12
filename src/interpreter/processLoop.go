@@ -63,7 +63,10 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			// Condition is true?
 			if i.processCondition(&contentList) == grammar.TRUE {
 				if do {
-					i.processTokens(tokens, do)
+					kwstate := i.processTokens(tokens, do)
+					if kwstate == fract.LOOPBreak {
+						line = -1
+					}
 				}
 			} else {
 				line = -1
@@ -137,7 +140,10 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 		// Condition is true?
 		if do {
-			i.processTokens(tokens, do)
+			kwstate := i.processTokens(tokens, do)
+			if kwstate == fract.LOOPBreak {
+				do = false
+			}
 		}
 
 	nextFor:

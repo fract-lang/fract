@@ -189,6 +189,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.KwIn) { // In.
 		token.Value = grammar.KwIn
 		token.Type = fract.TypeIn
+	} else if isKeywordToken(ln, grammar.KwBreak) { // Break.
+		token.Value = grammar.KwBreak
+		token.Type = fract.TypeBreak
 	} else if isKeywordToken(ln, grammar.DtInt8) { // int8.
 		token.Value = grammar.DtInt8
 		token.Type = fract.TypeDataType
