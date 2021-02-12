@@ -61,14 +61,14 @@ Until the brackets are closed, they are tokenized.
 
 > Cannot change values of const variables!
 
-#### Syntax
+### Syntax
 ```
 var [NAME] [DATA_TYPE] := [VALUE]
 ```
 ```
 const [NAME] [DATA_TYPE] := [VALUE]
 ```
-#### Examples
+### Examples
 ```
 const Pi float32 := 3.14
 ```
@@ -76,27 +76,27 @@ const Pi float32 := 3.14
 var Fibonacci.First int32 := 1
 ```
 
-### Set Defined
-#### Syntax
+## Set Defined
+### Syntax
 ```
 [NAME] := [VALUE]
 ```
-#### Examples
+### Examples
 ```
 var a int32 := 45    # Value is 45
 a := 1               # Value is 1
 ```
 
-### Deletion Defines
+## Deletion Defines
 You can free space and customize usage by deleting definitions from memory.
 
 > Fract does not allow direct memory management! You can contribute to usage by deleting only memorized definitions.
 
-#### Syntax
+### Syntax
 ```
 del [NAME], [NAME], [NAME],...
 ```
-#### Examples
+### Examples
 ```
 var a int32 := 4
 var a int32 := 5       # Error, defined name 'a'
@@ -114,7 +114,7 @@ del a, b               # Remove 'a' and 'b'
                        # No defined variables
 ```
 
-### Arrays
+## Arrays
 They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
 Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
 ```
@@ -133,14 +133,14 @@ The syntax for setting an element of an array with index:
 array[index] := value
 ```
 
-### Conditional Expressions
+## Conditional Expressions
 You can let the algorithm flow with the conditions. Fract offers the If-Else If-Else structure like most programming languages.
 "If" is the main condition, the alternative conditions that will come later are shown as "Else If".
 When one condition is fulfilled, other conditions do not. Therefore, "If" must be rewritten each time to create a different order of conditions.
 
 > Only the first element of arrays is used in conditions. Represents 0 if the array is empty.
 
-#### Syntax
+### Syntax
 ```
 if [CONDITION]:
 end
@@ -174,16 +174,48 @@ if example:
   # ...
 end
 ```
-### Loops
+
+## Loops
 
 Repetitive operations can be done using loops.
 
-#### While
+### While Loop
 The while is a loop that happens as long as the condition is met.
 
-##### Syntax
+#### Syntax
 ```
 for [CONDITION]:
   # ...
+end
+```
+#### Examples
+```
+var counter int32 := 0
+for counter <= 10:
+  counter
+  counter := counter + 1
+end
+```
+
+### For Loop
+You can rotate the elements of arrays one by one with the for loop.
+
+#### Syntax
+```
+for [VARIABLE_NAME] in [VALUE]:
+  # ...
+end
+```
+#### Examples
+```
+var t1 int32 := { 0, 3, 2, 1, 90 }
+for index in { 0, 1, 2, 3, 4 }:
+  t1[index]
+end
+```
+```
+var t1 int32 := { 0, 3, 2, 1, 90 }
+for item in t1:
+  item
 end
 ```
