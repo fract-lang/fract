@@ -29,6 +29,7 @@
 #  counter := counter + 1
 #end
 
-#for index in { 0, 1, 2, 3, 4 }:
-#  t1[index]
+#for index in { 0, 1, 2, 3, 4.0 }:
+#  var test float64 := index
+#  index
 #end
