@@ -37,6 +37,8 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 	// WHILE
 	if contentList.Len() == 1 || contentList.At(1).(objects.Token).Type != fract.TypeIn {
+		variableLen := i.vars.Len()
+
 		/* Interpret/skip block. */
 		for !i.lexer.Finished {
 			// Skip this loop if tokens are empty.
@@ -52,8 +54,10 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				}
 				i.lexer.Line -= i.lexer.Line - line
 				i.lexer.BlockCount++
-				tokens = i.lexer.Next()
-				continue
+
+				// Remove temporary variables.
+				i.vars.RemoveRange(variableLen, i.vars.Len()-variableLen)
+				goto nextWhile
 			}
 
 			// Condition is true?
@@ -65,6 +69,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				line = -1
 			}
 
+		nextWhile:
 			tokens = i.lexer.Next()
 		}
 	}
@@ -99,7 +104,9 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 	i.vars.Append(variable)
 
-	for vindex := 0; vindex < len(value.Content); vindex++ {
+	variableLen := i.vars.Len()
+
+	for vindex := 0; vindex < len(value.Content); {
 		variable.Value[0] = value.Content[vindex]
 		i.vars.Set(i.vars.Len()-1, variable)
 
@@ -115,14 +122,17 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 		first := tokens.First().(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
+			vindex++
 			if vindex == len(value.Content) {
 				break
 			}
 			i.lexer.Line -= i.lexer.Line - line
 			i.lexer.BlockCount++
-			tokens = i.lexer.Next()
-			vindex--
-			continue
+
+			// Remove temporary variables.
+			i.vars.RemoveRange(variableLen, i.vars.Len()-variableLen)
+
+			goto nextFor
 		}
 
 		// Condition is true?
@@ -130,6 +140,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			i.processTokens(tokens, do)
 		}
 
+	nextFor:
 		tokens = i.lexer.Next()
 	}
 
