@@ -84,3 +84,8 @@ func (v *Vector) First() interface{} {
 func (v *Vector) Last() interface{} {
 	return v.Vals[len(v.Vals)-1]
 }
+
+// RemoveLast Remove last element.
+func (v *Vector) RemoveLast() {
+	v.Vals = v.Vals[:len(v.Vals)-1]
+}
