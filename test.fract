@@ -24,11 +24,9 @@ var t1 int32 := { 0, 4, 4, 2 }
 #t1 = t2
 
 #var counter int32 := 0
-#for counter <= 10:
+#for counter:
 #  counter
 #  counter := counter + 1
 #end
 
-for index in { 0, 1, 2, 3 }:
-  t1[index]
-end
+#for index in 1: t1[index]; end
