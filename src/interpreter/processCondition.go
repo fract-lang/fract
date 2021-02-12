@@ -13,6 +13,15 @@ import (
 	"../utilities/vector"
 )
 
+// checkEmpty Check value is empty. And return 0 if empty.
+// values Values to check.
+func checkEmpty(values []string) []string {
+	if len(values) == 0 {
+		return []string{"0"}
+	}
+	return values
+}
+
 // compare Compare values by operator.
 // value0 First value of comparison.
 // value1 Second value of comparison.
@@ -54,7 +63,6 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		_token.Type = fract.TypeValue
 		tokens.Insert(found, _token)
 	}
-
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(tokens, grammar.TokenVerticalBar)
 	for index := 0; index < ors.Len(); index++ {
@@ -94,8 +102,8 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		val0L := current.Sublist(0, operatorIndex)
 		val1L := current.Sublist(operatorIndex+1, current.Len()-operatorIndex-1)
-		val0, _ := arithmetic.ToFloat64(i.processValue(&val0L).Content[0])
-		val1, _ := arithmetic.ToFloat64(i.processValue(&val1L).Content[0])
+		val0, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(&val0L).Content)[0])
+		val1, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(&val1L).Content)[0])
 		if compare(val0, val1, operator) {
 			return grammar.TRUE
 		}

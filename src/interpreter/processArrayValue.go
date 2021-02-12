@@ -33,6 +33,9 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		if err != nil {
 			fract.Error(first, "Value out of range!")
 		}
+		if val < 0 {
+			fract.Error(first, "Value is not lower than zero!")
+		}
 		value.Content = make([]string, val)
 		for index := range value.Content {
 			value.Content[index] = "0"
