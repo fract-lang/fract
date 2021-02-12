@@ -1,7 +1,7 @@
 # QUICK START TO FRACT
 
 + [Keywords](https://github.com/fract-lang/fract/blob/main/docs/Fract/keywords.md)
-+ [DataTypes](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
++ [Data Types](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
 + [Operators](https://github.com/fract-lang/fract/blob/main/docs/Fract/operators.md)
 
 ## Comments
@@ -112,6 +112,25 @@ var a int32 := 0
 var b int32 := 0
 del a, b               # Remove 'a' and 'b'
                        # No defined variables
+```
+
+### Arrays
+They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
+Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
+```
+var array int32 := { 4, 5, 6, 7 }  # Elements: 4, 5, 6, 7
+```
+The syntax for creating an array of a certain size without value:
+```
+var array float64 := [5] # Elements: 0, 0, 0, 0, 0
+```
+The syntax for accessing an element of an array with index:
+```
+array[index]
+```
+The syntax for setting an element of an array with index:
+```
+array[index] := value
 ```
 
 ### Conditional Expressions
