@@ -69,6 +69,9 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 					}
 				}
 			} else {
+				if first.Type == fract.TypeIf { // If?
+					i.processIf(tokens, false)
+				}
 				line = -1
 			}
 
@@ -77,7 +80,9 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		}
 	}
 
-	// FOR
+	// ************
+	//     FOR
+	// ************
 	nameToken := contentList.First().(objects.Token)
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {
