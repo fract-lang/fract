@@ -149,6 +149,10 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			if kwstate == fract.LOOPBreak {
 				do = false
 			}
+		} else {
+			if first.Type == fract.TypeIf { // If?
+				i.processIf(tokens, false)
+			}
 		}
 
 	nextFor:

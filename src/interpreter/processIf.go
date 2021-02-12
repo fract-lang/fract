@@ -13,9 +13,11 @@ import (
 )
 
 // processIf Process if-elif-else blocks and returns loop keyword state.
+// And returns loop keyword state.
+//
 // tokens Tokens to process.
 // do Do processes?
-func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
+func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	/* IF */
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
@@ -38,8 +40,12 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 	conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
 	tokens = &conditionList
 
+	kwstate := -1
+
 	/* Interpret/skip block. */
 	for !i.lexer.Finished {
+		do = kwstate == -1 && do
+
 		// Skip this loop if tokens are empty.
 		if !tokens.Any() {
 			tokens = i.lexer.Next()
@@ -48,7 +54,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 
 		first := tokens.First().(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
-			return
+			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			i.lexer.BlockCount--
 
@@ -82,7 +88,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 
 				first := tokens.First().(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					return
+					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
 				} else if first.Type == fract.TypeElseIf { // Else if block.
@@ -91,7 +97,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 
 				// Condition is true?
 				if state == grammar.TRUE && !actioned && do {
-					i.processTokens(tokens, true)
+					kwstate = i.processTokens(tokens, true)
 				}
 
 				tokens = i.lexer.Next()
@@ -105,9 +111,10 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) {
 
 		// Condition is true?
 		if state == grammar.TRUE && do {
-			i.processTokens(tokens, do)
+			kwstate = i.processTokens(tokens, do)
 		}
 
 		tokens = i.lexer.Next()
 	}
+	return kwstate
 }
