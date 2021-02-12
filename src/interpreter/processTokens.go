@@ -52,6 +52,8 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) {
 		i.processDelete(tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
 		i.processIf(tokens, do)
+	} else if first.Type == fract.TypeLoop { // Loop.
+		i.processLoop(tokens, do)
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}

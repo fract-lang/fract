@@ -183,6 +183,12 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.KwElseIf) { // Else if.
 		token.Value = grammar.KwElseIf
 		token.Type = fract.TypeElseIf
+	} else if isKeywordToken(ln, grammar.KwForWhileLoop) { // For and while loop.
+		token.Value = grammar.KwForWhileLoop
+		token.Type = fract.TypeLoop
+	} else if isKeywordToken(ln, grammar.KwIn) { // In.
+		token.Value = grammar.KwIn
+		token.Type = fract.TypeIn
 	} else if isKeywordToken(ln, grammar.DtInt8) { // int8.
 		token.Value = grammar.DtInt8
 		token.Type = fract.TypeDataType
