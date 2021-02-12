@@ -19,7 +19,7 @@
 #  end
 #end
 
-var t1 int32 := { 0, 4, 4, 2 }
+#var t1 int32 := { 0, 3, 2, 1, 90 }
 #var t2 int32 := { }
 #t1 = t2
 
@@ -29,4 +29,6 @@ var t1 int32 := { 0, 4, 4, 2 }
 #  counter := counter + 1
 #end
 
-#for index in 1: t1[index]; end
+#for index in { 0, 1, 2, 3, 4 }:
+#  t1[index]
+#end
