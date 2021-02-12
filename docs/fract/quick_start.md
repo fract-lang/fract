@@ -174,3 +174,16 @@ if example:
   # ...
 end
 ```
+### Loops
+
+Repetitive operations can be done using loops.
+
+#### While
+The while is a loop that happens as long as the condition is met.
+
+##### Syntax
+```
+for [CONDITION]:
+  # ...
+end
+```

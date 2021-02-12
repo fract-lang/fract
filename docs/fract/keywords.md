@@ -34,4 +34,8 @@
     <td align="center"><b>end</b></td>
     <td>Block breaker.</td>
   </tr>
+  <tr>
+    <td align="center"><b>for</b></td>
+    <td>For and while loop.</td>
+  </tr>
 </table>
