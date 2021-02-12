@@ -19,8 +19,10 @@ const (
 	KwReturn string = "ret"
 	//KwBlockEnd End of block.
 	KwBlockEnd string = "end"
-	// KwForLoop For loop.
-	KwForLoop string = "for"
+	// KwForWhileLoop For and while loop.
+	KwForWhileLoop string = "for"
+	// KwIn In.
+	KwIn string = "in"
 	// KwIf If condition.
 	KwIf string = "if"
 	// KwElseIf Else-If alternate or else.

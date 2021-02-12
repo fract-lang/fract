@@ -46,6 +46,10 @@ const (
 	TypeElseIf int = 1115
 	// TypeStatementTerminator Statement terminator.
 	TypeStatementTerminator int = 1116
+	// TypeLoop Loop type.
+	TypeLoop int = 1117
+	// TypeIn In type.
+	TypeIn int = 1118
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
