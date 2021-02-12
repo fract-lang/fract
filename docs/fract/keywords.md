@@ -38,4 +38,8 @@
     <td align="center"><b>for</b></td>
     <td>For and while loop.</td>
   </tr>
+  <tr>
+    <td align="center"><b>in</b></td>
+    <td>Range loop declare.</td>
+  </tr>
 </table>
