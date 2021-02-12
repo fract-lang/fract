@@ -29,7 +29,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	// WHILE
-	if contentList.At(1).(objects.Token).Type != fract.TypeIn {
+	if contentList.Len() == 1 || contentList.At(1).(objects.Token).Type != fract.TypeIn {
 		line := i.lexer.Line
 
 		cacheList := tokens.Sublist(index+1, tokens.Len()-index-1)
@@ -66,6 +66,4 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			tokens = i.lexer.Next()
 		}
 	}
-
-	// FOR
 }
