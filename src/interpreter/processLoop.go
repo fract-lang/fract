@@ -12,18 +12,6 @@ import (
 	"../utilities/vector"
 )
 
-// isWhile Find in keyword in tokens.
-// tokens Tokens to check.
-func findIn(tokens vector.Vector) int {
-	for index := 0; index < tokens.Len(); index++ {
-		current := tokens.At(index).(objects.Token)
-		if current.Type == fract.TypeIn {
-			return index
-		}
-	}
-	return -1
-}
-
 // processLoop Process loop block.
 // tokens Tokens to process.
 // do Do processes?
@@ -33,11 +21,15 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	if index == -1 {
 		fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
 	}
-	inIndex := findIn(tokens.Sublist(0, index))
 
-	// While?
-	if inIndex == -1 {
-		conditionList := tokens.Sublist(1, tokens.Len()-inIndex-3)
+	contentList := tokens.Sublist(1, index-1)
+	// Content is empty?
+	if !contentList.Any() {
+		fract.Error(tokens.First().(objects.Token), "Content is empty!")
+	}
+
+	// WHILE
+	if contentList.At(1).(objects.Token).Type != fract.TypeIn {
 		line := i.lexer.Line
 
 		cacheList := tokens.Sublist(index+1, tokens.Len()-index-1)
@@ -63,7 +55,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			}
 
 			// Condition is true?
-			if i.processCondition(&conditionList) == grammar.TRUE {
+			if i.processCondition(&contentList) == grammar.TRUE {
 				if do {
 					i.processTokens(tokens, do)
 				}
@@ -74,4 +66,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			tokens = i.lexer.Next()
 		}
 	}
+
+	// FOR
 }
