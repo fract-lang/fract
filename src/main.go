@@ -56,16 +56,16 @@ func main() {
 
 	command := ""
 	skipped := false
-	for arg := range os.Args {
+	for index := range os.Args {
 		if !skipped {
 			skipped = true
 			continue
 		}
 		if command == "" {
-			command += os.Args[arg]
+			command += os.Args[index]
 			continue
 		}
-		command += " " + os.Args[arg]
+		command += " " + os.Args[index]
 	}
 
 	processCommand(commands.GetNamespace(command),
