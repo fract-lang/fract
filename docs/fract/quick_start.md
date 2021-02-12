@@ -94,7 +94,7 @@ You can free space and customize usage by deleting definitions from memory.
 
 #### Syntax
 ```
-del [NAME] [NAME] [NAME]...
+del [NAME], [NAME], [NAME],...
 ```
 #### Examples
 ```
@@ -110,7 +110,7 @@ var a int32 := 5       # No error, a is 5
 ```
 var a int32 := 0
 var b int32 := 0
-del a b                # Remove 'a' and 'b'
+del a, b               # Remove 'a' and 'b'
                        # No defined variables
 ```
 
