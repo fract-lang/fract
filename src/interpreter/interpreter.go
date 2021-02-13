@@ -17,6 +17,8 @@ type Interpreter struct {
 	lexer *lexer.Lexer
 	// Variables.
 	vars *vector.Vector
+	// Loop count.
+	loops int
 
 	/* PUBLIC */
 
