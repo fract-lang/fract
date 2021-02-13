@@ -46,4 +46,8 @@
     <td align="center"><b>break</b></td>
     <td>Break loop.</td>
   </tr>
+  <tr>
+    <td align="center"><b>continue</b></td>
+    <td>Continue loop with next.</td>
+  </tr>
 </table>
