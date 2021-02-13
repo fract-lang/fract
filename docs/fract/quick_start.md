@@ -219,3 +219,33 @@ for item in t1:
   item
 end
 ```
+
+### Break Keyword
+With the keyword break, it is possible to override and terminate the entire loop even when the loop could still return.
+#### Examples
+```
+var counter int32 := 0
+for counter <= 10:
+  counter := counter + 1
+  if counter > 5:
+    break
+  end
+  counter
+end
+
+# Output: 0 1 2 3 4 5
+```
+
+### Continue Keyword
+It can be used to pass the cycle to the next cycle step. If there is no next loop step, the loop is terminated.
+```
+for index in { 0, 1, 2, 3, 4.0 }:
+  if index = 1 | index = 3:
+    continue
+  end
+  var test float64 := index
+  index
+end
+
+# Output: 0, 2, 4.000000
+```
