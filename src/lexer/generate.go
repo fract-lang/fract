@@ -238,7 +238,7 @@ func (l *Lexer) Generate() objects.Token {
 	} else { // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
-			"^([A-z])([a-zA-Z1-9" + grammar.TokenUnderscore + grammar.TokenDot +
+			"^([A-z])([a-zA-Z0-9" + grammar.TokenUnderscore + grammar.TokenDot +
 				"]+)?([[:punct:]]|\\s|$)").FindString(ln)); check != "" { // Name.
 			// Remove punct.
 			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
