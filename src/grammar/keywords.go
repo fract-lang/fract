@@ -25,6 +25,8 @@ const (
 	KwIn string = "in"
 	// KwBreak Break loop.
 	KwBreak string = "break"
+	// KwContinue Continue loop.
+	KwContinue string = "continue"
 	// KwIf If condition.
 	KwIf string = "if"
 	// KwElseIf Else-If alternate or else.

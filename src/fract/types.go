@@ -52,6 +52,8 @@ const (
 	TypeIn int = 1118
 	// TypeBreak Break loop type.
 	TypeBreak int = 1119
+	// TypeContinue Continue loop type.
+	TypeContinue int = 1120
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
@@ -64,4 +66,6 @@ const (
 
 	// LOOPBreak Break loop.
 	LOOPBreak int = 1
+	// LOOPContinue Continue loop.
+	LOOPContinue int = 2
 )

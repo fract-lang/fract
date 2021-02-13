@@ -31,6 +31,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	line := i.lexer.Line
+	_continue := false
 
 	cacheList := tokens.Sublist(index+1, tokens.Len()-index-1)
 	tokens = &cacheList
@@ -52,6 +53,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				if line == -1 {
 					return
 				}
+				_continue = false
 				i.lexer.Line -= i.lexer.Line - line
 				i.lexer.BlockCount++
 
@@ -62,10 +64,12 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 			// Condition is true?
 			if i.processCondition(&contentList) == grammar.TRUE {
-				if do {
+				if do && !_continue {
 					kwstate := i.processTokens(tokens, do)
-					if kwstate == fract.LOOPBreak {
+					if kwstate == fract.LOOPBreak { // Break loop?
 						line = -1
+					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						_continue = true
 					}
 				}
 			} else {
@@ -134,6 +138,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			if vindex == len(value.Content) {
 				break
 			}
+			_continue = false
 			i.lexer.Line -= i.lexer.Line - line
 			i.lexer.BlockCount++
 
@@ -144,10 +149,12 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		}
 
 		// Condition is true?
-		if do {
+		if do && !_continue {
 			kwstate := i.processTokens(tokens, do)
-			if kwstate == fract.LOOPBreak {
+			if kwstate == fract.LOOPBreak { // Break loop?
 				do = false
+			} else if kwstate == fract.LOOPContinue { // Continue next?
+				_continue = true
 			}
 		} else {
 			if first.Type == fract.TypeIf { // If?
