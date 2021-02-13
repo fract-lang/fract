@@ -55,10 +55,18 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 	} else if first.Type == fract.TypeIf { // if-elif-else.
 		return i.processIf(tokens, do)
 	} else if first.Type == fract.TypeLoop { // Loop.
+		i.loops++
 		i.processLoop(tokens, do)
+		i.loops--
 	} else if first.Type == fract.TypeBreak { // Break loop.
+		if i.loops == 0 {
+			fract.Error(first, "Break keyword only used in loops!")
+		}
 		return fract.LOOPBreak
 	} else if first.Type == fract.TypeContinue { // Continue loop.
+		if i.loops == 0 {
+			fract.Error(first, "Continue keyword only used in loops!")
+		}
 		return fract.LOOPContinue
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
