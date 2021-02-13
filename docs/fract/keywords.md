@@ -42,4 +42,8 @@
     <td align="center"><b>in</b></td>
     <td>Range loop declare.</td>
   </tr>
+  <tr>
+    <td align="center"><b>break</b></td>
+    <td>Break loop.</td>
+  </tr>
 </table>
