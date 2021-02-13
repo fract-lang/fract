@@ -25,11 +25,15 @@
 
 var counter int32 := 0
 for counter <= 10:
-  counter
   counter := counter + 1
+  if counter > 5:
+    continue
+  end
+  counter
 end
 
 for index in { 0, 1, 2, 3, 4.0 }:
+  continue
   var test float64 := index
   index
 end
