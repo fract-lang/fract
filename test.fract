@@ -40,7 +40,7 @@ var b float32 := 4.0
 #  var test float64 := index
 #  index
 #end
-
+continue
 var counter int32 := 1
 for counter <= 1000:
   var total int32 := 0
