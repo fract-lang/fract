@@ -18,12 +18,8 @@ import (
 //
 // tokens Tokens to process.
 // do Do processes?
+// nested Is nested?
 func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
-	// Skip this loop if tokens are empty.
-	if !tokens.Any() {
-		return -1
-	}
-
 	first := tokens.At(0).(objects.Token)
 
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
