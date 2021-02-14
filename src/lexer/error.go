@@ -1,5 +1,5 @@
 /*
-	ERROR FUNCTIONS
+	Error Function.
 */
 
 package lexer

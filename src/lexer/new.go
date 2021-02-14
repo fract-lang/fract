@@ -1,5 +1,5 @@
 /*
-	GENERIC FUNCTIONS
+	New Function.
 */
 
 package lexer
