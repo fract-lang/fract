@@ -1,5 +1,5 @@
-#var a int32 := 4
-#var b float32 := 4.0
+var a int32 := 4
+var b float32 := 4.0
 #var c bool := false
 #c :=true
 #b + a + c
@@ -12,28 +12,49 @@
 #if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
 #  3
 #  if true = false:
-#    5
+#    #5
 #  elif false = false:
 #    10
 #    4
 #  end
 #end
 
+#if true = false:
+#  5
+#elif false = false:
+#  10
+#  4
+#end
+
 #var t1 int32 := { 0, 3, 2, 1, 90 }
 #var t2 int32 := { }
 #t1 = t2
 
-var counter int32 := 0
-for counter <= 10:
-  counter := counter + 1
-  if counter > 5:
-    continue
-  end
-  counter
-end
+#var counter int32 := 0
+#for counter <= 10:
+#  counter := counter +1
+#  counter
+#end
 
-for index in { 0, 1, 2, 3, 4.0 }:
-  continue
-  var test float64 := index
-  index
+#for index in { 0, 1, 2, 3, 4.0 }:
+#  var test float64 := index
+#  index
+#end
+
+var counter int32 := 1
+for counter <= 1000:
+  var total int32 := 0
+  var ccounter int32 := 1
+  for ccounter < counter:
+    if counter % ccounter = 0:
+      total := total + ccounter
+    end
+    ccounter := ccounter + 1
+  end
+
+  if total = counter:
+    counter
+  end
+
+  counter := counter + 1
 end

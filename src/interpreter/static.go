@@ -21,6 +21,7 @@ func New(path string, _type int) *Interpreter {
 	preter.lexer = lexer.New(ReadyFile(path))
 	preter.vars = vector.New()
 	preter.Type = _type
+	preter.tokens = vector.New()
 	return preter
 }
 

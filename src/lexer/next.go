@@ -68,11 +68,6 @@ tokenize:
 			l.Error("Bracket is expected to close...")
 		}
 		goto tokenize
-	} else if l.BlockCount > 0 { // Check blocks.
-		if l.Finished {
-			l.Line--
-			l.Error("Block is expected ending...")
-		}
 	}
 
 	return tokens

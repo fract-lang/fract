@@ -17,6 +17,7 @@ import (
 // tokens Tokens to process.
 // do Do processes?
 func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
+	i.blockCount++
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
 	if index == -1 {
@@ -29,57 +30,58 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		fract.Error(tokens.First().(objects.Token), "Content is empty!")
 	}
 
-	line := i.lexer.Line
 	_continue := false
+	_break := false
 
 	cacheList := tokens.Sublist(index+1, tokens.Len()-index-1)
 	tokens = &cacheList
+
+	i.emptyControl(&tokens)
+	iindex := i.index
 
 	// WHILE
 	if contentList.Len() == 1 || contentList.At(1).(objects.Token).Type != fract.TypeIn {
 		variableLen := i.vars.Len()
 
 		/* Interpret/skip block. */
-		for !i.lexer.Finished {
-			// Skip this loop if tokens are empty.
-			if !tokens.Any() {
-				tokens = i.lexer.Next()
-				continue
-			}
+		for i.index < i.tokenLen {
+			i.index++
+			tokens = i.tokens.At(i.index).(*vector.Vector)
+			condition := i.processCondition(&contentList)
 
 			first := tokens.First().(objects.Token)
 			if first.Type == fract.TypeBlockEnd { // Block is ended.
-				if line == -1 {
+				if condition != grammar.TRUE || _break {
+					i.subtractBlock(&first)
 					return
 				}
+				i.index = iindex
 				_continue = false
-				i.lexer.Line -= i.lexer.Line - line
-				i.lexer.BlockCount++
 
 				// Remove temporary variables.
 				i.vars.RemoveRange(variableLen, i.vars.Len()-variableLen)
-				goto nextWhile
+
+				continue
 			}
 
 			// Condition is true?
-			if i.processCondition(&contentList) == grammar.TRUE {
+			if condition == grammar.TRUE {
 				if do && !_continue {
 					kwstate := i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak { // Break loop?
-						line = -1
-					} else if kwstate == fract.LOOPContinue { // Continue loop?
-						_continue = true
+						do = false
+						_break = true
+					} else {
+						_continue = kwstate == fract.LOOPContinue // Continue loop?
 					}
 				}
 			} else {
+				do = false
+				_break = true
 				if first.Type == fract.TypeIf { // If?
-					i.processIf(tokens, false)
+					i.processIf(tokens, do)
 				}
-				line = -1
 			}
-
-		nextWhile:
-			tokens = i.lexer.Next()
 		}
 	}
 
@@ -104,7 +106,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	if !dt.TypeIsArray(value.Type) {
 		fract.Error(contentList.First().(objects.Token), "For loop must defined array value!")
 	}
-
 	// Create loop variable.
 	variable := objects.Variable{
 		Name:  nameToken.Value,
@@ -118,33 +119,26 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	variableLen := i.vars.Len()
 
 	for vindex := 0; vindex < len(value.Content); {
+		i.index++
+		tokens = i.tokens.At(i.index).(*vector.Vector)
+
 		variable.Value[0] = value.Content[vindex]
 		i.vars.Set(i.vars.Len()-1, variable)
-
-		/* Interpret/skip block. */
-		for !i.lexer.Finished {
-			// Skip this loop if tokens are empty.
-			if !tokens.Any() {
-				tokens = i.lexer.Next()
-				continue
-			}
-			break
-		}
 
 		first := tokens.First().(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			vindex++
-			if vindex == len(value.Content) {
+			if _break || vindex == len(value.Content) {
+				i.subtractBlock(&first)
 				break
 			}
+			i.index = iindex
 			_continue = false
-			i.lexer.Line -= i.lexer.Line - line
-			i.lexer.BlockCount++
 
 			// Remove temporary variables.
 			i.vars.RemoveRange(variableLen, i.vars.Len()-variableLen)
 
-			goto nextFor
+			continue
 		}
 
 		// Condition is true?
@@ -152,17 +146,17 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			kwstate := i.processTokens(tokens, do)
 			if kwstate == fract.LOOPBreak { // Break loop?
 				do = false
-			} else if kwstate == fract.LOOPContinue { // Continue next?
-				_continue = true
+				_break = true
+			} else {
+				_continue = kwstate == fract.LOOPContinue // Continue next?
 			}
 		} else {
+			do = false
+			_break = true
 			if first.Type == fract.TypeIf { // If?
-				i.processIf(tokens, false)
+				i.processIf(tokens, do)
 			}
 		}
-
-	nextFor:
-		tokens = i.lexer.Next()
 	}
 
 	// Remove loop variable.

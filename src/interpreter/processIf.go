@@ -18,6 +18,8 @@ import (
 // tokens Tokens to process.
 // do Do processes?
 func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
+	i.blockCount++
+
 	/* IF */
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
@@ -40,23 +42,20 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
 	tokens = &conditionList
 
+	i.emptyControl(&tokens)
 	kwstate := -1
 
 	/* Interpret/skip block. */
-	for !i.lexer.Finished {
+	for i.index < i.tokenLen {
+		i.index++
+		tokens = i.tokens.At(i.index).(*vector.Vector)
 		do = kwstate == -1 && do
-
-		// Skip this loop if tokens are empty.
-		if !tokens.Any() {
-			tokens = i.lexer.Next()
-			continue
-		}
 
 		first := tokens.First().(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
+			i.subtractBlock(&first)
 			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
-			i.lexer.BlockCount--
 
 			index = parser.IndexBlockDeclare(tokens)
 			// Block declare is not defined?
@@ -78,16 +77,16 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
 			tokens = &conditionList
 
+			i.emptyControl(&tokens)
+
 			/* Interpret/skip block. */
-			for !i.lexer.Finished {
-				// Skip this loop if tokens are empty.
-				if !tokens.Any() {
-					tokens = i.lexer.Next()
-					continue
-				}
+			for i.index < i.tokenLen {
+				i.index++
+				tokens = i.tokens.At(i.index).(*vector.Vector)
 
 				first := tokens.First().(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
+					i.subtractBlock(&first)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
@@ -100,7 +99,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 					kwstate = i.processTokens(tokens, true)
 				}
 
-				tokens = i.lexer.Next()
 			}
 
 			if !actioned {
@@ -113,8 +111,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 		if state == grammar.TRUE && do {
 			kwstate = i.processTokens(tokens, do)
 		}
-
-		tokens = i.lexer.Next()
 	}
 	return kwstate
 }
