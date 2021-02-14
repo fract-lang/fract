@@ -1,5 +1,5 @@
 /*
-	GENERIC
+	TypeToString Function.
 */
 
 package arithmetic
