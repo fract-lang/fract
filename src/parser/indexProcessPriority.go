@@ -11,44 +11,40 @@ import (
 //
 // tokens Tokens to search.
 func IndexProcessPriority(tokens *vector.Vector) int {
-	// Returns -1 if vector contains one value.
-	if len(tokens.Vals) == 1 {
-		return -1
-	}
+	modulus := -1
+	multiplyOrDivive := -1
+	additionOrSubtraction := -1
 
-	/* Find exponentiation. */
-	for index := range tokens.Vals {
-		if tokens.Vals[index].(objects.Token).Value == grammar.TokenCaret {
-			return index
-		}
-	}
-
-	/* Find mod. */
-	for index := range tokens.Vals {
-		if tokens.Vals[index].(objects.Token).Value == grammar.TokenPercent {
-			return index
-		}
-	}
-
-	/* Find multipy or divide. */
 	for index := range tokens.Vals {
 		_token := tokens.Vals[index].(objects.Token)
-		if _token.Value == grammar.TokenStar ||
+		// Exponentiation.
+		if _token.Value == grammar.TokenCaret {
+			return index
+		} else if _token.Value == grammar.TokenPercent { // Modulus.
+			if modulus == -1 {
+				modulus = index
+			}
+		} else if _token.Value == grammar.TokenStar ||
 			_token.Value == grammar.TokenSlash ||
 			_token.Value == grammar.TokenReverseSlash ||
 			_token.Value == grammar.IntegerDivision ||
-			_token.Value == grammar.IntegerDivideWithBigger {
-			return index
+			_token.Value == grammar.IntegerDivideWithBigger { // Multiply or division.
+			if multiplyOrDivive == -1 {
+				multiplyOrDivive = index
+			}
+		} else if _token.Value == grammar.TokenPlus ||
+			_token.Value == grammar.TokenMinus { // Addition or subtraction.
+			if additionOrSubtraction == -1 {
+				additionOrSubtraction = index
+			}
 		}
 	}
 
-	/* Addition or subtraction. */
-	for index := range tokens.Vals {
-		_token := tokens.Vals[index].(objects.Token)
-		if _token.Value == grammar.TokenPlus || _token.Value == grammar.TokenMinus {
-			return index
-		}
+	if modulus != -1 {
+		return modulus
+	} else if multiplyOrDivive != -1 {
+		return multiplyOrDivive
 	}
 
-	return -1
+	return additionOrSubtraction
 }
