@@ -8,6 +8,7 @@ package vector
 // values Base values.
 func New(values ...interface{}) *Vector {
 	vector := new(Vector)
-	vector.Vals = values
+	vector.Vals = make([]interface{}, len(values))
+	copy(vector.Vals, values)
 	return vector
 }
