@@ -20,15 +20,15 @@ import (
 // do Do processes?
 // nested Is nested?
 func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
-	first := tokens.At(0).(objects.Token)
+	first := tokens.Vals[0].(objects.Token)
 
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
 		// Check variable set statement?
 		if first.Type == fract.TypeName {
-			for index := 1; index < tokens.Len(); index++ {
-				current := tokens.At(index).(objects.Token)
+			for index := range tokens.Vals {
+				current := tokens.Vals[index].(objects.Token)
 				if current.Type == fract.TypeOperator &&
 					current.Value == grammar.Setter { // Variable setting.
 					i.processVariableSet(tokens)

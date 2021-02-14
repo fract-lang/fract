@@ -22,8 +22,8 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 	)
 	processes := *vector.New()
 
-	for index := 0; index < tokens.Len(); index++ {
-		_token := tokens.At(index).(objects.Token)
+	for index := range tokens.Vals {
+		_token := tokens.Vals[index].(objects.Token)
 		if _token.Type == fract.TypeOperator {
 			if !operator {
 				fract.Error(_token, "Operator spam!")
@@ -42,14 +42,15 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 			}
 			last = _token
 			processes.Append(_token)
-			operator = index < tokens.Len()-1
+			operator = index < len(tokens.Vals)-1
 		} else {
 			fract.Error(_token, "Invalid value!")
 		}
 	}
 
 	if last.Type == fract.TypeOperator {
-		fract.Error(processes.Last().(objects.Token), "Operator defined, but for what?")
+		fract.Error(processes.Vals[len(processes.Vals)-1].(objects.Token),
+			"Operator defined, but for what?")
 	}
 
 	return processes

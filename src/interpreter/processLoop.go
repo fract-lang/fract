@@ -21,35 +21,35 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
 	if index == -1 {
-		fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
 	}
 
 	contentList := tokens.Sublist(1, index-1)
 	// Content is empty?
-	if !contentList.Any() {
-		fract.Error(tokens.First().(objects.Token), "Content is empty!")
+	if len(contentList.Vals) == 0 {
+		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")
 	}
 
 	_continue := false
 	_break := false
 
-	cacheList := tokens.Sublist(index+1, tokens.Len()-index-1)
+	cacheList := tokens.Sublist(index+1, len(tokens.Vals)-index-1)
 	tokens = &cacheList
 
 	i.emptyControl(&tokens)
 	iindex := i.index
 
 	// WHILE
-	if contentList.Len() == 1 || contentList.At(1).(objects.Token).Type != fract.TypeIn {
-		variableLen := i.vars.Len()
+	if len(contentList.Vals) == 1 || contentList.Vals[1].(objects.Token).Type != fract.TypeIn {
+		variableLen := len(i.vars.Vals)
 
 		/* Interpret/skip block. */
 		for i.index < i.tokenLen {
 			i.index++
-			tokens = i.tokens.At(i.index).(*vector.Vector)
+			tokens = i.tokens.Vals[i.index].(*vector.Vector)
 			condition := i.processCondition(&contentList)
 
-			first := tokens.First().(objects.Token)
+			first := tokens.Vals[0].(objects.Token)
 			if first.Type == fract.TypeBlockEnd { // Block is ended.
 				if condition != grammar.TRUE || _break {
 					i.subtractBlock(&first)
@@ -59,7 +59,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				_continue = false
 
 				// Remove temporary variables.
-				i.vars.RemoveRange(variableLen, i.vars.Len()-variableLen)
+				i.vars.RemoveRange(variableLen, len(i.vars.Vals)-variableLen)
 
 				continue
 			}
@@ -88,7 +88,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	// ************
 	//     FOR
 	// ************
-	nameToken := contentList.First().(objects.Token)
+	nameToken := contentList.Vals[0].(objects.Token)
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {
 		fract.Error(nameToken, "This is not a valid name!")
@@ -99,12 +99,12 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		fract.Error(nameToken, "Already defined this name!: "+nameToken.Value)
 	}
 
-	contentList = contentList.Sublist(2, contentList.Len()-2)
+	contentList = contentList.Sublist(2, len(contentList.Vals)-2)
 	value := i.processValue(&contentList)
 
 	// Type is not array?
 	if !dt.TypeIsArray(value.Type) {
-		fract.Error(contentList.First().(objects.Token), "For loop must defined array value!")
+		fract.Error(contentList.Vals[0].(objects.Token), "For loop must defined array value!")
 	}
 	// Create loop variable.
 	variable := objects.Variable{
@@ -116,16 +116,16 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 	i.vars.Append(variable)
 
-	variableLen := i.vars.Len()
+	variableLen := len(i.vars.Vals)
 
 	for vindex := 0; vindex < len(value.Content); {
 		i.index++
-		tokens = i.tokens.At(i.index).(*vector.Vector)
+		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
 		variable.Value[0] = value.Content[vindex]
-		i.vars.Set(i.vars.Len()-1, variable)
+		i.vars.Vals[len(i.vars.Vals)-1] = variable
 
-		first := tokens.First().(objects.Token)
+		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			vindex++
 			if _break || vindex == len(value.Content) {
@@ -136,7 +136,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			_continue = false
 
 			// Remove temporary variables.
-			i.vars.RemoveRange(variableLen, i.vars.Len()-variableLen)
+			i.vars.RemoveRange(variableLen, len(i.vars.Vals)-variableLen)
 
 			continue
 		}
@@ -160,5 +160,5 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	// Remove loop variable.
-	i.vars.RemoveLast()
+	i.vars.Vals = i.vars.Vals[:len(i.vars.Vals)-1]
 }

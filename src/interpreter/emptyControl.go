@@ -11,9 +11,9 @@ import (
 // emptyControl Control empty tokens and return success state.
 // tokens Tokens to check.
 func (i *Interpreter) emptyControl(tokens **vector.Vector) bool {
-	if !(*tokens).Any() {
+	if len((*tokens).Vals) == 0 {
 		if i.index < i.tokenLen {
-			*tokens = i.tokens.At(i.index).(*vector.Vector)
+			*tokens = i.tokens.Vals[i.index].(*vector.Vector)
 			return true
 		}
 		return false

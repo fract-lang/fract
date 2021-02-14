@@ -65,15 +65,15 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 	}
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(tokens, grammar.TokenVerticalBar)
-	for index := 0; index < ors.Len(); index++ {
-		current := ors.At(index).(vector.Vector)
+	for index := range ors.Vals {
+		current := ors.Vals[index].(vector.Vector)
 
 		// Decompose and conditions.
 		ands := parser.DecomposeConditionalProcess(&current, grammar.TokenAmper)
 		// Is and statement?
-		if ands.Len() > 1 {
-			for aindex := 0; aindex < ands.Len(); aindex++ {
-				acurrent := ands.At(aindex).(vector.Vector)
+		if len(ands.Vals) > 1 {
+			for aindex := range ands.Vals {
+				acurrent := ands.Vals[aindex].(vector.Vector)
 				value, _ := arithmetic.ToFloat64(i.processValue(&acurrent).Content[0])
 				if !compare(value, 1, grammar.TokenEquals) {
 					return grammar.FALSE
@@ -95,13 +95,13 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		// Operator is first or last?
 		if operatorIndex == 0 {
-			fract.Error(current.First().(objects.Token), "Comparison values are missing!")
-		} else if operatorIndex == current.Len()-1 {
-			fract.Error(current.Last().(objects.Token), "Comparison values are missing!")
+			fract.Error(current.Vals[0].(objects.Token), "Comparison values are missing!")
+		} else if operatorIndex == len(current.Vals)-1 {
+			fract.Error(current.Vals[len(current.Vals)-1].(objects.Token), "Comparison values are missing!")
 		}
 
 		val0L := current.Sublist(0, operatorIndex)
-		val1L := current.Sublist(operatorIndex+1, current.Len()-operatorIndex-1)
+		val1L := current.Sublist(operatorIndex+1, len(current.Vals)-operatorIndex-1)
 		val0, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(&val0L).Content)[0])
 		val1, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(&val1L).Content)[0])
 		if compare(val0, val1, operator) {

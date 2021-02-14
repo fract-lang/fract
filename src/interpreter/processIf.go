@@ -24,13 +24,13 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
 	if index == -1 {
-		fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
 	}
 	conditionList := tokens.Sublist(1, index-1)
 
 	// Condition is empty?
-	if !conditionList.Any() {
-		first := tokens.First().(objects.Token)
+	if len(conditionList.Vals) == 0 {
+		first := tokens.Vals[0].(objects.Token)
 		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
 			"Condition is empty!")
 	}
@@ -39,7 +39,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	actioned := state == grammar.TRUE
 
 	// Get after block tokens with used @conditionList as cache.
-	conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
+	conditionList = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
 	tokens = &conditionList
 
 	i.emptyControl(&tokens)
@@ -48,10 +48,10 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	/* Interpret/skip block. */
 	for i.index < i.tokenLen {
 		i.index++
-		tokens = i.tokens.At(i.index).(*vector.Vector)
+		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 		do = kwstate == -1 && do
 
-		first := tokens.First().(objects.Token)
+		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			i.subtractBlock(&first)
 			return kwstate
@@ -60,13 +60,13 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			index = parser.IndexBlockDeclare(tokens)
 			// Block declare is not defined?
 			if index == -1 {
-				fract.Error(tokens.Last().(objects.Token), "Where is the block declare!?")
+				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
 			}
 			conditionList := tokens.Sublist(1, index-1)
 
 			// Condition is empty?
-			if !conditionList.Any() {
-				first := tokens.First().(objects.Token)
+			if len(conditionList.Vals) == 0 {
+				first := tokens.Vals[0].(objects.Token)
 				fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
 					"Condition is empty!")
 			}
@@ -74,7 +74,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			state = i.processCondition(&conditionList)
 
 			// Get after block tokens with used @conditionList as cache.
-			conditionList = tokens.Sublist(index+1, tokens.Len()-index-1)
+			conditionList = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
 			tokens = &conditionList
 
 			i.emptyControl(&tokens)
@@ -82,9 +82,9 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			/* Interpret/skip block. */
 			for i.index < i.tokenLen {
 				i.index++
-				tokens = i.tokens.At(i.index).(*vector.Vector)
+				tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
-				first := tokens.First().(objects.Token)
+				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					i.subtractBlock(&first)
 					return kwstate

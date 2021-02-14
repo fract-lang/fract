@@ -22,11 +22,9 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Ve
 		last  int
 	)
 
-	len := len(tokens.Vals)
-
 	/* Find open parentheses. */
-	for index := 0; index < len; index++ {
-		current := tokens.At(index).(objects.Token)
+	for index := range tokens.Vals {
+		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeBrace && current.Value == open {
 			first = index
 			break
@@ -44,8 +42,8 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Ve
 	/* Find close parentheses. */
 	count := 1
 	length := 0
-	for index := first + 1; index < len; index++ {
-		current := tokens.At(index).(objects.Token)
+	for index := first + 1; index < len(tokens.Vals); index++ {
+		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == open {
 				count++
@@ -62,8 +60,8 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Ve
 	_range := tokens.Sublist(first+1, length)
 
 	// Bracket content is empty?
-	if !_range.Any() {
-		fract.Error(tokens.At(first).(objects.Token), "Brackets content are empty!")
+	if len(_range.Vals) == 0 {
+		fract.Error(tokens.Vals[first].(objects.Token), "Brackets content are empty!")
 	}
 
 	/* Remove range from original tokens. */

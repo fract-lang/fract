@@ -20,15 +20,15 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	var value objects.Value
 	value.Type = fract.VTIntegerArray
 
-	first := tokens.First().(objects.Token)
+	first := tokens.Vals[0].(objects.Token)
 
 	// Initializer?
 	if first.Value == grammar.TokenLBracket {
-		last := tokens.Last().(objects.Token)
+		last := tokens.Vals[len(tokens.Vals)-1].(objects.Token)
 		if last.Type != fract.TypeBrace && last.Value != grammar.TokenRBracket {
 			fract.Error(last, "Array close bracket is not found!")
 		}
-		valueList := tokens.Sublist(1, tokens.Len()-2)
+		valueList := tokens.Sublist(1, len(tokens.Vals)-2)
 		val, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
 		if err != nil {
 			fract.Error(first, "Value out of range!")
@@ -46,14 +46,14 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	if first.Type != fract.TypeBrace && first.Value != grammar.TokenLBrace {
 		fract.Error(first, "Array brace is not found!")
 	}
-	last := tokens.Last().(objects.Token)
+	last := tokens.Vals[len(tokens.Vals)-1].(objects.Token)
 	if last.Type != fract.TypeBrace && last.Value != grammar.TokenRBrace {
 		fract.Error(last, "Array close brace is not found!")
 	}
 
 	comma := 1
-	for index := 1; index < tokens.Len()-1; index++ {
-		current := tokens.At(index).(objects.Token)
+	for index := 1; index < len(tokens.Vals)-1; index++ {
+		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeComma {
 			valueList := tokens.Sublist(comma, index-comma)
 			value.Content = append(value.Content, i.processValue(&valueList).Content...)
@@ -61,8 +61,8 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		}
 	}
 
-	if comma < tokens.Len()-1 {
-		valueList := tokens.Sublist(comma, tokens.Len()-comma-1)
+	if comma < len(tokens.Vals)-1 {
+		valueList := tokens.Sublist(comma, len(tokens.Vals)-comma-1)
 		value.Content = append(value.Content, i.processValue(&valueList).Content...)
 	}
 
