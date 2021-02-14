@@ -1,7 +1,3 @@
-/*
-	THE LEXER STRUCT
-*/
-
 package lexer
 
 import (
