@@ -1,5 +1,5 @@
-var a int32 := 4
-var b float32 := 4.0
+#var a int32 := 4
+#var b float32 := 4.0
 #var c bool := false
 #c :=true
 #b + a + c
@@ -41,7 +41,6 @@ var b float32 := 4.0
 #  index
 #end
 
-continue
 var counter int32 := 1
 for counter <= 1000:
   var total int32 := 0
