@@ -23,8 +23,6 @@ type Interpreter struct {
 	tokens *vector.Vector
 	// Interpreter index.
 	index int
-	// Length of tokens.
-	tokenLen int
 	// BlockCount Count of declared not ended blocks.
 	blockCount int
 

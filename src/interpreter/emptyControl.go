@@ -12,7 +12,7 @@ import (
 // tokens Tokens to check.
 func (i *Interpreter) emptyControl(tokens **vector.Vector) bool {
 	if len((*tokens).Vals) == 0 {
-		if i.index < i.tokenLen {
+		if i.index < len(i.tokens.Vals) {
 			*tokens = i.tokens.Vals[i.index].(*vector.Vector)
 			return true
 		}

@@ -37,7 +37,7 @@ tokenize:
 	// Tokenize line.
 	token := l.Generate()
 	for token.Value != "" && token.Type != fract.TypeStatementTerminator {
-		tokens.Append(token)
+		tokens.Vals = append(tokens.Vals, token)
 		l.lastToken = token
 		token = l.Generate()
 	}

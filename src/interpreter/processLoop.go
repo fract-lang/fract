@@ -44,7 +44,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		variableLen := len(i.vars.Vals)
 
 		/* Interpret/skip block. */
-		for i.index < i.tokenLen {
+		for i.index < len(i.tokens.Vals) {
 			i.index++
 			tokens = i.tokens.Vals[i.index].(*vector.Vector)
 			condition := i.processCondition(&contentList)
@@ -114,7 +114,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		Type:  grammar.DtFloat64,
 		Value: []string{""},
 	}
-	i.vars.Append(variable)
+	i.vars.Vals = append(i.vars.Vals, variable)
 
 	variableLen := len(i.vars.Vals)
 
