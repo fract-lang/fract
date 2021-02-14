@@ -18,7 +18,7 @@ import (
 // ProcessVariableSet Process variable set statement.
 // tokens Tokens to process.
 func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
-	_name := tokens.At(0).(objects.Token)
+	_name := tokens.Vals[0].(objects.Token)
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -30,9 +30,9 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 		fract.Error(_name, "Name is not defined!: "+_name.Value)
 	}
 	var setIndex int64 = -1
-	variable := i.vars.At(index).(objects.Variable)
+	variable := i.vars.Vals[index].(objects.Variable)
 
-	setter := tokens.At(1).(objects.Token)
+	setter := tokens.Vals[1].(objects.Token)
 
 	// Array setter?
 	if setter.Type == fract.TypeBrace && setter.Value == grammar.TokenLBracket {
@@ -41,12 +41,12 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 			fract.Error(setter, "Variable is not array!")
 		}
 		// Find close bracket.
-		for cindex := 2; cindex < tokens.Len(); cindex++ {
-			current := tokens.At(cindex).(objects.Token)
+		for cindex := 2; cindex < len(tokens.Vals); cindex++ {
+			current := tokens.Vals[cindex].(objects.Token)
 			if current.Type == fract.TypeBrace && current.Value == grammar.TokenRBracket {
 				valueList := tokens.Sublist(2, cindex-2)
 				// Index value is empty?
-				if !valueList.Any() {
+				if len(valueList.Vals) == 0 {
 					fract.Error(setter, "Index is not defined!")
 				}
 				position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
@@ -58,7 +58,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 				}
 				setIndex = position
 				tokens.RemoveRange(1, cindex)
-				setter = tokens.At(1).(objects.Token)
+				setter = tokens.Vals[1].(objects.Token)
 				break
 			}
 		}
@@ -70,12 +70,12 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	}
 
 	// Value are not defined?
-	if tokens.Len() < 3 {
+	if len(tokens.Vals) < 3 {
 		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
-	valtokens := tokens.Sublist(2, tokens.Len()-2)
+	valtokens := tokens.Sublist(2, len(tokens.Vals)-2)
 	value := i.processValue(&valtokens)
 
 	if variable.Array && !dt.TypeIsArray(value.Type) && setIndex == -1 {
@@ -106,5 +106,5 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	} else {
 		variable.Value = result
 	}
-	i.vars.Set(index, variable)
+	i.vars.Vals[index] = variable
 }

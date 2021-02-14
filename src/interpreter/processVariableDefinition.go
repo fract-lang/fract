@@ -17,16 +17,16 @@ import (
 // tokens Tokens to process.
 func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	var variable objects.Variable
-	length := tokens.Len()
+	length := len(tokens.Vals)
 
 	// Name is not defined?
 	if length < 2 {
-		first := tokens.First().(objects.Token)
+		first := tokens.Vals[0].(objects.Token)
 		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
 			"Name is not found!")
 	}
 
-	_name := tokens.At(1).(objects.Token)
+	_name := tokens.Vals[1].(objects.Token)
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -43,7 +43,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 			"Data type is not found!")
 	}
 
-	dataType := tokens.At(2).(objects.Token)
+	dataType := tokens.Vals[2].(objects.Token)
 	// Data type is not data type token?
 	if dataType.Type != fract.TypeDataType {
 		fract.Error(dataType, "This is not a data type!")
@@ -54,7 +54,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 			"Setter is not found!")
 	}
 
-	setter := tokens.At(3).(objects.Token)
+	setter := tokens.Vals[3].(objects.Token)
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter {
 		fract.Error(setter, "This is not a setter operator!"+setter.Value)
@@ -68,7 +68,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	variable.Name = _name.Value
 	variable.Type = dataType.Value
-	valtokens := tokens.Sublist(4, tokens.Len()-4)
+	valtokens := tokens.Sublist(4, length-4)
 	value := i.processValue(&valtokens)
 
 	// Check value and data type compatibility.
@@ -88,7 +88,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	variable.Value = result
 
 	// Set const state.
-	variable.Const = tokens.First().(objects.Token).Value == grammar.KwConstVariable
+	variable.Const = tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable
 
 	i.vars.Append(variable)
 }

@@ -18,16 +18,16 @@ func (i *Interpreter) Interpret() {
 		cacheTokens := i.lexer.Next()
 
 		// cacheTokens are empty?
-		if !cacheTokens.Any() {
+		if len(cacheTokens.Vals) == 0 {
 			continue
 		}
 
 		i.tokens.Append(cacheTokens)
 	}
 
-	i.tokenLen = i.tokens.Len()
+	i.tokenLen = len(i.tokens.Vals)
 	for ; i.index < i.tokenLen; i.index++ {
-		i.processTokens(i.tokens.At(i.index).(*vector.Vector), true)
+		i.processTokens(i.tokens.Vals[i.index].(*vector.Vector), true)
 	}
 
 	if i.blockCount > 0 { // Check blocks.

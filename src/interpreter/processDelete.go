@@ -15,15 +15,15 @@ import (
 // tokens Tokens to process.
 func (i *Interpreter) processDelete(tokens *vector.Vector) {
 	// Value is not defined?
-	if tokens.Len() < 2 {
-		del := tokens.First().(objects.Token)
+	if len(tokens.Vals) < 2 {
+		del := tokens.Vals[0].(objects.Token)
 		fract.ErrorCustom(del.File.Path, del.Line, del.Column+len(del.Value),
 			"Value is not found!")
 	}
 
 	comma := false
-	for index := 1; index < tokens.Len(); index++ {
-		current := tokens.At(index).(objects.Token)
+	for index := 1; index < len(tokens.Vals); index++ {
+		current := tokens.Vals[index].(objects.Token)
 
 		if comma {
 			if current.Type != fract.TypeComma {
@@ -50,6 +50,6 @@ func (i *Interpreter) processDelete(tokens *vector.Vector) {
 	}
 	//
 	if !comma {
-		fract.Error(tokens.Last().(objects.Token), "The extra comma defined!")
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "The extra comma defined!")
 	}
 }

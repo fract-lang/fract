@@ -17,22 +17,22 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 	}
 
 	/* Find exponentiation. */
-	for index := 0; index < len(tokens.Vals); index++ {
-		if tokens.At(index).(objects.Token).Value == grammar.TokenCaret {
+	for index := range tokens.Vals {
+		if tokens.Vals[index].(objects.Token).Value == grammar.TokenCaret {
 			return index
 		}
 	}
 
 	/* Find mod. */
-	for index := 0; index < len(tokens.Vals); index++ {
-		if tokens.At(index).(objects.Token).Value == grammar.TokenPercent {
+	for index := range tokens.Vals {
+		if tokens.Vals[index].(objects.Token).Value == grammar.TokenPercent {
 			return index
 		}
 	}
 
 	/* Find multipy or divide. */
-	for index := 0; index < len(tokens.Vals); index++ {
-		_token := tokens.At(index).(objects.Token)
+	for index := range tokens.Vals {
+		_token := tokens.Vals[index].(objects.Token)
 		if _token.Value == grammar.TokenStar ||
 			_token.Value == grammar.TokenSlash ||
 			_token.Value == grammar.TokenReverseSlash ||
@@ -43,8 +43,8 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 	}
 
 	/* Addition or subtraction. */
-	for index := 0; index < len(tokens.Vals); index++ {
-		_token := tokens.At(index).(objects.Token)
+	for index := range tokens.Vals {
+		_token := tokens.Vals[index].(objects.Token)
 		if _token.Value == grammar.TokenPlus || _token.Value == grammar.TokenMinus {
 			return index
 		}

@@ -15,11 +15,6 @@ func New(values ...interface{}) *Vector {
 	return vector
 }
 
-// Len Returns length of vector.
-func (v *Vector) Len() int {
-	return len(v.Vals)
-}
-
 // Append Append value.
 // value Value to append.
 func (v *Vector) Append(value ...interface{}) {
@@ -39,18 +34,6 @@ func (v *Vector) Insert(pos int, value ...interface{}) {
 	}
 }
 
-// At Get element by index.
-// pos Index of element.
-func (v *Vector) At(pos int) interface{} {
-	return v.Vals[pos]
-}
-
-// Set Set value by index.
-// pos Index to set.
-func (v *Vector) Set(pos int, value interface{}) {
-	v.Vals[pos] = value
-}
-
 // RemoveRange Remove range.
 // pos Start position of removing.
 // len Count of removing elements.
@@ -58,29 +41,9 @@ func (v *Vector) RemoveRange(pos int, len int) {
 	v.Vals = append(v.Vals[:pos], v.Vals[pos+len:]...)
 }
 
-// Any Any value is exist?
-func (v *Vector) Any() bool {
-	return len(v.Vals) > 0
-}
-
 // Sublist Get range.
 // pos Start position to take.
 // length Count of taken elements.
 func (v *Vector) Sublist(pos int, length int) Vector {
 	return *New(v.Vals[pos : pos+length]...)
-}
-
-// First Returns first element.
-func (v *Vector) First() interface{} {
-	return v.Vals[0]
-}
-
-// Last Returns last element.
-func (v *Vector) Last() interface{} {
-	return v.Vals[len(v.Vals)-1]
-}
-
-// RemoveLast Remove last element.
-func (v *Vector) RemoveLast() {
-	v.Vals = v.Vals[:len(v.Vals)-1]
 }
