@@ -59,7 +59,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				_continue = false
 
 				// Remove temporary variables.
-				i.vars.RemoveRange(variableLen, len(i.vars.Vals)-variableLen)
+				i.vars.Vals = i.vars.Vals[:variableLen]
 
 				continue
 			}
@@ -136,7 +136,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			_continue = false
 
 			// Remove temporary variables.
-			i.vars.RemoveRange(variableLen, len(i.vars.Vals)-variableLen)
+			i.vars.Vals = i.vars.Vals[:variableLen]
 
 			continue
 		}
