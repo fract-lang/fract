@@ -1,5 +1,5 @@
 /*
-	SolveArithmeticProcess Function
+	SolveArithmeticProcess Function.
 */
 
 package arithmetic
