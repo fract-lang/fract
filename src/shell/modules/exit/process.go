@@ -1,3 +1,7 @@
+/*
+	Process Function.
+*/
+
 package exit
 
 import (

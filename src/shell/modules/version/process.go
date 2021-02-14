@@ -1,9 +1,13 @@
-package help
+/*
+	Process Function.
+*/
+
+package version
 
 import (
 	"fmt"
 
-	"../../../utilities/cli"
+	"../../../fract"
 )
 
 // Process Process command in module.
@@ -13,10 +17,5 @@ func Process(command string) {
 		fmt.Println("This module can only be used!")
 		return
 	}
-	cli.PrintMapAsTable(map[string]string{
-		"make":    "Interprete Fract code.",
-		"version": "Show version.",
-		"help":    "Show help.",
-		"exit":    "Exit.",
-	})
+	fmt.Println("Fract Version [" + fract.FractVersion + "]")
 }

@@ -1,3 +1,7 @@
+/*
+	Process Function.
+*/
+
 package make
 
 import (
@@ -26,14 +30,4 @@ func Process(command string) {
 
 	preter := interpreter.New(command, fract.TypeEntryFile)
 	preter.Interpret()
-}
-
-// Check Check invalid state of value.
-// value Value to check.
-func Check(value string) bool {
-	if strings.HasSuffix(value, fract.FractExtension) {
-		return true
-	}
-	value += ".fract"
-	return fs.ExistFile(value)
 }
