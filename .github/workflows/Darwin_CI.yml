@@ -19,7 +19,7 @@ jobs:
         go-version: 1.15
 
     - name: Build
-      run: go build -v src/main.go
+      run: go build -v src/main.go src/processCommand.go
 
     - name: Test
-      run: go test -v src/main.go
+      run: go test -v src/main.go src/processCommand.go
