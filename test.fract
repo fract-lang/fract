@@ -40,6 +40,9 @@ var b float32 := 4.0
 #  var test float64 := index
 #  index
 #end
+
+5 + (2^2) * 10
+
 continue
 var counter int32 := 1
 for counter <= 1000:
