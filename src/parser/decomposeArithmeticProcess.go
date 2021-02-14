@@ -29,7 +29,7 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 				fract.Error(_token, "Operator spam!")
 			}
 			last = _token
-			processes.Append(_token)
+			processes.Vals = append(processes.Vals, _token)
 			operator = false
 		} else if _token.Type == fract.TypeValue || _token.Type == fract.TypeName ||
 			_token.Type == fract.TypeBooleanTrue || _token.Type == fract.TypeBooleanFalse ||
@@ -41,7 +41,7 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 				fract.Error(_token, "Negative number declare after subtraction!")
 			}
 			last = _token
-			processes.Append(_token)
+			processes.Vals = append(processes.Vals, _token)
 			operator = index < len(tokens.Vals)-1
 		} else {
 			fract.Error(_token, "Invalid value!")

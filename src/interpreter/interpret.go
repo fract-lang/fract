@@ -22,11 +22,10 @@ func (i *Interpreter) Interpret() {
 			continue
 		}
 
-		i.tokens.Append(cacheTokens)
+		i.tokens.Vals = append(i.tokens.Vals, cacheTokens)
 	}
 
-	i.tokenLen = len(i.tokens.Vals)
-	for ; i.index < i.tokenLen; i.index++ {
+	for ; i.index < len(i.tokens.Vals); i.index++ {
 		i.processTokens(i.tokens.Vals[i.index].(*vector.Vector), true)
 	}
 

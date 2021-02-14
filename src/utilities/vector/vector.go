@@ -15,12 +15,6 @@ func New(values ...interface{}) *Vector {
 	return vector
 }
 
-// Append Append value.
-// value Value to append.
-func (v *Vector) Append(value ...interface{}) {
-	v.Vals = append(v.Vals, value...)
-}
-
 // Insert Insert value by position.
 // pos Position to insert.
 // value Value to insert.

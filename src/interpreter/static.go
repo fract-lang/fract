@@ -40,7 +40,7 @@ func ReadyFile(path string) objects.CodeFile {
 func ReadyLines(lines []string) *vector.Vector {
 	readyLines := vector.New()
 	for index := 0; index < len(lines); index++ {
-		readyLines.Append(objects.CodeLine{Line: index + 1,
+		readyLines.Vals = append(readyLines.Vals, objects.CodeLine{Line: index + 1,
 			Text: strings.TrimRight(lines[index], " \t\n\r")})
 	}
 	return readyLines

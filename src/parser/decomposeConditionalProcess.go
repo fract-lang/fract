@@ -36,7 +36,7 @@ func DecomposeConditionalProcess(tokens *vector.Vector, operator string) vector.
 		fract.Error(tokens.Vals[0].(objects.Token), "Operator spam!")
 	}
 	for index != -1 {
-		expressions.Append(tokens.Sublist(last, index-last))
+		expressions.Vals = append(expressions.Vals, tokens.Sublist(last, index-last))
 		last = index + 1
 		index = findNextOperator(tokens, last, operator) // Find next.
 		if index == len(tokens.Vals)-1 {
@@ -45,7 +45,7 @@ func DecomposeConditionalProcess(tokens *vector.Vector, operator string) vector.
 		}
 	}
 	if last != len(tokens.Vals) {
-		expressions.Append(tokens.Sublist(last, len(tokens.Vals)-last))
+		expressions.Vals = append(expressions.Vals, tokens.Sublist(last, len(tokens.Vals)-last))
 	}
 
 	return expressions
