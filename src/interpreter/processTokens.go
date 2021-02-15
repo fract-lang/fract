@@ -39,7 +39,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 
 		// Println
 		value := i.processValue(tokens)
-		if value.Type == fract.VTIntegerArray || value.Type == fract.VTFloatArray {
+		if value.Array {
 			fmt.Println(value.Content)
 		} else {
 			fmt.Println(value.Content[0])

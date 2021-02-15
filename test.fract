@@ -19,6 +19,14 @@
 #  end
 #end
 
+var test int32 := [5]
+var test1 int32 := [1]
+test[4] := 5
+test1[0] := 2
+test
+test1
+test + test1
+
 #if true = false:
 #  5
 #elif false = false:
@@ -26,8 +34,7 @@
 #  4
 #end
 
-var t1 int32 := { 0, 3, 2, 1, 90 }
-(-1--1)
+#var t1 int32 := { 0, 3, 2, 1, 90 }
 #var t2 int32 := { }
 #t1 = t2
 

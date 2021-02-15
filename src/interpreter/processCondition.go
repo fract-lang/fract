@@ -59,7 +59,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		}
 
 		var _token objects.Token
-		_token.Value = i.processValue(&_range).Content[0]
+		_token.Value = i.processValue(_range).Content[0]
 		_token.Type = fract.TypeValue
 		tokens.Insert(found, _token)
 	}
@@ -100,10 +100,10 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 			fract.Error(current.Vals[len(current.Vals)-1].(objects.Token), "Comparison values are missing!")
 		}
 
-		val0L := current.Sublist(0, operatorIndex)
-		val1L := current.Sublist(operatorIndex+1, len(current.Vals)-operatorIndex-1)
-		val0, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(&val0L).Content)[0])
-		val1, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(&val1L).Content)[0])
+		val0, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(
+			current.Sublist(0, operatorIndex)).Content)[0])
+		val1, _ := arithmetic.ToFloat64(checkEmpty(i.processValue(
+			current.Sublist(operatorIndex+1, len(current.Vals)-operatorIndex-1)).Content)[0])
 		if compare(val0, val1, operator) {
 			return grammar.TRUE
 		}

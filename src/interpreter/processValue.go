@@ -5,8 +5,6 @@
 package interpreter
 
 import (
-	"strings"
-
 	"../fract"
 	"../fract/arithmetic"
 	"../fract/dt"
@@ -17,16 +15,22 @@ import (
 	"../utilities/vector"
 )
 
-// processVariableName Process value is variable name?
+// __processValue Process value.
+// first This is first value.
 // token Token to process.
 // operations All operations.
 // index Index of token.
-func (i *Interpreter) processVariableName(token *objects.Token,
+func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticProcess,
 	operations *vector.Vector, index int) int {
+	token := operation.First
+	if !first {
+		token = operation.Second
+	}
+
 	if token.Type == fract.TypeName {
 		vindex := name.VarIndexByName(i.vars, token.Value)
 		if vindex == -1 {
-			fract.Error(*token, "Name is not defined!: "+token.Value)
+			fract.Error(token, "Name is not defined!: "+token.Value)
 		}
 		if index < len(operations.Vals)-1 {
 			next := operations.Vals[index+1].(objects.Token)
@@ -44,9 +48,9 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 				valueList := operations.Sublist(index+2, cindex-index-2)
 				// Index value is empty?
 				if len(valueList.Vals) == 0 {
-					fract.Error(*token, "Index is not defined!")
+					fract.Error(token, "Index is not defined!")
 				}
-				position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
+				position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
 				if err != nil {
 					fract.Error(operations.Vals[cindex].(objects.Token), "Value out of range!")
 				}
@@ -55,14 +59,75 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 					fract.Error(operations.Vals[cindex].(objects.Token), "Index is out of range!")
 				}
 				operations.RemoveRange(index, cindex-index)
-				token.Value = variable.Value[position]
+
+				if first {
+					operation.FirstV.Content = []string{variable.Value[position]}
+					operation.FirstV.Array = false
+					operation.FirstV.Type = fract.VTInteger
+					if dt.IsFloatType(variable.Type) {
+						operation.FirstV.Type = fract.VTFloat
+					}
+				} else {
+					operation.SecondV.Content = []string{variable.Value[position]}
+					operation.SecondV.Array = false
+					operation.SecondV.Type = fract.VTInteger
+					if dt.IsFloatType(variable.Type) {
+						operation.SecondV.Type = fract.VTFloat
+					}
+				}
+
 				return len(valueList.Vals) - 1
 			}
 		}
 
-		token.Value = i.vars.Vals[vindex].(objects.Variable).Value[0]
+		variable := i.vars.Vals[vindex].(objects.Variable)
+
+		if first {
+			operation.FirstV.Content = variable.Value
+			operation.FirstV.Array = variable.Array
+			operation.FirstV.Type = fract.VTInteger
+			if dt.IsFloatType(variable.Type) {
+				operation.FirstV.Type = fract.VTFloat
+			}
+		} else {
+			operation.SecondV.Content = variable.Value
+			operation.SecondV.Array = variable.Array
+			operation.SecondV.Type = fract.VTInteger
+			if dt.IsFloatType(variable.Type) {
+				operation.SecondV.Type = fract.VTFloat
+			}
+		}
+		return 0
+	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBracket {
+		// Array constructor.
+		cindex := index + 1
+		braceCount := 1
+		for ; cindex < len(operations.Vals); cindex++ {
+			current := operations.Vals[cindex].(objects.Token)
+			if current.Type == fract.TypeBrace && current.Value == grammar.TokenLBracket {
+				braceCount++
+			} else if current.Type == fract.TypeBrace && current.Value == grammar.TokenRBracket {
+				braceCount--
+			}
+
+			if braceCount == 0 {
+				break
+			}
+		}
+
+		if first {
+			operation.FirstV.Array = true
+			operation.FirstV.Content = i.processArrayValue(
+				operations.Sublist(index, cindex-index+1)).Content
+		} else {
+			operation.SecondV.Array = true
+			operation.SecondV.Content = i.processArrayValue(
+				operations.Sublist(index, cindex-index+1)).Content
+		}
+		operations.RemoveRange(index+1, cindex-index-1)
+		return 0
 	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBracket {
-		// Find close bracket.
+		// Find open bracket.
 		oindex := index - 1
 		for ; oindex >= 0; oindex-- {
 			current := operations.Vals[oindex].(objects.Token)
@@ -72,20 +137,30 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 		}
 		// Finished?
 		if oindex == 0 {
-			fract.Error(operations.Vals[0].(objects.Token), "Index error!")
+			if first {
+				operation.FirstV.Array = true
+				operation.FirstV.Content = i.processArrayValue(
+					operations.Sublist(oindex+1, index-oindex-1)).Content
+			} else {
+				operation.SecondV.Array = true
+				operation.SecondV.Content = i.processArrayValue(
+					operations.Sublist(oindex+1, index-oindex-1)).Content
+			}
+			operations.RemoveRange(oindex+1, index-oindex-1)
+			return 1
 		}
 
-		nameToken := operations.Vals[oindex-1].(objects.Token)
-		vindex := name.VarIndexByName(i.vars, nameToken.Value)
+		endToken := operations.Vals[oindex-1].(objects.Token)
+		vindex := name.VarIndexByName(i.vars, endToken.Value)
 		if vindex == -1 {
-			fract.Error(*token, "Name is not defined!: "+nameToken.Value)
+			fract.Error(endToken, "Name is not defined!: "+endToken.Value)
 		}
 		valueList := operations.Sublist(oindex+1, index-oindex-1)
 		// Index value is empty?
 		if len(valueList.Vals) == 0 {
-			fract.Error(nameToken, "Index is not defined!")
+			fract.Error(endToken, "Index is not defined!")
 		}
-		position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
+		position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
 		if err != nil {
 			fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
 		}
@@ -94,117 +169,103 @@ func (i *Interpreter) processVariableName(token *objects.Token,
 			fract.Error(operations.Vals[oindex].(objects.Token), "Index is out of range!")
 		}
 		operations.RemoveRange(oindex-1, index-oindex+1)
-		token.Value = variable.Value[position]
+
+		if first {
+			operation.FirstV.Content = []string{variable.Value[position]}
+			operation.FirstV.Array = false
+			operation.FirstV.Type = fract.VTInteger
+			if dt.IsFloatType(variable.Type) {
+				operation.FirstV.Type = fract.VTFloat
+			}
+		} else {
+			operation.SecondV.Content = []string{variable.Value[position]}
+			operation.SecondV.Array = false
+			operation.SecondV.Type = fract.VTInteger
+			if dt.IsFloatType(variable.Type) {
+				operation.SecondV.Type = fract.VTFloat
+			}
+		}
+
 		return index - oindex + 1
 	}
+
+	_, err := arithmetic.ToFloat64(token.Value)
+	if err != nil {
+		fract.Error(token, "Value out of range!")
+	}
+
+	if first {
+		operation.FirstV.Content = []string{token.Value}
+		operation.FirstV.Array = false
+		operation.FirstV.Type = fract.VTInteger
+		if arithmetic.IsFloatValue(token.Value) {
+			operation.FirstV.Type = fract.VTFloat
+		}
+	} else {
+		operation.SecondV.Content = []string{token.Value}
+		operation.SecondV.Array = false
+		operation.SecondV.Type = fract.VTInteger
+		if arithmetic.IsFloatValue(token.Value) {
+			operation.SecondV.Type = fract.VTFloat
+		}
+	}
+
 	return 0
 }
 
 // processValue Process value.
 // tokens Tokens.
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
-	// Is array expression?
-	first := tokens.Vals[0].(objects.Token)
-	if first.Type == fract.TypeBrace && (first.Value == grammar.TokenLBrace ||
-		first.Value == grammar.TokenLBracket) {
-		return i.processArrayValue(tokens)
-	}
-
-	/* Check parentheses range. */
-	for true {
-		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
-			grammar.TokenRParenthes)
-
-		/* Parentheses are not found! */
-		if found == -1 {
-			break
-		}
-
-		var _token objects.Token
-		_token.Value = i.processValue(&_range).Content[0]
-		_token.Type = fract.TypeValue
-		tokens.Insert(found, _token)
-	}
-
-	var value objects.Value
-	value.Type = fract.VTInteger
-
-	// Is conditional expression?
-	if i.isConditional(tokens) {
-		value.Content = []string{arithmetic.IntToString(i.processCondition(tokens))}
-		return value
+	value := objects.Value{
+		Content: []string{"0"},
+		Type:    fract.VTInteger,
+		Array:   false,
 	}
 
 	// Decompose arithmetic operations.
 	operations := parser.DecomposeArithmeticProcesses(tokens)
-
-	// Process arithmetic operation.
 	priorityIndex := parser.IndexProcessPriority(&operations)
 	looped := priorityIndex != -1
 	for priorityIndex != -1 {
 		var operation objects.ArithmeticProcess
+
 		operation.First = operations.Vals[priorityIndex-1].(objects.Token)
-		// First value is a name?
-		priorityIndex -= i.processVariableName(&operation.First, &operations, priorityIndex-1)
+		priorityIndex -= i._processValue(true, &operation,
+			&operations, priorityIndex-1)
 
 		operation.Operator = operations.Vals[priorityIndex].(objects.Token)
 
 		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
-		// Second value is a name?
-		priorityIndex -= i.processVariableName(&operation.Second, &operations, priorityIndex+1)
+		priorityIndex -= i._processValue(false, &operation,
+			&operations, priorityIndex+1)
 
-		_token := operations.Vals[priorityIndex-1].(objects.Token)
+		resultValue := arithmetic.SolveArithmeticProcess(operation)
+
+		operation.Operator.Value = grammar.TokenPlus
+		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
+		operation.FirstV = value
+		operation.SecondV = resultValue
+
+		value.Content = arithmetic.SolveArithmeticProcess(operation).Content
+		value.Type = resultValue.Type
+		value.Array = resultValue.Array
+
+		// Remove processed processes from operations.
 		operations.RemoveRange(priorityIndex-1, 3)
-		_type, result := arithmetic.SolveArithmeticProcess(operation)
-		value.Type = _type
-		_token.Value = arithmetic.TypeToString(_type, result)
-		_token.Type = fract.TypeValue
-		operations.Insert(priorityIndex-1, _token)
+		operations.Insert(priorityIndex-1, objects.Token{Value: "0"})
 
 		// Find next operator.
 		priorityIndex = parser.IndexProcessPriority(&operations)
 	}
 
-	// Set value.
-	first = operations.Vals[0].(objects.Token)
-
-	// First value is a name?
-	if first.Type == fract.TypeName && !looped {
-		index := name.VarIndexByName(i.vars, first.Value)
-		if index == -1 {
-			fract.Error(first,
-				"Name is not defined!: "+first.Value)
-		}
-		variable := i.vars.Vals[index].(objects.Variable)
-		// Is Array?
-		if variable.Array && len(operations.Vals) == 1 {
-			value.Content = variable.Value
-			if dt.IsFloatType(variable.Type) {
-				value.Type = fract.VTFloatArray
-			} else {
-				value.Type = fract.VTIntegerArray
-			}
-			return value
-		}
-		i.processVariableName(&first, &operations, 0)
-		value.Content = []string{first.Value}
-		return value
-	}
-
-	_value, err := arithmetic.ToFloat64(first.Value)
-	if err != nil {
-		fract.Error(first, "Value out of range!")
-	}
-	if arithmetic.IsFloatValue(first.Value) {
-		value.Type = fract.VTFloat
-	}
-	value.Content = []string{arithmetic.TypeToString(value.Type, _value)}
-
-	/* Set type to float if... */
-	if value.Type != fract.VTFloat &&
-		(strings.Index(value.Content[0], grammar.TokenDot) != -1 ||
-			strings.Index(value.Content[0], grammar.TokenDot) != -1) {
-		value.Type = fract.VTFloat
+	// One value?
+	if !looped {
+		var operation objects.ArithmeticProcess
+		operation.First = operations.Vals[0].(objects.Token)
+		i._processValue(true, &operation, &operations, 0)
+		value.Content = operation.FirstV.Content
+		value.Type = operation.FirstV.Type
+		value.Array = operation.FirstV.Array
 	}
 
 	return value

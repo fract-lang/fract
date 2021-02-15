@@ -35,12 +35,10 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			"Condition is empty!")
 	}
 
-	state := i.processCondition(&conditionList)
+	state := i.processCondition(conditionList)
 	actioned := state == grammar.TRUE
 
-	// Get after block tokens with used @conditionList as cache.
-	conditionList = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
-	tokens = &conditionList
+	tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
 
 	i.emptyControl(&tokens)
 	kwstate := -1
@@ -71,12 +69,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 					"Condition is empty!")
 			}
 
-			state = i.processCondition(&conditionList)
-
-			// Get after block tokens with used @conditionList as cache.
-			conditionList = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
-			tokens = &conditionList
-
+			state = i.processCondition(conditionList)
+			tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
 			i.emptyControl(&tokens)
 
 			/* Interpret/skip block. */
