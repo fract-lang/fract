@@ -53,7 +53,8 @@ func (l *Lexer) Generate() objects.Token {
 	if check := strings.TrimSpace(regexp.MustCompile(
 		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln)); check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
-			l.lastToken.Type == fract.TypeBrace || l.lastToken.Type == fract.TypeBlock ||
+			(l.lastToken.Type == fract.TypeBrace && (l.lastToken.Value != grammar.TokenRBracket &&
+				l.lastToken.Value != grammar.TokenRBracket)) || l.lastToken.Type == fract.TypeBlock ||
 			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf) { // Numeric value.
