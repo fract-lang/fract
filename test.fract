@@ -22,7 +22,6 @@
 var test int32 := [5]
 var test1 int32 := [1]
 test[4] := 5
-test[test[0]+4] + 5
 test1[0] := 2
 test
 test1

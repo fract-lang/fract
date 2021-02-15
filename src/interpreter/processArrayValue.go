@@ -25,11 +25,20 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	// Initializer?
 	if first.Value == grammar.TokenLBracket {
 		valueList := tokens.Sublist(1, len(tokens.Vals)-2)
+
 		if len(valueList.Vals) == 0 {
 			fract.Error(first, "Size is not defined!")
 		}
 
-		val, _ := arithmetic.ToInt64(i.processValue(valueList).Content[0])
+		value := i.processValue(valueList)
+		if value.Array {
+			fract.Error(first, "Arrays is not used in array constructors!")
+		}
+		if value.Type == fract.VTFloat {
+			fract.Error(first, "Float values is not used in array constructors!")
+		}
+
+		val, _ := arithmetic.ToInt64(value.Content[0])
 		if val < 0 {
 			fract.Error(first, "Value is not lower than zero!")
 		}
