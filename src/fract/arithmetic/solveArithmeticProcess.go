@@ -104,7 +104,7 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
 			for index := range process.FirstV.Content {
 				first, _ := ToFloat64(process.FirstV.Content[index])
 				second, _ := ToFloat64(process.SecondV.Content[index])
-				process.SecondV.Content[index] = fmt.Sprintf("%g",
+				process.FirstV.Content[index] = fmt.Sprintf("%g",
 					solve(process.Operator, first, second))
 			}
 			value.Content = process.FirstV.Content

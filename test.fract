@@ -19,7 +19,7 @@
 #  end
 #end
 
-var test int32 := [5]
+var test int32 := { 0, 1, 0, 0, 0 }
 var test1 int32 := [1]
 test[4] := 5
 test1[0] := 2
