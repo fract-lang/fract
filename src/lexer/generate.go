@@ -63,6 +63,9 @@ func (l *Lexer) Generate() objects.Token {
 		if result {
 			check = check[:len(check)-1]
 		}
+		clen := len(check)
+		check = strings.ReplaceAll(check, " ", "")
+		l.Column += clen - len(check)
 		token.Value = check
 		token.Type = fract.TypeValue
 	} else if strings.HasPrefix(ln, grammar.TokenSemicolon) { // Statement terminator.
