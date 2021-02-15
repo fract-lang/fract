@@ -5,7 +5,6 @@
 package parser
 
 import (
-	"fmt"
 	"strings"
 
 	"../fract"
@@ -54,6 +53,5 @@ func DecomposeArithmeticProcesses(tokens *vector.Vector) vector.Vector {
 			"Operator defined, but for what?")
 	}
 
-	fmt.Println(processes.Vals, "\n")
 	return processes
 }
