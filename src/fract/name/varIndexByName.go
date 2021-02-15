@@ -13,8 +13,7 @@ import (
 // name Name to find.
 func VarIndexByName(vars *vector.Vector, name string) int {
 	for index := range vars.Vals {
-		current := vars.Vals[index].(objects.Variable)
-		if current.Name == name {
+		if vars.Vals[index].(objects.Variable).Name == name {
 			return index
 		}
 	}
