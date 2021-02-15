@@ -21,9 +21,9 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 		_token := tokens.Vals[index].(objects.Token)
 
 		if _token.Type == fract.TypeBrace {
-			if _token.Value == grammar.TokenLBracket {
+			if _token.Value == grammar.TokenLBracket || _token.Value == grammar.TokenLBrace {
 				bracket++
-			} else if _token.Value == grammar.TokenRBracket {
+			} else if _token.Value == grammar.TokenRBracket || _token.Value == grammar.TokenRBrace {
 				bracket--
 			}
 		}

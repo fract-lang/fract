@@ -117,36 +117,6 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 		}
 		return 0
-	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBracket {
-		// Array constructor.
-		cindex := index + 1
-		bracketCount := 1
-		for ; cindex < len(operations.Vals); cindex++ {
-			current := operations.Vals[cindex].(objects.Token)
-			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenLBracket {
-					bracketCount++
-				} else if current.Value == grammar.TokenRBracket {
-					bracketCount--
-				}
-			}
-
-			if bracketCount == 0 {
-				break
-			}
-		}
-
-		if first {
-			operation.FirstV.Array = true
-			operation.FirstV.Content = i.processArrayValue(
-				operations.Sublist(index, cindex-index+1)).Content
-		} else {
-			operation.SecondV.Array = true
-			operation.SecondV.Content = i.processArrayValue(
-				operations.Sublist(index, cindex-index+1)).Content
-		}
-		operations.RemoveRange(index+1, cindex-index-1)
-		return 0
 	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBracket {
 		// Find open bracket.
 		bracketCount := 1
@@ -229,6 +199,101 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		}
 
 		return index - oindex + 1
+	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBracket {
+		// Array constructor.
+		cindex := index + 1
+		bracketCount := 1
+		for ; cindex < len(operations.Vals); cindex++ {
+			current := operations.Vals[cindex].(objects.Token)
+			if current.Type == fract.TypeBrace {
+				if current.Value == grammar.TokenLBracket {
+					bracketCount++
+				} else if current.Value == grammar.TokenRBracket {
+					bracketCount--
+				}
+			}
+
+			if bracketCount == 0 {
+				break
+			}
+		}
+
+		if first {
+			operation.FirstV.Array = true
+			operation.FirstV.Content = i.processArrayValue(
+				operations.Sublist(index, cindex-index+1)).Content
+		} else {
+			operation.SecondV.Array = true
+			operation.SecondV.Content = i.processArrayValue(
+				operations.Sublist(index, cindex-index+1)).Content
+		}
+		operations.RemoveRange(index+1, cindex-index-1)
+		return 0
+	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBrace {
+		// Array initializer.
+
+		// Find close brace.
+		cindex := index + 1
+		braceCount := 1
+		for ; cindex < len(operations.Vals); cindex++ {
+			current := operations.Vals[cindex].(objects.Token)
+			if current.Type == fract.TypeBrace {
+				if current.Value == grammar.TokenLBrace {
+					braceCount++
+				} else if current.Value == grammar.TokenRBrace {
+					braceCount--
+				}
+			}
+
+			if braceCount == 0 {
+				break
+			}
+		}
+
+		if first {
+			operation.FirstV.Array = true
+			operation.FirstV.Content = i.processArrayValue(
+				operations.Sublist(index, cindex-index+1)).Content
+		} else {
+			operation.SecondV.Array = true
+			operation.SecondV.Content = i.processArrayValue(
+				operations.Sublist(index, cindex-index+1)).Content
+		}
+		operations.RemoveRange(index+1, cindex-index-1)
+		return 0
+	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBrace {
+		// Array initializer.
+
+		// Find open brace.
+		braceCount := 1
+		oindex := index - 1
+		for ; oindex >= 0; oindex-- {
+			current := operations.Vals[oindex].(objects.Token)
+			if current.Type == fract.TypeBrace {
+				if current.Value == grammar.TokenRBrace {
+					braceCount++
+				} else if current.Value == grammar.TokenLBrace {
+					braceCount--
+				}
+			}
+
+			if braceCount == 0 {
+				break
+			}
+		}
+
+		if first {
+			operation.FirstV.Array = true
+			operation.FirstV.Content = i.processArrayValue(
+				operations.Sublist(oindex, index-oindex+1)).Content
+		} else {
+			operation.SecondV.Array = true
+			operation.SecondV.Content = i.processArrayValue(
+				operations.Sublist(oindex, index-oindex+1)).Content
+		}
+		operations.RemoveRange(oindex, index-oindex)
+
+		return index
 	}
 
 	_, err := arithmetic.ToFloat64(token.Value)
