@@ -16,7 +16,7 @@ import (
 // tokens Tokens to process.
 // open Open bracket.
 // close Close bracket.
-func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Vector, int) {
+func DecomposeBrace(tokens *vector.Vector, open string, close string) (*vector.Vector, int) {
 	var (
 		first int = -1
 		last  int
@@ -36,7 +36,7 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string) (vector.Ve
 		if open parentheses is not found.
 	*/
 	if first == -1 {
-		return *new(vector.Vector), -1
+		return new(vector.Vector), -1
 	}
 
 	/* Find close parentheses. */

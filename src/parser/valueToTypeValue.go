@@ -5,6 +5,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"../fract/arithmetic"
 	"../grammar"
 )
@@ -67,13 +69,13 @@ func valueToTypeValue(_type string, value string) ([]string, string) {
 		if err != nil {
 			return []string{""}, "Value out of range!"
 		}
-		return []string{arithmetic.FloatToString(result)}, ""
+		return []string{fmt.Sprintf("%g", result)}, ""
 	case grammar.DtFloat64:
 		result, err := arithmetic.ToFloat64(value)
 		if err != nil {
 			return []string{""}, "Value out of range!"
 		}
-		return []string{arithmetic.FloatToString(result)}, ""
+		return []string{fmt.Sprintf("%g", result)}, ""
 	case grammar.DtBoolean:
 		if value != grammar.KwTrue && value != grammar.KwFalse &&
 			value != "0" && value != "1" {

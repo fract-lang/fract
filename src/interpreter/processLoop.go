@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/dt"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -33,8 +32,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	_continue := false
 	_break := false
 
-	cacheList := tokens.Sublist(index+1, len(tokens.Vals)-index-1)
-	tokens = &cacheList
+	tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
 
 	i.emptyControl(&tokens)
 	iindex := i.index
@@ -47,7 +45,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		for i.index < len(i.tokens.Vals) {
 			i.index++
 			tokens = i.tokens.Vals[i.index].(*vector.Vector)
-			condition := i.processCondition(&contentList)
+			condition := i.processCondition(contentList)
 
 			first := tokens.Vals[0].(objects.Token)
 			if first.Type == fract.TypeBlockEnd { // Block is ended.
@@ -99,11 +97,10 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		fract.Error(nameToken, "Already defined this name!: "+nameToken.Value)
 	}
 
-	contentList = contentList.Sublist(2, len(contentList.Vals)-2)
-	value := i.processValue(&contentList)
+	value := i.processValue(contentList.Sublist(2, len(contentList.Vals)-2))
 
 	// Type is not array?
-	if !dt.TypeIsArray(value.Type) {
+	if !value.Array {
 		fract.Error(contentList.Vals[0].(objects.Token), "For loop must defined array value!")
 	}
 	// Create loop variable.

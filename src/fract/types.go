@@ -57,12 +57,8 @@ const (
 
 	// VTInteger Integer value type.
 	VTInteger int = 0
-	// VTIntegerArray Integer array value type.
-	VTIntegerArray int = 1
 	// VTFloat Float value type.
-	VTFloat int = 2
-	// VTFloatArray Float array value type.
-	VTFloatArray int = 3
+	VTFloat int = 1
 
 	// LOOPBreak Break loop.
 	LOOPBreak int = 1

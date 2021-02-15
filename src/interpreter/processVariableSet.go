@@ -11,7 +11,6 @@ import (
 	"../fract/name"
 	"../grammar"
 	"../objects"
-	"../parser"
 	"../utilities/vector"
 )
 
@@ -49,7 +48,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 				if len(valueList.Vals) == 0 {
 					fract.Error(setter, "Index is not defined!")
 				}
-				position, err := arithmetic.ToInt64(i.processValue(&valueList).Content[0])
+				position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
 				if err != nil {
 					fract.Error(setter, "Value out of range!")
 				}
@@ -75,25 +74,17 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 			"Value is not defined!")
 	}
 
-	valtokens := tokens.Sublist(2, len(tokens.Vals)-2)
-	value := i.processValue(&valtokens)
+	value := i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
 
-	if variable.Array && !dt.TypeIsArray(value.Type) && setIndex == -1 {
+	if variable.Array && !value.Array && setIndex == -1 {
 		fract.Error(setter, "This variable is array, cannot set nonarray value!")
-	} else if !variable.Array && dt.TypeIsArray(value.Type) {
+	} else if !variable.Array && value.Array {
 		fract.Error(setter, "This variable is not array, cannot set array value!")
 	}
 
 	// Check value and data type compatibility.
-	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger &&
-		value.Type != fract.VTIntegerArray {
+	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger {
 		fract.Error(setter, "Value and data type is not compatible!")
-	}
-
-	result, err := parser.ValueToTypeValue(variable.Array, variable.Type, value.Content)
-	if err != "" {
-		fract.ErrorCustom(setter.File.Path, setter.Line,
-			setter.Column+len(setter.Value), err)
 	}
 
 	// Check const state
@@ -102,9 +93,12 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	}
 
 	if setIndex != -1 {
-		variable.Value[setIndex] = result[0]
+		if value.Array {
+			fract.Error(setter, "Array is cannot set as indexed value!")
+		}
+		variable.Value[setIndex] = value.Content[0]
 	} else {
-		variable.Value = result
+		variable.Value = value.Content
 	}
 	i.vars.Vals[index] = variable
 }

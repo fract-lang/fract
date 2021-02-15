@@ -5,6 +5,7 @@
 package arithmetic
 
 import (
+	"fmt"
 	"math"
 
 	fract ".."
@@ -12,39 +13,19 @@ import (
 	"../../objects"
 )
 
-// SolveArithmeticProcess Solve arithmetic process.
-// process Process to solve.
-func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
-	/* Check type. */
-	_type := fract.VTInteger
-	if IsFloatValue(process.First.Value) || IsFloatValue(process.Second.Value) {
-		_type = fract.VTFloat
-
-		if IsFloatValue(process.First.Value) && !CheckFloat(process.First.Value) {
-			fract.Error(process.First, "Decimal limit exceeded!")
-		}
-		if IsFloatValue(process.Second.Value) && !CheckFloat(process.Second.Value) {
-			fract.Error(process.Second, "Decimal limit exceeded!")
-		}
-	}
-
+// solve Solve process.
+// operator Operator.
+// first First value.
+// second Second value.
+func solve(operator objects.Token, first float64, second float64) float64 {
 	var result float64
 
-	first, err := ToFloat64(process.First.Value)
-	if err != nil {
-		fract.Error(process.First, "Value out of range!")
-	}
-	second, err := ToFloat64(process.Second.Value)
-	if err != nil {
-		fract.Error(process.Second, "Value out of range!")
-	}
-
-	if process.Operator.Value == grammar.TokenReverseSlash ||
-		process.Operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
-		if process.Operator.Value == grammar.TokenReverseSlash {
-			process.Operator.Value = grammar.TokenSlash
+	if operator.Value == grammar.TokenReverseSlash ||
+		operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
+		if operator.Value == grammar.TokenReverseSlash {
+			operator.Value = grammar.TokenSlash
 		} else {
-			process.Operator.Value = grammar.IntegerDivision
+			operator.Value = grammar.IntegerDivision
 		}
 
 		if first < second {
@@ -54,32 +35,113 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) (int, float64) {
 		}
 	}
 
-	if process.Operator.Value == grammar.TokenPlus { // Addition.
+	if operator.Value == grammar.TokenPlus { // Addition.
 		result = first + second
-	} else if process.Operator.Value == grammar.TokenMinus { // Subtraction.
+	} else if operator.Value == grammar.TokenMinus { // Subtraction.
 		result = first - second
-	} else if process.Operator.Value == grammar.TokenStar { // Multiply.
+	} else if operator.Value == grammar.TokenStar { // Multiply.
 		result = first * second
-	} else if process.Operator.Value == grammar.TokenSlash ||
-		process.Operator.Value == grammar.IntegerDivision { // Division.
-		if first == 0 {
-			fract.Error(process.First, "Divide by zero!")
-		} else if second == 0 {
-			fract.Error(process.Second, "Divide by zero!")
+	} else if operator.Value == grammar.TokenSlash ||
+		operator.Value == grammar.IntegerDivision { // Division.
+		if first == 0 || second == 0 {
+			fract.Error(operator, "Divide by zero!")
 		}
 		result = first / second
 
-		if process.Operator.Value == grammar.IntegerDivision {
+		if operator.Value == grammar.IntegerDivision {
 			result = math.RoundToEven(result)
 		}
-	} else if process.Operator.Value == grammar.TokenCaret { // Exponentiation.
+	} else if operator.Value == grammar.TokenCaret { // Exponentiation.
 		result = math.Pow(first, second)
-	} else if process.Operator.Value == grammar.TokenPercent { // Mod.
+	} else if operator.Value == grammar.TokenPercent { // Mod.
 		result = math.Mod(first, second)
 	} else {
-		fract.Error(process.Operator,
-			"Operator is invalid!: "+process.Operator.Value)
+		fract.Error(operator, "Operator is invalid!")
 	}
 
-	return _type, result
+	return result
+}
+
+// SolveArithmeticProcess Solve arithmetic process.
+// process Process to solve.
+func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
+	var value objects.Value
+	value.Type = fract.VTInteger
+
+	/* Check type. */
+	if process.FirstV.Type == fract.VTFloat || process.SecondV.Type == fract.VTFloat {
+		value.Type = fract.VTFloat
+	}
+
+	if process.FirstV.Array && process.SecondV.Array {
+		if len(process.FirstV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		} else if len(process.SecondV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		}
+		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
+			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
+			fract.Error(process.Second, "Array element count is not one or equals to first array!")
+		}
+
+		if len(process.FirstV.Content) == 1 {
+			first, _ := ToFloat64(process.FirstV.Content[0])
+			for index := range process.SecondV.Content {
+				second, _ := ToFloat64(process.SecondV.Content[index])
+				process.SecondV.Content[index] = fmt.Sprintf("%g",
+					solve(process.Operator, first, second))
+			}
+			value.Content = process.SecondV.Content
+		} else if len(process.SecondV.Content) == 1 {
+			second, _ := ToFloat64(process.SecondV.Content[0])
+			for index := range process.FirstV.Content {
+				first, _ := ToFloat64(process.FirstV.Content[index])
+				process.FirstV.Content[index] = fmt.Sprintf("%g",
+					solve(process.Operator, first, second))
+			}
+			value.Content = process.FirstV.Content
+		} else {
+			for index := range process.FirstV.Content {
+				first, _ := ToFloat64(process.FirstV.Content[index])
+				second, _ := ToFloat64(process.SecondV.Content[index])
+				process.SecondV.Content[index] = fmt.Sprintf("%g",
+					solve(process.Operator, first, second))
+			}
+			value.Content = process.FirstV.Content
+		}
+		value.Array = true
+	} else if process.FirstV.Array {
+		if len(process.FirstV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		}
+
+		second, _ := ToFloat64(process.SecondV.Content[0])
+		for index := range process.FirstV.Content {
+			first, _ := ToFloat64(process.FirstV.Content[index])
+			process.FirstV.Content[index] = fmt.Sprintf("%g",
+				solve(process.Operator, first, second))
+		}
+		value.Array = true
+		value.Content = process.FirstV.Content
+	} else if process.SecondV.Array {
+		if len(process.SecondV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		}
+
+		first, _ := ToFloat64(process.FirstV.Content[0])
+		for index := range process.SecondV.Content {
+			second, _ := ToFloat64(process.SecondV.Content[index])
+			process.SecondV.Content[index] = fmt.Sprintf("%g",
+				solve(process.Operator, second, first))
+		}
+		value.Array = true
+		value.Content = process.SecondV.Content
+	} else {
+		first, _ := ToFloat64(process.FirstV.Content[0])
+		second, _ := ToFloat64(process.SecondV.Content[0])
+		value.Content = []string{fmt.Sprintf("%g",
+			solve(process.Operator, first, second))}
+	}
+
+	return value
 }

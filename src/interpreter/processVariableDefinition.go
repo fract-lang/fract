@@ -9,7 +9,6 @@ import (
 	"../fract/dt"
 	"../grammar"
 	"../objects"
-	"../parser"
 	"../utilities/vector"
 )
 
@@ -67,24 +66,15 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 
 	variable.Name = _name.Value
 	variable.Type = dataType.Value
-	valtokens := tokens.Sublist(4, len(tokens.Vals)-4)
-	value := i.processValue(&valtokens)
+	value := i.processValue(tokens.Sublist(4, len(tokens.Vals)-4))
 
 	// Check value and data type compatibility.
-	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger &&
-		value.Type != fract.VTIntegerArray {
+	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
-	variable.Array = dt.TypeIsArray(value.Type)
-
-	result, err := parser.ValueToTypeValue(variable.Array, variable.Type, value.Content)
-	if err != "" {
-		fract.ErrorCustom(setter.File.Path, setter.Line,
-			setter.Column+len(setter.Value), err)
-	}
-
-	variable.Value = result
+	variable.Array = value.Array
+	variable.Value = value.Content
 
 	// Set const state.
 	variable.Const = tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable

@@ -4,8 +4,12 @@ package objects
 type ArithmeticProcess struct {
 	// First value of process.
 	First Token
-	// Secon value of process.
+	// Value instance of first value.
+	FirstV Value
+	// Second value of process.
 	Second Token
+	// Value instance of second value.
+	SecondV Value
 	// Operator of process.
 	Operator Token
 }
