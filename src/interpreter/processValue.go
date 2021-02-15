@@ -54,12 +54,23 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 					}
 				}
 
-				valueList := operations.Sublist(index+2, cindex-index-2)
+				valueList := operations.Sublist(index+2, cindex-index-3)
 				// Index value is empty?
 				if len(valueList.Vals) == 0 {
 					fract.Error(token, "Index is not defined!")
 				}
-				position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
+
+				value := i.processValue(valueList)
+				if value.Array {
+					fract.Error(operations.Vals[index].(objects.Token),
+						"Arrays is not used in index access!")
+				}
+				if value.Type == fract.VTFloat {
+					fract.Error(operations.Vals[index].(objects.Token),
+						"Float values is not used in index access!")
+				}
+
+				position, err := arithmetic.ToInt64(value.Content[0])
 				if err != nil {
 					fract.Error(operations.Vals[cindex].(objects.Token), "Value out of range!")
 				}
@@ -180,7 +191,18 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		if len(valueList.Vals) == 0 {
 			fract.Error(endToken, "Index is not defined!")
 		}
-		position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
+
+		value := i.processValue(valueList)
+		if value.Array {
+			fract.Error(operations.Vals[index].(objects.Token),
+				"Arrays is not used in index access!")
+		}
+		if value.Type == fract.VTFloat {
+			fract.Error(operations.Vals[index].(objects.Token),
+				"Float values is not used in index access!")
+		}
+
+		position, err := arithmetic.ToInt64(value.Content[0])
 		if err != nil {
 			fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
 		}
