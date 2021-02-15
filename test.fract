@@ -26,7 +26,8 @@
 #  4
 #end
 
-#var t1 int32 := { 0, 3, 2, 1, 90 }
+var t1 int32 := { 0, 3, 2, 1, 90 }
+(-1 -- 1)
 #var t2 int32 := { }
 #t1 = t2
 
@@ -41,20 +42,20 @@
 #  index
 #end
 
-var counter int32 := 1
-for counter <= 1000:
-  var total int32 := 0
-  var ccounter int32 := 1
-  for ccounter < counter:
-    if counter % ccounter = 0:
-      total := total + ccounter
-    end
-    ccounter := ccounter + 1
-  end
-
-  if total = counter:
-    counter
-  end
-
-  counter := counter + 1
-end
+#var counter int32 := 1
+#for counter <= 1000:
+#  var total int32 := 0
+#  var ccounter int32 := 1
+#  for ccounter < counter:
+#    if counter % ccounter = 0:
+#      total := total + ccounter
+#    end
+#    ccounter := ccounter + 1
+#  end
+#
+#  if total = counter:
+#    counter
+#  end
+#
+#  counter := counter + 1
+#end
