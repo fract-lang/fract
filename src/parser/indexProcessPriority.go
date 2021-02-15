@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"../fract"
 	"../grammar"
 	"../objects"
 	"../utilities/vector"
@@ -11,12 +12,26 @@ import (
 //
 // tokens Tokens to search.
 func IndexProcessPriority(tokens *vector.Vector) int {
+	bracket := 0
 	modulus := -1
 	multiplyOrDivive := -1
 	additionOrSubtraction := -1
 
 	for index := range tokens.Vals {
 		_token := tokens.Vals[index].(objects.Token)
+
+		if _token.Type == fract.TypeBrace {
+			if _token.Value == grammar.TokenLBracket {
+				bracket++
+			} else if _token.Value == grammar.TokenRBracket {
+				bracket--
+			}
+		}
+
+		if bracket > 0 {
+			continue
+		}
+
 		// Exponentiation.
 		if _token.Value == grammar.TokenCaret {
 			return index
