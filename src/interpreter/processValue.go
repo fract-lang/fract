@@ -38,9 +38,18 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			if next.Type == fract.TypeBrace && next.Value == grammar.TokenLBracket {
 				// Find close bracket.
 				cindex := index + 1
+				bracketCount := 1
 				for ; cindex < len(operations.Vals); cindex++ {
 					current := operations.Vals[cindex].(objects.Token)
-					if current.Type == fract.TypeBrace && current.Value == grammar.TokenRBracket {
+					if current.Type == fract.TypeBrace {
+						if current.Value == grammar.TokenLBracket {
+							bracketCount++
+						} else if current.Value == grammar.TokenRBracket {
+							bracketCount--
+						}
+					}
+
+					if bracketCount == 0 {
 						break
 					}
 				}
@@ -58,7 +67,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 				if position < 0 || position >= int64(len(variable.Value)) {
 					fract.Error(operations.Vals[cindex].(objects.Token), "Index is out of range!")
 				}
-				operations.RemoveRange(index, cindex-index)
+				operations.RemoveRange(index+1, cindex-index-1)
 
 				if first {
 					operation.FirstV.Content = []string{variable.Value[position]}
@@ -75,8 +84,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						operation.SecondV.Type = fract.VTFloat
 					}
 				}
-
-				return len(valueList.Vals) - 1
+				return 0
 			}
 		}
 
@@ -101,16 +109,18 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBracket {
 		// Array constructor.
 		cindex := index + 1
-		braceCount := 1
+		bracketCount := 1
 		for ; cindex < len(operations.Vals); cindex++ {
 			current := operations.Vals[cindex].(objects.Token)
-			if current.Type == fract.TypeBrace && current.Value == grammar.TokenLBracket {
-				braceCount++
-			} else if current.Type == fract.TypeBrace && current.Value == grammar.TokenRBracket {
-				braceCount--
+			if current.Type == fract.TypeBrace {
+				if current.Value == grammar.TokenLBracket {
+					bracketCount++
+				} else if current.Value == grammar.TokenRBracket {
+					bracketCount--
+				}
 			}
 
-			if braceCount == 0 {
+			if bracketCount == 0 {
 				break
 			}
 		}
@@ -128,13 +138,23 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		return 0
 	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBracket {
 		// Find open bracket.
+		bracketCount := 1
 		oindex := index - 1
 		for ; oindex >= 0; oindex-- {
 			current := operations.Vals[oindex].(objects.Token)
-			if current.Type == fract.TypeBrace && current.Value == grammar.TokenLBracket {
+			if current.Type == fract.TypeBrace {
+				if current.Value == grammar.TokenRBracket {
+					bracketCount++
+				} else if current.Value == grammar.TokenLBracket {
+					bracketCount--
+				}
+			}
+
+			if bracketCount == 0 {
 				break
 			}
 		}
+
 		// Finished?
 		if oindex == 0 {
 			if first {

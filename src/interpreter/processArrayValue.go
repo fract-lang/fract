@@ -25,7 +25,6 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	// Initializer?
 	if first.Value == grammar.TokenLBracket {
 		valueList := tokens.Sublist(1, len(tokens.Vals)-2)
-
 		if len(valueList.Vals) == 0 {
 			fract.Error(first, "Size is not defined!")
 		}
