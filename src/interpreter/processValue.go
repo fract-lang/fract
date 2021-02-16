@@ -335,6 +335,12 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		Array:   false,
 	}
 
+	// Is conditional expression?
+	if i.isConditional(tokens) {
+		value.Content = []string{arithmetic.IntToString(i.processCondition(tokens))}
+		return value
+	}
+
 	// Decompose arithmetic operations.
 	operations := parser.DecomposeArithmeticProcesses(tokens)
 	priorityIndex := parser.IndexProcessPriority(&operations)

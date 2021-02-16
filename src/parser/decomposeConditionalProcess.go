@@ -27,8 +27,8 @@ func findNextOperator(tokens *vector.Vector, pos int, operator string) int {
 // DecomposeConditionalProcess Decompose and returns conditional expressions by operators.
 // tokens Tokens to process.
 // operator Operator to decompose.
-func DecomposeConditionalProcess(tokens *vector.Vector, operator string) vector.Vector {
-	expressions := *vector.New()
+func DecomposeConditionalProcess(tokens *vector.Vector, operator string) *vector.Vector {
+	expressions := vector.New()
 
 	last := 0
 	index := findNextOperator(tokens, last, operator)
