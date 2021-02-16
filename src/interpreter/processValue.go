@@ -307,6 +307,13 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		fract.Error(token, "Value out of range!")
 	}
 
+	// Boolean check.
+	if token.Type == fract.TypeBooleanTrue {
+		token.Value = "1"
+	} else if token.Type == fract.TypeBooleanFalse {
+		token.Value = "0"
+	}
+
 	if first {
 		operation.FirstV.Content = []string{token.Value}
 		operation.FirstV.Array = false
