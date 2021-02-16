@@ -239,6 +239,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			current := operations.Vals[cindex].(objects.Token)
 			if current.Type == fract.TypeBrace {
 				if current.Value == grammar.TokenLBrace {
+					fract.Error(current, "Arrays is cannot take array value as element!")
 					braceCount++
 				} else if current.Value == grammar.TokenRBrace {
 					braceCount--
@@ -267,13 +268,18 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		// Find open brace.
 		braceCount := 1
 		oindex := index - 1
+		nestedArray := false
 		for ; oindex >= 0; oindex-- {
 			current := operations.Vals[oindex].(objects.Token)
 			if current.Type == fract.TypeBrace {
 				if current.Value == grammar.TokenRBrace {
 					braceCount++
+					nestedArray = true
 				} else if current.Value == grammar.TokenLBrace {
 					braceCount--
+					if nestedArray {
+						fract.Error(current, "Arrays is cannot take array value as element!")
+					}
 				}
 			}
 
