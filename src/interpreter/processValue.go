@@ -147,8 +147,8 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 				operation.SecondV.Content = i.processArrayValue(
 					operations.Sublist(oindex, index-oindex+1)).Content
 			}
-			operations.RemoveRange(oindex+1, index-oindex-1)
-			return index - oindex - 1
+			operations.RemoveRange(oindex, index-oindex)
+			return index - oindex
 		}
 
 		endToken := operations.Vals[oindex-1].(objects.Token)
@@ -298,8 +298,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 				operations.Sublist(oindex, index-oindex+1)).Content
 		}
 		operations.RemoveRange(oindex, index-oindex)
-
-		return index
+		return index - oindex
 	}
 
 	_, err := arithmetic.ToFloat64(token.Value)
@@ -405,7 +404,6 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		operation.First = operations.Vals[priorityIndex-1].(objects.Token)
 		priorityIndex -= i._processValue(true, &operation,
 			&operations, priorityIndex-1)
-
 		operation.Operator = operations.Vals[priorityIndex].(objects.Token)
 
 		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
@@ -419,7 +417,8 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		operation.FirstV = value
 		operation.SecondV = resultValue
 
-		value.Content = arithmetic.SolveArithmeticProcess(operation).Content
+		resultValue = arithmetic.SolveArithmeticProcess(operation)
+		value.Content = resultValue.Content
 		value.Type = resultValue.Type
 		value.Array = resultValue.Array
 
