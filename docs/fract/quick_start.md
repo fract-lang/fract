@@ -138,7 +138,7 @@ You can let the algorithm flow with the conditions. Fract offers the If-Else If-
 "If" is the main condition, the alternative conditions that will come later are shown as "Else If".
 When one condition is fulfilled, other conditions do not. Therefore, "If" must be rewritten each time to create a different order of conditions.
 
-> Only the first element of arrays is used in conditions. Represents 0 if the array is empty.
+> All kinds of data can be given, but conditioning only looks for 0 and 1. 0 is accepted as false, 1 true.
 
 ### Syntax
 ```
