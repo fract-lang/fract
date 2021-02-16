@@ -51,8 +51,9 @@
 
 
 var counter int32 := 1
-for counter <= 1000:
+for _ in [1000]:
   var total int32 := 0
+  total
   var ccounter int32 := 1
   for ccounter < counter:
     if counter % ccounter = 0:
