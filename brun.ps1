@@ -23,5 +23,5 @@
 
 #!bin/bash
 
-@go build src/main.go src/processCommand.go
+@go build ./src/
 @./main
