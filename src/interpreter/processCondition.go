@@ -6,6 +6,7 @@ package interpreter
 
 import (
 	"../fract"
+	"../fract/arithmetic"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -33,8 +34,8 @@ func compare(value0 objects.Value, value1 objects.Value, operator string) bool {
 		return false
 	}
 	for index := range value0.Content {
-		item0 := value0.Content[index]
-		item1 := value1.Content[index]
+		item0, _ := arithmetic.ToFloat64(value0.Content[index])
+		item1, _ := arithmetic.ToFloat64(value1.Content[index])
 		switch operator {
 		case grammar.TokenEquals: // Equals.
 			if item0 == item1 {
