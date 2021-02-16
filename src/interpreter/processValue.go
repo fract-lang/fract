@@ -326,15 +326,9 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 	return 0
 }
 
-// processValue Process value.
-// tokens Tokens.
-func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
-	value := objects.Value{
-		Content: []string{"0"},
-		Type:    fract.VTInteger,
-		Array:   false,
-	}
-
+// processRange Process range by value processor principles.
+// tokens Tokens to process.
+func (i *Interpreter) processRange(tokens *vector.Vector) {
 	/* Check parentheses range. */
 	for true {
 		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
@@ -375,6 +369,18 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 			})
 		}
 	}
+}
+
+// processValue Process value.
+// tokens Tokens.
+func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
+	value := objects.Value{
+		Content: []string{"0"},
+		Type:    fract.VTInteger,
+		Array:   false,
+	}
+
+	i.processRange(tokens)
 
 	// Is conditional expression?
 	if i.isConditional(tokens) {

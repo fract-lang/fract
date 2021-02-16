@@ -75,6 +75,8 @@ func compare(value0 objects.Value, value1 objects.Value, operator string) bool {
 // processCondition Process conditional expression and return result.
 // tokens Tokens to process.
 func (i *Interpreter) processCondition(tokens *vector.Vector) int {
+	i.processRange(tokens)
+
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(tokens, grammar.TokenVerticalBar)
 	for index := range ors.Vals {
