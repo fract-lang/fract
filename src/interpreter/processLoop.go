@@ -108,9 +108,14 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		Name:  nameToken.Value,
 		Array: false,
 		Const: false,
-		Type:  grammar.DtFloat64,
+		Type:  grammar.DtInt64,
 		Value: []string{""},
 	}
+
+	if value.Type == fract.VTFloat {
+		variable.Type = grammar.DtFloat64
+	}
+
 	i.vars.Vals = append(i.vars.Vals, variable)
 
 	variableLen := len(i.vars.Vals)
