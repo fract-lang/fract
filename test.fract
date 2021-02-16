@@ -19,6 +19,8 @@
 #  end
 #end
 
+[2+2] + 2
+
 var test int32 := { 0, 1, 0, 0, 0 }
 var test1 int32 := [1]
 test[4] := 5

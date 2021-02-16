@@ -141,14 +141,14 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			if first {
 				operation.FirstV.Array = true
 				operation.FirstV.Content = i.processArrayValue(
-					operations.Sublist(oindex+1, index-oindex-1)).Content
+					operations.Sublist(oindex, index-oindex+1)).Content
 			} else {
 				operation.SecondV.Array = true
 				operation.SecondV.Content = i.processArrayValue(
-					operations.Sublist(oindex+1, index-oindex-1)).Content
+					operations.Sublist(oindex, index-oindex+1)).Content
 			}
 			operations.RemoveRange(oindex+1, index-oindex-1)
-			return 1
+			return index - oindex - 1
 		}
 
 		endToken := operations.Vals[oindex-1].(objects.Token)
