@@ -39,7 +39,7 @@
 #t1 = t2
 
 #var counter int32 := 0
-#for counter <= 10:
+#for counter <= 1000:
 #  counter := counter +1
 #  counter
 #end
@@ -48,6 +48,7 @@
 #  var test float64 := index
 #  index
 #end
+
 
 var counter int32 := 1
 for counter <= 1000:
