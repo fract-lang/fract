@@ -127,7 +127,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
 		variable.Value[0] = value.Content[vindex]
-		i.vars.Vals[len(i.vars.Vals)-1] = variable
 
 		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
@@ -144,7 +143,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 			continue
 		}
-
 		// Condition is true?
 		if do && !_continue {
 			kwstate := i.processTokens(tokens, do)
@@ -164,5 +162,5 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	// Remove loop variable.
-	i.vars.Vals = i.vars.Vals[:len(i.vars.Vals)-1]
+	i.vars.Vals = i.vars.Vals[:variableLen-1]
 }
