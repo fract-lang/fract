@@ -22,6 +22,11 @@ import (
 func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 	first := tokens.Vals[0].(objects.Token)
 
+	if first.Type == fract.TypeBlockEnd {
+		i.subtractBlock(&first)
+		return
+	}
+
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
