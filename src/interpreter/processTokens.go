@@ -24,7 +24,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 
 	if first.Type == fract.TypeBlockEnd {
 		i.subtractBlock(&first)
-		return
+		return -1
 	}
 
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
