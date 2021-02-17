@@ -4,7 +4,9 @@
 
 package interpreter
 
-import "../utilities/vector"
+import (
+	"../utilities/vector"
+)
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {

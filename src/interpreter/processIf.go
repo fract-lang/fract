@@ -44,8 +44,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	kwstate := -1
 
 	/* Interpret/skip block. */
-	for i.index < len(i.tokens.Vals) {
-		i.index++
+	i.index++
+	for ; i.index < len(i.tokens.Vals); i.index++ {
 		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 		do = kwstate == -1 && do
 
@@ -74,8 +74,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			i.emptyControl(&tokens)
 
 			/* Interpret/skip block. */
-			for i.index < len(i.tokens.Vals) {
-				i.index++
+			i.index++
+			for ; i.index < len(i.tokens.Vals); i.index++ {
 				tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
 				first := tokens.Vals[0].(objects.Token)

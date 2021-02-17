@@ -44,22 +44,23 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		variableLen := len(i.vars.Vals)
 
 		/* Interpret/skip block. */
-		for i.index < len(i.tokens.Vals) {
-			i.index++
+		i.index++
+		for ; i.index < len(i.tokens.Vals); i.index++ {
 			tokens = i.tokens.Vals[i.index].(*vector.Vector)
 			condition := i.processCondition(contentList)
 
 			first := tokens.Vals[0].(objects.Token)
 			if first.Type == fract.TypeBlockEnd { // Block is ended.
+
+				// Remove temporary variables.
+				i.vars.Vals = i.vars.Vals[:variableLen]
+
 				if condition != grammar.TRUE || _break {
 					i.subtractBlock(&first)
 					return
 				}
 				i.index = iindex
 				_continue = false
-
-				// Remove temporary variables.
-				i.vars.Vals = i.vars.Vals[:variableLen]
 
 				continue
 			}
@@ -83,6 +84,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				}
 			}
 		}
+		return
 	}
 
 	// ************
@@ -124,12 +126,18 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 	for vindex := 0; vindex < len(value.Content); {
 		i.index++
+		if i.index >= len(i.tokens.Vals) {
+			return
+		}
 		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
 		variable.Value[0] = value.Content[vindex]
 
 		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
+			// Remove temporary variables.
+			i.vars.Vals = i.vars.Vals[:variableLen]
+
 			vindex++
 			if _break || vindex == len(value.Content) {
 				i.subtractBlock(&first)
@@ -137,9 +145,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			}
 			i.index = iindex
 			_continue = false
-
-			// Remove temporary variables.
-			i.vars.Vals = i.vars.Vals[:variableLen]
 
 			continue
 		}

@@ -12,7 +12,7 @@
 #if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
 #  3
 #  if true = false:
-#    #5
+#    5
 #  elif false = false:
 #    10
 #    4
@@ -39,8 +39,8 @@
 #t1 = t2
 
 #var counter int32 := 0
-#for counter <= 1000:
-#  counter := counter +1
+#for count in [1000]:
+#  counter := counter+1
 #  counter
 #end
 
@@ -70,20 +70,20 @@
 
 #end
 
-var counter int32 := 1
-for counter <= 1000:
-  var total int32 := 0
-  var ccounter int32 := 1
-  for ccounter < counter:
-    if counter % ccounter = 0:
-      total := total + ccounter
-    end
-    ccounter := ccounter + 1
-  end
-
-  if total = counter:
-    counter
-  end
-
-  counter := counter + 1
-end
+#var counter int32 := 1
+#for counter <= 1000:
+#  var total int32 := 0
+#  var ccounter int32 := 1
+#  for ccounter < counter:
+#    if counter % ccounter = 0:
+#      total := total + ccounter
+#    end
+#    ccounter := ccounter + 1
+#  end
+#
+#  if total = counter:
+#    counter
+#  end
+#
+#  counter := counter + 1
+#end
