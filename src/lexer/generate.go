@@ -165,6 +165,7 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenColon) { // Block start.
 		token.Value = grammar.TokenColon
 		token.Type = fract.TypeBlock
+		l.Line--
 	} else if isKeywordToken(ln, grammar.KwBlockEnd) { // End of block.
 		token.Value = grammar.KwBlockEnd
 		token.Type = fract.TypeBlockEnd

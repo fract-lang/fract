@@ -31,10 +31,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	_break := false
-
-	tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
-
-	i.emptyControl(&tokens)
 	iindex := i.index
 
 	// ************
