@@ -50,35 +50,35 @@
 #end
 
 # PRIME NUMBER BETWEEN 1 an 100
-#var num int32 := 1
-#for num <= 100:
-#  num := num + 1
-#  var prime bool := true
-#  var i int32 := 2
-#  for i < num:
-#    if num % i = 0:
-#      prime := false
-#      break
-#    end
-#    i := i + 1
-#  end
-#  if prime:
-#    num
-#  end
-#end
-
-var counter int32 := 1
-for counter <= 1000:
-  var total int32 := 0
-  var ccounter int32 := 1
-  for ccounter < counter:
-    if counter % ccounter = 0:
-      total := total + ccounter
+var num int32 := 1
+for num <= 100:
+  num := num + 1
+  var prime bool := true
+  var i int32 := 2
+  for i < num:
+    if num % i = 0:
+      prime := false
+      break
     end
-    ccounter := ccounter + 1
+    i := i + 1
   end
-  if total = counter:
-    counter
+  if prime:
+    num
   end
-  counter := counter + 1
 end
+
+#var counter int32 := 1
+#for counter <= 1000:
+#  var total int32 := 0
+#  var ccounter int32 := 1
+#  for ccounter < counter:
+#    if counter % ccounter = 0:
+#      total := total + ccounter
+#    end
+#    ccounter := ccounter + 1
+#  end
+#  if total = counter:
+#    counter
+#  end
+#  counter := counter + 1
+#end

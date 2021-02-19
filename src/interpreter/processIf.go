@@ -38,9 +38,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	state := i.processCondition(conditionList)
 	actioned := state == grammar.TRUE
 
-	tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
-
-	i.emptyControl(&tokens)
 	kwstate := -1
 
 	/* Interpret/skip block. */
@@ -70,8 +67,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			}
 
 			state = i.processCondition(conditionList)
-			tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
-			i.emptyControl(&tokens)
 
 			/* Interpret/skip block. */
 			i.index++
