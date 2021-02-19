@@ -8,3 +8,7 @@ Say hello to Fract!
 ## How to compile?
 Fract is written in Go. <br>
 Run one of the scripts ``build.bat`` or ``build.ps1`` to compile.
+
+## Contributing
+
+To contribute, please read the contribution guidelines from [here](https://github.com/fract-lang/fract/blob/main/CONTRIBUTING.md).
