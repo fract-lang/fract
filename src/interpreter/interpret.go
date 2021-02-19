@@ -15,7 +15,7 @@ func (i *Interpreter) Interpret() {
 		return
 	}
 
-	/* Interpret all lines. */
+	/* Tokenize all lines. */
 	for !i.lexer.Finished {
 		cacheTokens := i.lexer.Next()
 
@@ -27,6 +27,7 @@ func (i *Interpreter) Interpret() {
 		i.tokens.Vals = append(i.tokens.Vals, cacheTokens)
 	}
 
+	// Interpret all lines.
 	for ; i.index < len(i.tokens.Vals); i.index++ {
 		i.processTokens(i.tokens.Vals[i.index].(*vector.Vector), true)
 	}

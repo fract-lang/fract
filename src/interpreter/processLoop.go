@@ -6,6 +6,7 @@ package interpreter
 
 import (
 	"../fract"
+	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -29,7 +30,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")
 	}
 
-	_continue := false
 	_break := false
 
 	tokens = tokens.Sublist(index+1, len(tokens.Vals)-index-1)
@@ -51,7 +51,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 			first := tokens.Vals[0].(objects.Token)
 			if first.Type == fract.TypeBlockEnd { // Block is ended.
-
 				// Remove temporary variables.
 				i.vars.Vals = i.vars.Vals[:variableLen]
 
@@ -59,29 +58,28 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 					i.subtractBlock(&first)
 					return
 				}
-				i.index = iindex
-				_continue = false
 
+				i.index = iindex
 				continue
 			}
 
 			// Condition is true?
 			if condition == grammar.TRUE {
-				if do && !_continue {
+				if do {
 					kwstate := i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak { // Break loop?
-						do = false
 						_break = true
-					} else {
-						_continue = kwstate == fract.LOOPContinue // Continue loop?
+						i.skipBlock(tokens)
+						i.index--
+					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						i.skipBlock(tokens)
+						i.index--
 					}
 				}
 			} else {
-				do = false
 				_break = true
-				if first.Type == fract.TypeIf { // If?
-					i.processIf(tokens, do)
-				}
+				i.skipBlock(tokens)
+				i.index--
 			}
 		}
 		return
@@ -97,7 +95,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	// Name is already defined?
-	if i.checkName(nameToken.Value) {
+	if name.VarIndexByName(i.vars, nameToken.Value) != -1 {
 		fract.Error(nameToken, "Already defined this name!: "+nameToken.Value)
 	}
 
@@ -144,25 +142,24 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				break
 			}
 			i.index = iindex
-			_continue = false
 
 			continue
 		}
 		// Condition is true?
-		if do && !_continue {
+		if do {
 			kwstate := i.processTokens(tokens, do)
 			if kwstate == fract.LOOPBreak { // Break loop?
-				do = false
 				_break = true
-			} else {
-				_continue = kwstate == fract.LOOPContinue // Continue next?
+				i.skipBlock(tokens)
+				i.index--
+			} else if kwstate == fract.LOOPContinue { // Continue next?
+				i.skipBlock(tokens)
+				i.index--
 			}
 		} else {
-			do = false
 			_break = true
-			if first.Type == fract.TypeIf { // If?
-				i.processIf(tokens, do)
-			}
+			i.skipBlock(tokens)
+			i.index--
 		}
 	}
 

@@ -7,6 +7,7 @@ package interpreter
 import (
 	"../fract"
 	"../fract/dt"
+	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../utilities/vector"
@@ -17,8 +18,10 @@ import (
 func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	var variable objects.Variable
 
+	tokenLen := len(tokens.Vals)
+
 	// Name is not defined?
-	if len(tokens.Vals) < 2 {
+	if tokenLen < 2 {
 		first := tokens.Vals[0].(objects.Token)
 		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
 			"Name is not found!")
@@ -32,11 +35,11 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	}
 
 	// Name is already defined?
-	if i.checkName(_name.Value) {
+	if name.VarIndexByName(i.vars, _name.Value) != -1 {
 		fract.Error(_name, "Already defined this name!: "+_name.Value)
 	}
 	// Data type is not defined?
-	if len(tokens.Vals) < 3 {
+	if tokenLen < 3 {
 		fract.ErrorCustom(_name.File.Path, _name.Line, _name.Column+len(_name.Value),
 			"Data type is not found!")
 	}
@@ -47,7 +50,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 		fract.Error(dataType, "This is not a data type!")
 	}
 	// Setter is not defined?
-	if len(tokens.Vals) < 4 {
+	if tokenLen < 4 {
 		fract.ErrorCustom(dataType.File.Path, dataType.Line, dataType.Column+len(dataType.Value),
 			"Setter is not found!")
 	}
@@ -59,14 +62,14 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	}
 
 	// Value is not defined?
-	if len(tokens.Vals) < 5 {
+	if tokenLen < 5 {
 		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
 	variable.Name = _name.Value
 	variable.Type = dataType.Value
-	value := i.processValue(tokens.Sublist(4, len(tokens.Vals)-4))
+	value := i.processValue(tokens.Sublist(4, tokenLen-4))
 
 	// Check value and data type compatibility.
 	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger {
