@@ -50,4 +50,8 @@
     <td align="center"><b>continue</b></td>
     <td>Continue loop with next.</td>
   </tr>
+  <tr>
+    <td align="center"><b>exit</b></td>
+    <td>Exit program with exit code.</td>
+  </tr>
 </table>
