@@ -1,4 +1,4 @@
-# THE FRACT PROGRAMMING LANGUAGE
+# Fract
 
 Say hello to Fract!
 
