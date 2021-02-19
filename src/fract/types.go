@@ -54,6 +54,8 @@ const (
 	TypeBreak int = 1119
 	// TypeContinue Continue loop type.
 	TypeContinue int = 1120
+	// TypeExit Exit type.
+	TypeExit int = 1121
 
 	// VTInteger Integer value type.
 	VTInteger int = 0

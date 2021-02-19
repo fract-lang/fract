@@ -69,6 +69,8 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 			fract.Error(first, "Continue keyword only used in loops!")
 		}
 		return fract.LOOPContinue
+	} else if first.Type == fract.TypeExit { // Exit.
+		i.processExit(tokens)
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}
