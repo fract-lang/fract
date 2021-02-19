@@ -101,6 +101,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	if !value.Array {
 		fract.Error(contentList.Vals[0].(objects.Token), "For loop must defined array value!")
 	}
+
 	// Create loop variable.
 	variable := objects.Variable{
 		Name:  nameToken.Value,

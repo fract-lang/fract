@@ -35,4 +35,6 @@ const (
 	KwTrue string = "true"
 	// KwFalse Boolean false value.
 	KwFalse string = "false"
+	// KwExit Exit.
+	KwExit string = "exit"
 )
