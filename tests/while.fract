@@ -1,0 +1,5 @@
+var counter int32 := 0
+for count in [1000]:
+  counter := counter+1
+  counter
+end
