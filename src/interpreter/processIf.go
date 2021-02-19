@@ -92,7 +92,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 				if state == grammar.TRUE && !actioned && do {
 					kwstate = i.processTokens(tokens, true)
 				}
-
 			}
 
 			if !actioned {
