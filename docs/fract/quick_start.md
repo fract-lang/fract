@@ -24,6 +24,11 @@ Fract uses nothing to print. Just write the value and print it out.
 
 > If the statement starts with parentheses, it's "definitely" considered a print statement!
 
+### Syntax
+```
+[VALUE]
+```
+
 ### Examples
 ```
 5555 + 1 # Print 5556
@@ -33,8 +38,26 @@ var x int32 := 5
 x # Print 5
 ```
 
+## Exit Keyword
+With the Exit keyword, you can end the execution with an exit code.
+
+### Syntax
+```
+exit [CODE]
+```
+
+### Examples
+```
+exit 0
+```
+
 ## Statement Terminator
 With the Statement terminator, you can perform multiple operations on the same line without moving to a new line.
+
+### Syntax
+```
+[STATEMENT]; [STATEMENT]; [STATEMENT];...
+```
 
 ### Examples
 ```
