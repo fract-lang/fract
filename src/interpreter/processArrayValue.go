@@ -67,8 +67,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	/* Set type to float if... */
 	for index := range value.Content {
 		current := value.Content[index]
-		if strings.Index(current, grammar.TokenDot) != -1 ||
-			strings.Index(current, grammar.TokenDot) != -1 {
+		if strings.Index(current, grammar.TokenDot) != -1 {
 			value.Type = fract.VTFloat
 			break
 		}

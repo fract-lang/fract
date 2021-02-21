@@ -251,14 +251,15 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 		}
 
+		value := i.processArrayValue(operations.Sublist(index, cindex-index+1))
 		if first {
 			operation.FirstV.Array = true
-			operation.FirstV.Content = i.processArrayValue(
-				operations.Sublist(index, cindex-index+1)).Content
+			operation.FirstV.Content = value.Content
+			operation.FirstV.Type = value.Type
 		} else {
 			operation.SecondV.Array = true
-			operation.SecondV.Content = i.processArrayValue(
-				operations.Sublist(index, cindex-index+1)).Content
+			operation.SecondV.Content = value.Content
+			operation.SecondV.Type = value.Type
 		}
 		operations.RemoveRange(index+1, cindex-index-1)
 		return 0
@@ -288,14 +289,15 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 		}
 
+		value := i.processArrayValue(operations.Sublist(oindex, index-oindex+1))
 		if first {
 			operation.FirstV.Array = true
-			operation.FirstV.Content = i.processArrayValue(
-				operations.Sublist(oindex, index-oindex+1)).Content
+			operation.FirstV.Content = value.Content
+			operation.FirstV.Type = value.Type
 		} else {
 			operation.SecondV.Array = true
-			operation.SecondV.Content = i.processArrayValue(
-				operations.Sublist(oindex, index-oindex+1)).Content
+			operation.SecondV.Content = value.Content
+			operation.SecondV.Type = value.Type
 		}
 		operations.RemoveRange(oindex, index-oindex)
 		return index - oindex
