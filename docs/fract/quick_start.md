@@ -156,6 +156,19 @@ The syntax for setting an element of an array with index:
 array[index] := value
 ```
 
+### How can you quickly use the data in an array for arithmetic operations?
+```
+var array int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
+array := array + 5                  # Elements: 5 9 9 7
+```
+```
+var array  int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
+var array2 int32 := { 2, 2, 2, 2 }   # Elements: 2 2 2 2
+array := array + array2              # Elements: 2 6 6 4
+```
+
+> An array can be manipulated with an arithmetic value. However, when executing with a different array, the array must have only one element or the same number of elements.
+
 ## Conditional Expressions
 You can let the algorithm flow with the conditions. Fract offers the If-Else If-Else structure like most programming languages.
 "If" is the main condition, the alternative conditions that will come later are shown as "Else If".
