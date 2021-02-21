@@ -5,6 +5,8 @@
 package interpreter
 
 import (
+	"strings"
+
 	"../fract"
 	"../fract/arithmetic"
 	"../fract/dt"
@@ -104,6 +106,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		if first {
 			operation.FirstV.Content = variable.Value
 			operation.FirstV.Array = variable.Array
+			operation.FirstV.Charray = variable.Charray
 			operation.FirstV.Type = fract.VTInteger
 			if dt.IsFloatType(variable.Type) {
 				operation.FirstV.Type = fract.VTFloat
@@ -111,6 +114,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		} else {
 			operation.SecondV.Content = variable.Value
 			operation.SecondV.Array = variable.Array
+			operation.SecondV.Charray = variable.Charray
 			operation.SecondV.Type = fract.VTInteger
 			if dt.IsFloatType(variable.Type) {
 				operation.SecondV.Type = fract.VTFloat
@@ -254,10 +258,12 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		value := i.processArrayValue(operations.Sublist(index, cindex-index+1))
 		if first {
 			operation.FirstV.Array = true
+			operation.FirstV.Charray = value.Charray
 			operation.FirstV.Content = value.Content
 			operation.FirstV.Type = value.Type
 		} else {
 			operation.SecondV.Array = true
+			operation.SecondV.Charray = value.Charray
 			operation.SecondV.Content = value.Content
 			operation.SecondV.Type = value.Type
 		}
@@ -292,10 +298,12 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		value := i.processArrayValue(operations.Sublist(oindex, index-oindex+1))
 		if first {
 			operation.FirstV.Array = true
+			operation.FirstV.Charray = value.Charray
 			operation.FirstV.Content = value.Content
 			operation.FirstV.Type = value.Type
 		} else {
 			operation.SecondV.Array = true
+			operation.SecondV.Charray = value.Charray
 			operation.SecondV.Content = value.Content
 			operation.SecondV.Type = value.Type
 		}
@@ -303,9 +311,15 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		return index - oindex
 	}
 
-	_, err := arithmetic.ToFloat64(token.Value)
-	if err != nil {
-		fract.Error(token, "Value out of range!")
+	//
+	// Single value.
+	//
+
+	if !strings.HasPrefix(token.Value, grammar.TokenQuote) {
+		_, err := arithmetic.ToFloat64(token.Value)
+		if err != nil {
+			fract.Error(token, "Value out of range!")
+		}
 	}
 
 	// Boolean check.
@@ -316,14 +330,24 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 	}
 
 	if first {
-		operation.FirstV.Content = []string{token.Value}
+		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
+			operation.FirstV.Content = []string{arithmetic.IntToString(token.Value[1])}
+			operation.FirstV.Charray = true
+		} else {
+			operation.FirstV.Content = []string{token.Value}
+		}
 		operation.FirstV.Array = false
 		operation.FirstV.Type = fract.VTInteger
 		if arithmetic.IsFloatValue(token.Value) {
 			operation.FirstV.Type = fract.VTFloat
 		}
 	} else {
-		operation.SecondV.Content = []string{token.Value}
+		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
+			operation.SecondV.Content = []string{arithmetic.IntToString(token.Value[1])}
+			operation.SecondV.Charray = true
+		} else {
+			operation.SecondV.Content = []string{token.Value}
+		}
 		operation.SecondV.Array = false
 		operation.SecondV.Type = fract.VTInteger
 		if arithmetic.IsFloatValue(token.Value) {
@@ -423,6 +447,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		value.Content = resultValue.Content
 		value.Type = resultValue.Type
 		value.Array = resultValue.Array
+		value.Charray = resultValue.Charray
 
 		// Remove processed processes from operations.
 		operations.RemoveRange(priorityIndex-1, 3)
@@ -440,6 +465,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		value.Content = operation.FirstV.Content
 		value.Type = operation.FirstV.Type
 		value.Array = operation.FirstV.Array
+		value.Charray = operation.FirstV.Charray
 	}
 
 	return value

@@ -53,15 +53,21 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	for index := 1; index < len(tokens.Vals)-1; index++ {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeComma {
-			value.Content = append(value.Content, i.processValue(
-				tokens.Sublist(comma, index-comma)).Content...)
+			val := i.processValue(tokens.Sublist(comma, index-comma))
+			value.Content = append(value.Content, val.Content...)
+			if !value.Charray {
+				value.Charray = val.Charray
+			}
 			comma = index + 1
 		}
 	}
 
 	if comma < len(tokens.Vals)-1 {
-		value.Content = append(value.Content, i.processValue(
-			tokens.Sublist(comma, len(tokens.Vals)-comma-1)).Content...)
+		val := i.processValue(tokens.Sublist(comma, len(tokens.Vals)-comma-1))
+		value.Content = append(value.Content, val.Content...)
+		if !value.Charray {
+			value.Charray = val.Charray
+		}
 	}
 
 	/* Set type to float if... */

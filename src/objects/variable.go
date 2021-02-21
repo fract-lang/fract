@@ -12,4 +12,6 @@ type Variable struct {
 	Const bool
 	// Is array variable.
 	Array bool
+	// Is char typed variable.
+	Charray bool
 }

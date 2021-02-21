@@ -77,6 +77,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	}
 
 	variable.Array = value.Array
+	variable.Charray = value.Charray
 	variable.Value = value.Content
 
 	// Set const state.

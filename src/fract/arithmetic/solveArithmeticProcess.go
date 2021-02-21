@@ -68,6 +68,8 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
 	var value objects.Value
 	value.Type = fract.VTInteger
 
+	value.Charray = process.FirstV.Charray || process.SecondV.Charray
+
 	/* Check type. */
 	if process.FirstV.Type == fract.VTFloat || process.SecondV.Type == fract.VTFloat {
 		value.Type = fract.VTFloat
