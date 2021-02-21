@@ -6,6 +6,8 @@ type Value struct {
 	Content []string
 	// Type of value.
 	Type int
+	// Char typed of value.
+	Charray bool
 	// Is array value.
 	Array bool
 }

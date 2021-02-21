@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"../fract"
+	"../fract/arithmetic"
 	"../grammar"
 	"../objects"
 	"../utilities/vector"
@@ -45,9 +46,22 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		// Println
 		value := i.processValue(tokens)
 		if value.Array {
-			fmt.Println(value.Content)
+			if value.Charray {
+				for index := range value.Content {
+					ch, _ := arithmetic.ToInt64(value.Content[index])
+					fmt.Printf("%c", ch)
+				}
+				fmt.Println()
+			} else {
+				fmt.Println(value.Content)
+			}
 		} else {
-			fmt.Println(value.Content[0])
+			if value.Charray {
+				ch, _ := arithmetic.ToInt64(value.Content[0])
+				fmt.Printf("%c\n", ch)
+			} else {
+				fmt.Println(value.Content[0])
+			}
 		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)

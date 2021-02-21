@@ -55,6 +55,10 @@ const (
 	TokenLBracket string = "["
 	// TokenRBracket Right bracket.
 	TokenRBracket string = "]"
+	// TokenDoubleQuote Double quote.
+	TokenDoubleQuote string = "\""
+	// TokenQuote Single quote.
+	TokenQuote string = "'"
 
 	// TokenCaret Caret.
 	TokenCaret string = "^"

@@ -5,6 +5,7 @@
 package lexer
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -17,15 +18,15 @@ import (
 func (l *Lexer) Generate() objects.Token {
 	var token objects.Token
 	token.File = l.File
-	ln := l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text
+	fln := l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text // Full line.
 
 	/* Line is finished. */
-	if l.Column > len(ln) {
+	if l.Column > len(fln) {
 		return token
 	}
 
 	// Resume.
-	ln = ln[l.Column-1:]
+	ln := fln[l.Column-1:]
 
 	/* Skip spaces. */
 	for index := 0; index < len(ln); index++ {
@@ -240,6 +241,24 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
+	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // Char.
+		token.Value = grammar.TokenQuote
+		l.Column++
+		for ; l.Column < len(fln)+1; l.Column++ {
+			current := string(fln[l.Column-1])
+			token.Value += current
+			if current == grammar.TokenQuote {
+				break
+			}
+		}
+		if !strings.HasSuffix(token.Value, grammar.TokenQuote) {
+			l.Error("Close quote is not found!")
+		} else if len(token.Value) != 3 {
+			fmt.Println(token.Value)
+			l.Error("Char is only be one character!")
+		}
+		token.Type = fract.TypeValue
+		l.Column -= 2
 	} else { // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
