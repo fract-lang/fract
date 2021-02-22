@@ -2,8 +2,7 @@
 
 Say hello to Fract!
 
-[Wiki](https://github.com/fract-lang/fract/wiki) <br>
-[Quick Start](https://github.com/fract-lang/fract/blob/main/docs/Fract/quick_start.md)
+[Quick Start](https://github.com/fract-lang/fract/blob/main/docs/fract/quick_start.md)
 
 ## About of Fract
 Fract gets its name from Fraction. It is a programming language focused on mathematics. It is designed to efficiently perform data science, statistics and arithmetic operations. Open to community support, please feel free to show off your ideas and skills for Fract's improvement.
