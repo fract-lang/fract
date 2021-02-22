@@ -17,8 +17,8 @@ const (
 	TokenPercent string = "%"
 	// TokenSlash Slash.
 	TokenSlash string = "/"
-	// TokenReverseSlash Rever slash.
-	TokenReverseSlash string = "\\"
+	// TokenBackslash Rever slash.
+	TokenBackslash string = "\\"
 	// TokenEquals Equals.
 	TokenEquals string = "="
 	// TokenQuestion Question mark.

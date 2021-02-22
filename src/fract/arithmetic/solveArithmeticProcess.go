@@ -20,9 +20,9 @@ import (
 func solve(operator objects.Token, first float64, second float64) float64 {
 	var result float64
 
-	if operator.Value == grammar.TokenReverseSlash ||
+	if operator.Value == grammar.TokenBackslash ||
 		operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
-		if operator.Value == grammar.TokenReverseSlash {
+		if operator.Value == grammar.TokenBackslash {
 			operator.Value = grammar.TokenSlash
 		} else {
 			operator.Value = grammar.IntegerDivision

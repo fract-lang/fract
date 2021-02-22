@@ -165,8 +165,8 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenPercent) { // Mod.
 		token.Value = grammar.TokenPercent
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenReverseSlash) { // Divisin with bigger.
-		token.Value = grammar.TokenReverseSlash
+	} else if strings.HasPrefix(ln, grammar.TokenBackslash) { // Divisin with bigger.
+		token.Value = grammar.TokenBackslash
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
 		l.parenthesCount++
