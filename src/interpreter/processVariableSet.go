@@ -87,6 +87,11 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
+	// Charray uncompatible?
+	if value.Charray != variable.Value.Charray {
+		fract.Error(setter, "Charray type uncompatibility!")
+	}
+
 	// Check const state
 	if variable.Const {
 		fract.Error(setter, "Values is can not changed of const defines!")
@@ -100,5 +105,6 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	} else {
 		variable.Value.Content = value.Content
 	}
+
 	i.vars.Vals[index] = variable
 }
