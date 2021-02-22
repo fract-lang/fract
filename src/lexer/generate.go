@@ -5,7 +5,6 @@
 package lexer
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -13,6 +12,49 @@ import (
 	"../grammar"
 	"../objects"
 )
+
+// processEsacepeSequence Process char literal espace sequence.
+// l Lexer.
+// token Token.
+// fln Full line text of current code line.
+func processEscapeSequence(l *Lexer, token *objects.Token, fln string) bool {
+	// Is not espace sequence?
+	if fln[l.Column-1] != '\\' {
+		return false
+	}
+
+	l.Column++
+	if l.Column >= len(fln)+1 {
+		l.Error("Charray literal is not defined full!")
+	}
+
+	switch fln[l.Column-1] {
+	case '\\':
+		token.Value += "\\"
+	case '"':
+		token.Value += "\""
+	case '\'':
+		token.Value += "'"
+	case 'n':
+		token.Value += "\n"
+	case 'r':
+		token.Value += "\r"
+	case 't':
+		token.Value += "\t"
+	case 'b':
+		token.Value += "\b"
+	case 'f':
+		token.Value += "\f"
+	case 'a':
+		token.Value += "\a"
+	case 'v':
+		token.Value += "\v"
+	default:
+		l.Error("Invalid escape sequence!")
+	}
+
+	return true
+}
 
 // lexChar Lex char literal.
 // l Lexer.
@@ -23,15 +65,16 @@ func lexChar(l *Lexer, token *objects.Token, fln string) {
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
 		current := string(fln[l.Column-1])
-		token.Value += current
-		if current == grammar.TokenQuote {
+		if current == grammar.TokenQuote { // Finish?
+			token.Value += current
 			break
+		} else if !processEscapeSequence(l, token, fln) {
+			token.Value += current
 		}
 	}
 	if !strings.HasSuffix(token.Value, grammar.TokenQuote) {
 		l.Error("Close quote is not found!")
 	} else if len(token.Value) != 3 {
-		fmt.Println(token.Value)
 		l.Error("Char is only be one character!")
 	}
 	token.Type = fract.TypeValue

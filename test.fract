@@ -84,15 +84,12 @@
 #end
 
 # ARRAY SUM TEST
-var array int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
-array := array + 5                  # Elements: 5 9 9 7
-array
-
-del array
-
-var array  int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
-var array2 int32 := { 2, 2, 2, 2 }   # Elements: 2 2 2 2
-array := array + array2              # Elements: 2 6 6 4
-array
-
-del array, array2
+#var array int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
+#array := array + 5                  # Elements: 5 9 9 7
+#array
+#del array
+#var array  int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
+#var array2 int32 := { 2, 2, 2, 2 }   # Elements: 2 2 2 2
+#array := array + array2              # Elements: 2 6 6 4
+#array
+#del array, array2
