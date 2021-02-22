@@ -94,3 +94,4 @@
 #var array2 int32 := { 2, 2, 2, 2 }   # Elements: 2 2 2 2
 #array := array + array2              # Elements: 2 6 6 4
 #array
+
