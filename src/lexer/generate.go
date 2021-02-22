@@ -14,6 +14,30 @@ import (
 	"../objects"
 )
 
+// lexChar Lex char literal.
+// l Lexer.
+// token Token.
+// fln Full line text of current code line.
+func lexChar(l *Lexer, token *objects.Token, fln string) {
+	token.Value = grammar.TokenQuote
+	l.Column++
+	for ; l.Column < len(fln)+1; l.Column++ {
+		current := string(fln[l.Column-1])
+		token.Value += current
+		if current == grammar.TokenQuote {
+			break
+		}
+	}
+	if !strings.HasSuffix(token.Value, grammar.TokenQuote) {
+		l.Error("Close quote is not found!")
+	} else if len(token.Value) != 3 {
+		fmt.Println(token.Value)
+		l.Error("Char is only be one character!")
+	}
+	token.Type = fract.TypeValue
+	l.Column -= 2
+}
+
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
 	var token objects.Token
@@ -242,23 +266,7 @@ func (l *Lexer) Generate() objects.Token {
 		token.Type = fract.TypeBooleanFalse
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // Char.
-		token.Value = grammar.TokenQuote
-		l.Column++
-		for ; l.Column < len(fln)+1; l.Column++ {
-			current := string(fln[l.Column-1])
-			token.Value += current
-			if current == grammar.TokenQuote {
-				break
-			}
-		}
-		if !strings.HasSuffix(token.Value, grammar.TokenQuote) {
-			l.Error("Close quote is not found!")
-		} else if len(token.Value) != 3 {
-			fmt.Println(token.Value)
-			l.Error("Char is only be one character!")
-		}
-		token.Type = fract.TypeValue
-		l.Column -= 2
+		lexChar(l, &token, fln)
 	} else { // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
