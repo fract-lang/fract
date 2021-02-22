@@ -298,7 +298,8 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 	// Single value.
 	//
 
-	if !strings.HasPrefix(token.Value, grammar.TokenQuote) {
+	if !strings.HasPrefix(token.Value, grammar.TokenQuote) &&
+		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
 		_, err := arithmetic.ToFloat64(token.Value)
 		if err != nil {
 			fract.Error(token, "Value out of range!")
@@ -313,28 +314,42 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 	}
 
 	if first {
+		operation.FirstV.Array = false
+		operation.FirstV.Type = fract.VTInteger
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
 			operation.FirstV.Content = []string{arithmetic.IntToString(token.Value[1])}
 			operation.FirstV.Charray = true
+		} else if strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
+			operation.FirstV.Charray = true
+			operation.FirstV.Array = true
+			for index := 1; index < len(token.Value)-1; index++ {
+				operation.FirstV.Content = append(
+					operation.FirstV.Content, arithmetic.IntToString(token.Value[index]))
+			}
 		} else {
 			operation.FirstV.Content = []string{token.Value}
-		}
-		operation.FirstV.Array = false
-		operation.FirstV.Type = fract.VTInteger
-		if arithmetic.IsFloatValue(token.Value) {
-			operation.FirstV.Type = fract.VTFloat
+			if arithmetic.IsFloatValue(token.Value) {
+				operation.FirstV.Type = fract.VTFloat
+			}
 		}
 	} else {
+		operation.SecondV.Array = false
+		operation.SecondV.Type = fract.VTInteger
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
 			operation.SecondV.Content = []string{arithmetic.IntToString(token.Value[1])}
 			operation.SecondV.Charray = true
+		} else if strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
+			operation.SecondV.Charray = true
+			operation.SecondV.Array = true
+			for index := 1; index < len(token.Value)-1; index++ {
+				operation.SecondV.Content = append(
+					operation.SecondV.Content, arithmetic.IntToString(token.Value[index]))
+			}
 		} else {
 			operation.SecondV.Content = []string{token.Value}
-		}
-		operation.SecondV.Array = false
-		operation.SecondV.Type = fract.VTInteger
-		if arithmetic.IsFloatValue(token.Value) {
-			operation.SecondV.Type = fract.VTFloat
+			if arithmetic.IsFloatValue(token.Value) {
+				operation.SecondV.Type = fract.VTFloat
+			}
 		}
 	}
 

@@ -62,6 +62,7 @@ func processEscapeSequence(l *Lexer, token *objects.Token, fln string) bool {
 // fln Full line text of current code line.
 func lexChar(l *Lexer, token *objects.Token, fln string) {
 	token.Value = grammar.TokenQuote
+	token.Type = fract.TypeValue
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
 		current := string(fln[l.Column-1])
@@ -77,8 +78,31 @@ func lexChar(l *Lexer, token *objects.Token, fln string) {
 	} else if len(token.Value) != 3 {
 		l.Error("Char is only be one character!")
 	}
-	token.Type = fract.TypeValue
 	l.Column -= 2
+}
+
+// lexString Lex string literal.
+// l Lexer.
+// token Token.
+// fln Full line text of current code line.
+func lexString(l *Lexer, token *objects.Token, fln string) {
+	token.Value = grammar.TokenDoubleQuote
+	l.Column++
+	for ; l.Column < len(fln)+1; l.Column++ {
+		current := string(fln[l.Column-1])
+		if current == grammar.TokenDoubleQuote { // Finish?
+			token.Value += current
+			break
+		} else if !processEscapeSequence(l, token, fln) {
+			token.Value += current
+		}
+	}
+	if !strings.HasSuffix(token.Value, grammar.TokenDoubleQuote) {
+		l.Error("Close double quote is not found!")
+	}
+	token.Type = fract.TypeValue
+
+	l.Column -= len(token.Value) - 1
 }
 
 // Generate Generate next token.
@@ -310,6 +334,8 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // Char.
 		lexChar(l, &token, fln)
+	} else if strings.HasPrefix(ln, grammar.TokenDoubleQuote) { // String.
+		lexString(l, &token, fln)
 	} else { // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
