@@ -56,10 +56,22 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 	}
 
 	if modulus != -1 {
+		if modulus == len(tokens.Vals)-1 {
+			fract.Error(tokens.Vals[modulus].(objects.Token),
+				"Operator defined, but for what?")
+		}
 		return modulus
 	} else if multiplyOrDivive != -1 {
+		if multiplyOrDivive == len(tokens.Vals)-1 {
+			fract.Error(tokens.Vals[multiplyOrDivive].(objects.Token),
+				"Operator defined, but for what?")
+		}
 		return multiplyOrDivive
 	}
 
+	if additionOrSubtraction == len(tokens.Vals)-1 {
+		fract.Error(tokens.Vals[additionOrSubtraction].(objects.Token),
+			"Operator defined, but for what?")
+	}
 	return additionOrSubtraction
 }

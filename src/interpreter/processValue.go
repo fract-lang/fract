@@ -25,7 +25,14 @@ import (
 func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticProcess,
 	operations *vector.Vector, index int) int {
 	token := operation.First
-	if !first {
+	if first {
+		if operation.First.Type == fract.TypeOperator {
+			fract.Error(operation.First, "Operator spam!")
+		}
+	} else {
+		if operation.Second.Type == fract.TypeOperator {
+			fract.Error(operation.Second, "Operator spam!")
+		}
 		token = operation.Second
 	}
 
@@ -397,44 +404,43 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	}
 
 	// Decompose arithmetic operations.
-	operations := parser.DecomposeArithmeticProcesses(tokens)
-	priorityIndex := parser.IndexProcessPriority(&operations)
+	priorityIndex := parser.IndexProcessPriority(tokens)
 	looped := priorityIndex != -1
 	for priorityIndex != -1 {
 		var operation objects.ArithmeticProcess
 
-		operation.First = operations.Vals[priorityIndex-1].(objects.Token)
+		operation.First = tokens.Vals[priorityIndex-1].(objects.Token)
 		priorityIndex -= i._processValue(true, &operation,
-			&operations, priorityIndex-1)
-		operation.Operator = operations.Vals[priorityIndex].(objects.Token)
+			tokens, priorityIndex-1)
+		operation.Operator = tokens.Vals[priorityIndex].(objects.Token)
 
-		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
+		operation.Second = tokens.Vals[priorityIndex+1].(objects.Token)
 		priorityIndex -= i._processValue(false, &operation,
-			&operations, priorityIndex+1)
+			tokens, priorityIndex+1)
 
 		resultValue := arithmetic.SolveArithmeticProcess(operation)
 
 		operation.Operator.Value = grammar.TokenPlus
-		operation.Second = operations.Vals[priorityIndex+1].(objects.Token)
+		operation.Second = tokens.Vals[priorityIndex+1].(objects.Token)
 		operation.FirstV = value
 		operation.SecondV = resultValue
 
 		resultValue = arithmetic.SolveArithmeticProcess(operation)
 		value = resultValue
 
-		// Remove processed processes from operations.
-		operations.RemoveRange(priorityIndex-1, 3)
-		operations.Insert(priorityIndex-1, objects.Token{Value: "0"})
+		// Remove processed processes.
+		tokens.RemoveRange(priorityIndex-1, 3)
+		tokens.Insert(priorityIndex-1, objects.Token{Value: "0"})
 
 		// Find next operator.
-		priorityIndex = parser.IndexProcessPriority(&operations)
+		priorityIndex = parser.IndexProcessPriority(tokens)
 	}
 
 	// One value?
 	if !looped {
 		var operation objects.ArithmeticProcess
-		operation.First = operations.Vals[0].(objects.Token)
-		i._processValue(true, &operation, &operations, 0)
+		operation.First = tokens.Vals[0].(objects.Token)
+		i._processValue(true, &operation, tokens, 0)
 		value = operation.FirstV
 	}
 
