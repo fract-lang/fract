@@ -41,7 +41,7 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 			}
 		} else if _token.Value == grammar.TokenStar ||
 			_token.Value == grammar.TokenSlash ||
-			_token.Value == grammar.TokenReverseSlash ||
+			_token.Value == grammar.TokenBackslash ||
 			_token.Value == grammar.IntegerDivision ||
 			_token.Value == grammar.IntegerDivideWithBigger { // Multiply or division.
 			if multiplyOrDivive == -1 {
