@@ -105,10 +105,12 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	// Create loop variable.
 	variable := objects.Variable{
 		Name:  nameToken.Value,
-		Array: false,
 		Const: false,
 		Type:  grammar.DtInt64,
-		Value: []string{""},
+		Value: objects.Value{
+			Array:   false,
+			Content: []string{""},
+		},
 	}
 
 	if value.Type == fract.VTFloat {
@@ -126,7 +128,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		}
 		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
-		variable.Value[0] = value.Content[vindex]
+		variable.Value.Content[0] = value.Content[vindex]
 
 		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.

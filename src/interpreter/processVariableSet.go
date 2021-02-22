@@ -36,7 +36,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	// Array setter?
 	if setter.Type == fract.TypeBrace && setter.Value == grammar.TokenLBracket {
 		// Variable is not array?
-		if !variable.Array {
+		if !variable.Value.Array {
 			fract.Error(setter, "Variable is not array!")
 		}
 		// Find close bracket.
@@ -52,7 +52,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 				if err != nil {
 					fract.Error(setter, "Value out of range!")
 				}
-				if position < 0 || position >= int64(len(variable.Value)) {
+				if position < 0 || position >= int64(len(variable.Value.Content)) {
 					fract.Error(setter, "Index is out of range!")
 				}
 				setIndex = position
@@ -76,9 +76,9 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 
 	value := i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
 
-	if variable.Array && !value.Array && setIndex == -1 {
+	if variable.Value.Array && !value.Array && setIndex == -1 {
 		fract.Error(setter, "This variable is array, cannot set nonarray value!")
-	} else if !variable.Array && value.Array {
+	} else if !variable.Value.Array && value.Array {
 		fract.Error(setter, "This variable is not array, cannot set array value!")
 	}
 
@@ -96,9 +96,9 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 		if value.Array {
 			fract.Error(setter, "Array is cannot set as indexed value!")
 		}
-		variable.Value[setIndex] = value.Content[0]
+		variable.Value.Content[setIndex] = value.Content[0]
 	} else {
-		variable.Value = value.Content
+		variable.Value.Content = value.Content
 	}
 	i.vars.Vals[index] = variable
 }

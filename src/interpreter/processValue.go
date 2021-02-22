@@ -77,20 +77,20 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 					fract.Error(operations.Vals[cindex].(objects.Token), "Value out of range!")
 				}
 				variable := i.vars.Vals[vindex].(objects.Variable)
-				if position < 0 || position >= int64(len(variable.Value)) {
+				if position < 0 || position >= int64(len(variable.Value.Content)) {
 					fract.Error(operations.Vals[cindex].(objects.Token), "Index is out of range!")
 				}
 				operations.RemoveRange(index+1, cindex-index-1)
 
 				if first {
-					operation.FirstV.Content = []string{variable.Value[position]}
+					operation.FirstV.Content = []string{variable.Value.Content[position]}
 					operation.FirstV.Array = false
 					operation.FirstV.Type = fract.VTInteger
 					if dt.IsFloatType(variable.Type) {
 						operation.FirstV.Type = fract.VTFloat
 					}
 				} else {
-					operation.SecondV.Content = []string{variable.Value[position]}
+					operation.SecondV.Content = []string{variable.Value.Content[position]}
 					operation.SecondV.Array = false
 					operation.SecondV.Type = fract.VTInteger
 					if dt.IsFloatType(variable.Type) {
@@ -104,21 +104,9 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		variable := i.vars.Vals[vindex].(objects.Variable)
 
 		if first {
-			operation.FirstV.Content = variable.Value
-			operation.FirstV.Array = variable.Array
-			operation.FirstV.Charray = variable.Charray
-			operation.FirstV.Type = fract.VTInteger
-			if dt.IsFloatType(variable.Type) {
-				operation.FirstV.Type = fract.VTFloat
-			}
+			operation.FirstV = variable.Value
 		} else {
-			operation.SecondV.Content = variable.Value
-			operation.SecondV.Array = variable.Array
-			operation.SecondV.Charray = variable.Charray
-			operation.SecondV.Type = fract.VTInteger
-			if dt.IsFloatType(variable.Type) {
-				operation.SecondV.Type = fract.VTFloat
-			}
+			operation.SecondV = variable.Value
 		}
 		return 0
 	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBracket {
@@ -181,20 +169,20 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
 		}
 		variable := i.vars.Vals[vindex].(objects.Variable)
-		if position < 0 || position >= int64(len(variable.Value)) {
+		if position < 0 || position >= int64(len(variable.Value.Content)) {
 			fract.Error(operations.Vals[oindex].(objects.Token), "Index is out of range!")
 		}
 		operations.RemoveRange(oindex-1, index-oindex+1)
 
 		if first {
-			operation.FirstV.Content = []string{variable.Value[position]}
+			operation.FirstV.Content = []string{variable.Value.Content[position]}
 			operation.FirstV.Array = false
 			operation.FirstV.Type = fract.VTInteger
 			if dt.IsFloatType(variable.Type) {
 				operation.FirstV.Type = fract.VTFloat
 			}
 		} else {
-			operation.SecondV.Content = []string{variable.Value[position]}
+			operation.SecondV.Content = []string{variable.Value.Content[position]}
 			operation.SecondV.Array = false
 			operation.SecondV.Type = fract.VTInteger
 			if dt.IsFloatType(variable.Type) {
@@ -257,15 +245,9 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 		value := i.processArrayValue(operations.Sublist(index, cindex-index+1))
 		if first {
-			operation.FirstV.Array = true
-			operation.FirstV.Charray = value.Charray
-			operation.FirstV.Content = value.Content
-			operation.FirstV.Type = value.Type
+			operation.FirstV = value
 		} else {
-			operation.SecondV.Array = true
-			operation.SecondV.Charray = value.Charray
-			operation.SecondV.Content = value.Content
-			operation.SecondV.Type = value.Type
+			operation.SecondV = value
 		}
 		operations.RemoveRange(index+1, cindex-index-1)
 		return 0
@@ -297,15 +279,9 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 		value := i.processArrayValue(operations.Sublist(oindex, index-oindex+1))
 		if first {
-			operation.FirstV.Array = true
-			operation.FirstV.Charray = value.Charray
-			operation.FirstV.Content = value.Content
-			operation.FirstV.Type = value.Type
+			operation.FirstV = value
 		} else {
-			operation.SecondV.Array = true
-			operation.SecondV.Charray = value.Charray
-			operation.SecondV.Content = value.Content
-			operation.SecondV.Type = value.Type
+			operation.SecondV = value
 		}
 		operations.RemoveRange(oindex, index-oindex)
 		return index - oindex
@@ -444,10 +420,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		operation.SecondV = resultValue
 
 		resultValue = arithmetic.SolveArithmeticProcess(operation)
-		value.Content = resultValue.Content
-		value.Type = resultValue.Type
-		value.Array = resultValue.Array
-		value.Charray = resultValue.Charray
+		value = resultValue
 
 		// Remove processed processes from operations.
 		operations.RemoveRange(priorityIndex-1, 3)
@@ -462,10 +435,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		var operation objects.ArithmeticProcess
 		operation.First = operations.Vals[0].(objects.Token)
 		i._processValue(true, &operation, &operations, 0)
-		value.Content = operation.FirstV.Content
-		value.Type = operation.FirstV.Type
-		value.Array = operation.FirstV.Array
-		value.Charray = operation.FirstV.Charray
+		value = operation.FirstV
 	}
 
 	return value

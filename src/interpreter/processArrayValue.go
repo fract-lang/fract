@@ -18,6 +18,7 @@ import (
 // tokens Tokens.
 func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	var value objects.Value
+	value.Array = true
 	value.Type = fract.VTInteger
 
 	first := tokens.Vals[0].(objects.Token)

@@ -76,9 +76,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
-	variable.Array = value.Array
-	variable.Charray = value.Charray
-	variable.Value = value.Content
+	variable.Value = value
 
 	// Set const state.
 	variable.Const = tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable
