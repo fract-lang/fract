@@ -14,8 +14,7 @@ import (
 // tokens Tokens to search.
 func IndexBlockDeclare(tokens *vector.Vector) int {
 	for index := range tokens.Vals {
-		current := tokens.Vals[index].(objects.Token)
-		if current.Type == fract.TypeBlock {
+		if tokens.Vals[index].(objects.Token).Type == fract.TypeBlock {
 			return index
 		}
 	}
