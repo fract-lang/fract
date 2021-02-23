@@ -27,10 +27,7 @@ var (
 // value1 Second value of comparison.
 // operator Operator of comparison.
 func compare(value0 objects.Value, value1 objects.Value, operator string) bool {
-	if value0.Array != value1.Array {
-		return false
-	}
-	if len(value0.Content) != len(value1.Content) {
+	if value0.Array != value1.Array || len(value0.Content) != len(value1.Content) {
 		return false
 	}
 	for index := range value0.Content {
@@ -49,7 +46,6 @@ func compare(value0 objects.Value, value1 objects.Value, operator string) bool {
 			}
 		case grammar.TokenGreat: // Greater.
 			if item0 > item1 {
-
 			} else {
 				return false
 			}
