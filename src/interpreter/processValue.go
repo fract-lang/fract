@@ -25,14 +25,7 @@ import (
 func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticProcess,
 	operations *vector.Vector, index int) int {
 	token := operation.First
-	if first {
-		if operation.First.Type == fract.TypeOperator {
-			fract.Error(operation.First, "Operator spam!")
-		}
-	} else {
-		if operation.Second.Type == fract.TypeOperator {
-			fract.Error(operation.Second, "Operator spam!")
-		}
+	if !first {
 		token = operation.Second
 	}
 
