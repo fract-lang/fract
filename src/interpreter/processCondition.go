@@ -104,14 +104,17 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		// Operator is first or last?
 		if operatorIndex == 0 {
-			fract.Error(current.Vals[0].(objects.Token), "Comparison values are missing!")
+			fract.Error(current.Vals[0].(objects.Token),
+				"Comparison values are missing!")
 		} else if operatorIndex == len(current.Vals)-1 {
-			fract.Error(current.Vals[len(current.Vals)-1].(objects.Token), "Comparison values are missing!")
+			fract.Error(current.Vals[len(current.Vals)-1].(objects.Token),
+				"Comparison values are missing!")
 		}
 
 		if compare(i.processValue(
 			current.Sublist(0, operatorIndex)), i.processValue(
-			current.Sublist(operatorIndex+1, len(current.Vals)-operatorIndex-1)), operator) {
+			current.Sublist(operatorIndex+1,
+				len(current.Vals)-operatorIndex-1)), operator) {
 			return grammar.TRUE
 		}
 	}

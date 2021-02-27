@@ -395,7 +395,7 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 }
 
 // processValue Process value.
-// tokens Tokens.
+// tokens Tokens to process.
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	value := objects.Value{
 		Content: []string{"0"},

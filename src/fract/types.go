@@ -56,6 +56,8 @@ const (
 	TypeContinue int = 1120
 	// TypeExit Exit type.
 	TypeExit int = 1121
+	// TypeFunction Function declare type.
+	TypeFunction int = 1122
 
 	// VTInteger Integer value type.
 	VTInteger int = 0

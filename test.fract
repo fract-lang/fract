@@ -93,3 +93,8 @@
 #array := array + array2              # Elements: 2 6 6 4
 #array
 #del array, array2
+
+# FUNCTION TEST
+func test():
+  "Hello World"
+end

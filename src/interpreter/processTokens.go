@@ -1,5 +1,5 @@
 /*
-	processTokens Functions.
+	processTokens Function.
 */
 
 package interpreter
@@ -85,6 +85,8 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		return fract.LOOPContinue
 	} else if first.Type == fract.TypeExit { // Exit.
 		i.processExit(tokens)
+	} else if first.Type == fract.TypeFunction { // Function.
+		i.processFunction(tokens)
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}
