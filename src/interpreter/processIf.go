@@ -24,7 +24,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
 	if index == -1 {
-		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+			"Where is the block declare!?")
 	}
 	conditionList := tokens.Sublist(1, index-1)
 
@@ -55,7 +56,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			index = parser.IndexBlockDeclare(tokens)
 			// Block declare is not defined?
 			if index == -1 {
-				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
+				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+					"Where is the block declare!?")
 			}
 			conditionList := tokens.Sublist(1, index-1)
 

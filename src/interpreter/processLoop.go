@@ -30,6 +30,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")
 	}
 
+	functionLen := len(i.funcs.Vals)
 	_break := false
 	iindex := i.index
 
@@ -49,6 +50,8 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			if first.Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
 				i.vars.Vals = i.vars.Vals[:variableLen]
+				// Remove temporary functions.
+				i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 				if condition != grammar.TRUE || _break {
 					i.subtractBlock(&first)
@@ -65,16 +68,16 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 					kwstate := i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak { // Break loop?
 						_break = true
-						i.skipBlock(tokens)
+						i.skipBlock()
 						i.index--
 					} else if kwstate == fract.LOOPContinue { // Continue loop?
-						i.skipBlock(tokens)
+						i.skipBlock()
 						i.index--
 					}
 				}
 			} else {
 				_break = true
-				i.skipBlock(tokens)
+				i.skipBlock()
 				i.index--
 			}
 		}
@@ -134,6 +137,8 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
 			i.vars.Vals = i.vars.Vals[:variableLen]
+			// Remove temporary functions.
+			i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 			vindex++
 			if _break || vindex == len(value.Content) {
@@ -149,15 +154,15 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			kwstate := i.processTokens(tokens, do)
 			if kwstate == fract.LOOPBreak { // Break loop?
 				_break = true
-				i.skipBlock(tokens)
+				i.skipBlock()
 				i.index--
 			} else if kwstate == fract.LOOPContinue { // Continue next?
-				i.skipBlock(tokens)
+				i.skipBlock()
 				i.index--
 			}
 		} else {
 			_break = true
-			i.skipBlock(tokens)
+			i.skipBlock()
 			i.index--
 		}
 	}
