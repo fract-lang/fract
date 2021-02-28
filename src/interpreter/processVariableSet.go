@@ -77,7 +77,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	value := i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
 
 	if variable.Value.Array && !value.Array && setIndex == -1 {
-		fract.Error(setter, "This variable is array, cannot set nonarray value!")
+		fract.Error(setter, "This variable is array, cannot set non-array value!")
 	} else if !variable.Value.Array && value.Array {
 		fract.Error(setter, "This variable is not array, cannot set array value!")
 	}

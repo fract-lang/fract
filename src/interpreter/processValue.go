@@ -74,11 +74,20 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 				position, err := arithmetic.ToInt64(value.Content[0])
 				if err != nil {
-					fract.Error(operations.Vals[cindex].(objects.Token), "Value out of range!")
+					fract.Error(operations.Vals[index].(objects.Token),
+						"Value out of range!")
 				}
+
 				variable := i.vars.Vals[vindex].(objects.Variable)
+
+				if !variable.Value.Array {
+					fract.Error(operations.Vals[index].(objects.Token),
+						"Index accessor is cannot used with non-array variables!")
+				}
+
 				if position < 0 || position >= int64(len(variable.Value.Content)) {
-					fract.Error(operations.Vals[cindex].(objects.Token), "Index is out of range!")
+					fract.Error(operations.Vals[index].(objects.Token),
+						"Index is out of range!")
 				}
 				operations.RemoveRange(index+1, cindex-index-1)
 
@@ -168,7 +177,14 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		if err != nil {
 			fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
 		}
+
 		variable := i.vars.Vals[vindex].(objects.Variable)
+
+		if !variable.Value.Array {
+			fract.Error(operations.Vals[oindex].(objects.Token),
+				"Index accessor is cannot used with non-array variables!")
+		}
+
 		if position < 0 || position >= int64(len(variable.Value.Content)) {
 			fract.Error(operations.Vals[oindex].(objects.Token), "Index is out of range!")
 		}

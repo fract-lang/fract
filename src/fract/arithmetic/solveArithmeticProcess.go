@@ -83,7 +83,8 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
 		}
 		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
 			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
-			fract.Error(process.Second, "Array element count is not one or equals to first array!")
+			fract.Error(process.Second,
+				"Array element count is not one or equals to first array!")
 		}
 
 		if len(process.FirstV.Content) == 1 {
