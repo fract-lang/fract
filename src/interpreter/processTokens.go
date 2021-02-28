@@ -31,12 +31,13 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
-		// Check variable set statement?
-		if first.Type == fract.TypeName {
-			for index := range tokens.Vals {
-				current := tokens.Vals[index].(objects.Token)
-				if current.Type == fract.TypeOperator &&
-					current.Value == grammar.Setter { // Variable setting.
+		tokenLen := len(tokens.Vals)
+		if tokenLen > 1 {
+			second := tokens.Vals[1].(objects.Token)
+			// Check name statement?
+			if first.Type == fract.TypeName {
+				if second.Type == fract.TypeOperator &&
+					second.Value == grammar.Setter { // Variable setting.
 					i.processVariableSet(tokens)
 					return -1
 				}
