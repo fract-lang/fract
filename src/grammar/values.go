@@ -6,7 +6,7 @@ package grammar
 
 const (
 	//TRUE Boolean true.
-	TRUE int = 1
+	TRUE = 1
 	//FALSE Boolean false.
-	FALSE int = 0
+	FALSE = 0
 )

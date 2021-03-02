@@ -5,27 +5,16 @@
 package grammar
 
 const (
-	// SeperatorSub Sub element seperator.
-	SeperatorSub string = "::"
-
 	// Setter X setter.
-	Setter string = ":="
-
+	Setter = ":="
 	// IntegerDivision Integer divide.
-	IntegerDivision string = "//"
-
+	IntegerDivision = "//"
 	// IntegerDivideWithBigger Integer division with bigger.
-	IntegerDivideWithBigger string = "\\\\"
-
+	IntegerDivideWithBigger = "\\\\"
 	// NotEquals Not equals to.
-	NotEquals string = "<>"
-
+	NotEquals = "<>"
 	// GreaterEquals Greater than or equals to.
-	GreaterEquals string = ">="
-
+	GreaterEquals = ">="
 	// LessEquals Less than or equals to.
-	LessEquals string = "<="
-
-	// ArrayDeclare Array declare.
-	ArrayDeclare string = "[]"
+	LessEquals = "<="
 )

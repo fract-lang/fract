@@ -6,35 +6,35 @@ package grammar
 
 const (
 	// KwImport Import packages.
-	KwImport string = "use"
+	KwImport = "use"
 	// KwFunction Function define.
-	KwFunction string = "func"
+	KwFunction = "func"
 	// KwDelete Delete variable.
-	KwDelete string = "del"
+	KwDelete = "del"
 	// KwVariable Variable define.
-	KwVariable string = "var"
+	KwVariable = "var"
 	// KwConstVariable Const variable define.
-	KwConstVariable string = "const"
+	KwConstVariable = "const"
 	// KwReturn Returns.
-	KwReturn string = "ret"
+	KwReturn = "ret"
 	//KwBlockEnd End of block.
-	KwBlockEnd string = "end"
+	KwBlockEnd = "end"
 	// KwForWhileLoop For and while loop.
-	KwForWhileLoop string = "for"
+	KwForWhileLoop = "for"
 	// KwIn In.
-	KwIn string = "in"
+	KwIn = "in"
 	// KwBreak Break loop.
-	KwBreak string = "break"
+	KwBreak = "break"
 	// KwContinue Continue loop.
-	KwContinue string = "continue"
+	KwContinue = "continue"
 	// KwIf If condition.
-	KwIf string = "if"
+	KwIf = "if"
 	// KwElseIf Else-If alternate or else.
-	KwElseIf string = "elif"
+	KwElseIf = "elif"
 	// KwTrue Boolean true value.
-	KwTrue string = "true"
+	KwTrue = "true"
 	// KwFalse Boolean false value.
-	KwFalse string = "false"
+	KwFalse = "false"
 	// KwExit Exit.
-	KwExit string = "exit"
+	KwExit = "exit"
 )
