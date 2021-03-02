@@ -16,7 +16,9 @@ import (
 // tokens Tokens to process.
 // open Open bracket.
 // close Close bracket.
-func DecomposeBrace(tokens *vector.Vector, open string, close string) (*vector.Vector, int) {
+// nonCheck Check empty bracket content.
+func DecomposeBrace(tokens *vector.Vector, open string, close string,
+	nonCheck bool) (*vector.Vector, int) {
 	var (
 		first int = -1
 		last  int
@@ -60,7 +62,7 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string) (*vector.V
 	_range := tokens.Sublist(first+1, length)
 
 	// Bracket content is empty?
-	if len(_range.Vals) == 0 {
+	if nonCheck && len(_range.Vals) == 0 {
 		fract.Error(tokens.Vals[first].(objects.Token), "Brackets content are empty!")
 	}
 

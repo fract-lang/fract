@@ -40,6 +40,10 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 					second.Value == grammar.Setter { // Variable setting.
 					i.processVariableSet(tokens)
 					return -1
+				} else if second.Type == fract.TypeBrace &&
+					second.Value == grammar.TokenLParenthes { // Function call.
+					i.processFunctionCall(tokens)
+					return -1
 				}
 			}
 		}

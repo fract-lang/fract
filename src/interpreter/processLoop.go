@@ -34,9 +34,9 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	_break := false
 	iindex := i.index
 
-	// ************
+	//*************
 	//    WHILE
-	// ************
+	//*************
 	if len(contentList.Vals) == 1 || contentList.Vals[1].(objects.Token).Type != fract.TypeIn {
 		variableLen := len(i.vars.Vals)
 
@@ -84,9 +84,9 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		return
 	}
 
-	// ************
+	//*************
 	//     FOR
-	// ************
+	//*************
 	nameToken := contentList.Vals[0].(objects.Token)
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {

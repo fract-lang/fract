@@ -371,7 +371,7 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 	/* Check parentheses range. */
 	for true {
 		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
-			grammar.TokenRParenthes)
+			grammar.TokenRParenthes, true)
 
 		/* Parentheses are not found! */
 		if found == -1 {
