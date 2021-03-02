@@ -6,62 +6,57 @@ package grammar
 
 const (
 	// TokenSharp Sharp.
-	TokenSharp string = "#"
+	TokenSharp = "#"
 	// TokenPlus Plus.
-	TokenPlus string = "+"
+	TokenPlus = "+"
 	// TokenMinus Minus.
-	TokenMinus string = "-"
+	TokenMinus = "-"
 	// TokenStar Star.
-	TokenStar string = "*"
+	TokenStar = "*"
 	// TokenPercent Percent.
-	TokenPercent string = "%"
+	TokenPercent = "%"
 	// TokenSlash Slash.
-	TokenSlash string = "/"
+	TokenSlash = "/"
 	// TokenBackslash Rever slash.
-	TokenBackslash string = "\\"
+	TokenBackslash = "\\"
 	// TokenEquals Equals.
-	TokenEquals string = "="
-	// TokenQuestion Question mark.
-	TokenQuestion string = "?"
+	TokenEquals = "="
 	// TokenVerticalBar Vertical bar.
-	TokenVerticalBar string = "|"
+	TokenVerticalBar = "|"
 	// TokenGreat Greater then.
-	TokenGreat string = ">"
+	TokenGreat = ">"
 	// TokenLess Less then.
-	TokenLess string = "<"
+	TokenLess = "<"
 	// TokenSemicolon Semicolon.
-	TokenSemicolon string = ";"
+	TokenSemicolon = ";"
 	// TokenColon Colon.
-	TokenColon string = ":"
+	TokenColon = ":"
 	// TokenComma Comma.
-	TokenComma string = ","
+	TokenComma = ","
 	// TokenExclamation Exclamation.
-	TokenExclamation string = "!"
+	TokenExclamation = "!"
 	// TokenAmper Amper.
-	TokenAmper string = "&"
-	// TokenAt At.
-	TokenAt string = "@"
+	TokenAmper = "&"
 	// TokenDot Dot.
-	TokenDot string = "."
+	TokenDot = "."
 	// TokenLParenthes Left parentheses.
-	TokenLParenthes string = "("
+	TokenLParenthes = "("
 	// TokenRParenthes Right parentheses.
-	TokenRParenthes string = ")"
+	TokenRParenthes = ")"
 	// TokenLBrace Left brace.
-	TokenLBrace string = "{"
+	TokenLBrace = "{"
 	// TokenRBrace Right brace.
-	TokenRBrace string = "}"
+	TokenRBrace = "}"
 	// TokenLBracket Left bracket.
-	TokenLBracket string = "["
+	TokenLBracket = "["
 	// TokenRBracket Right bracket.
-	TokenRBracket string = "]"
+	TokenRBracket = "]"
 	// TokenDoubleQuote Double quote.
-	TokenDoubleQuote string = "\""
+	TokenDoubleQuote = "\""
 	// TokenQuote Single quote.
-	TokenQuote string = "'"
-
+	TokenQuote = "'"
 	// TokenCaret Caret.
-	TokenCaret string = "^"
+	TokenCaret = "^"
 	// TokenUnderscore Unserscore.
-	TokenUnderscore string = "_"
+	TokenUnderscore = "_"
 )
