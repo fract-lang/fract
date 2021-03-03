@@ -7,6 +7,7 @@ package interpreter
 import (
 	"../fract"
 	"../fract/name"
+	"../grammar"
 	"../objects"
 	"../parser"
 	"../utilities/vector"
@@ -41,11 +42,23 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 		fract.Error(_name, "Where is the function parentheses?")
 	}
 
-	//paramList := tokens.Sublist(2, index-2)
 	i.index++
-	i.funcs.Vals = append(i.funcs.Vals, objects.Function{
+	function := objects.Function{
 		Name:  _name.Value,
 		Start: i.index,
-	})
+	}
+
+	dtToken := tokens.Vals[index-1].(objects.Token)
+	if dtToken.Type == fract.TypeDataType { // Returnable function?
+		index--
+		function.ReturnType = dtToken.Value
+	} else if dtToken.Type != fract.TypeBrace ||
+		dtToken.Value != grammar.TokenRParenthes {
+		fract.Error(dtToken, "Invalid syntax!")
+	}
+
+	//paramList := tokens.Sublist(2, index-2)
+	i.funcs.Vals = append(i.funcs.Vals, function)
+
 	i.skipBlock()
 }

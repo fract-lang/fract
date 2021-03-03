@@ -67,7 +67,10 @@ const (
 	VTFloat = 1
 
 	// LOOPBreak Break loop.
-	LOOPBreak = 1
+	LOOPBreak = 0
 	// LOOPContinue Continue loop.
-	LOOPContinue = 2
+	LOOPContinue = 1
+
+	// FUNCReturn Return value.
+	FUNCReturn = 0
 )

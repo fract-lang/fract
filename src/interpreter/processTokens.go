@@ -14,6 +14,33 @@ import (
 	"../utilities/vector"
 )
 
+// printValue Print value to screen.
+// value Value to print.
+func printValue(value objects.Value) {
+	if value.Content == nil {
+		return
+	}
+
+	if value.Array {
+		if value.Charray {
+			for index := range value.Content {
+				ch, _ := arithmetic.ToInt64(value.Content[index])
+				fmt.Printf("%c", ch)
+			}
+			fmt.Println()
+		} else {
+			fmt.Println(value.Content)
+		}
+	} else {
+		if value.Charray {
+			ch, _ := arithmetic.ToInt64(value.Content[0])
+			fmt.Printf("%c\n", ch)
+		} else {
+			fmt.Println(value.Content[0])
+		}
+	}
+}
+
 // processTokens Process tokens and returns true if block end, returns false if not.
 // and returns loop keyword state.
 //
@@ -25,7 +52,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 
 	if first.Type == fract.TypeBlockEnd {
 		i.subtractBlock(&first)
-		return -1
+		return fract.TypeNone
 	}
 
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
@@ -42,32 +69,16 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 					return -1
 				} else if second.Type == fract.TypeBrace &&
 					second.Value == grammar.TokenLParenthes { // Function call.
-					i.processFunctionCall(tokens)
-					return -1
+					i.functions++
+					printValue(i.processFunctionCall(tokens))
+					i.functions--
+					return fract.TypeNone
 				}
 			}
 		}
 
 		// Println
-		value := i.processValue(tokens)
-		if value.Array {
-			if value.Charray {
-				for index := range value.Content {
-					ch, _ := arithmetic.ToInt64(value.Content[index])
-					fmt.Printf("%c", ch)
-				}
-				fmt.Println()
-			} else {
-				fmt.Println(value.Content)
-			}
-		} else {
-			if value.Charray {
-				ch, _ := arithmetic.ToInt64(value.Content[0])
-				fmt.Printf("%c\n", ch)
-			} else {
-				fmt.Println(value.Content[0])
-			}
-		}
+		printValue(i.processValue(tokens))
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
@@ -92,8 +103,13 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		i.processExit(tokens)
 	} else if first.Type == fract.TypeFunction { // Function.
 		i.processFunction(tokens)
+	} else if first.Type == fract.TypeReturn { // Return.
+		if i.functions == 0 {
+			fract.Error(first, "Return keyword onlt used in functions!")
+		}
+		return fract.FUNCReturn
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)
 	}
-	return -1
+	return fract.TypeNone
 }

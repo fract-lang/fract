@@ -6,4 +6,6 @@ type Function struct {
 	Name string
 	// Block start of function.
 	Start int
+	// DataType of return value.
+	ReturnType string
 }

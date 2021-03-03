@@ -150,7 +150,7 @@ func (l *Lexer) Generate() objects.Token {
 			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
-			l.lastToken.Type == fract.TypeExit) { // Numeric value.
+			l.lastToken.Type == fract.TypeExit || l.lastToken.Type == fract.TypeReturn) { // Numeric value.
 		// Remove punct.
 		result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
 		if result {
