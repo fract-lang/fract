@@ -295,6 +295,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.KwFunction) { // Function.
 		token.Value = grammar.KwFunction
 		token.Type = fract.TypeFunction
+	} else if isKeywordToken(ln, grammar.KwReturn) { // Return.
+		token.Value = grammar.KwReturn
+		token.Type = fract.TypeReturn
 	} else if isKeywordToken(ln, grammar.DtInt8) { // int8.
 		token.Value = grammar.DtInt8
 		token.Type = fract.TypeDataType
