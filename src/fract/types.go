@@ -58,6 +58,8 @@ const (
 	TypeExit = 1121
 	// TypeFunction Function declare type.
 	TypeFunction = 1122
+	// TypeReturn Return type.
+	TypeReturn = 1123
 
 	// VTInteger Integer value type.
 	VTInteger = 0
