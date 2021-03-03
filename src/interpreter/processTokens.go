@@ -105,7 +105,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		i.processFunction(tokens)
 	} else if first.Type == fract.TypeReturn { // Return.
 		if i.functions == 0 {
-			fract.Error(first, "Return keyword onlt used in functions!")
+			fract.Error(first, "Return keyword only used in functions!")
 		}
 		return fract.FUNCReturn
 	} else {
