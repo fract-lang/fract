@@ -95,9 +95,8 @@
 #del array, array2
 
 # FUNCTION TEST
-func test() int32:
+func test():
   "Hello World"
-  ret 2
 end
 
 test()
