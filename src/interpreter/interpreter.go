@@ -21,6 +21,8 @@ type Interpreter struct {
 	funcs *vector.Vector
 	// Loop count.
 	loops int
+	// Function count.
+	functions int
 	// All tokens of code file.
 	tokens *vector.Vector
 	// Interpreter index.

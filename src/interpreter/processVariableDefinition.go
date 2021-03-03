@@ -49,10 +49,11 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	if dataType.Type != fract.TypeDataType {
 		fract.Error(dataType, "This is not a data type!")
 	}
+
 	// Setter is not defined?
 	if tokenLen < 4 {
-		fract.ErrorCustom(dataType.File.Path, dataType.Line, dataType.Column+len(dataType.Value),
-			"Setter is not found!")
+		fract.ErrorCustom(dataType.File.Path, dataType.Line,
+			dataType.Column+len(dataType.Value), "Setter is not found!")
 	}
 
 	setter := tokens.Vals[3].(objects.Token)
