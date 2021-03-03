@@ -53,6 +53,11 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 			if len(valueList.Vals) == 0 {
 				break
 			}
+
+			if function.ReturnType == "" {
+				fract.Error(first, "This function is not returnable but return value!")
+			}
+
 			returnValue = i.processValue(valueList)
 			// Check value and data type compatibility.
 			if dt.IsIntegerType(function.ReturnType) && returnValue.Type != fract.VTInteger {
