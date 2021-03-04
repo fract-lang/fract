@@ -450,7 +450,11 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	for index := 1; index < len(tokens.Vals)-1; index++ {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeComma {
-			val := i.processValue(tokens.Sublist(comma, index-comma))
+			lst := tokens.Sublist(comma, index-comma)
+			if len(lst.Vals) == 0 {
+				fract.Error(first, "Value is not defined!")
+			}
+			val := i.processValue(lst)
 			value.Content = append(value.Content, val.Content...)
 			if !value.Charray {
 				value.Charray = val.Charray
@@ -460,7 +464,11 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	}
 
 	if comma < len(tokens.Vals)-1 {
-		val := i.processValue(tokens.Sublist(comma, len(tokens.Vals)-comma-1))
+		lst := tokens.Sublist(comma, len(tokens.Vals)-comma-1)
+		if len(lst.Vals) == 0 {
+			fract.Error(first, "Value is not defined!")
+		}
+		val := i.processValue(lst)
 		value.Content = append(value.Content, val.Content...)
 		if !value.Charray {
 			value.Charray = val.Charray

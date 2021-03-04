@@ -67,11 +67,13 @@ func IndexProcessPriority(tokens *vector.Vector) int {
 				"Operator defined, but for what?")
 		}
 		return multiplyOrDivive
+	} else if additionOrSubtraction != -1 {
+		if additionOrSubtraction == len(tokens.Vals)-1 {
+			fract.Error(tokens.Vals[additionOrSubtraction].(objects.Token),
+				"Operator defined, but for what?")
+		}
+		return additionOrSubtraction
 	}
 
-	if additionOrSubtraction == len(tokens.Vals)-1 {
-		fract.Error(tokens.Vals[additionOrSubtraction].(objects.Token),
-			"Operator defined, but for what?")
-	}
-	return additionOrSubtraction
+	return -1
 }
