@@ -37,9 +37,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	}
 
 	state := i.processCondition(conditionList)
-	actioned := state == grammar.TRUE
-
-	kwstate := -1
+	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
 	i.index++
@@ -52,7 +50,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			i.subtractBlock(&first)
 			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
-
 			index = parser.IndexBlockDeclare(tokens)
 			// Block declare is not defined?
 			if index == -1 {
@@ -80,19 +77,20 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 					i.subtractBlock(&first)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
-					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
+					i.processIf(tokens, state == grammar.TRUE && do)
 				} else if first.Type == fract.TypeElseIf { // Else if block.
 					break
 				}
 
 				// Condition is true?
-				if state == grammar.TRUE && !actioned && do {
+				if state == grammar.TRUE && do {
 					kwstate = i.processTokens(tokens, true)
 				}
 			}
 
-			if !actioned {
-				actioned = state == grammar.TRUE
+			if state == grammar.TRUE {
+				i.skipBlock()
+				i.index--
 			}
 			continue
 		}
@@ -102,5 +100,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			kwstate = i.processTokens(tokens, do)
 		}
 	}
+
 	return kwstate
 }
