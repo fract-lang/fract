@@ -99,4 +99,4 @@ func test():
   "Hello World"
 end
 
-#test()
+test()
