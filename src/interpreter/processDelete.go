@@ -48,8 +48,10 @@ func (i *Interpreter) processDelete(tokens *vector.Vector) {
 		i.vars.RemoveRange(position, 1)
 		comma = true
 	}
-	//
+
+	// Extra comma check.
 	if !comma {
-		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "The extra comma defined!")
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+			"The extra comma defined!")
 	}
 }
