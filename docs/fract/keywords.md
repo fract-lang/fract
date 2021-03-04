@@ -54,4 +54,12 @@
     <td align="center"><b>exit</b></td>
     <td>Exit program with exit code.</td>
   </tr>
+  <tr>
+    <td align="center"><b>func</b></td>
+    <td>Define function.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>ret</b></td>
+    <td>Return value.</td>
+  </tr>
 </table>
