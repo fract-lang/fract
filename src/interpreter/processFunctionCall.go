@@ -55,9 +55,13 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	for index := range tokens.Vals {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLParenthes {
+			if current.Value == grammar.TokenLParenthes ||
+				current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLBracket {
 				braceCount++
-			} else if current.Value == grammar.TokenRParenthes {
+			} else if current.Value == grammar.TokenRParenthes ||
+				current.Value == grammar.TokenRBrace ||
+				current.Value == grammar.TokenRBracket {
 				braceCount--
 			}
 		} else if current.Type == fract.TypeComma && braceCount == 0 {
@@ -109,11 +113,6 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 			if len(valueList.Vals) == 0 {
 				break
 			}
-
-			if function.ReturnType == "" {
-				fract.Error(first, "This function is not returnable but return value!")
-			}
-
 			returnValue = i.processValue(valueList)
 			break
 		}
@@ -125,13 +124,7 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 	i.subtractBlock(nil)
-
-	if function.ReturnType != "" && returnValue.Content == nil {
-		fract.Error(
-			i.tokens.Vals[function.Start-1].(*vector.Vector).Vals[0].(objects.Token),
-			"This function is returnable but not return anything!")
-	}
-
 	i.index = nameIndex
+
 	return returnValue
 }
