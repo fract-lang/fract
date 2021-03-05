@@ -65,13 +65,13 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 			if current.Type != fract.TypeName {
 				fract.Error(current, "Parameter name is not found!")
 			}
+			function.Parameters = append(function.Parameters,
+				paramList.Vals[index].(objects.Token).Value)
 			paramName = false
 		} else {
 			if current.Type != fract.TypeComma {
 				fract.Error(current, "Comma is not found!")
 			}
-			function.Parameters = append(function.Parameters,
-				paramList.Vals[index-1].(objects.Token).Value)
 			paramName = true
 		}
 	}
