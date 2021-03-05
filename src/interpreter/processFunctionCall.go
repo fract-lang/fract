@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/dt"
 	"../fract/name"
 	"../grammar"
 	"../objects"
@@ -59,10 +58,6 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 			}
 
 			returnValue = i.processValue(valueList)
-			// Check value and data type compatibility.
-			if dt.IsIntegerType(function.ReturnType) && returnValue.Type != fract.VTInteger {
-				fract.Error(first, "Return data type and value data type is not compatible!")
-			}
 			break
 		}
 	}

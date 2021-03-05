@@ -7,7 +7,6 @@ package interpreter
 import (
 	"../fract"
 	"../fract/arithmetic"
-	"../fract/dt"
 	"../fract/name"
 	"../grammar"
 	"../objects"
@@ -80,11 +79,6 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 		fract.Error(setter, "This variable is array, cannot set non-array value!")
 	} else if !variable.Value.Array && value.Array {
 		fract.Error(setter, "This variable is not array, cannot set array value!")
-	}
-
-	// Check value and data type compatibility.
-	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger {
-		fract.Error(setter, "Value and data type is not compatible!")
 	}
 
 	// Charray uncompatible?

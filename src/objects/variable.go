@@ -6,8 +6,6 @@ type Variable struct {
 	Name string
 	// Value of variable.
 	Value Value
-	// Type of variable.
-	Type string
 	// Is const variable.
 	Const bool
 }

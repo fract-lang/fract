@@ -4,8 +4,6 @@ package objects
 type Value struct {
 	// Content of value.
 	Content []string
-	// Type of value.
-	Type int
 	// Char typed of value.
 	Charray bool
 	// Is array value.

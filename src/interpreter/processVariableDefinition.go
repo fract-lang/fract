@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/dt"
 	"../fract/name"
 	"../grammar"
 	"../objects"
@@ -32,50 +31,30 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
-	}
-
-	// Name is already defined?
-	if name.VarIndexByName(i.vars, _name.Value) != -1 {
+	} else if name.VarIndexByName(i.vars, _name.Value) != -1 { // Name is already defined?
 		fract.Error(_name, "Already defined this name!: "+_name.Value)
 	}
+
 	// Data type is not defined?
 	if tokenLen < 3 {
 		fract.ErrorCustom(_name.File.Path, _name.Line, _name.Column+len(_name.Value),
-			"Data type is not found!")
+			"Setter is not found!")
 	}
 
-	dataType := tokens.Vals[2].(objects.Token)
-	// Data type is not data type token?
-	if dataType.Type != fract.TypeDataType {
-		fract.Error(dataType, "This is not a data type!")
-	}
-
-	// Setter is not defined?
-	if tokenLen < 4 {
-		fract.ErrorCustom(dataType.File.Path, dataType.Line,
-			dataType.Column+len(dataType.Value), "Setter is not found!")
-	}
-
-	setter := tokens.Vals[3].(objects.Token)
+	setter := tokens.Vals[2].(objects.Token)
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter {
-		fract.Error(setter, "This is not a setter operator!"+setter.Value)
+		fract.Error(setter, "This is not a setter operator!: "+setter.Value)
 	}
 
 	// Value is not defined?
-	if tokenLen < 5 {
+	if tokenLen < 4 {
 		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
 	variable.Name = _name.Value
-	variable.Type = dataType.Value
-	value := i.processValue(tokens.Sublist(4, tokenLen-4))
-
-	// Check value and data type compatibility.
-	if dt.IsIntegerType(variable.Type) && value.Type != fract.VTInteger {
-		fract.Error(setter, "Value and data type is not compatible!")
-	}
+	value := i.processValue(tokens.Sublist(3, tokenLen-3))
 
 	variable.Value = value
 
