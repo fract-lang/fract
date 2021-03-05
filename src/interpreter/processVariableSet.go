@@ -27,9 +27,9 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	if index == -1 {
 		fract.Error(_name, "Name is not defined!: "+_name.Value)
 	}
+
 	var setIndex int64 = -1
 	variable := i.vars.Vals[index].(objects.Variable)
-
 	setter := tokens.Vals[1].(objects.Token)
 
 	// Array setter?
@@ -75,17 +75,6 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 
 	value := i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
 
-	if variable.Value.Array && !value.Array && setIndex == -1 {
-		fract.Error(setter, "This variable is array, cannot set non-array value!")
-	} else if !variable.Value.Array && value.Array {
-		fract.Error(setter, "This variable is not array, cannot set array value!")
-	}
-
-	// Charray uncompatible?
-	if value.Charray != variable.Value.Charray {
-		fract.Error(setter, "Charray type uncompatibility!")
-	}
-
 	// Check const state
 	if variable.Const {
 		fract.Error(setter, "Values is can not changed of const defines!")
@@ -97,7 +86,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 		}
 		variable.Value.Content[setIndex] = value.Content[0]
 	} else {
-		variable.Value.Content = value.Content
+		variable.Value = value
 	}
 
 	i.vars.Vals[index] = variable

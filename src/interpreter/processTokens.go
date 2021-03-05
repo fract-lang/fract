@@ -57,20 +57,21 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
 		tokenLen := len(tokens.Vals)
-		if tokenLen > 1 {
+		if first.Type == fract.TypeName && tokenLen > 1 {
 			second := tokens.Vals[1].(objects.Token)
-			// Check name statement?
-			if first.Type == fract.TypeName {
-				if second.Type == fract.TypeOperator &&
-					second.Value == grammar.Setter { // Variable setting.
+			if second.Type == fract.TypeBrace &&
+				second.Value == grammar.TokenLParenthes { // Function call.
+				i.functions++
+				printValue(i.processFunctionCall(tokens))
+				i.functions--
+				return fract.TypeNone
+			}
+			for index := range tokens.Vals {
+				current := tokens.Vals[index].(objects.Token)
+				if current.Type == fract.TypeOperator &&
+					current.Value == grammar.Setter { // Variable setting.
 					i.processVariableSet(tokens)
 					return -1
-				} else if second.Type == fract.TypeBrace &&
-					second.Value == grammar.TokenLParenthes { // Function call.
-					i.functions++
-					printValue(i.processFunctionCall(tokens))
-					i.functions--
-					return fract.TypeNone
 				}
 			}
 		}
