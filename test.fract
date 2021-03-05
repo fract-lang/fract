@@ -95,7 +95,7 @@
 #del array, array2
 
 # FUNCTION TEST
-func test(owo, a,):
+func test():
   "Hello World"
 end
 
