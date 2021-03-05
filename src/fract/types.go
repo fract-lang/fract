@@ -26,45 +26,38 @@ const (
 	TypeVariable = 1105
 	// TypeName Name type.
 	TypeName = 1106
-	// TypeDataType Datatype type.
-	TypeDataType = 1107
 	// TypeDelete Delete from memory type.
-	TypeDelete = 1108
+	TypeDelete = 1107
 	// TypeComma Comma type.
-	TypeComma = 1109
+	TypeComma = 1108
 	// TypeBooleanTrue Boolean true type.
-	TypeBooleanTrue = 1110
+	TypeBooleanTrue = 119
 	// TypeBooleanFalse Boolean false type.
-	TypeBooleanFalse = 1111
+	TypeBooleanFalse = 1110
 	// TypeBlock Block start type.
-	TypeBlock = 1112
+	TypeBlock = 1111
 	// TypeBlockEnd End of block type.
-	TypeBlockEnd = 1113
+	TypeBlockEnd = 1112
 	// TypeIf If declare.
-	TypeIf = 1114
+	TypeIf = 1113
 	// TypeElseIf Else if/else declare.
-	TypeElseIf = 1115
+	TypeElseIf = 1114
 	// TypeStatementTerminator Statement terminator.
-	TypeStatementTerminator = 1116
+	TypeStatementTerminator = 1115
 	// TypeLoop Loop type.
-	TypeLoop = 1117
+	TypeLoop = 1116
 	// TypeIn In type.
-	TypeIn = 1118
+	TypeIn = 1117
 	// TypeBreak Break loop type.
-	TypeBreak = 1119
+	TypeBreak = 1118
 	// TypeContinue Continue loop type.
-	TypeContinue = 1120
+	TypeContinue = 1119
 	// TypeExit Exit type.
-	TypeExit = 1121
+	TypeExit = 1120
 	// TypeFunction Function declare type.
-	TypeFunction = 1122
+	TypeFunction = 1121
 	// TypeReturn Return type.
-	TypeReturn = 1123
-
-	// VTInteger Integer value type.
-	VTInteger = 0
-	// VTFloat Float value type.
-	VTFloat = 1
+	TypeReturn = 1122
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0

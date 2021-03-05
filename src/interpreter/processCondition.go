@@ -17,7 +17,6 @@ var (
 	// TrueValueIns True condition value instance.
 	TrueValueIns objects.Value = objects.Value{
 		Array:   false,
-		Type:    fract.VTInteger,
 		Content: []string{"1"},
 	}
 )

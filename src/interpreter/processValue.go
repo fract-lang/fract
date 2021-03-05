@@ -9,7 +9,6 @@ import (
 
 	"../fract"
 	"../fract/arithmetic"
-	"../fract/dt"
 	"../fract/name"
 	"../grammar"
 	"../objects"
@@ -66,12 +65,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 				if value.Array {
 					fract.Error(operations.Vals[index].(objects.Token),
 						"Arrays is not used in index access!")
-				}
-				if value.Type == fract.VTFloat {
+				} else if arithmetic.IsFloatValue(value.Content[0]) {
 					fract.Error(operations.Vals[index].(objects.Token),
 						"Float values is not used in index access!")
 				}
-
 				position, err := arithmetic.ToInt64(value.Content[0])
 				if err != nil {
 					fract.Error(operations.Vals[index].(objects.Token),
@@ -90,21 +87,12 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						"Index is out of range!")
 				}
 				operations.RemoveRange(index+1, cindex-index-1)
-
 				if first {
 					operation.FirstV.Content = []string{variable.Value.Content[position]}
 					operation.FirstV.Array = false
-					operation.FirstV.Type = fract.VTInteger
-					if dt.IsFloatType(variable.Type) {
-						operation.FirstV.Type = fract.VTFloat
-					}
 				} else {
 					operation.SecondV.Content = []string{variable.Value.Content[position]}
 					operation.SecondV.Array = false
-					operation.SecondV.Type = fract.VTInteger
-					if dt.IsFloatType(variable.Type) {
-						operation.SecondV.Type = fract.VTFloat
-					}
 				}
 				return 0
 			}
@@ -167,8 +155,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		if value.Array {
 			fract.Error(operations.Vals[index].(objects.Token),
 				"Arrays is not used in index access!")
-		}
-		if value.Type == fract.VTFloat {
+		} else if arithmetic.IsFloatValue(value.Content[0]) {
 			fract.Error(operations.Vals[index].(objects.Token),
 				"Float values is not used in index access!")
 		}
@@ -193,17 +180,9 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		if first {
 			operation.FirstV.Content = []string{variable.Value.Content[position]}
 			operation.FirstV.Array = false
-			operation.FirstV.Type = fract.VTInteger
-			if dt.IsFloatType(variable.Type) {
-				operation.FirstV.Type = fract.VTFloat
-			}
 		} else {
 			operation.SecondV.Content = []string{variable.Value.Content[position]}
 			operation.SecondV.Array = false
-			operation.SecondV.Type = fract.VTInteger
-			if dt.IsFloatType(variable.Type) {
-				operation.SecondV.Type = fract.VTFloat
-			}
 		}
 
 		return index - oindex + 1
@@ -324,7 +303,6 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 	if first {
 		operation.FirstV.Array = false
-		operation.FirstV.Type = fract.VTInteger
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
 			operation.FirstV.Content = []string{arithmetic.IntToString(token.Value[1])}
 			operation.FirstV.Charray = true
@@ -337,13 +315,9 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 		} else {
 			operation.FirstV.Content = []string{token.Value}
-			if arithmetic.IsFloatValue(token.Value) {
-				operation.FirstV.Type = fract.VTFloat
-			}
 		}
 	} else {
 		operation.SecondV.Array = false
-		operation.SecondV.Type = fract.VTInteger
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
 			operation.SecondV.Content = []string{arithmetic.IntToString(token.Value[1])}
 			operation.SecondV.Charray = true
@@ -356,9 +330,6 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 		} else {
 			operation.SecondV.Content = []string{token.Value}
-			if arithmetic.IsFloatValue(token.Value) {
-				operation.SecondV.Type = fract.VTFloat
-			}
 		}
 	}
 
@@ -413,9 +384,9 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 // processArrayValue Process array value.
 // tokens Tokens.
 func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
-	var value objects.Value
-	value.Array = true
-	value.Type = fract.VTInteger
+	value := objects.Value{
+		Array: true,
+	}
 
 	first := tokens.Vals[0].(objects.Token)
 
@@ -430,8 +401,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		value := i.processValue(valueList)
 		if value.Array {
 			fract.Error(first, "Arrays is not used in array constructors!")
-		}
-		if value.Type == fract.VTFloat {
+		} else if arithmetic.IsFloatValue(value.Content[0]) {
 			fract.Error(first, "Float values is not used in array constructors!")
 		}
 
@@ -475,15 +445,6 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		}
 	}
 
-	/* Set type to float if... */
-	for index := range value.Content {
-		current := value.Content[index]
-		if strings.Index(current, grammar.TokenDot) != -1 {
-			value.Type = fract.VTFloat
-			break
-		}
-	}
-
 	return value
 }
 
@@ -492,7 +453,6 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	value := objects.Value{
 		Content: []string{"0"},
-		Type:    fract.VTInteger,
 		Array:   false,
 	}
 

@@ -28,7 +28,7 @@ func (i *Interpreter) processExit(tokens *vector.Vector) {
 
 	if value.Array {
 		fract.Error(first, "Array is not a valid value!")
-	} else if value.Type != fract.VTInteger {
+	} else if arithmetic.IsFloatValue(value.Content[0]) {
 		fract.Error(first, "Exit code is only be integer!")
 	}
 
