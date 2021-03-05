@@ -48,6 +48,8 @@ func printValue(value objects.Value) {
 // do Do processes?
 // nested Is nested?
 func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
+	tokens = vector.New(tokens.Vals...)
+
 	first := tokens.Vals[0].(objects.Token)
 
 	if first.Type == fract.TypeBlockEnd {
