@@ -44,8 +44,9 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 
 	i.index++
 	function := objects.Function{
-		Name:  _name.Value,
-		Start: i.index,
+		Name:       _name.Value,
+		Start:      i.index,
+		Parameters: vector.New(),
 	}
 
 	dtToken := tokens.Vals[index-1].(objects.Token)
@@ -57,7 +58,41 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 		fract.Error(dtToken, "Invalid syntax!")
 	}
 
-	//paramList := tokens.Sublist(2, index-2)
+	paramList := tokens.Sublist(3, index-4)
+
+	// Decompose function parameters.
+	param_name := true
+	param_type := true
+	for index := range paramList.Vals {
+		current := paramList.Vals[index].(objects.Token)
+		if param_name {
+			if current.Type != fract.TypeName {
+				fract.Error(current, "Parameter name is not found!")
+			}
+			param_name = false
+		} else if param_type {
+			if current.Type != fract.TypeDataType {
+				fract.Error(current, "Parameter datatype is not found!")
+			}
+			param_type = false
+		} else {
+			if current.Type != fract.TypeComma {
+				fract.Error(current, "Comma is not found!")
+			}
+			function.Parameters.Vals = append(function.Parameters.Vals, objects.Parameter{
+				Name: paramList.Vals[index-2].(objects.Token).Value,
+				Type: paramList.Vals[index-1].(objects.Token).Value,
+			})
+			param_name = true
+			param_type = true
+		}
+	}
+
+	if !param_name && param_type {
+		fract.Error(paramList.Vals[len(paramList.Vals)-1].(objects.Token),
+			"Parameter datatype is not found!")
+	}
+
 	i.funcs.Vals = append(i.funcs.Vals, function)
 
 	i.skipBlock()

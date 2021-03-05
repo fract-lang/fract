@@ -1,5 +1,9 @@
 package objects
 
+import (
+	"../utilities/vector"
+)
+
 // Function Function instance.
 type Function struct {
 	// Name of function.
@@ -8,4 +12,6 @@ type Function struct {
 	Start int
 	// DataType of return value.
 	ReturnType string
+	// Parameters of function.
+	Parameters *vector.Vector
 }
