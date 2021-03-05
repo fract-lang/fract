@@ -86,17 +86,17 @@ Until the brackets are closed, they are tokenized.
 
 ### Syntax
 ```
-var [NAME] [DATA_TYPE] := [VALUE]
+var [NAME] := [VALUE]
 ```
 ```
-const [NAME] [DATA_TYPE] := [VALUE]
+const [NAME] := [VALUE]
 ```
 ### Examples
 ```
-const Pi float32 := 3.14
+const Pi := 3.14
 ```
 ```
-var Fibonacci.First int32 := 1
+var Fibonacci.First := 1
 ```
 
 ## Set Defined
@@ -106,8 +106,8 @@ var Fibonacci.First int32 := 1
 ```
 ### Examples
 ```
-var a int32 := 45    # Value is 45
-a := 1               # Value is 1
+var a := 45      # Value is 45
+a := 1           # Value is 1
 ```
 
 ## Deletion Defines
@@ -121,31 +121,31 @@ del [NAME], [NAME], [NAME],...
 ```
 ### Examples
 ```
-var a int32 := 4
-var a int32 := 5       # Error, defined name 'a'
+var a := 4
+var a := 5       # Error, defined name 'a'
 
 ------------------
 
-var a int32 := 4
-del a                  # Remove 'a' from memory
-var a int32 := 5       # No error, a is 5
+var a := 4
+del a            # Remove 'a' from memory
+var a := 5       # No error, a is 5
 ```
 ```
-var a int32 := 0
-var b int32 := 0
-del a, b               # Remove 'a' and 'b'
-                       # No defined variables
+var a := 0
+var b := 0
+del a, b         # Remove 'a' and 'b'
+                 # No defined variables
 ```
 
 ## Arrays
 They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
 Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
 ```
-var array int32 := { 4, 5, 6, 7 }  # Elements: 4, 5, 6, 7
+var array := { 4, 5, 6, 7 }  # Elements: 4, 5, 6, 7
 ```
 The syntax for creating an array of a certain size without value:
 ```
-var array float64 := [5] # Elements: 0, 0, 0, 0, 0
+var array := [5] # Elements: 0, 0, 0, 0, 0
 ```
 The syntax for accessing an element of an array with index:
 ```
@@ -158,12 +158,12 @@ array[index] := value
 
 ### How can you quickly use the data in an array for arithmetic operations?
 ```
-var array int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
-array := array + 5                  # Elements: 5 9 9 7
+var array := { 0, 4, 4, 2 }          # Elements: 0 4 4 2
+array := array + 5                   # Elements: 5 9 9 7
 ```
 ```
-var array  int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
-var array2 int32 := { 2, 2, 2, 2 }   # Elements: 2 2 2 2
+var array := { 0, 4, 4, 2 }          # Elements: 0 4 4 2
+var array2 := { 2, 2, 2, 2 }         # Elements: 2 2 2 2
 array := array + array2              # Elements: 2 6 6 4
 ```
 
@@ -205,7 +205,7 @@ end
 A condition can be given any kind of value, but it only works with true(1) and false(0).
 Unlike most languages, you won't get an error even if you only enter an integer value in the condition. It looks at the value and if it is 1 it fulfills the condition.
 ```
-var example int32 := 0
+var example := 0
 if example:
   # ...
 end
@@ -226,7 +226,7 @@ end
 ```
 #### Examples
 ```
-var counter int32 := 0
+var counter := 0
 for counter <= 10:
   counter
   counter := counter + 1
@@ -244,13 +244,13 @@ end
 ```
 #### Examples
 ```
-var t1 int32 := { 0, 3, 2, 1, 90 }
+var t1 := { 0, 3, 2, 1, 90 }
 for index in { 0, 1, 2, 3, 4 }:
   t1[index]
 end
 ```
 ```
-var t1 int32 := { 0, 3, 2, 1, 90 }
+var t1 := { 0, 3, 2, 1, 90 }
 for item in t1:
   item
 end
@@ -260,7 +260,7 @@ end
 With the keyword break, it is possible to override and terminate the entire loop even when the loop could still return.
 #### Examples
 ```
-var counter int32 := 0
+var counter := 0
 for counter <= 10:
   counter := counter + 1
   if counter > 5:
@@ -279,7 +279,7 @@ for index in { 0, 1, 2, 3, 4.0 }:
   if index = 1 | index = 3:
     continue
   end
-  var test float64 := index
+  var test := index
   index
 end
 

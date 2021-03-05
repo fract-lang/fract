@@ -46,7 +46,7 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 	function := objects.Function{
 		Name:       _name.Value,
 		Start:      i.index,
-		Parameters: vector.New(),
+		Parameters: []string{},
 	}
 
 	dtToken := tokens.Vals[index-1].(objects.Token)
@@ -70,10 +70,8 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 			if current.Type != fract.TypeComma {
 				fract.Error(current, "Comma is not found!")
 			}
-			function.Parameters.Vals = append(function.Parameters.Vals, objects.Parameter{
-				Name: paramList.Vals[index-2].(objects.Token).Value,
-				Type: paramList.Vals[index-1].(objects.Token).Value,
-			})
+			function.Parameters = append(function.Parameters,
+				paramList.Vals[index-1].(objects.Token).Value)
 			paramName = true
 		}
 	}

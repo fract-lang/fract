@@ -1,10 +1,10 @@
-#var a int32 := 4
-#var b float32 := 4.0
-#var c bool := false
+#var a := 4
+#var b := 4.0
+#var c := false
 #c :=true
 #b + a + c
 
-#var test int32 := [4]
+#var test := [4]
 #test[3] := 1
 #test
 #test[3] := [4]
@@ -19,8 +19,8 @@
 #  end
 #end
 
-#var test int32 := { 0, 1, 0, 0, 0 }
-#var test1 int32 := [1]
+#var test := { 0, 1, 0, 0, 0 }
+#var test1 := [1]
 #test[4] := 5
 #test1[0] := 2
 #test
@@ -34,27 +34,27 @@
 #  4
 #end
 
-#var t1 int32 := { 0, 3, 2, 1, 90 }
-#var t2 int32 := { }
+#var t1 := { 0, 3, 2, 1, 90 }
+#var t2 := { }
 #t1 = t2
 
-#var counter int32 := 0
+#var counter := 0
 #for count in [1000]:
 #  counter := counter+1
 #  counter
 #end
 
 #for index in { 0, 1, 2, 3, 4.0 }:
-#  var test float64 := index
+#  var test := index
 #  index
 #end
 
 # PRIME NUMBER BETWEEN 1 an 100
-#var num int32 := 1
+#var num := 1
 #for num <= 100:
 #  num := num + 1
-#  var prime bool := true
-#  var i int32 := 2
+#  var prime := true
+#  var i := 2
 #  for i < num:
 #    if num % i = 0:
 #      prime := false
@@ -67,10 +67,10 @@
 #  end
 #end
 
-#var counter int32 := 1
+#var counter := 1
 #for counter <= 1000:
-#  var total int32 := 0
-#  var ccounter int32 := 1
+#  var total := 0
+#  var ccounter := 1
 #  for ccounter < counter:
 #    if counter % ccounter = 0:
 #      total := total + ccounter
@@ -84,18 +84,18 @@
 #end
 
 # ARRAY SUM TEST
-#var array int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
-#array := array + 5                  # Elements: 5 9 9 7
+#var array := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
+#array := array + 5            # Elements: 5 9 9 7
 #array
 #del array
-#var array  int32 := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
-#var array2 int32 := { 2, 2, 2, 2 }   # Elements: 2 2 2 2
-#array := array + array2              # Elements: 2 6 6 4
+#var array := { 0, 4, 4, 2 }   # Elements: 0 4 4 2
+#var array2 := { 2, 2, 2, 2 }  # Elements: 2 2 2 2
+#array := array + array2       # Elements: 2 6 6 4
 #array
 #del array, array2
 
 # FUNCTION TEST
-func test():
+func test(owo, a,):
   "Hello World"
 end
 
