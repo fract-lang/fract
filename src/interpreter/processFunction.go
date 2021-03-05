@@ -61,20 +61,20 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 	paramList := tokens.Sublist(3, index-4)
 
 	// Decompose function parameters.
-	param_name := true
-	param_type := true
+	paramName := true
+	paramType := true
 	for index := range paramList.Vals {
 		current := paramList.Vals[index].(objects.Token)
-		if param_name {
+		if paramName {
 			if current.Type != fract.TypeName {
 				fract.Error(current, "Parameter name is not found!")
 			}
-			param_name = false
-		} else if param_type {
+			paramName = false
+		} else if paramType {
 			if current.Type != fract.TypeDataType {
 				fract.Error(current, "Parameter datatype is not found!")
 			}
-			param_type = false
+			paramType = false
 		} else {
 			if current.Type != fract.TypeComma {
 				fract.Error(current, "Comma is not found!")
@@ -83,12 +83,12 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 				Name: paramList.Vals[index-2].(objects.Token).Value,
 				Type: paramList.Vals[index-1].(objects.Token).Value,
 			})
-			param_name = true
-			param_type = true
+			paramName = true
+			paramType = true
 		}
 	}
 
-	if !param_name && param_type {
+	if !paramName && paramType {
 		fract.Error(paramList.Vals[len(paramList.Vals)-1].(objects.Token),
 			"Parameter datatype is not found!")
 	}
