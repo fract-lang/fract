@@ -81,6 +81,9 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	}
 
 	if setIndex != -1 {
+		if !variable.Value.Array {
+			fract.Error(_name, "This variable is not array!")
+		}
 		if value.Array {
 			fract.Error(setter, "Array is cannot set as indexed value!")
 		}

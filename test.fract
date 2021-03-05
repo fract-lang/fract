@@ -103,4 +103,13 @@ func len(list):
   ret counter
 end
 
-len({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 })
+func range(start, len):
+  var lst := [len]
+  for _ in lst:
+    lst[start] := start
+    start := start + 1
+  end
+  ret lst
+end
+
+range(0, 10)
