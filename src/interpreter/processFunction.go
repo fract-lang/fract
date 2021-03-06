@@ -34,7 +34,7 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 
 	// Name is already defined?
 	if name.FunctionIndexByName(i.funcs, _name.Value) != -1 {
-		fract.Error(_name, "Already defined this name!: "+_name.Value)
+		fract.Error(_name, "Already defined this function!: "+_name.Value)
 	}
 
 	// Function parentheses are not defined?

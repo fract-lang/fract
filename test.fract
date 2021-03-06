@@ -95,6 +95,15 @@
 #del array, array2
 
 # FUNCTION TEST
+
+for _ in [0]:
+  if true:
+    break
+  end
+end
+
+exit 0
+
 func len(list):
   var counter := 0
   for _ in list:
@@ -103,14 +112,29 @@ func len(list):
   ret counter
 end
 
-func range(start, len):
-  var lst := [len]
-  for _ in lst:
-    lst[start] := start
+func range(start, to):
+  var lst := [to-start]
+  var index := 0
+  for start < to:
+    lst[index] := start
     start := start + 1
+    index := index + 1
   end
   ret lst
 end
+
+func int.prime(x):
+  for y in range(2, x):
+    if x % y = 0:
+      ret false
+    end
+  end
+  ret true
+end
+
+int.prime(4)
+
+exit 0
 
 for number in range(0, 10):
   number
