@@ -84,7 +84,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 	}
 
 	//*************
-	//     FOR
+	//   FOREACH
 	//*************
 	nameToken := contentList.Vals[0].(objects.Token)
 	// Name is not name?
@@ -118,48 +118,54 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 	variableLen := len(i.vars.Vals)
 
-	for vindex := 0; vindex < len(value.Content); {
+	if len(value.Content) == 0 {
 		i.index++
-		if i.index >= len(i.tokens.Vals) {
-			return
-		}
-		tokens = i.tokens.Vals[i.index].(*vector.Vector)
-
-		variable.Value.Content[0] = value.Content[vindex]
-
-		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
-			// Remove temporary variables.
-			i.vars.Vals = i.vars.Vals[:variableLen]
-			// Remove temporary functions.
-			i.funcs.Vals = i.funcs.Vals[:functionLen]
-
-			vindex++
-			if _break || vindex == len(value.Content) {
-				i.subtractBlock(nil)
-				break
+		i.skipBlock()
+	} else {
+		for vindex := 0; vindex < len(value.Content); {
+			i.index++
+			if i.index >= len(i.tokens.Vals) {
+				return
 			}
-			i.index = iindex
+			tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
-			continue
-		}
+			variable.Value.Content[0] = value.Content[vindex]
 
-		// Condition is true?
-		if do {
-			kwstate := i.processTokens(tokens, do)
-			if kwstate == fract.LOOPBreak { // Break loop?
+			if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
+				// Remove temporary variables.
+				i.vars.Vals = i.vars.Vals[:variableLen]
+				// Remove temporary functions.
+				i.funcs.Vals = i.funcs.Vals[:functionLen]
+
+				vindex++
+				if _break || vindex == len(value.Content) {
+					break
+				}
+				i.index = iindex
+
+				continue
+			}
+
+			// Condition is true?
+			if do {
+				kwstate := i.processTokens(tokens, do)
+				if kwstate == fract.LOOPBreak { // Break loop?
+					_break = true
+					i.skipBlock()
+					i.index--
+				} else if kwstate == fract.LOOPContinue { // Continue next?
+					i.skipBlock()
+					i.index--
+				}
+			} else {
 				_break = true
 				i.skipBlock()
 				i.index--
-			} else if kwstate == fract.LOOPContinue { // Continue next?
-				i.skipBlock()
-				i.index--
 			}
-		} else {
-			_break = true
-			i.skipBlock()
-			i.index--
 		}
 	}
+
+	i.subtractBlock(nil)
 
 	// Remove loop variable.
 	i.vars.Vals = i.vars.Vals[:variableLen-1]
