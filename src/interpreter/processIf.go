@@ -61,8 +61,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			// Condition is empty?
 			if len(conditionList.Vals) == 0 {
 				first := tokens.Vals[0].(objects.Token)
-				fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
-					"Condition is empty!")
+				fract.ErrorCustom(first.File.Path, first.Line,
+					first.Column+len(first.Value), "Condition is empty!")
 			}
 
 			state = i.processCondition(conditionList)
@@ -74,7 +74,6 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					i.index++
 					i.subtractBlock(&first)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
@@ -85,7 +84,9 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 				// Condition is true?
 				if state == grammar.TRUE && do {
-					kwstate = i.processTokens(tokens, true)
+					if kwstate = i.processTokens(tokens, true); kwstate != fract.TypeNone {
+						i.skipBlock()
+					}
 				}
 			}
 
@@ -98,7 +99,9 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 		// Condition is true?
 		if state == grammar.TRUE && do {
-			kwstate = i.processTokens(tokens, do)
+			if kwstate = i.processTokens(tokens, do); kwstate != fract.TypeNone {
+				i.skipBlock()
+			}
 		}
 	}
 

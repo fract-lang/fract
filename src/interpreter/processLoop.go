@@ -16,7 +16,7 @@ import (
 // processLoop Process loop block.
 // tokens Tokens to process.
 // do Do processes?
-func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
+func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 	i.blockCount++
 	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
@@ -32,6 +32,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 	functionLen := len(i.funcs.Vals)
 	_break := false
+	kwstate := fract.TypeNone
 	iindex := i.index
 
 	//*************
@@ -54,7 +55,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 				if condition != grammar.TRUE || _break {
 					i.subtractBlock(nil)
-					return
+					return kwstate
 				}
 
 				i.index = iindex
@@ -64,12 +65,16 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			// Condition is true?
 			if condition == grammar.TRUE {
 				if do {
-					kwstate := i.processTokens(tokens, do)
+					kwstate = i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak { // Break loop?
 						_break = true
 						i.skipBlock()
 						i.index--
 					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						i.skipBlock()
+						i.index--
+					} else if kwstate == fract.FUNCReturn { // Return?
+						_break = true
 						i.skipBlock()
 						i.index--
 					}
@@ -80,7 +85,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 				i.index--
 			}
 		}
-		return
+		return kwstate
 	}
 
 	//*************
@@ -125,7 +130,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 		for vindex := 0; vindex < len(value.Content); {
 			i.index++
 			if i.index >= len(i.tokens.Vals) {
-				return
+				return kwstate
 			}
 			tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
@@ -148,12 +153,16 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 
 			// Condition is true?
 			if do {
-				kwstate := i.processTokens(tokens, do)
+				kwstate = i.processTokens(tokens, do)
 				if kwstate == fract.LOOPBreak { // Break loop?
 					_break = true
 					i.skipBlock()
 					i.index--
 				} else if kwstate == fract.LOOPContinue { // Continue next?
+					i.skipBlock()
+					i.index--
+				} else if kwstate == fract.FUNCReturn { // Return?
+					_break = true
 					i.skipBlock()
 					i.index--
 				}
@@ -164,9 +173,9 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) {
 			}
 		}
 	}
-
 	i.subtractBlock(nil)
 
 	// Remove loop variable.
 	i.vars.Vals = i.vars.Vals[:variableLen-1]
+	return kwstate
 }
