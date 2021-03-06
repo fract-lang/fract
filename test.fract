@@ -96,14 +96,6 @@
 
 # FUNCTION TEST
 
-for _ in [0]:
-  if true:
-    break
-  end
-end
-
-exit 0
-
 func len(list):
   var counter := 0
   for _ in list:
