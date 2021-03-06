@@ -63,7 +63,8 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	}
 
 	// Setter is not a setter operator?
-	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter {
+	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter &&
+		setter.Value != grammar.Input {
 		fract.Error(setter, "This is not a setter operator!"+setter.Value)
 	}
 
@@ -73,7 +74,12 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 			"Value is not defined!")
 	}
 
-	value := i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
+	var value objects.Value
+	if setter.Value == grammar.Setter { // :=
+		value = i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
+	} else { // <<
+		value = i.processInput(tokens.Sublist(2, len(tokens.Vals)-2))
+	}
 
 	// Check const state
 	if variable.Const {

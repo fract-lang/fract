@@ -207,6 +207,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.Setter) { // Setter.
 		token.Value = grammar.Setter
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.Input) { // Input (<<).
+		token.Value = grammar.Input
+		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenAmper) { // Amper (&).
 		token.Value = grammar.TokenAmper
 		token.Type = fract.TypeOperator
