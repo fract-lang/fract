@@ -27,16 +27,15 @@ func printValue(value objects.Value) {
 				ch, _ := arithmetic.ToInt64(value.Content[index])
 				fmt.Printf("%c", ch)
 			}
-			fmt.Println()
 		} else {
-			fmt.Println(value.Content)
+			fmt.Print(value.Content)
 		}
 	} else {
 		if value.Charray {
 			ch, _ := arithmetic.ToInt64(value.Content[0])
 			fmt.Printf("%c\n", ch)
 		} else {
-			fmt.Println(value.Content[0])
+			fmt.Print(value.Content[0])
 		}
 	}
 }
@@ -62,7 +61,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 			for index := range tokens.Vals {
 				current := tokens.Vals[index].(objects.Token)
 				if current.Type == fract.TypeOperator &&
-					current.Value == grammar.Setter { // Variable setting.
+					(current.Value == grammar.Setter || current.Value == grammar.Input) { // Variable setting.
 					i.processVariableSet(tokens)
 					return -1
 				}
@@ -71,6 +70,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 
 		// Println
 		printValue(i.processValue(tokens))
+		fmt.Println()
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
