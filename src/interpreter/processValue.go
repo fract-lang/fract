@@ -373,10 +373,8 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 	if first {
 		operation.FirstV.Array = false
-		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
-			operation.FirstV.Content = []string{arithmetic.IntToString(token.Value[1])}
-			operation.FirstV.Charray = true
-		} else if strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
+		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
+			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
 			operation.FirstV.Charray = true
 			operation.FirstV.Array = true
 			for index := 1; index < len(token.Value)-1; index++ {
@@ -388,10 +386,8 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 		}
 	} else {
 		operation.SecondV.Array = false
-		if strings.HasPrefix(token.Value, grammar.TokenQuote) { // Char?
-			operation.SecondV.Content = []string{arithmetic.IntToString(token.Value[1])}
-			operation.SecondV.Charray = true
-		} else if strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
+		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
+			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
 			operation.SecondV.Charray = true
 			operation.SecondV.Array = true
 			for index := 1; index < len(token.Value)-1; index++ {
