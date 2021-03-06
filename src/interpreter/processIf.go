@@ -74,6 +74,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
+					i.index++
 					i.subtractBlock(&first)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
