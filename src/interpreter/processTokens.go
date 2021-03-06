@@ -17,7 +17,7 @@ import (
 // printValue Print value to screen.
 // value Value to print.
 func printValue(value objects.Value) {
-	if value.Content == nil {
+	if !value.Charray && value.Content == nil {
 		return
 	}
 
@@ -70,10 +70,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		}
 
 		// Println
-		value := i.processValue(tokens)
-		if value.Content != nil {
-			printValue(value)
-		}
+		printValue(i.processValue(tokens))
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
