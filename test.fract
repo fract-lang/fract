@@ -50,22 +50,24 @@
 #end
 
 # PRIME NUMBER BETWEEN 1 an 100
-#var num := 1
-#for num <= 100:
-#  num := num + 1
-#  var prime := true
-#  var i := 2
-#  for i < num:
-#    if num % i = 0:
-#      prime := false
-#      break
-#    end
-#    i := i + 1
-#  end
-#  if prime:
-#    num
-#  end
-#end
+var num := 1
+for num <= 100:
+  num := num + 1
+  var prime := true
+  var i := 2
+  for i < num:
+    i := i + 1
+    if num % i = 0:
+      prime := false
+      break
+    end
+  end
+  if prime:
+    num
+  end
+end
+
+exit 0
 
 #var counter := 1
 #for counter <= 1000:
