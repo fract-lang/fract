@@ -233,8 +233,8 @@ for counter <= 10:
 end
 ```
 
-### For Loop
-You can rotate the elements of arrays one by one with the for loop.
+### Foreach Loop
+You can rotate the elements of arrays one by one with the foreach loop.
 
 #### Syntax
 ```
@@ -284,4 +284,57 @@ for index in { 0, 1, 2, 3, 4.0 }:
 end
 
 # Output: 0, 2, 4.000000
+```
+
+## Functions
+Functions are very useful for adding functionality to your code.
+
+### Syntax
+Define:
+```
+func [NAME]([PARAM], [PARAM], [PARAM],...):
+  ...
+end
+```
+Call:
+```
+[NAME]([PARAM], [PARAM],...)
+```
+
+### Examples
+```
+func int.prime(x):
+  for y in range(2, x):
+    if x % y = 0:
+      ret false
+    end
+  end
+  ret true
+end
+
+int.prime(3)
+```
+```
+func print.hello():
+  "Hello"
+end
+
+print.hello()
+```
+
+### Ret Keyword
+The keyword ret is used to return the value of the function.
+
+#### Syntax
+```
+ret [VALUE]
+```
+
+#### Examples
+```
+func reverse(x):
+  ret x * -1
+end
+
+reverse(-500) # Returns: 500
 ```
