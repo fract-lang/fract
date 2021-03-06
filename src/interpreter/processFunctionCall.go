@@ -88,7 +88,7 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	}
 
 	// All parameters is not defined?
-	if count < len(function.Parameters) {
+	if count != len(function.Parameters) {
 		fract.Error(_name, "All parameters is not defined!")
 	}
 
@@ -100,6 +100,8 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	nameIndex = i.index
 	i.index = function.Start
 
+	// Process block.
+	i.functions++
 	for ; i.index < len(i.tokens.Vals); i.index++ {
 		tokens = i.tokens.Vals[i.index].(*vector.Vector)
 
@@ -123,6 +125,7 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	// Remove temporary functions.
 	i.funcs.Vals = i.funcs.Vals[:functionLen]
 
+	i.functions--
 	i.subtractBlock(nil)
 	i.index = nameIndex
 
