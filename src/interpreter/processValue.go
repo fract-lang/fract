@@ -143,213 +143,215 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			operation.SecondV = variable.Value
 		}
 		return 0
-	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBracket {
-		// Find open bracket.
-		bracketCount := 1
-		oindex := index - 1
-		for ; oindex >= 0; oindex-- {
-			current := operations.Vals[oindex].(objects.Token)
-			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenRBracket {
-					bracketCount++
-				} else if current.Value == grammar.TokenLBracket {
-					bracketCount--
+	} else if token.Type == fract.TypeBrace {
+		if token.Value == grammar.TokenRBracket {
+			// Find open bracket.
+			bracketCount := 1
+			oindex := index - 1
+			for ; oindex >= 0; oindex-- {
+				current := operations.Vals[oindex].(objects.Token)
+				if current.Type == fract.TypeBrace {
+					if current.Value == grammar.TokenRBracket {
+						bracketCount++
+					} else if current.Value == grammar.TokenLBracket {
+						bracketCount--
+					}
+				}
+
+				if bracketCount == 0 {
+					break
 				}
 			}
 
-			if bracketCount == 0 {
-				break
+			// Finished?
+			if oindex == 0 {
+				if first {
+					operation.FirstV.Array = true
+					operation.FirstV.Content = i.processArrayValue(
+						operations.Sublist(oindex, index-oindex+1)).Content
+				} else {
+					operation.SecondV.Array = true
+					operation.SecondV.Content = i.processArrayValue(
+						operations.Sublist(oindex, index-oindex+1)).Content
+				}
+				operations.RemoveRange(oindex, index-oindex)
+				return index - oindex
 			}
-		}
 
-		// Finished?
-		if oindex == 0 {
+			endToken := operations.Vals[oindex-1].(objects.Token)
+			vindex := name.VarIndexByName(i.vars, endToken.Value)
+			if vindex == -1 {
+				fract.Error(endToken, "Name is not defined!: "+endToken.Value)
+			}
+			valueList := operations.Sublist(oindex+1, index-oindex-1)
+			// Index value is empty?
+			if len(valueList.Vals) == 0 {
+				fract.Error(endToken, "Index is not defined!")
+			}
+
+			value := i.processValue(valueList)
+			if value.Array {
+				fract.Error(operations.Vals[index].(objects.Token),
+					"Arrays is not used in index access!")
+			} else if arithmetic.IsFloatValue(value.Content[0]) {
+				fract.Error(operations.Vals[index].(objects.Token),
+					"Float values is not used in index access!")
+			}
+
+			position, err := arithmetic.ToInt64(value.Content[0])
+			if err != nil {
+				fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
+			}
+
+			variable := i.vars.Vals[vindex].(objects.Variable)
+
+			if !variable.Value.Array {
+				fract.Error(operations.Vals[oindex].(objects.Token),
+					"Index accessor is cannot used with non-array variables!")
+			}
+
+			if position < 0 || position >= int64(len(variable.Value.Content)) {
+				fract.Error(operations.Vals[oindex].(objects.Token), "Index is out of range!")
+			}
+			operations.RemoveRange(oindex-1, index-oindex+1)
+
+			if first {
+				operation.FirstV.Content = []string{variable.Value.Content[position]}
+				operation.FirstV.Array = false
+			} else {
+				operation.SecondV.Content = []string{variable.Value.Content[position]}
+				operation.SecondV.Array = false
+			}
+
+			return index - oindex + 1
+		} else if token.Value == grammar.TokenLBracket {
+			// Array constructor.
+			cindex := index + 1
+			bracketCount := 1
+			for ; cindex < len(operations.Vals); cindex++ {
+				current := operations.Vals[cindex].(objects.Token)
+				if current.Type == fract.TypeBrace {
+					if current.Value == grammar.TokenLBracket {
+						bracketCount++
+					} else if current.Value == grammar.TokenRBracket {
+						bracketCount--
+					}
+				}
+
+				if bracketCount == 0 {
+					break
+				}
+			}
+
 			if first {
 				operation.FirstV.Array = true
 				operation.FirstV.Content = i.processArrayValue(
-					operations.Sublist(oindex, index-oindex+1)).Content
+					operations.Sublist(index, cindex-index+1)).Content
 			} else {
 				operation.SecondV.Array = true
 				operation.SecondV.Content = i.processArrayValue(
-					operations.Sublist(oindex, index-oindex+1)).Content
+					operations.Sublist(index, cindex-index+1)).Content
+			}
+			operations.RemoveRange(index+1, cindex-index-1)
+			return 0
+		} else if token.Value == grammar.TokenLBrace {
+			// Array initializer.
+
+			// Find close brace.
+			cindex := index + 1
+			braceCount := 1
+			for ; cindex < len(operations.Vals); cindex++ {
+				current := operations.Vals[cindex].(objects.Token)
+				if current.Type == fract.TypeBrace {
+					if current.Value == grammar.TokenLBrace {
+						fract.Error(current, "Arrays is cannot take array value as element!")
+						braceCount++
+					} else if current.Value == grammar.TokenRBrace {
+						braceCount--
+					}
+				}
+
+				if braceCount == 0 {
+					break
+				}
+			}
+
+			value := i.processArrayValue(operations.Sublist(index, cindex-index+1))
+			if first {
+				operation.FirstV = value
+			} else {
+				operation.SecondV = value
+			}
+			operations.RemoveRange(index+1, cindex-index-1)
+			return 0
+		} else if token.Value == grammar.TokenRBrace {
+			// Array initializer.
+
+			// Find open brace.
+			braceCount := 1
+			oindex := index - 1
+			nestedArray := false
+			for ; oindex >= 0; oindex-- {
+				current := operations.Vals[oindex].(objects.Token)
+				if current.Type == fract.TypeBrace {
+					if current.Value == grammar.TokenRBrace {
+						braceCount++
+						nestedArray = true
+					} else if current.Value == grammar.TokenLBrace {
+						braceCount--
+						if nestedArray {
+							fract.Error(current, "Arrays is cannot take array value as element!")
+						}
+					}
+				}
+
+				if braceCount == 0 {
+					break
+				}
+			}
+
+			value := i.processArrayValue(operations.Sublist(oindex, index-oindex+1))
+			if first {
+				operation.FirstV = value
+			} else {
+				operation.SecondV = value
+			}
+			operations.RemoveRange(oindex, index-oindex)
+			return index - oindex
+		} else if token.Value == grammar.TokenRParenthes {
+			// Function.
+
+			// Find open parentheses.
+			bracketCount := 1
+			oindex := index - 1
+			for ; oindex >= 0; oindex-- {
+				current := operations.Vals[oindex].(objects.Token)
+				if current.Type == fract.TypeBrace {
+					if current.Value == grammar.TokenRBracket {
+						bracketCount++
+					} else if current.Value == grammar.TokenLBracket {
+						bracketCount--
+					}
+				}
+
+				if bracketCount == 0 {
+					break
+				}
+			}
+			oindex++
+			value := i.processFunctionCall(operations.Sublist(oindex, index-oindex+1))
+			if value.Content == nil {
+				fract.Error(operations.Vals[oindex].(objects.Token),
+					"Function is not return any value!")
+			}
+			if first {
+				operation.FirstV = value
+			} else {
+				operation.SecondV = value
 			}
 			operations.RemoveRange(oindex, index-oindex)
 			return index - oindex
 		}
-
-		endToken := operations.Vals[oindex-1].(objects.Token)
-		vindex := name.VarIndexByName(i.vars, endToken.Value)
-		if vindex == -1 {
-			fract.Error(endToken, "Name is not defined!: "+endToken.Value)
-		}
-		valueList := operations.Sublist(oindex+1, index-oindex-1)
-		// Index value is empty?
-		if len(valueList.Vals) == 0 {
-			fract.Error(endToken, "Index is not defined!")
-		}
-
-		value := i.processValue(valueList)
-		if value.Array {
-			fract.Error(operations.Vals[index].(objects.Token),
-				"Arrays is not used in index access!")
-		} else if arithmetic.IsFloatValue(value.Content[0]) {
-			fract.Error(operations.Vals[index].(objects.Token),
-				"Float values is not used in index access!")
-		}
-
-		position, err := arithmetic.ToInt64(value.Content[0])
-		if err != nil {
-			fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
-		}
-
-		variable := i.vars.Vals[vindex].(objects.Variable)
-
-		if !variable.Value.Array {
-			fract.Error(operations.Vals[oindex].(objects.Token),
-				"Index accessor is cannot used with non-array variables!")
-		}
-
-		if position < 0 || position >= int64(len(variable.Value.Content)) {
-			fract.Error(operations.Vals[oindex].(objects.Token), "Index is out of range!")
-		}
-		operations.RemoveRange(oindex-1, index-oindex+1)
-
-		if first {
-			operation.FirstV.Content = []string{variable.Value.Content[position]}
-			operation.FirstV.Array = false
-		} else {
-			operation.SecondV.Content = []string{variable.Value.Content[position]}
-			operation.SecondV.Array = false
-		}
-
-		return index - oindex + 1
-	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBracket {
-		// Array constructor.
-		cindex := index + 1
-		bracketCount := 1
-		for ; cindex < len(operations.Vals); cindex++ {
-			current := operations.Vals[cindex].(objects.Token)
-			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenLBracket {
-					bracketCount++
-				} else if current.Value == grammar.TokenRBracket {
-					bracketCount--
-				}
-			}
-
-			if bracketCount == 0 {
-				break
-			}
-		}
-
-		if first {
-			operation.FirstV.Array = true
-			operation.FirstV.Content = i.processArrayValue(
-				operations.Sublist(index, cindex-index+1)).Content
-		} else {
-			operation.SecondV.Array = true
-			operation.SecondV.Content = i.processArrayValue(
-				operations.Sublist(index, cindex-index+1)).Content
-		}
-		operations.RemoveRange(index+1, cindex-index-1)
-		return 0
-	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenLBrace {
-		// Array initializer.
-
-		// Find close brace.
-		cindex := index + 1
-		braceCount := 1
-		for ; cindex < len(operations.Vals); cindex++ {
-			current := operations.Vals[cindex].(objects.Token)
-			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenLBrace {
-					fract.Error(current, "Arrays is cannot take array value as element!")
-					braceCount++
-				} else if current.Value == grammar.TokenRBrace {
-					braceCount--
-				}
-			}
-
-			if braceCount == 0 {
-				break
-			}
-		}
-
-		value := i.processArrayValue(operations.Sublist(index, cindex-index+1))
-		if first {
-			operation.FirstV = value
-		} else {
-			operation.SecondV = value
-		}
-		operations.RemoveRange(index+1, cindex-index-1)
-		return 0
-	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRBrace {
-		// Array initializer.
-
-		// Find open brace.
-		braceCount := 1
-		oindex := index - 1
-		nestedArray := false
-		for ; oindex >= 0; oindex-- {
-			current := operations.Vals[oindex].(objects.Token)
-			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenRBrace {
-					braceCount++
-					nestedArray = true
-				} else if current.Value == grammar.TokenLBrace {
-					braceCount--
-					if nestedArray {
-						fract.Error(current, "Arrays is cannot take array value as element!")
-					}
-				}
-			}
-
-			if braceCount == 0 {
-				break
-			}
-		}
-
-		value := i.processArrayValue(operations.Sublist(oindex, index-oindex+1))
-		if first {
-			operation.FirstV = value
-		} else {
-			operation.SecondV = value
-		}
-		operations.RemoveRange(oindex, index-oindex)
-		return index - oindex
-	} else if token.Type == fract.TypeBrace && token.Value == grammar.TokenRParenthes {
-		// Function.
-
-		// Find open parentheses.
-		bracketCount := 1
-		oindex := index - 1
-		for ; oindex >= 0; oindex-- {
-			current := operations.Vals[oindex].(objects.Token)
-			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenRBracket {
-					bracketCount++
-				} else if current.Value == grammar.TokenLBracket {
-					bracketCount--
-				}
-			}
-
-			if bracketCount == 0 {
-				break
-			}
-		}
-		oindex++
-		value := i.processFunctionCall(operations.Sublist(oindex, index-oindex+1))
-		if value.Content == nil {
-			fract.Error(operations.Vals[oindex].(objects.Token),
-				"Function is not return any value!")
-		}
-		if first {
-			operation.FirstV = value
-		} else {
-			operation.SecondV = value
-		}
-		operations.RemoveRange(oindex, index-oindex)
-		return index - oindex
 	}
 
 	//

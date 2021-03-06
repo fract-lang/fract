@@ -282,7 +282,7 @@ func (l *Lexer) Generate() objects.Token {
 		token.Type = fract.TypeBooleanFalse
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 		/* --------- */
-	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // Char.
+	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // String.
 		lexString(l, grammar.TokenQuote, &token, fln)
 	} else if strings.HasPrefix(ln, grammar.TokenDoubleQuote) { // String.
 		lexString(l, grammar.TokenDoubleQuote, &token, fln)
