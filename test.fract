@@ -95,7 +95,6 @@
 #del array, array2
 
 # FUNCTION TEST
-
 func len(list):
   var counter := 0
   for _ in list:
@@ -123,10 +122,6 @@ func int.prime(x):
   end
   ret true
 end
-
-int.prime(4)
-
-exit 0
 
 for number in range(0, 10):
   number

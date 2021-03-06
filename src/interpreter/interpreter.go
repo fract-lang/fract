@@ -27,6 +27,8 @@ type Interpreter struct {
 	tokens *vector.Vector
 	// Interpreter index.
 	index int
+	// Last return index.
+	returnIndex int
 	// BlockCount Count of declared not ended blocks.
 	blockCount int
 

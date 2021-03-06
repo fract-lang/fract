@@ -82,7 +82,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		return i.processIf(tokens, do)
 	} else if first.Type == fract.TypeLoop { // Loop.
 		i.loops++
-		i.processLoop(tokens, do)
+		return i.processLoop(tokens, do)
 		i.loops--
 	} else if first.Type == fract.TypeBreak { // Break loop.
 		if i.loops == 0 {
@@ -102,6 +102,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		if i.functions == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
 		}
+		i.returnIndex = i.index
 		return fract.FUNCReturn
 	} else {
 		fract.Error(first, "What is this?: "+first.Value)

@@ -65,5 +65,5 @@ const (
 	LOOPContinue = 1
 
 	// FUNCReturn Return value.
-	FUNCReturn = 0
+	FUNCReturn = 2
 )
