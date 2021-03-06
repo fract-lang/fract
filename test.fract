@@ -112,4 +112,6 @@ func range(start, len):
   ret lst
 end
 
-range(0, 10)
+for number in range(0, 10):
+  number
+end

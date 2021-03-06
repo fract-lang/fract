@@ -58,16 +58,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 	} else if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
-		tokenLen := len(tokens.Vals)
-		if first.Type == fract.TypeName && tokenLen > 1 {
-			second := tokens.Vals[1].(objects.Token)
-			if second.Type == fract.TypeBrace &&
-				second.Value == grammar.TokenLParenthes { // Function call.
-				i.functions++
-				printValue(i.processFunctionCall(tokens))
-				i.functions--
-				return fract.TypeNone
-			}
+		if first.Type == fract.TypeName {
 			for index := range tokens.Vals {
 				current := tokens.Vals[index].(objects.Token)
 				if current.Type == fract.TypeOperator &&
@@ -79,7 +70,10 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		}
 
 		// Println
-		printValue(i.processValue(tokens))
+		value := i.processValue(tokens)
+		if value.Content != nil {
+			printValue(value)
+		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
