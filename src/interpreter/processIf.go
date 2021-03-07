@@ -135,6 +135,5 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			}
 		}
 	}
-
 	return kwstate
 }

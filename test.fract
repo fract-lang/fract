@@ -134,8 +134,6 @@ for number in range(0, 10):
   elif true:
     if true:
       "False"
-    elif true:
-      "ELSE"
     end
   end
   ""
