@@ -129,12 +129,6 @@ end
 
 for number in range(0, 10):
   number
-  if int.prime(number):
-    "True"
-  else:
-    if true:
-      "False"
-    end
-  end
+  if int.prime(number): "True"; else: "False"; end
   ""
 end

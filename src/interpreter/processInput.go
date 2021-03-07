@@ -5,7 +5,8 @@
 package interpreter
 
 import (
-	"fmt"
+	"bufio"
+	"os"
 
 	"../fract/arithmetic"
 	"../objects"
@@ -24,8 +25,9 @@ func (i *Interpreter) processInput(tokens *vector.Vector) objects.Value {
 		}
 	}
 	printValue(i.processValue(tokens))
-	var input string
-	fmt.Scanln(&input)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	input := scanner.Text()
 	value := objects.Value{
 		Content: []string{},
 		Charray: true,
