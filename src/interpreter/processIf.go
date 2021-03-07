@@ -37,6 +37,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 	}
 
 	state := i.processCondition(conditionList)
+	actioned := state == grammar.TRUE
 	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
@@ -83,7 +84,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 				}
 
 				// Condition is true?
-				if state == grammar.TRUE && do {
+				if state == grammar.TRUE && !actioned && do {
 					if kwstate = i.processTokens(tokens, true); kwstate != fract.TypeNone {
 						i.skipBlock()
 					}
@@ -93,6 +94,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 			if state == grammar.TRUE {
 				i.skipBlock()
 				i.index--
+			} else if !actioned {
+				actioned = state == grammar.TRUE
 			}
 			continue
 		}

@@ -115,6 +115,10 @@ func range(start, to):
 end
 
 func int.prime(x):
+  if x < 2:
+    ret false
+  end
+
   for y in range(2, x):
     if x % y = 0:
       ret false
@@ -124,5 +128,5 @@ func int.prime(x):
 end
 
 for number in range(0, 10):
-  number
+  if int.prime(number): number; end
 end
