@@ -188,17 +188,8 @@ elif [CONDITION]:
   # ...
 elif [CONDITION]:
   # ...
-end
-```
-
-The term "Else" has not been identified as a direct keyword by Fract. For "Else", a condition set to "true" should always be written at the bottom of the condition row.
-```
-if [CONDITION]:
-  # ...
-elif [CONDITION]:
-  # ...
-elif true:
-  # ...
+else:
+ # ...
 end
 ```
 
