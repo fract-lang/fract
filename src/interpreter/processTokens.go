@@ -16,9 +16,9 @@ import (
 
 // printValue Print value to screen.
 // value Value to print.
-func printValue(value objects.Value) {
+func printValue(value objects.Value) bool {
 	if !value.Charray && value.Content == nil {
-		return
+		return false
 	}
 
 	if value.Array {
@@ -38,6 +38,7 @@ func printValue(value objects.Value) {
 			fmt.Print(value.Content[0])
 		}
 	}
+	return true
 }
 
 // processTokens Process tokens and returns true if block end, returns false if not.
@@ -69,8 +70,9 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		}
 
 		// Println
-		printValue(i.processValue(tokens))
-		fmt.Println()
+		if printValue(i.processValue(tokens)) { // If printed?
+			fmt.Println()
+		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
 		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
