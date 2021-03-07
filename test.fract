@@ -131,7 +131,7 @@ for number in range(0, 10):
   number
   if int.prime(number):
     "True"
-  elif true:
+  else:
     if true:
       "False"
     end
