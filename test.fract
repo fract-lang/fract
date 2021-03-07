@@ -128,5 +128,15 @@ func int.prime(x):
 end
 
 for number in range(0, 10):
-  if int.prime(number): number; end
+  number
+  if int.prime(number):
+    "True"
+  elif true:
+    if true:
+      "False"
+    elif true:
+      "ELSE"
+    end
+  end
+  ""
 end

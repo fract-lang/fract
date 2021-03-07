@@ -40,24 +40,26 @@ const (
 	TypeBlockEnd = 1112
 	// TypeIf If declare.
 	TypeIf = 1113
-	// TypeElseIf Else if/else declare.
+	// TypeElseIf Else if declare.
 	TypeElseIf = 1114
+	// TypeElse Else declare.
+	TypeElse = 1115
 	// TypeStatementTerminator Statement terminator.
-	TypeStatementTerminator = 1115
+	TypeStatementTerminator = 1116
 	// TypeLoop Loop type.
-	TypeLoop = 1116
+	TypeLoop = 1117
 	// TypeIn In type.
-	TypeIn = 1117
+	TypeIn = 1118
 	// TypeBreak Break loop type.
-	TypeBreak = 1118
+	TypeBreak = 1119
 	// TypeContinue Continue loop type.
-	TypeContinue = 1119
+	TypeContinue = 1120
 	// TypeExit Exit type.
-	TypeExit = 1120
+	TypeExit = 1121
 	// TypeFunction Function declare type.
-	TypeFunction = 1121
+	TypeFunction = 1122
 	// TypeReturn Return type.
-	TypeReturn = 1122
+	TypeReturn = 1123
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0
