@@ -98,7 +98,9 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	}
 
 	nameIndex = i.index
-	i.index = function.Start
+	itokens := i.tokens
+	i.tokens = function.Tokens
+	i.index = 0
 
 	// Process block.
 	i.functions++
@@ -128,8 +130,9 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 	i.functions--
-	i.subtractBlock(nil)
 	i.index = nameIndex
+	i.tokens = itokens
+	i.subtractBlock(nil)
 
 	return returnValue
 }
