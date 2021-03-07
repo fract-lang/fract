@@ -79,7 +79,8 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, state == grammar.TRUE && do)
-				} else if first.Type == fract.TypeElseIf { // Else if block.
+				} else if first.Type == fract.TypeElseIf ||
+					first.Type == fract.TypeElse { // Else if or else block.
 					break
 				}
 
@@ -98,6 +99,33 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 				actioned = state == grammar.TRUE
 			}
 			continue
+		} else if first.Type == fract.TypeElse { // Else block.
+			// Block declare is not defined?
+			if parser.IndexBlockDeclare(tokens) == -1 {
+				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+					"Where is the block declare!?")
+			}
+
+			/* Interpret/skip block. */
+			i.index++
+			for ; i.index < len(i.tokens.Vals); i.index++ {
+				tokens = i.tokens.Vals[i.index].(*vector.Vector)
+
+				first := tokens.Vals[0].(objects.Token)
+				if first.Type == fract.TypeBlockEnd { // Block is ended.
+					i.subtractBlock(&first)
+					return kwstate
+				} else if first.Type == fract.TypeIf { // If block.
+					i.processIf(tokens, state == grammar.TRUE && do)
+				}
+
+				// Condition is true?
+				if !actioned && do {
+					if kwstate = i.processTokens(tokens, true); kwstate != fract.TypeNone {
+						i.skipBlock()
+					}
+				}
+			}
 		}
 
 		// Condition is true?

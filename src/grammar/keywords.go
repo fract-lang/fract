@@ -29,8 +29,10 @@ const (
 	KwContinue = "continue"
 	// KwIf If condition.
 	KwIf = "if"
-	// KwElseIf Else-If alternate or else.
+	// KwElseIf Else-If alternate.
 	KwElseIf = "elif"
+	// KwElse Else.
+	KwElse = "else"
 	// KwTrue Boolean true value.
 	KwTrue = "true"
 	// KwFalse Boolean false value.
