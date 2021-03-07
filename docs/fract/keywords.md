@@ -28,7 +28,11 @@
   </tr>
   <tr>
     <td align="center"><b>elif</b></td>
-    <td>Alternative conditional expression or else.</td>
+    <td>Alternative conditional expression.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>else</b></td>
+    <td>Else expression.</td>
   </tr>
   <tr>
     <td align="center"><b>end</b></td>
