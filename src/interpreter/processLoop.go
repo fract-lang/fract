@@ -69,10 +69,8 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 						_break = true
 						i.skipBlock()
-						i.index--
 					} else if kwstate == fract.LOOPContinue { // Continue loop?
 						i.skipBlock()
-						i.index--
 					}
 				}
 			} else {
@@ -81,7 +79,6 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 				i.index--
 			}
 		}
-		return kwstate
 	}
 
 	//*************

@@ -48,7 +48,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
-			i.subtractBlock(&first)
+			i.subtractBlock(nil)
 			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			index = parser.IndexBlockDeclare(tokens)
@@ -75,10 +75,11 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					i.subtractBlock(&first)
+					i.subtractBlock(nil)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
-					i.processIf(tokens, state == grammar.TRUE && do)
+					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
+					continue
 				} else if first.Type == fract.TypeElseIf ||
 					first.Type == fract.TypeElse { // Else if or else block.
 					break
@@ -113,10 +114,11 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 
 				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					i.subtractBlock(&first)
+					i.subtractBlock(nil)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
-					i.processIf(tokens, state == grammar.TRUE && do)
+					i.processIf(tokens, !actioned && do)
+					continue
 				}
 
 				// Condition is true?
