@@ -13,7 +13,7 @@ import (
 
 // processDelete Process delete keyword.
 // tokens Tokens to process.
-func (i *Interpreter) processDelete(tokens *vector.Vector) {
+func (i *Interpreter) processDelete(tokens vector.Vector) {
 	// Value is not defined?
 	if len(tokens.Vals) < 2 {
 		first := tokens.Vals[0].(objects.Token)

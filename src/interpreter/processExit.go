@@ -15,7 +15,7 @@ import (
 
 // processExit Process exit keyword.
 // tokens Tokens to process.
-func (i *Interpreter) processExit(tokens *vector.Vector) {
+func (i *Interpreter) processExit(tokens vector.Vector) {
 	first := tokens.Vals[0].(objects.Token)
 
 	// Value is not defined?
