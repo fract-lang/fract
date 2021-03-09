@@ -14,7 +14,7 @@ import (
 
 // processVariable Process variable defination.
 // tokens Tokens to process.
-func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
+func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	var variable objects.Variable
 
 	tokenLen := len(tokens.Vals)

@@ -74,7 +74,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 			fmt.Println()
 		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
-		i.processVariableDefinition(tokens)
+		i.processVariableDefinition(*tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
 		i.processDelete(*tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
