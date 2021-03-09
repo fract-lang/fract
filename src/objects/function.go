@@ -11,7 +11,7 @@ type Function struct {
 	// Block start of function.
 	Start int
 	// Block content of function.
-	Tokens *vector.Vector
+	Tokens vector.Vector
 	// Parameters of function.
 	Parameters []string
 }

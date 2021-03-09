@@ -14,7 +14,7 @@ import (
 func (i *Interpreter) skipBlock() {
 	blockCount := 1
 	for ; i.index < len(i.tokens.Vals); i.index++ {
-		first := i.tokens.Vals[i.index].(*vector.Vector).Vals[0].(objects.Token)
+		first := i.tokens.Vals[i.index].(vector.Vector).Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd {
 			blockCount--
 			if blockCount == 0 {

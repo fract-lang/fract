@@ -74,9 +74,9 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 	i.processRange(tokens)
 
 	// Process condition.
-	ors := parser.DecomposeConditionalProcess(tokens, grammar.TokenVerticalBar)
+	ors := parser.DecomposeConditionalProcess(*tokens, grammar.TokenVerticalBar)
 	for index := range ors.Vals {
-		current := ors.Vals[index].(*vector.Vector)
+		current := ors.Vals[index].(vector.Vector)
 
 		// Decompose and conditions.
 		ands := parser.DecomposeConditionalProcess(current, grammar.TokenAmper)
@@ -95,7 +95,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			if compare(i.processValue(current), TrueValueIns, grammar.TokenEquals) {
+			if compare(i.processValue(&current), TrueValueIns, grammar.TokenEquals) {
 				return grammar.TRUE
 			}
 			continue

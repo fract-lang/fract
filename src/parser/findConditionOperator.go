@@ -13,7 +13,7 @@ import (
 
 // FindConditionOperator Find next condition operator.
 // tokens Tokens to search.
-func FindConditionOperator(tokens *vector.Vector) (int, string) {
+func FindConditionOperator(tokens vector.Vector) (int, string) {
 	for index := range tokens.Vals {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeOperator && (current.Value == grammar.TokenEquals ||

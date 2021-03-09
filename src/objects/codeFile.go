@@ -13,5 +13,5 @@ type CodeFile struct {
 	// File instance of file.
 	File *os.File
 	// Lines of file.
-	Lines *vector.Vector
+	Lines vector.Vector
 }

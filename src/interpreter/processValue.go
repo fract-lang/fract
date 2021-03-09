@@ -527,13 +527,13 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	i.processRange(tokens)
 
 	// Is conditional expression?
-	if i.isConditional(tokens) {
+	if i.isConditional(*tokens) {
 		value.Content = []string{arithmetic.IntToString(i.processCondition(tokens))}
 		return value
 	}
 
 	// Decompose arithmetic operations.
-	priorityIndex := parser.IndexProcessPriority(tokens)
+	priorityIndex := parser.IndexProcessPriority(*tokens)
 	looped := priorityIndex != -1
 	for priorityIndex != -1 {
 		var operation objects.ArithmeticProcess
@@ -562,7 +562,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		tokens.Insert(priorityIndex-1, objects.Token{Value: "0"})
 
 		// Find next operator.
-		priorityIndex = parser.IndexProcessPriority(tokens)
+		priorityIndex = parser.IndexProcessPriority(*tokens)
 	}
 
 	// One value?
