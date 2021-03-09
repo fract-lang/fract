@@ -32,7 +32,7 @@ func processArgument(function *objects.Function, current *objects.Token,
 
 // processFunctionCall Process function call.
 // tokens Tokens to process.
-func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
+func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	_name := tokens.Vals[0].(objects.Token)
 
 	// Name is not defined?
@@ -47,7 +47,7 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	variableLen := len(i.vars.Vals)
 
 	// Decompose arguments.
-	tokens, _ = parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
+	tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
 		grammar.TokenRParenthes, false)
 	braceCount := 0
 	lastComma := 0

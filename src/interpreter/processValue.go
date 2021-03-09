@@ -115,7 +115,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 							break
 						}
 					}
-					value := i.processFunctionCall(operations.Sublist(index, cindex-index))
+					value := i.processFunctionCall(*operations.Sublist(index, cindex-index))
 					if !operation.FirstV.Array && value.Content == nil {
 						fract.Error(token, "Function is not return any value!")
 					}
@@ -339,7 +339,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 				}
 			}
 			oindex++
-			value := i.processFunctionCall(operations.Sublist(oindex, index-oindex+1))
+			value := i.processFunctionCall(*operations.Sublist(oindex, index-oindex+1))
 			if value.Content == nil {
 				fract.Error(operations.Vals[oindex].(objects.Token),
 					"Function is not return any value!")
@@ -417,7 +417,7 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 			break
 		}
 
-		val := i.processValue(_range)
+		val := i.processValue(&_range)
 		if val.Array {
 			tokens.Insert(found, objects.Token{
 				Value: grammar.TokenLBrace,

@@ -18,7 +18,7 @@ import (
 // close Close bracket.
 // nonCheck Check empty bracket content.
 func DecomposeBrace(tokens *vector.Vector, open string, close string,
-	nonCheck bool) (*vector.Vector, int) {
+	nonCheck bool) (vector.Vector, int) {
 	var (
 		first int = -1
 		last  int
@@ -51,7 +51,7 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string,
 		if open parentheses is not found.
 	*/
 	if first == -1 {
-		return new(vector.Vector), -1
+		return *new(vector.Vector), -1
 	}
 
 	/* Find close parentheses. */
@@ -72,7 +72,7 @@ func DecomposeBrace(tokens *vector.Vector, open string, close string,
 		}
 		length++
 	}
-	_range := tokens.Sublist(first+1, length)
+	_range := *tokens.Sublist(first+1, length)
 
 	// Bracket content is empty?
 	if nonCheck && len(_range.Vals) == 0 {
