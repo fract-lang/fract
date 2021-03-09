@@ -78,7 +78,7 @@ func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
 	if setter.Value == grammar.Setter { // :=
 		value = i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
 	} else { // <<
-		value = i.processInput(tokens.Sublist(2, len(tokens.Vals)-2))
+		value = i.processInput(*tokens.Sublist(2, len(tokens.Vals)-2))
 	}
 
 	// Check const state
