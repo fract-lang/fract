@@ -11,7 +11,7 @@ import (
 // Returns index of operator if found, returns -1 if not.
 //
 // tokens Tokens to search.
-func IndexProcessPriority(tokens *vector.Vector) int {
+func IndexProcessPriority(tokens vector.Vector) int {
 	bracket := 0
 	modulus := -1
 	multiplyOrDivive := -1

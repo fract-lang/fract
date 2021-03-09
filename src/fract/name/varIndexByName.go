@@ -12,7 +12,7 @@ import (
 // VarIndexByName Find index of variable by name.
 // vars All variables.
 // name Name to find.
-func VarIndexByName(vars *vector.Vector, name string) int {
+func VarIndexByName(vars vector.Vector, name string) int {
 	for index := range vars.Vals {
 		if vars.Vals[index].(objects.Variable).Name == name {
 			return index

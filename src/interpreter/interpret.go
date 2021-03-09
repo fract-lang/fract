@@ -17,7 +17,7 @@ func (i *Interpreter) Interpret() {
 
 	/* Tokenize all lines. */
 	for !i.lexer.Finished {
-		cacheTokens := i.lexer.Next()
+		cacheTokens := *i.lexer.Next()
 
 		// cacheTokens are empty?
 		if len(cacheTokens.Vals) == 0 {
@@ -29,7 +29,8 @@ func (i *Interpreter) Interpret() {
 
 	// Interpret all lines.
 	for ; i.index < len(i.tokens.Vals); i.index++ {
-		i.processTokens(i.tokens.Vals[i.index].(*vector.Vector), true)
+		tokens := i.tokens.Vals[i.index].(vector.Vector)
+		i.processTokens(&tokens, true)
 	}
 
 	if i.blockCount > 0 { // Check blocks.

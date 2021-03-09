@@ -16,7 +16,7 @@ import (
 // processFunction Process function.
 // tokens Tokens to process.
 func (i *Interpreter) processFunction(tokens *vector.Vector) {
-	index := parser.IndexBlockDeclare(tokens)
+	index := parser.IndexBlockDeclare(*tokens)
 	// Block declare is not defined?
 	if index == -1 {
 		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
@@ -77,6 +77,6 @@ func (i *Interpreter) processFunction(tokens *vector.Vector) {
 	}
 
 	i.skipBlock()
-	function.Tokens = i.tokens.Sublist(function.Start, i.index-function.Start)
+	function.Tokens = *i.tokens.Sublist(function.Start, i.index-function.Start)
 	i.funcs.Vals = append(i.funcs.Vals, function)
 }

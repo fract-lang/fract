@@ -13,7 +13,7 @@ import (
 
 // isConditional Expression is conditional?
 // tokens Tokens to check?
-func (i *Interpreter) isConditional(tokens *vector.Vector) bool {
+func (i *Interpreter) isConditional(tokens vector.Vector) bool {
 	// Search conditional expression.
 	for index := range tokens.Vals {
 		current := tokens.Vals[index].(objects.Token)

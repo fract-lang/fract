@@ -20,7 +20,7 @@ type Lexer struct {
 	/* PUBLIC */
 
 	// Destination file.
-	File *objects.CodeFile
+	File objects.CodeFile
 	// Last column.
 	Column int
 	// Last line.

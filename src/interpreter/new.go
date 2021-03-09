@@ -14,10 +14,10 @@ import (
 // type Type of file.
 func New(path string, _type int) *Interpreter {
 	preter := new(Interpreter)
-	preter.lexer = lexer.New(ReadyFile(path))
-	preter.vars = vector.New()
-	preter.funcs = vector.New()
+	preter.lexer = *lexer.New(ReadyFile(path))
+	preter.vars = *vector.New()
+	preter.funcs = *vector.New()
 	preter.Type = _type
-	preter.tokens = vector.New()
+	preter.tokens = *vector.New()
 	return preter
 }

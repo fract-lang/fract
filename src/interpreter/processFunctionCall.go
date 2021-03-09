@@ -105,11 +105,11 @@ func (i *Interpreter) processFunctionCall(tokens *vector.Vector) objects.Value {
 	// Process block.
 	i.functions++
 	for ; i.index < len(i.tokens.Vals); i.index++ {
-		tokens = i.tokens.Vals[i.index].(*vector.Vector)
+		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			break
-		} else if i.processTokens(tokens, true) == fract.FUNCReturn {
-			tokens = i.tokens.Vals[i.returnIndex].(*vector.Vector)
+		} else if i.processTokens(&tokens, true) == fract.FUNCReturn {
+			tokens := i.tokens.Vals[i.returnIndex].(vector.Vector)
 			i.returnIndex = fract.TypeNone
 			valueList := vector.New(tokens.Vals[1:]...)
 			if len(valueList.Vals) == 0 {

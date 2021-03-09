@@ -14,17 +14,17 @@ type Interpreter struct {
 	/* PRIVATE */
 
 	// Parser of this file.
-	lexer *lexer.Lexer
+	lexer lexer.Lexer
 	// Variables.
-	vars *vector.Vector
+	vars vector.Vector
 	// Functions.
-	funcs *vector.Vector
+	funcs vector.Vector
 	// Loop count.
 	loops int
 	// Function count.
 	functions int
 	// All tokens of code file.
-	tokens *vector.Vector
+	tokens vector.Vector
 	// Interpreter index.
 	index int
 	// Last return index.

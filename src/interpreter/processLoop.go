@@ -18,7 +18,7 @@ import (
 // do Do processes?
 func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 	i.blockCount++
-	index := parser.IndexBlockDeclare(tokens)
+	index := parser.IndexBlockDeclare(*tokens)
 	// Block declare is not defined?
 	if index == -1 {
 		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
@@ -44,7 +44,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 		/* Interpret/skip block. */
 		i.index++
 		for ; i.index < len(i.tokens.Vals); i.index++ {
-			tokens = i.tokens.Vals[i.index].(*vector.Vector)
+			tokens := i.tokens.Vals[i.index].(vector.Vector)
 			condition := i.processCondition(contentList)
 
 			if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
@@ -65,7 +65,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 			// Condition is true?
 			if condition == grammar.TRUE {
 				if do {
-					kwstate = i.processTokens(tokens, do)
+					kwstate = i.processTokens(&tokens, do)
 					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 						_break = true
 						i.skipBlock()
@@ -125,7 +125,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 			if i.index >= len(i.tokens.Vals) {
 				return kwstate
 			}
-			tokens = i.tokens.Vals[i.index].(*vector.Vector)
+			tokens := i.tokens.Vals[i.index].(vector.Vector)
 
 			variable.Value.Content[0] = value.Content[vindex]
 
@@ -146,7 +146,7 @@ func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
 
 			// Condition is true?
 			if do {
-				kwstate = i.processTokens(tokens, do)
+				kwstate = i.processTokens(&tokens, do)
 				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 					_break = true
 					i.skipBlock()
