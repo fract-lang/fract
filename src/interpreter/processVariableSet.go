@@ -15,7 +15,7 @@ import (
 
 // ProcessVariableSet Process variable set statement.
 // tokens Tokens to process.
-func (i *Interpreter) processVariableSet(tokens *vector.Vector) {
+func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 	_name := tokens.Vals[0].(objects.Token)
 
 	// Name is not name?
