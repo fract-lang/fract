@@ -17,11 +17,11 @@ import (
 //
 // tokens Tokens to process.
 // do Do processes?
-func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
+func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 	i.blockCount++
 
 	/* IF */
-	index := parser.IndexBlockDeclare(*tokens)
+	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
 	if index == -1 {
 		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
@@ -78,7 +78,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 					i.subtractBlock(nil)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
-					i.processIf(&tokens, state == grammar.TRUE && !actioned && do)
+					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
 					continue
 				} else if first.Type == fract.TypeElseIf ||
 					first.Type == fract.TypeElse { // Else if or else block.
@@ -117,7 +117,7 @@ func (i *Interpreter) processIf(tokens *vector.Vector, do bool) int {
 					i.subtractBlock(nil)
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
-					i.processIf(&tokens, !actioned && do)
+					i.processIf(tokens, !actioned && do)
 					continue
 				}
 
