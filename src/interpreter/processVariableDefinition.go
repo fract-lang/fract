@@ -59,7 +59,7 @@ func (i *Interpreter) processVariableDefinition(tokens *vector.Vector) {
 	if setter.Value == grammar.Setter { // :=
 		value = i.processValue(tokens.Sublist(3, tokenLen-3))
 	} else { // <<
-		value = i.processInput(tokens.Sublist(3, tokenLen-3))
+		value = i.processInput(*tokens.Sublist(3, tokenLen-3))
 	}
 
 	variable.Value = value

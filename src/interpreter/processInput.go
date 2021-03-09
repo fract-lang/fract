@@ -16,7 +16,7 @@ import (
 
 // processInput Process user input.
 // tokens Tokens to process.
-func (i *Interpreter) processInput(tokens *vector.Vector) objects.Value {
+func (i *Interpreter) processInput(tokens vector.Vector) objects.Value {
 	if len(tokens.Vals) == 0 {
 		return objects.Value{
 			Content: []string{cli.Input("")},
@@ -24,7 +24,7 @@ func (i *Interpreter) processInput(tokens *vector.Vector) objects.Value {
 			Array:   true,
 		}
 	}
-	printValue(i.processValue(tokens))
+	printValue(i.processValue(&tokens))
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	input := scanner.Text()
