@@ -64,7 +64,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 			// Condition is true?
 			if condition == grammar.TRUE {
 				if do {
-					kwstate = i.processTokens(&tokens, do)
+					kwstate = i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 						_break = true
 						i.skipBlock()
@@ -146,7 +146,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 
 			// Condition is true?
 			if do {
-				kwstate = i.processTokens(&tokens, do)
+				kwstate = i.processTokens(tokens, do)
 				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 					_break = true
 					i.skipBlock()

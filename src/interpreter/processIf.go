@@ -87,7 +87,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 
 				// Condition is true?
 				if state == grammar.TRUE && !actioned && do {
-					if kwstate = i.processTokens(&tokens, true); kwstate != fract.TypeNone {
+					if kwstate = i.processTokens(tokens, true); kwstate != fract.TypeNone {
 						i.skipBlock()
 					}
 				}
@@ -123,7 +123,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 
 				// Condition is true?
 				if !actioned && do {
-					if kwstate = i.processTokens(&tokens, true); kwstate != fract.TypeNone {
+					if kwstate = i.processTokens(tokens, true); kwstate != fract.TypeNone {
 						i.skipBlock()
 					}
 				}
@@ -132,7 +132,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 
 		// Condition is true?
 		if state == grammar.TRUE && do {
-			if kwstate = i.processTokens(&tokens, do); kwstate != fract.TypeNone {
+			if kwstate = i.processTokens(tokens, do); kwstate != fract.TypeNone {
 				i.skipBlock()
 			}
 		}

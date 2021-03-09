@@ -47,8 +47,8 @@ func printValue(value objects.Value) bool {
 // tokens Tokens to process.
 // do Do processes?
 // nested Is nested?
-func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
-	tokens = vector.New(tokens.Vals...)
+func (i *Interpreter) processTokens(tokens vector.Vector, do bool) int {
+	tokens = *vector.New(tokens.Vals...)
 
 	first := tokens.Vals[0].(objects.Token)
 
@@ -63,25 +63,25 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 				current := tokens.Vals[index].(objects.Token)
 				if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.Setter || current.Value == grammar.Input) { // Variable setting.
-					i.processVariableSet(*tokens)
+					i.processVariableSet(tokens)
 					return -1
 				}
 			}
 		}
 
 		// Println
-		if printValue(i.processValue(tokens)) { // If printed?
+		if printValue(i.processValue(&tokens)) { // If printed?
 			fmt.Println()
 		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
-		i.processVariableDefinition(*tokens)
+		i.processVariableDefinition(tokens)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
-		i.processDelete(*tokens)
+		i.processDelete(tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
-		return i.processIf(*tokens, do)
+		return i.processIf(tokens, do)
 	} else if first.Type == fract.TypeLoop { // Loop.
 		i.loops++
-		state := i.processLoop(*tokens, do)
+		state := i.processLoop(tokens, do)
 		i.loops--
 		return state
 	} else if first.Type == fract.TypeBreak { // Break loop.
@@ -95,9 +95,9 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		}
 		return fract.LOOPContinue
 	} else if first.Type == fract.TypeExit { // Exit.
-		i.processExit(*tokens)
+		i.processExit(tokens)
 	} else if first.Type == fract.TypeFunction { // Function.
-		i.processFunction(*tokens)
+		i.processFunction(tokens)
 	} else if first.Type == fract.TypeReturn { // Return.
 		if i.functions == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
