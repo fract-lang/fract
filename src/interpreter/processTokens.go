@@ -63,7 +63,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 				current := tokens.Vals[index].(objects.Token)
 				if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.Setter || current.Value == grammar.Input) { // Variable setting.
-					i.processVariableSet(tokens)
+					i.processVariableSet(*tokens)
 					return -1
 				}
 			}
