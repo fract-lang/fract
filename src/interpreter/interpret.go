@@ -4,9 +4,7 @@
 
 package interpreter
 
-import (
-	"../utilities/vector"
-)
+import "../utilities/vector"
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {
@@ -29,8 +27,7 @@ func (i *Interpreter) Interpret() {
 
 	// Interpret all lines.
 	for ; i.index < len(i.tokens.Vals); i.index++ {
-		tokens := i.tokens.Vals[i.index].(vector.Vector)
-		i.processTokens(&tokens, true)
+		i.processTokens(i.tokens.Vals[i.index].(vector.Vector), true)
 	}
 
 	if i.blockCount > 0 { // Check blocks.
