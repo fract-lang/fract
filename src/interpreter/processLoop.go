@@ -16,9 +16,9 @@ import (
 // processLoop Process loop block.
 // tokens Tokens to process.
 // do Do processes?
-func (i *Interpreter) processLoop(tokens *vector.Vector, do bool) int {
+func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	i.blockCount++
-	index := parser.IndexBlockDeclare(*tokens)
+	index := parser.IndexBlockDeclare(tokens)
 	// Block declare is not defined?
 	if index == -1 {
 		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
