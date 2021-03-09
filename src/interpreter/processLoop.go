@@ -53,7 +53,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 				i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 				if _break && condition != grammar.TRUE {
-					i.subtractBlock(nil)
+					i.blockCount--
 					return kwstate
 				}
 
@@ -162,7 +162,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 			}
 		}
 	}
-	i.subtractBlock(nil)
+	i.blockCount--
 
 	// Remove loop variable.
 	i.vars.Vals = i.vars.Vals[:variableLen-1]

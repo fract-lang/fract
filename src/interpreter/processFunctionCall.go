@@ -125,9 +125,9 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 	i.functions--
+	i.blockCount--
 	i.index = nameIndex
 	i.tokens = itokens
-	i.subtractBlock(nil)
 
 	return returnValue
 }
