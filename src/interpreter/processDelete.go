@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/name"
 	"../objects"
 	"../utilities/vector"
 )
@@ -38,7 +37,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 			fract.Error(current, "This is not deletable object!")
 		}
 
-		position := name.VarIndexByName(i.vars, current.Value)
+		position := i.varIndexByName(current.Value)
 
 		// Name is not defined?
 		if position == -1 {

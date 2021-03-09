@@ -9,7 +9,6 @@ import (
 
 	"../fract"
 	"../fract/arithmetic"
-	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -34,7 +33,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			// Array?
 			if next.Type == fract.TypeBrace {
 				if next.Value == grammar.TokenLBracket {
-					vindex := name.VarIndexByName(i.vars, token.Value)
+					vindex := i.varIndexByName(token.Value)
 					if vindex == -1 {
 						fract.Error(token, "Name is not defined!: "+token.Value)
 					}
@@ -130,7 +129,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 		}
 
-		vindex := name.VarIndexByName(i.vars, token.Value)
+		vindex := i.varIndexByName(token.Value)
 		if vindex == -1 {
 			fract.Error(token, "Name is not defined!: "+token.Value)
 		}
@@ -179,7 +178,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 
 			endToken := operations.Vals[oindex-1].(objects.Token)
-			vindex := name.VarIndexByName(i.vars, endToken.Value)
+			vindex := i.varIndexByName(endToken.Value)
 			if vindex == -1 {
 				fract.Error(endToken, "Name is not defined!: "+endToken.Value)
 			}

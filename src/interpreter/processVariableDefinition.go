@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../utilities/vector"
@@ -31,7 +30,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
-	} else if name.VarIndexByName(i.vars, _name.Value) != -1 { // Name is already defined?
+	} else if i.varIndexByName(_name.Value) != -1 { // Name is already defined?
 		fract.Error(_name, "Already defined this name!: "+_name.Value)
 	}
 

@@ -7,7 +7,6 @@ package interpreter
 import (
 	"../fract"
 	"../fract/arithmetic"
-	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../utilities/vector"
@@ -23,7 +22,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 		fract.Error(_name, "This is not a valid name!")
 	}
 
-	index := name.VarIndexByName(i.vars, _name.Value)
+	index := i.varIndexByName(_name.Value)
 	if index == -1 {
 		fract.Error(_name, "Name is not defined!: "+_name.Value)
 	}

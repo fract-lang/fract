@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -91,7 +90,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	}
 
 	// Name is already defined?
-	if name.VarIndexByName(i.vars, nameToken.Value) != -1 {
+	if i.varIndexByName(nameToken.Value) != -1 {
 		fract.Error(nameToken, "Already defined this name!: "+nameToken.Value)
 	}
 

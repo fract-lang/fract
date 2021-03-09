@@ -6,7 +6,6 @@ package interpreter
 
 import (
 	"../fract"
-	"../fract/name"
 	"../grammar"
 	"../objects"
 	"../parser"
@@ -36,7 +35,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	_name := tokens.Vals[0].(objects.Token)
 
 	// Name is not defined?
-	nameIndex := name.FunctionIndexByName(i.funcs, _name.Value)
+	nameIndex := i.functionIndexByName(_name.Value)
 	if nameIndex == -1 {
 		fract.Error(_name, "Function is not defined!: "+_name.Value)
 	}
