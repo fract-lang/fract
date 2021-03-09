@@ -78,7 +78,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
 		i.processDelete(*tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
-		return i.processIf(tokens, do)
+		return i.processIf(*tokens, do)
 	} else if first.Type == fract.TypeLoop { // Loop.
 		i.loops++
 		state := i.processLoop(tokens, do)
