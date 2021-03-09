@@ -81,7 +81,7 @@ func (i *Interpreter) processTokens(tokens *vector.Vector, do bool) int {
 		return i.processIf(*tokens, do)
 	} else if first.Type == fract.TypeLoop { // Loop.
 		i.loops++
-		state := i.processLoop(tokens, do)
+		state := i.processLoop(*tokens, do)
 		i.loops--
 		return state
 	} else if first.Type == fract.TypeBreak { // Break loop.
