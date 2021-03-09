@@ -66,6 +66,35 @@
 #    num
 #  end
 #end
+func range(start, to):
+  var lst := [to-start]
+  var index := 0
+  for start < to:
+    lst[index] := start
+    start := start + 1
+    index := index + 1
+  end
+  ret lst
+end
+
+func int.prime(x):
+  if x < 2:
+    ret false
+  end
+
+  for y in range(2, x):
+    if x % y = 0:
+      ret false
+    end
+  end
+  ret true
+end
+
+for number in range(0, 10):
+  number
+  if int.prime(number): "True"; else: "False"; end
+  ""
+end
 exit 0
 var counter := 1
 for counter <= 1000:
