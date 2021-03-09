@@ -98,7 +98,8 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 
 	// Type is not array?
 	if !value.Array {
-		fract.Error(contentList.Vals[0].(objects.Token), "For loop must defined array value!")
+		fract.Error(contentList.Vals[0].(objects.Token),
+			"Foreach loop must defined array value!")
 	}
 
 	// Create loop variable.
