@@ -83,8 +83,10 @@ func lexString(l *Lexer, quote string, token *objects.Token, fln string) {
 
 // Generate Generate next token.
 func (l *Lexer) Generate() objects.Token {
-	var token objects.Token
-	token.File = l.File
+	token := objects.Token{
+		Type: fract.TypeNone,
+		File: l.File,
+	}
 	fln := l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text // Full line.
 
 	/* Line is finished. */
@@ -287,7 +289,7 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
-		/* --------- */
+		return token
 	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // String.
 		lexString(l, grammar.TokenQuote, &token, fln)
 	} else if strings.HasPrefix(ln, grammar.TokenDoubleQuote) { // String.

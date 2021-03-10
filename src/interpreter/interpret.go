@@ -4,7 +4,9 @@
 
 package interpreter
 
-import "../utilities/vector"
+import (
+	"../utilities/vector"
+)
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {
@@ -15,7 +17,7 @@ func (i *Interpreter) Interpret() {
 
 	/* Tokenize all lines. */
 	for !i.lexer.Finished {
-		cacheTokens := *i.lexer.Next()
+		cacheTokens := i.lexer.Next()
 
 		// cacheTokens are empty?
 		if len(cacheTokens.Vals) == 0 {
