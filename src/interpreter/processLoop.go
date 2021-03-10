@@ -8,7 +8,6 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../parser"
 	"../utilities/vector"
 )
 
@@ -17,13 +16,14 @@ import (
 // do Do processes?
 func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	i.blockCount++
-	index := parser.IndexBlockDeclare(tokens)
+
+	tokenLen := len(tokens.Vals)
 	// Block declare is not defined?
-	if index == -1 {
+	if tokens.Vals[tokenLen-1].(objects.Token).Type != fract.TypeBlock {
 		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token), "Where is the block declare!?")
 	}
 
-	contentList := tokens.Sublist(1, index-1)
+	contentList := tokens.Sublist(1, tokenLen-2)
 	// Content is empty?
 	if len(contentList.Vals) == 0 {
 		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")

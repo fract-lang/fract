@@ -8,7 +8,6 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../parser"
 	"../utilities/vector"
 )
 
@@ -21,13 +20,14 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 	i.blockCount++
 
 	/* IF */
-	index := parser.IndexBlockDeclare(tokens)
+	tokenLen := len(tokens.Vals)
+
 	// Block declare is not defined?
-	if index == -1 {
+	if tokens.Vals[tokenLen-1].(objects.Token).Type != fract.TypeBlock {
 		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
 			"Where is the block declare!?")
 	}
-	conditionList := tokens.Sublist(1, index-1)
+	conditionList := tokens.Sublist(1, tokenLen-2)
 
 	// Condition is empty?
 	if len(conditionList.Vals) == 0 {
@@ -51,13 +51,14 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			i.blockCount--
 			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
-			index = parser.IndexBlockDeclare(tokens)
+			tokenLen = len(tokens.Vals)
+
 			// Block declare is not defined?
-			if index == -1 {
+			if tokens.Vals[tokenLen-1].(objects.Token).Type != fract.TypeBlock {
 				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
 					"Where is the block declare!?")
 			}
-			conditionList := tokens.Sublist(1, index-1)
+			conditionList := tokens.Sublist(1, tokenLen-2)
 
 			// Condition is empty?
 			if len(conditionList.Vals) == 0 {
@@ -102,7 +103,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			continue
 		} else if first.Type == fract.TypeElse { // Else block.
 			// Block declare is not defined?
-			if parser.IndexBlockDeclare(tokens) == -1 {
+			if tokens.Vals[len(tokens.Vals)-1].(objects.Token).Type != fract.TypeBlock {
 				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
 					"Where is the block declare!?")
 			}
