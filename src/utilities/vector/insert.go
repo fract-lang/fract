@@ -8,11 +8,5 @@ package vector
 // pos Position to insert.
 // value Value to insert.
 func (v *Vector) Insert(pos int, value ...interface{}) {
-	len := len(value)
-	v.Vals = append(v.Vals, len)
-	copy(v.Vals[pos+len:], v.Vals[pos:])
-	for counter := 0; counter < len; counter++ {
-		v.Vals[pos] = value[counter]
-		pos++
-	}
+	v.Vals = append(v.Vals[:pos], append(value, v.Vals[pos:]...)...)
 }
