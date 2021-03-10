@@ -10,8 +10,8 @@ import (
 )
 
 // Next Lex next line.
-func (l *Lexer) Next() *vector.Vector {
-	tokens := vector.New()
+func (l *Lexer) Next() vector.Vector {
+	tokens := *vector.New()
 
 	// If file is finished?
 	if l.Finished {
@@ -37,7 +37,7 @@ tokenize:
 
 	// Tokenize line.
 	token := l.Generate()
-	for token.Value != "" && token.Type != fract.TypeStatementTerminator {
+	for token.Type != fract.TypeNone && token.Type != fract.TypeStatementTerminator {
 		tokens.Vals = append(tokens.Vals, token)
 		l.lastToken = token
 		token = l.Generate()
