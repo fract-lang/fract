@@ -17,10 +17,10 @@ import (
 // current Current token.
 // count Count of appended arguments.
 // value Value instance.
-func processArgument(function *objects.Function, current *objects.Token,
+func processArgument(function objects.Function, current objects.Token,
 	count int, value objects.Value) objects.Variable {
 	if count >= len(function.Parameters) {
-		fract.Error(*current, "Argument overflow!")
+		fract.Error(current, "Argument overflow!")
 	}
 	return objects.Variable{
 		Name:  function.Parameters[count],
@@ -68,7 +68,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 			if len(valueList.Vals) == 0 {
 				fract.Error(current, "Value is not defined!")
 			}
-			i.vars.Vals = append(i.vars.Vals, processArgument(&function, &current, count,
+			i.vars.Vals = append(i.vars.Vals, processArgument(function, current, count,
 				i.processValue(valueList)))
 			count++
 			lastComma = index + 1
@@ -81,7 +81,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 		if len(valueList.Vals) == 0 {
 			fract.Error(current, "Value is not defined!")
 		}
-		i.vars.Vals = append(i.vars.Vals, processArgument(&function, &current, count,
+		i.vars.Vals = append(i.vars.Vals, processArgument(function, current, count,
 			i.processValue(valueList)))
 		count++
 	}
