@@ -19,6 +19,8 @@ type Interpreter struct {
 	vars vector.Vector
 	// Functions.
 	funcs vector.Vector
+	// Count of function temporary variables.
+	funcTempVariables int
 	// Loop count.
 	loops int
 	// Function count.

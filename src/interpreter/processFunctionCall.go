@@ -43,7 +43,6 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	i.blockCount++
 
 	function := i.funcs.Vals[nameIndex].(objects.Function)
-	variableLen := len(i.vars.Vals)
 
 	// Decompose arguments.
 	tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
@@ -51,6 +50,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	braceCount := 0
 	lastComma := 0
 	count := 0
+	vars := make([]interface{}, 0)
 	for index := range tokens.Vals {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeBrace {
@@ -68,7 +68,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 			if len(valueList.Vals) == 0 {
 				fract.Error(current, "Value is not defined!")
 			}
-			i.vars.Vals = append(i.vars.Vals, processArgument(function, current, count,
+			vars = append(vars, processArgument(function, current, count,
 				i.processValue(valueList)))
 			count++
 			lastComma = index + 1
@@ -81,7 +81,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 		if len(valueList.Vals) == 0 {
 			fract.Error(current, "Value is not defined!")
 		}
-		i.vars.Vals = append(i.vars.Vals, processArgument(function, current, count,
+		vars = append(vars, processArgument(function, current, count,
 			i.processValue(valueList)))
 		count++
 	}
@@ -90,6 +90,11 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	if count != len(function.Parameters) {
 		fract.Error(_name, "All parameters is not defined!")
 	}
+
+	old := i.funcTempVariables
+	variables := append(make([]interface{}, 0), i.vars.Vals...)
+	i.vars.Vals = append(i.vars.Vals[:i.funcTempVariables], vars...)
+	i.funcTempVariables = len(vars)
 
 	functionLen := len(i.funcs.Vals)
 	returnValue := objects.Value{
@@ -105,6 +110,8 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	i.functions++
 	for ; i.index < len(i.tokens.Vals); i.index++ {
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
+		i.funcTempVariables = len(i.vars.Vals) - i.funcTempVariables
+
 		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			break
 		} else if i.processTokens(tokens, true) == fract.FUNCReturn {
@@ -120,12 +127,13 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	}
 
 	// Remove temporary variables.
-	i.vars.Vals = i.vars.Vals[:variableLen]
+	i.vars.Vals = variables
 	// Remove temporary functions.
 	i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 	i.functions--
 	i.blockCount--
+	i.funcTempVariables = old
 	i.index = nameIndex
 	i.tokens = itokens
 
