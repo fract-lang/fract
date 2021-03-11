@@ -28,7 +28,7 @@ func findNextOperator(tokens vector.Vector, pos int, operator string) int {
 // tokens Tokens to process.
 // operator Operator to decompose.
 func DecomposeConditionalProcess(tokens vector.Vector, operator string) *vector.Vector {
-	expressions := vector.New()
+	expressions := vector.Vector{}
 
 	last := 0
 	index := findNextOperator(tokens, last, operator)
@@ -48,5 +48,5 @@ func DecomposeConditionalProcess(tokens vector.Vector, operator string) *vector.
 		expressions.Vals = append(expressions.Vals, *tokens.Sublist(last, len(tokens.Vals)-last))
 	}
 
-	return expressions
+	return &expressions
 }
