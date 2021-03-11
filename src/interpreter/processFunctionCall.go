@@ -117,11 +117,11 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 		} else if i.processTokens(tokens, true) == fract.FUNCReturn {
 			tokens := i.tokens.Vals[i.returnIndex].(vector.Vector)
 			i.returnIndex = fract.TypeNone
-			valueList := vector.New(tokens.Vals[1:]...)
+			valueList := vector.Vector{tokens.Vals[1:]}
 			if len(valueList.Vals) == 0 {
 				break
 			}
-			returnValue = i.processValue(valueList)
+			returnValue = i.processValue(&valueList)
 			break
 		}
 	}

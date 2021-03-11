@@ -11,7 +11,7 @@ import (
 
 // Next Lex next line.
 func (l *Lexer) Next() vector.Vector {
-	tokens := *vector.New()
+	tokens := vector.Vector{}
 
 	// If file is finished?
 	if l.Finished {
