@@ -9,11 +9,11 @@
 #test
 #test[3] := [4]
 
-#if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2):
+#if ((b + b <> 8) & false) | (b + b = 8 & 2 = 2)
 #  3
-#  if true = false:
+#  if true = false
 #    5
-#  elif false = false:
+#  elif false = false
 #    10
 #    4
 #  end
@@ -27,9 +27,9 @@
 #test1
 #test + test1
 
-#if true = false:
+#if true = false
 #  5
-#elif false = false:
+#elif false = false
 #  10
 #  4
 #end
@@ -39,45 +39,45 @@
 #t1 = t2
 
 #var counter := 0
-#for count in [1000]:
+#for count in [1000]
 #  counter := counter+1
 #  counter
 #end
 
-#for index in { 0, 1, 2, 3, 4.0 }:
+#for index in { 0, 1, 2, 3, 4.0 }
 #  var test := index
 #  index
 #end
 
 # PRIME NUMBER BETWEEN 1 an 100
 #var num := 1
-#for num <= 100:
+#for num <= 100
 #  num := num + 1
 #  var prime := true
 #  var i := 2
-#  for i < num:
+#  for i < num
 #    i := i + 1
-#    if num % i = 0:
+#    if num % i = 0
 #      prime := false
 #      break
 #    end
 #  end
-#  if prime:
+#  if prime
 #    num
 #  end
 #end
 
 #var counter := 1
-#for counter <= 500:
+#for counter <= 500
 #  var total := 0
 #  var ccounter := 1
-#  for ccounter < counter:
+#  for ccounter < counter
 #    if counter % ccounter = 0:
 #      total := total + ccounter
 #    end
 #    ccounter := ccounter + 1
 #  end
-#  if total = counter:
+#  if total = counter
 #    counter
 #  end
 #  counter := counter + 1
@@ -95,18 +95,18 @@
 #del array, array2
 
 # FUNCTION TEST
-func len(list):
+func len(list)
   var counter := 0
-  for _ in list:
+  for _ in list
     counter := counter + 1
   end
   ret counter
 end
 
-func range(start, to):
+func range(start, to)
   var lst := [to-start]
   var index := 0
-  for start < to:
+  for start < to
     lst[index] := start
     start := start + 1
     index := index + 1
@@ -114,21 +114,21 @@ func range(start, to):
   ret lst
 end
 
-func int.prime(x):
-  if x < 2:
+func int.prime(x)
+  if x < 2
     ret false
   end
 
-  for y in range(2, x):
-    if x % y = 0:
+  for y in range(2, x)
+    if x % y = 0
       ret false
     end
   end
   ret true
 end
 
-for number in range(0, 10):
+for number in range(0, 10)
   number
-  if int.prime(number): "True"; else: "False"; end
+  if int.prime(number); "True"; else; "False"; end
   ""
 end

@@ -1,17 +1,17 @@
 # PRIME NUMBER BETWEEN 1 an 100
 var num := 1
-for num <= 100:
+for num <= 100
   num := num + 1
   var prime := true
   var i := 2
-  for i < num:
+  for i < num
     i := i + 1
-    if num % i = 0:
+    if num % i = 0
       prime := false
       break
     end
   end
-  if prime:
+  if prime
     num
   end
 end

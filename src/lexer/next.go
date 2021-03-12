@@ -25,8 +25,7 @@ func (l *Lexer) Next() vector.Vector {
 
 tokenize:
 
-	if l.lastToken.Type != fract.TypeStatementTerminator &&
-		l.lastToken.Type != fract.TypeBlock {
+	if l.lastToken.Type != fract.TypeStatementTerminator {
 		// Restore to defaults.
 		l.Column = 1
 		l.lastToken.Type = fract.TypeNone
@@ -41,10 +40,6 @@ tokenize:
 		tokens.Vals = append(tokens.Vals, token)
 		l.lastToken = token
 		token = l.Generate()
-		if token.Type == fract.TypeBlock {
-			tokens.Vals = append(tokens.Vals, token)
-			break
-		}
 	}
 
 	l.lastToken = token
