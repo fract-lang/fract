@@ -178,17 +178,17 @@ When one condition is fulfilled, other conditions do not. Therefore, "If" must b
 
 ### Syntax
 ```
-if [CONDITION]:
+if [CONDITION]
 end
 ```
 ```
-if [CONDITION]:
+if [CONDITION]
   # ...
-elif [CONDITION]:
+elif [CONDITION]
   # ...
-elif [CONDITION]:
+elif [CONDITION]
   # ...
-else:
+else
  # ...
 end
 ```
@@ -197,7 +197,7 @@ A condition can be given any kind of value, but it only works with true(1) and f
 Unlike most languages, you won't get an error even if you only enter an integer value in the condition. It looks at the value and if it is 1 it fulfills the condition.
 ```
 var example := 0
-if example:
+if example
   # ...
 end
 ```
@@ -211,14 +211,14 @@ The while is a loop that happens as long as the condition is met.
 
 #### Syntax
 ```
-for [CONDITION]:
+for [CONDITION]
   # ...
 end
 ```
 #### Examples
 ```
 var counter := 0
-for counter <= 10:
+for counter <= 10
   counter
   counter := counter + 1
 end
@@ -229,20 +229,20 @@ You can rotate the elements of arrays one by one with the foreach loop.
 
 #### Syntax
 ```
-for [VARIABLE_NAME] in [VALUE]:
+for [VARIABLE_NAME] in [VALUE]
   # ...
 end
 ```
 #### Examples
 ```
 var t1 := { 0, 3, 2, 1, 90 }
-for index in { 0, 1, 2, 3, 4 }:
+for index in { 0, 1, 2, 3, 4 }
   t1[index]
 end
 ```
 ```
 var t1 := { 0, 3, 2, 1, 90 }
-for item in t1:
+for item in t1
   item
 end
 ```
@@ -252,9 +252,9 @@ With the keyword break, it is possible to override and terminate the entire loop
 #### Examples
 ```
 var counter := 0
-for counter <= 10:
+for counter <= 10
   counter := counter + 1
-  if counter > 5:
+  if counter > 5
     break
   end
   counter
@@ -266,8 +266,8 @@ end
 ### Continue Keyword
 It can be used to pass the cycle to the next cycle step. If there is no next loop step, the loop is terminated.
 ```
-for index in { 0, 1, 2, 3, 4.0 }:
-  if index = 1 | index = 3:
+for index in { 0, 1, 2, 3, 4.0 }
+  if index = 1 | index = 3
     continue
   end
   var test := index
@@ -283,7 +283,7 @@ Functions are very useful for adding functionality to your code.
 ### Syntax
 Define:
 ```
-func [NAME]([PARAM], [PARAM], [PARAM],...):
+func [NAME]([PARAM], [PARAM], [PARAM],...)
   ...
 end
 ```
@@ -294,9 +294,9 @@ Call:
 
 ### Examples
 ```
-func int.prime(x):
-  for y in range(2, x):
-    if x % y = 0:
+func int.prime(x)
+  for y in range(2, x)
+    if x % y = 0
       ret false
     end
   end
@@ -306,7 +306,7 @@ end
 int.prime(3)
 ```
 ```
-func print.hello():
+func print.hello()
   "Hello"
 end
 
@@ -323,7 +323,7 @@ ret [VALUE]
 
 #### Examples
 ```
-func reverse(x):
+func reverse(x)
   ret x * -1
 end
 
