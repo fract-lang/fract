@@ -122,19 +122,26 @@ del [NAME], [NAME], [NAME],...
 ### Examples
 ```
 var a = 4
-var a = 5       # Error, defined name 'a'
+var a = 5        # Error, defined name 'a'
 
 ------------------
 
 var a = 4
-del a            # Remove 'a' from memory
-var a = 5       # No error, a is 5
+del a            # Remove 'a' variable from memory
+var a = 5        # No error, a is 5
 ```
 ```
 var a = 0
 var b = 0
-del a, b         # Remove 'a' and 'b'
+del a, b         # Remove 'a' and 'b' variables from memory
                  # No defined variables
+
+------------------
+
+# Function removing
+
+del a()          # Remove 'a' function from memory
+del a, a()       # Remove 'a' variable and function from memory
 ```
 
 ## Arrays
