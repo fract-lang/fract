@@ -15,6 +15,35 @@ import (
 	"../utilities/vector"
 )
 
+// checkValue Returns count of required operators.
+// tokens Tokens of statement.
+func getRequiredOperatorCount(tokens []interface{}) int {
+	counter := 0
+	bracket := 0
+	for index := range tokens {
+		current := tokens[index].(objects.Token)
+		if current.Type == fract.TypeBrace {
+			if current.Value == grammar.TokenLBracket ||
+				current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLParenthes {
+				bracket++
+			} else if current.Value == grammar.TokenRBracket ||
+				current.Value == grammar.TokenRBrace ||
+				current.Value == grammar.TokenRParenthes {
+				bracket--
+			}
+		}
+		if bracket > 0 {
+			continue
+		}
+		if current.Type == fract.TypeValue ||
+			current.Type == fract.TypeName {
+			counter++
+		}
+	}
+	return counter - 1
+}
+
 // __processValue Process value.
 // first This is first value.
 // token Token to process.
@@ -48,11 +77,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 								bracketCount++
 							} else if current.Value == grammar.TokenRBracket {
 								bracketCount--
+								if bracketCount == 0 {
+									break
+								}
 							}
-						}
-
-						if bracketCount == 0 {
-							break
 						}
 					}
 
@@ -107,11 +135,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 								bracketCount++
 							} else if current.Value == grammar.TokenRParenthes {
 								bracketCount--
+								if bracketCount == 0 {
+									break
+								}
 							}
-						}
-
-						if bracketCount == 0 {
-							break
 						}
 					}
 					value := i.processFunctionCall(*operations.Sublist(index, cindex-index))
@@ -154,11 +181,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						bracketCount++
 					} else if current.Value == grammar.TokenLBracket {
 						bracketCount--
+						if bracketCount == 0 {
+							break
+						}
 					}
-				}
-
-				if bracketCount == 0 {
-					break
 				}
 			}
 
@@ -234,11 +260,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						bracketCount++
 					} else if current.Value == grammar.TokenRBracket {
 						bracketCount--
+						if bracketCount == 0 {
+							break
+						}
 					}
-				}
-
-				if bracketCount == 0 {
-					break
 				}
 			}
 
@@ -267,11 +292,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						braceCount++
 					} else if current.Value == grammar.TokenRBrace {
 						braceCount--
+						if braceCount == 0 {
+							break
+						}
 					}
-				}
-
-				if braceCount == 0 {
-					break
 				}
 			}
 
@@ -297,15 +321,14 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						braceCount++
 						nestedArray = true
 					} else if current.Value == grammar.TokenLBrace {
-						braceCount--
 						if nestedArray {
 							fract.Error(current, "Arrays is cannot take array value as element!")
 						}
+						braceCount--
+						if braceCount == 0 {
+							break
+						}
 					}
-				}
-
-				if braceCount == 0 {
-					break
 				}
 			}
 
@@ -330,11 +353,10 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 						bracketCount++
 					} else if current.Value == grammar.TokenLBracket {
 						bracketCount--
+						if bracketCount == 0 {
+							break
+						}
 					}
-				}
-
-				if bracketCount == 0 {
-					break
 				}
 			}
 			oindex++
@@ -531,10 +553,13 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		return value
 	}
 
+	data_count := getRequiredOperatorCount(tokens.Vals)
+
 	// Decompose arithmetic operations.
 	priorityIndex := parser.IndexProcessPriority(*tokens)
 	looped := priorityIndex != -1
 	for priorityIndex != -1 {
+		data_count--
 		var operation objects.ArithmeticProcess
 
 		operation.First = tokens.Vals[priorityIndex-1].(objects.Token)
@@ -564,13 +589,18 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		priorityIndex = parser.IndexProcessPriority(*tokens)
 	}
 
-	// One value?
+	// Not operatored?
 	if !looped {
 		var operation objects.ArithmeticProcess
 		operation.First = tokens.Vals[0].(objects.Token)
 		operation.FirstV.Array = true // Ignore nil control if function call.
 		i._processValue(true, &operation, tokens, 0)
 		value = operation.FirstV
+	}
+
+	if data_count > 0 {
+		fract.Error(tokens.Vals[0].(objects.Token),
+			"Invalid value!")
 	}
 
 	return value
