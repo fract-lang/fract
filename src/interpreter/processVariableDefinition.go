@@ -42,7 +42,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 
 	setter := tokens.Vals[2].(objects.Token)
 	// Setter is not a setter operator?
-	if setter.Type != fract.TypeOperator && setter.Value != grammar.Setter &&
+	if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals &&
 		setter.Value != grammar.Input {
 		fract.Error(setter, "This is not a setter operator!: "+setter.Value)
 	}
@@ -55,7 +55,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 
 	variable.Name = _name.Value
 	var value objects.Value
-	if setter.Value == grammar.Setter { // :=
+	if setter.Value == grammar.TokenEquals { // =
 		value = i.processValue(tokens.Sublist(3, tokenLen-3))
 	} else { // <<
 		value = i.processInput(*tokens.Sublist(3, tokenLen-3))

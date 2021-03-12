@@ -33,7 +33,7 @@ func compare(value0 objects.Value, value1 objects.Value, operator string) bool {
 		item0, _ := arithmetic.ToFloat64(value0.Content[index])
 		item1, _ := arithmetic.ToFloat64(value1.Content[index])
 		switch operator {
-		case grammar.TokenEquals: // Equals.
+		case grammar.Equals: // Equals.
 			if item0 == item1 {
 			} else {
 				return false
@@ -84,7 +84,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		if len(ands.Vals) > 1 {
 			for aindex := range ands.Vals {
 				if !compare(i.processValue(
-					ands.Vals[aindex].(*vector.Vector)), TrueValueIns, grammar.TokenEquals) {
+					ands.Vals[aindex].(*vector.Vector)), TrueValueIns, grammar.Equals) {
 					return grammar.FALSE
 				}
 			}
@@ -95,7 +95,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			if compare(i.processValue(&current), TrueValueIns, grammar.TokenEquals) {
+			if compare(i.processValue(&current), TrueValueIns, grammar.Equals) {
 				return grammar.TRUE
 			}
 			continue
