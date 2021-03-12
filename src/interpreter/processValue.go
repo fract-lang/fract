@@ -15,6 +15,24 @@ import (
 	"../utilities/vector"
 )
 
+// isConditional Expression is conditional?
+// tokens Tokens to check?
+func isConditional(tokens vector.Vector) bool {
+	// Search conditional expression.
+	for index := range tokens.Vals {
+		current := tokens.Vals[index].(objects.Token)
+		if current.Type == fract.TypeOperator &&
+			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
+				current.Value == grammar.TokenEquals || current.Value == grammar.NotEquals ||
+				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
+				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // checkValue Returns count of required operators.
 // tokens Tokens of statement.
 func getRequiredOperatorCount(tokens []interface{}) int {
@@ -548,7 +566,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	i.processRange(tokens)
 
 	// Is conditional expression?
-	if i.isConditional(*tokens) {
+	if isConditional(*tokens) {
 		value.Content = []string{arithmetic.IntToString(i.processCondition(tokens))}
 		return value
 	}
