@@ -15,13 +15,6 @@ import (
 // tokens Tokens to process.
 func (i *Interpreter) processFunction(tokens vector.Vector) {
 	tokenLen := len(tokens.Vals)
-
-	// Block declare is not defined?
-	if tokens.Vals[tokenLen-1].(objects.Token).Type != fract.TypeBlock {
-		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
-			"Where is the block declare!?")
-	}
-
 	_name := tokens.Vals[1].(objects.Token)
 
 	// Name is not name?
@@ -46,13 +39,13 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 		Parameters: []string{},
 	}
 
-	dtToken := tokens.Vals[tokenLen-2].(objects.Token)
+	dtToken := tokens.Vals[tokenLen-1].(objects.Token)
 	if dtToken.Type != fract.TypeBrace ||
 		dtToken.Value != grammar.TokenRParenthes {
 		fract.Error(dtToken, "Invalid syntax!")
 	}
 
-	paramList := tokens.Sublist(3, tokenLen-5)
+	paramList := tokens.Sublist(3, tokenLen-4)
 
 	// Decompose function parameters.
 	paramName := true

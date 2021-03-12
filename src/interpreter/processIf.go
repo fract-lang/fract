@@ -21,13 +21,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 
 	/* IF */
 	tokenLen := len(tokens.Vals)
-
-	// Block declare is not defined?
-	if tokens.Vals[tokenLen-1].(objects.Token).Type != fract.TypeBlock {
-		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
-			"Where is the block declare!?")
-	}
-	conditionList := tokens.Sublist(1, tokenLen-2)
+	conditionList := tokens.Sublist(1, tokenLen-1)
 
 	// Condition is empty?
 	if len(conditionList.Vals) == 0 {
@@ -52,13 +46,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			tokenLen = len(tokens.Vals)
-
-			// Block declare is not defined?
-			if tokens.Vals[tokenLen-1].(objects.Token).Type != fract.TypeBlock {
-				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
-					"Where is the block declare!?")
-			}
-			conditionList := tokens.Sublist(1, tokenLen-2)
+			conditionList := tokens.Sublist(1, tokenLen-1)
 
 			// Condition is empty?
 			if len(conditionList.Vals) == 0 {
@@ -102,10 +90,8 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			}
 			continue
 		} else if first.Type == fract.TypeElse { // Else block.
-			// Block declare is not defined?
-			if tokens.Vals[len(tokens.Vals)-1].(objects.Token).Type != fract.TypeBlock {
-				fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
-					"Where is the block declare!?")
+			if len(tokens.Vals) > 1 {
+				fract.Error(first, "Else block is not take any arguments!")
 			}
 
 			/* Interpret/skip block. */

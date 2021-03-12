@@ -124,11 +124,11 @@ func (l *Lexer) Generate() objects.Token {
 		"^(-|)\\s*[0-9]+(\\.[0-9]+)?(\\s|[[:punct:]]|$)").FindString(ln)); check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
-			l.lastToken.Type == fract.TypeBlock || l.lastToken.Type == fract.TypeStatementTerminator ||
-			l.lastToken.Type == fract.TypeLoop || l.lastToken.Type == fract.TypeComma ||
-			l.lastToken.Type == fract.TypeIn || l.lastToken.Type == fract.TypeIf ||
-			l.lastToken.Type == fract.TypeElseIf || l.lastToken.Type == fract.TypeElse ||
-			l.lastToken.Type == fract.TypeExit || l.lastToken.Type == fract.TypeReturn) { // Numeric value.
+			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
+			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
+			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
+			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeExit ||
+			l.lastToken.Type == fract.TypeReturn) { // Numeric value.
 		// Remove punct.
 		result, _ := regexp.MatchString("(\\s|[[:punct:]])$", check)
 		if result {
@@ -236,10 +236,6 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenLess) { // Less than (<).
 		token.Value = grammar.TokenLess
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenColon) { // Block start.
-		token.Value = grammar.TokenColon
-		token.Type = fract.TypeBlock
-		l.Line--
 	} else if isKeywordToken(ln, grammar.KwBlockEnd) { // End of block.
 		token.Value = grammar.KwBlockEnd
 		token.Type = fract.TypeBlockEnd
