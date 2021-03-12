@@ -206,9 +206,6 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
 		token.Value = grammar.TokenComma
 		token.Type = fract.TypeComma
-	} else if strings.HasPrefix(ln, grammar.Setter) { // Setter.
-		token.Value = grammar.Setter
-		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.Input) { // Input (<<).
 		token.Value = grammar.Input
 		token.Type = fract.TypeOperator
@@ -224,8 +221,8 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.LessEquals) { // Less than or equals to (<=).
 		token.Value = grammar.LessEquals
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenEquals) { // Equals to (=).
-		token.Value = grammar.TokenEquals
+	} else if strings.HasPrefix(ln, grammar.Equals) { // Equals to (==).
+		token.Value = grammar.Equals
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.NotEquals) { // Not equals to (<>).
 		token.Value = grammar.NotEquals
@@ -235,6 +232,9 @@ func (l *Lexer) Generate() objects.Token {
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLess) { // Less than (<).
 		token.Value = grammar.TokenLess
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.TokenEquals) { // Equals(=).
+		token.Value = grammar.TokenEquals
 		token.Type = fract.TypeOperator
 	} else if isKeywordToken(ln, grammar.KwBlockEnd) { // End of block.
 		token.Value = grammar.KwBlockEnd

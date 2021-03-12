@@ -23,7 +23,7 @@ func isConditional(tokens vector.Vector) bool {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeOperator &&
 			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
-				current.Value == grammar.TokenEquals || current.Value == grammar.NotEquals ||
+				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
 				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
 				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
 			return true
@@ -617,7 +617,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	}
 
 	if data_count > 0 {
-		fract.Error(tokens.Vals[0].(objects.Token),
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
 			"Invalid value!")
 	}
 

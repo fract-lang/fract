@@ -34,7 +34,7 @@ Fract uses nothing to print. Just write the value and print it out.
 5555 + 1 # Print 5556
 ```
 ```
-var x int32 := 5
+var x int32 = 5
 x # Print 5
 ```
 
@@ -86,28 +86,28 @@ Until the brackets are closed, they are tokenized.
 
 ### Syntax
 ```
-var [NAME] := [VALUE]
+var [NAME] = [VALUE]
 ```
 ```
-const [NAME] := [VALUE]
+const [NAME] = [VALUE]
 ```
 ### Examples
 ```
-const Pi := 3.14
+const Pi = 3.14
 ```
 ```
-var Fibonacci.First := 1
+var Fibonacci.First = 1
 ```
 
 ## Set Defined
 ### Syntax
 ```
-[NAME] := [VALUE]
+[NAME] = [VALUE]
 ```
 ### Examples
 ```
-var a := 45      # Value is 45
-a := 1           # Value is 1
+var a = 45      # Value is 45
+a = 1           # Value is 1
 ```
 
 ## Deletion Defines
@@ -121,18 +121,18 @@ del [NAME], [NAME], [NAME],...
 ```
 ### Examples
 ```
-var a := 4
-var a := 5       # Error, defined name 'a'
+var a = 4
+var a = 5       # Error, defined name 'a'
 
 ------------------
 
-var a := 4
+var a = 4
 del a            # Remove 'a' from memory
-var a := 5       # No error, a is 5
+var a = 5       # No error, a is 5
 ```
 ```
-var a := 0
-var b := 0
+var a = 0
+var b = 0
 del a, b         # Remove 'a' and 'b'
                  # No defined variables
 ```
@@ -141,11 +141,11 @@ del a, b         # Remove 'a' and 'b'
 They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
 Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
 ```
-var array := { 4, 5, 6, 7 }  # Elements: 4, 5, 6, 7
+var array = { 4, 5, 6, 7 }  # Elements: 4, 5, 6, 7
 ```
 The syntax for creating an array of a certain size without value:
 ```
-var array := [5] # Elements: 0, 0, 0, 0, 0
+var array = [5] # Elements: 0, 0, 0, 0, 0
 ```
 The syntax for accessing an element of an array with index:
 ```
@@ -153,18 +153,18 @@ array[index]
 ```
 The syntax for setting an element of an array with index:
 ```
-array[index] := value
+array[index] = value
 ```
 
 ### How can you quickly use the data in an array for arithmetic operations?
 ```
-var array := { 0, 4, 4, 2 }          # Elements: 0 4 4 2
-array := array + 5                   # Elements: 5 9 9 7
+var array = { 0, 4, 4, 2 }          # Elements: 0 4 4 2
+array = array + 5                   # Elements: 5 9 9 7
 ```
 ```
-var array := { 0, 4, 4, 2 }          # Elements: 0 4 4 2
-var array2 := { 2, 2, 2, 2 }         # Elements: 2 2 2 2
-array := array + array2              # Elements: 2 6 6 4
+var array = { 0, 4, 4, 2 }          # Elements: 0 4 4 2
+var array2 = { 2, 2, 2, 2 }         # Elements: 2 2 2 2
+array = array + array2              # Elements: 2 6 6 4
 ```
 
 > An array can be manipulated with an arithmetic value. However, when executing with a different array, the array must have only one element or the same number of elements.
@@ -196,7 +196,7 @@ end
 A condition can be given any kind of value, but it only works with true(1) and false(0).
 Unlike most languages, you won't get an error even if you only enter an integer value in the condition. It looks at the value and if it is 1 it fulfills the condition.
 ```
-var example := 0
+var example = 0
 if example
   # ...
 end
@@ -217,10 +217,10 @@ end
 ```
 #### Examples
 ```
-var counter := 0
+var counter = 0
 for counter <= 10
   counter
-  counter := counter + 1
+  counter = counter + 1
 end
 ```
 
@@ -235,13 +235,13 @@ end
 ```
 #### Examples
 ```
-var t1 := { 0, 3, 2, 1, 90 }
+var t1 = { 0, 3, 2, 1, 90 }
 for index in { 0, 1, 2, 3, 4 }
   t1[index]
 end
 ```
 ```
-var t1 := { 0, 3, 2, 1, 90 }
+var t1 = { 0, 3, 2, 1, 90 }
 for item in t1
   item
 end
@@ -251,9 +251,9 @@ end
 With the keyword break, it is possible to override and terminate the entire loop even when the loop could still return.
 #### Examples
 ```
-var counter := 0
+var counter = 0
 for counter <= 10
-  counter := counter + 1
+  counter = counter + 1
   if counter > 5
     break
   end
@@ -267,10 +267,10 @@ end
 It can be used to pass the cycle to the next cycle step. If there is no next loop step, the loop is terminated.
 ```
 for index in { 0, 1, 2, 3, 4.0 }
-  if index = 1 | index = 3
+  if index == 1 | index == 3
     continue
   end
-  var test := index
+  var test = index
   index
 end
 
@@ -296,7 +296,7 @@ Call:
 ```
 func int.prime(x)
   for y in range(2, x)
-    if x % y = 0
+    if x % y == 0
       ret false
     end
   end

@@ -43,7 +43,7 @@
     <td>Integer division with bigger.</td>
   </tr>
   <tr>
-    <td align="center"><b>:=</b></td>
+    <td align="center"><b>=</b></td>
     <td>Set with value.</td>
   </tr>
   <tr>
@@ -51,7 +51,7 @@
     <td>Set from user input.</td>
   </tr>
   <tr>
-    <td align="center"><b>=</b></td>
+    <td align="center"><b>==</b></td>
     <td>Equals to.</td>
   </tr>
   <tr>
