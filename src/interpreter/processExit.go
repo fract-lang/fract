@@ -24,7 +24,7 @@ func (i *Interpreter) processExit(tokens vector.Vector) {
 			"Value is not found!")
 	}
 
-	value := i.processValue(&vector.Vector{tokens.Vals[1:]})
+	value := i.processValue(&vector.Vector{Vals: tokens.Vals[1:]})
 
 	if value.Array {
 		fract.Error(first, "Array is not a valid value!")

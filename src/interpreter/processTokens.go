@@ -48,7 +48,7 @@ func printValue(value objects.Value) bool {
 // do Do processes?
 // nested Is nested?
 func (i *Interpreter) processTokens(tokens vector.Vector, do bool) int {
-	tokens = vector.Vector{append(make([]interface{}, 0), tokens.Vals...)}
+	tokens = vector.Vector{Vals: append(make([]interface{}, 0), tokens.Vals...)}
 
 	first := tokens.Vals[0].(objects.Token)
 
