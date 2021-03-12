@@ -20,7 +20,7 @@ func (i *Interpreter) Interpret() {
 		cacheTokens := i.lexer.Next()
 
 		// cacheTokens are empty?
-		if len(cacheTokens.Vals) == 0 {
+		if cacheTokens.Vals == nil {
 			continue
 		}
 
