@@ -31,7 +31,7 @@ func (i *Interpreter) Interpret() {
 
 	// Change blocks.
 	count := 0
-	for ; i.index < len(i.tokens.Vals); i.index++ {
+	for i.index = range i.tokens.Vals {
 		first := i.tokens.Vals[i.index].(vector.Vector).Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd {
 			count--
