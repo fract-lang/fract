@@ -1,9 +1,5 @@
 package objects
 
-import (
-	"../utils/vector"
-)
-
 // Function Function instance.
 type Function struct {
 	// Name of function.
@@ -11,7 +7,7 @@ type Function struct {
 	// Block start of function.
 	Start int
 	// Block content of function.
-	Tokens vector.Vector
+	Tokens []interface{}
 	// Parameters of function.
 	Parameters []string
 }

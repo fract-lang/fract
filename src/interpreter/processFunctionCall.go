@@ -101,12 +101,13 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 
 	nameIndex = i.index
 	itokens := i.tokens
-	i.tokens = function.Tokens
-	i.index = 0
+	i.tokens.Vals = function.Tokens
 
 	// Process block.
 	i.functions++
-	for ; ; i.index++ {
+	i.index = -1
+	for true {
+		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		i.funcTempVariables = len(i.vars.Vals) - i.funcTempVariables
 
