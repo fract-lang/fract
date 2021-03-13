@@ -31,9 +31,4 @@ func (i *Interpreter) Interpret() {
 	for ; i.index < len(i.tokens.Vals); i.index++ {
 		i.processTokens(i.tokens.Vals[i.index].(vector.Vector), true)
 	}
-
-	if i.blockCount > 0 { // Check blocks.
-		i.lexer.Line--
-		i.lexer.Error("Block is expected ending...")
-	}
 }
