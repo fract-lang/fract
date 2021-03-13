@@ -10,7 +10,7 @@ import (
 
 	"../../../fract"
 	"../../../interpreter"
-	"../../../utilities/fs"
+	"../../../utils/fs"
 )
 
 // Process Process command in module.

@@ -1,7 +1,7 @@
 package objects
 
 import (
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // Function Function instance.

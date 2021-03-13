@@ -9,7 +9,7 @@ import (
 	"../fract/arithmetic"
 	"../grammar"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // ProcessVariableSet Process variable set statement.

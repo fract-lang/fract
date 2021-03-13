@@ -10,8 +10,8 @@ import (
 
 	"../fract/arithmetic"
 	"../objects"
-	"../utilities/cli"
-	"../utilities/vector"
+	"../utils/cli"
+	"../utils/vector"
 )
 
 // processInput Process user input.

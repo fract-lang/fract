@@ -7,7 +7,7 @@ package parser
 import (
 	"../fract"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // DecomposeBrace Returns range tokens and index of first parentheses.

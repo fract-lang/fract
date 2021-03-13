@@ -9,7 +9,7 @@ import (
 	"../grammar"
 	"../objects"
 	"../parser"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // processArgument Process function argument.

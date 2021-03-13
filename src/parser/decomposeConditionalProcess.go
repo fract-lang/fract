@@ -7,7 +7,7 @@ package parser
 import (
 	"../fract"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // findNextOrOperator Find next or condition operator index and return if find, return -1 if not.

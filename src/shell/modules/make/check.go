@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"../../../fract"
-	"../../../utilities/fs"
+	"../../../utils/fs"
 )
 
 // Check Check invalid state of value.

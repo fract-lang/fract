@@ -3,7 +3,7 @@ package objects
 import (
 	"os"
 
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // CodeFile Code file instance.

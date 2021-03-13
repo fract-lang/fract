@@ -10,7 +10,7 @@ import (
 	"../fract"
 	"../fract/arithmetic"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // processExit Process exit keyword.

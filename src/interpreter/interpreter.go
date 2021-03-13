@@ -6,7 +6,7 @@ package interpreter
 
 import (
 	"../lexer"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // Interpreter Interprater of Fract.
