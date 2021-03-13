@@ -67,21 +67,23 @@
 #  end
 #end
 
-#var counter = 1
-#for counter <= 500
-#  var total = 0
-#  var ccounter = 1
-#  for ccounter < counter
-#    if counter % ccounter == 0:
-#      total = total + ccounter
-#    end
-#    ccounter = ccounter + 1
-#  end
-#  if total == counter
-#    counter
-#  end
-#  counter = counter + 1
-#end
+var counter = 1
+for counter <= 500
+  var total = 0
+  var ccounter = 1
+  for ccounter < counter
+    if counter % ccounter == 0
+      total = total + ccounter
+    end
+    ccounter = ccounter + 1
+  end
+  if total == counter
+    counter
+  end
+  counter = counter + 1
+end
+
+exit 0
 
 # ARRAY SUM TEST
 #var array = { 0, 4, 4, 2 }   # Elements: 0 4 4 2
