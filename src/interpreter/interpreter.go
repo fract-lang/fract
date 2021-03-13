@@ -31,8 +31,6 @@ type Interpreter struct {
 	index int
 	// Last return index.
 	returnIndex int
-	// BlockCount Count of declared not ended blocks.
-	blockCount int
 
 	/* PUBLIC */
 

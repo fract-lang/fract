@@ -40,8 +40,6 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 		fract.Error(_name, "Function is not defined!: "+_name.Value)
 	}
 
-	i.blockCount++
-
 	function := i.funcs.Vals[nameIndex].(objects.Function)
 
 	// Decompose arguments.
@@ -108,7 +106,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 
 	// Process block.
 	i.functions++
-	for ; i.index < len(i.tokens.Vals); i.index++ {
+	for ; ; i.index++ {
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		i.funcTempVariables = len(i.vars.Vals) - i.funcTempVariables
 
@@ -132,7 +130,6 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	i.funcs.Vals = i.funcs.Vals[:functionLen]
 
 	i.functions--
-	i.blockCount--
 	i.funcTempVariables = old
 	i.index = nameIndex
 	i.tokens = itokens

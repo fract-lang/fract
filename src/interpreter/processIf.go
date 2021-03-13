@@ -17,8 +17,6 @@ import (
 // tokens Tokens to process.
 // do Do processes?
 func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
-	i.blockCount++
-
 	/* IF */
 	tokenLen := len(tokens.Vals)
 	conditionList := tokens.Sublist(1, tokenLen-1)
@@ -35,14 +33,13 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
-	i.index++
-	for ; i.index < len(i.tokens.Vals); i.index++ {
+	for true {
+		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		do = kwstate == -1 && do
 
 		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
-			i.blockCount--
 			return kwstate
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			tokenLen = len(tokens.Vals)
@@ -58,13 +55,12 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			state = i.processCondition(conditionList)
 
 			/* Interpret/skip block. */
-			i.index++
-			for ; i.index < len(i.tokens.Vals); i.index++ {
+			for true {
+				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
 
 				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					i.blockCount--
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
@@ -95,13 +91,12 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			}
 
 			/* Interpret/skip block. */
-			i.index++
-			for ; i.index < len(i.tokens.Vals); i.index++ {
+			for true {
+				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
 
 				first := tokens.Vals[0].(objects.Token)
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					i.blockCount--
 					return kwstate
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, !actioned && do)
