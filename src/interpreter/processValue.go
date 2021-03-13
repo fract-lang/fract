@@ -104,7 +104,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 					valueList := operations.Sublist(index+2, cindex-index-3)
 					// Index value is empty?
-					if len(valueList.Vals) == 0 {
+					if valueList.Vals == nil {
 						fract.Error(token, "Index is not defined!")
 					}
 
@@ -228,7 +228,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			}
 			valueList := operations.Sublist(oindex+1, index-oindex-1)
 			// Index value is empty?
-			if len(valueList.Vals) == 0 {
+			if valueList.Vals == nil {
 				fract.Error(endToken, "Index is not defined!")
 			}
 
@@ -501,7 +501,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 	if first.Value == grammar.TokenLBracket {
 		valueList := tokens.Sublist(1, len(tokens.Vals)-2)
 
-		if len(valueList.Vals) == 0 {
+		if valueList.Vals == nil {
 			fract.Error(first, "Size is not defined!")
 		}
 
@@ -528,7 +528,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeComma {
 			lst := tokens.Sublist(comma, index-comma)
-			if len(lst.Vals) == 0 {
+			if lst.Vals == nil {
 				fract.Error(first, "Value is not defined!")
 			}
 			val := i.processValue(lst)
@@ -542,7 +542,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 
 	if comma < len(tokens.Vals)-1 {
 		lst := tokens.Sublist(comma, len(tokens.Vals)-comma-1)
-		if len(lst.Vals) == 0 {
+		if lst.Vals == nil {
 			fract.Error(first, "Value is not defined!")
 		}
 		val := i.processValue(lst)

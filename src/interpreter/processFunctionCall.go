@@ -65,7 +65,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 			}
 		} else if current.Type == fract.TypeComma && braceCount == 0 {
 			valueList := tokens.Sublist(lastComma, index-lastComma)
-			if len(valueList.Vals) == 0 {
+			if valueList.Vals == nil {
 				fract.Error(current, "Value is not defined!")
 			}
 			vars = append(vars, processArgument(function, current, count,
@@ -78,7 +78,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	if tokenLen := len(tokens.Vals); lastComma < tokenLen {
 		current := tokens.Vals[lastComma].(objects.Token)
 		valueList := tokens.Sublist(lastComma, tokenLen-lastComma)
-		if len(valueList.Vals) == 0 {
+		if valueList.Vals == nil {
 			fract.Error(current, "Value is not defined!")
 		}
 		vars = append(vars, processArgument(function, current, count,
@@ -118,7 +118,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 			tokens := i.tokens.Vals[i.returnIndex].(vector.Vector)
 			i.returnIndex = fract.TypeNone
 			valueList := vector.Vector{Vals: tokens.Vals[1:]}
-			if len(valueList.Vals) == 0 {
+			if valueList.Vals == nil {
 				break
 			}
 			returnValue = i.processValue(&valueList)
