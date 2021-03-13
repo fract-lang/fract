@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"../objects"
-	"../utilities/fs"
+	"../utils/fs"
 )
 
 // ReadyFile Create instance of code file.

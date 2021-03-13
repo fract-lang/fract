@@ -6,7 +6,7 @@ package lexer
 
 import (
 	"../fract"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // Next Lex next line.

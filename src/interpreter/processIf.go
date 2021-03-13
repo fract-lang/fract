@@ -8,7 +8,7 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // processIf Process if-elif-else blocks and returns loop keyword state.

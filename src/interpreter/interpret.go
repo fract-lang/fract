@@ -5,7 +5,7 @@
 package interpreter
 
 import (
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // Interpret Interpret file.

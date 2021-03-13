@@ -12,7 +12,7 @@ import (
 	"../grammar"
 	"../objects"
 	"../parser"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // isConditional Expression is conditional?

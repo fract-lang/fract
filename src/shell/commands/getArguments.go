@@ -7,7 +7,7 @@ package commands
 import (
 	"regexp"
 
-	"../../utilities/vector"
+	"../../utils/vector"
 )
 
 // GetArguments Get arguments of command.

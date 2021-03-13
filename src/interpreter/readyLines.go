@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // ReadyLines Ready lines to process.

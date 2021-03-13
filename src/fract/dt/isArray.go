@@ -4,7 +4,7 @@
 
 package dt
 
-import "../../utilities/vector"
+import "../../utils/vector"
 
 // IsArray Value is array?
 // value Value to check.

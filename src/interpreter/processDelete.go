@@ -8,7 +8,7 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // processDelete Process delete keyword.

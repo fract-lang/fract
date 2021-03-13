@@ -4,7 +4,7 @@ import (
 	"../fract"
 	"../grammar"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // IndexProcessPriority Find index of priority operator.

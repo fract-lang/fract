@@ -10,7 +10,7 @@ import (
 	"../grammar"
 	"../objects"
 	"../parser"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 var (

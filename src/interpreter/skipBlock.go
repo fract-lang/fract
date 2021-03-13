@@ -7,7 +7,7 @@ package interpreter
 import (
 	"../fract"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // skipBlock Skip to block end.

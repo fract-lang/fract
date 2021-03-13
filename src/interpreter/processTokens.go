@@ -11,7 +11,7 @@ import (
 	"../fract/arithmetic"
 	"../grammar"
 	"../objects"
-	"../utilities/vector"
+	"../utils/vector"
 )
 
 // printValue Print value to screen.
