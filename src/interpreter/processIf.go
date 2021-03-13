@@ -30,17 +30,19 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 
 	state := i.processCondition(conditionList)
 	actioned := state == grammar.TRUE
+	variableLen := len(i.vars.Vals)
+	functionLen := len(i.funcs.Vals)
 	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
 	for true {
 		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
+		first := tokens.Vals[0].(objects.Token)
 		do = kwstate == -1 && do
 
-		first := tokens.Vals[0].(objects.Token)
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
-			return kwstate
+			goto ret
 		} else if first.Type == fract.TypeElseIf { // Else if block.
 			tokenLen = len(tokens.Vals)
 			conditionList := tokens.Sublist(1, tokenLen-1)
@@ -58,10 +60,10 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			for true {
 				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
-
 				first := tokens.Vals[0].(objects.Token)
+
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					return kwstate
+					goto ret
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
 					continue
@@ -94,10 +96,10 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			for true {
 				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
-
 				first := tokens.Vals[0].(objects.Token)
+
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
-					return kwstate
+					goto ret
 				} else if first.Type == fract.TypeIf { // If block.
 					i.processIf(tokens, !actioned && do)
 					continue
@@ -119,5 +121,8 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			}
 		}
 	}
+ret:
+	i.vars.Vals = i.vars.Vals[:variableLen]
+	i.funcs.Vals = i.funcs.Vals[:functionLen]
 	return kwstate
 }
