@@ -20,7 +20,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	contentList := tokens.Sublist(1, len(tokens.Vals)-1)
 
 	// Content is empty?
-	if len(contentList.Vals) == 0 {
+	if contentList.Vals == nil {
 		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")
 	}
 

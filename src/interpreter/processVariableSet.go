@@ -43,7 +43,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 			if current.Type == fract.TypeBrace && current.Value == grammar.TokenRBracket {
 				valueList := tokens.Sublist(2, cindex-2)
 				// Index value is empty?
-				if len(valueList.Vals) == 0 {
+				if valueList.Vals == nil {
 					fract.Error(setter, "Index is not defined!")
 				}
 				position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
