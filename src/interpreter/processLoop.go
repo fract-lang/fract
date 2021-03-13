@@ -17,8 +17,7 @@ import (
 func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	i.blockCount++
 
-	tokenLen := len(tokens.Vals)
-	contentList := tokens.Sublist(1, tokenLen-1)
+	contentList := tokens.Sublist(1, len(tokens.Vals)-1)
 
 	// Content is empty?
 	if len(contentList.Vals) == 0 {
@@ -26,6 +25,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	}
 
 	functionLen := len(i.funcs.Vals)
+	tokenLen := len(i.tokens.Vals)
 	_break := false
 	kwstate := fract.TypeNone
 	iindex := i.index
@@ -38,7 +38,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 
 		/* Interpret/skip block. */
 		i.index++
-		for ; i.index < len(i.tokens.Vals); i.index++ {
+		for ; i.index < tokenLen; i.index++ {
 			tokens := i.tokens.Vals[i.index].(vector.Vector)
 			condition := i.processCondition(contentList)
 
@@ -118,7 +118,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	} else {
 		for vindex := 0; vindex < len(value.Content); {
 			i.index++
-			if i.index >= len(i.tokens.Vals) {
+			if i.index >= tokenLen {
 				return kwstate
 			}
 			tokens := i.tokens.Vals[i.index].(vector.Vector)
