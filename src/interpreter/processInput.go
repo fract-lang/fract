@@ -10,20 +10,12 @@ import (
 
 	"../fract/arithmetic"
 	"../objects"
-	"../utils/cli"
 	"../utils/vector"
 )
 
 // processInput Process user input.
 // tokens Tokens to process.
 func (i *Interpreter) processInput(tokens vector.Vector) objects.Value {
-	if len(tokens.Vals) == 0 {
-		return objects.Value{
-			Content: []string{cli.Input("")},
-			Charray: true,
-			Array:   true,
-		}
-	}
 	printValue(i.processValue(&tokens))
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
