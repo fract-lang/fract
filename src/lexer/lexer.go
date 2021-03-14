@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/fract/src/objects"
 )
 
 // Lexer of Fract.

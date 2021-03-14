@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fract-lang/src/fract"
-	"github.com/fract-lang/src/interpreter"
-	"github.com/fract-lang/src/utils/fs"
+	"github.com/fract-lang/fract/src/fract"
+	"github.com/fract-lang/fract/src/interpreter"
+	"github.com/fract-lang/fract/src/utils/fs"
 )
 
 // Process Process command in module.

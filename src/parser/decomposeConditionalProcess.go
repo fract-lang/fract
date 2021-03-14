@@ -5,9 +5,9 @@
 package parser
 
 import (
-	"github.com/fract-lang/src/fract"
-	"github.com/fract-lang/src/objects"
-	"github.com/fract-lang/src/utils/vector"
+	"github.com/fract-lang/fract/src/fract"
+	"github.com/fract-lang/fract/src/objects"
+	"github.com/fract-lang/fract/src/utils/vector"
 )
 
 // findNextOrOperator Find next or condition operator index and return if find, return -1 if not.

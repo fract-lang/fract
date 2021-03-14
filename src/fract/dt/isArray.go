@@ -4,7 +4,7 @@
 
 package dt
 
-import "github.com/fract-lang/src/utils/vector"
+import "github.com/fract-lang/fract/src/utils/vector"
 
 // IsArray Value is array?
 // value Value to check.

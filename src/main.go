@@ -23,7 +23,7 @@ package main
 import (
 	"os"
 
-	"github.com/fract-lang/src/shell/commands"
+	"github.com/fract-lang/fract/src/shell/commands"
 )
 
 func main() {

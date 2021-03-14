@@ -7,8 +7,8 @@ package interpreter
 import (
 	"strings"
 
-	"github.com/fract-lang/src/objects"
-	"github.com/fract-lang/src/utils/fs"
+	"github.com/fract-lang/fract/src/objects"
+	"github.com/fract-lang/fract/src/utils/fs"
 )
 
 // ReadyFile Create instance of code file.

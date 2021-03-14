@@ -7,7 +7,7 @@ package version
 import (
 	"fmt"
 
-	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/fract/src/fract"
 )
 
 // Process Process command in module.

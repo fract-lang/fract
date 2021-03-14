@@ -7,7 +7,7 @@ package arithmetic
 import (
 	"strconv"
 
-	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/fract/src/grammar"
 )
 
 // ToInt64 String to 64bit integer.
