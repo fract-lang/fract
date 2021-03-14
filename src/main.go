@@ -26,7 +26,7 @@ import (
 	"github.com/fract-lang/fract/src/shell/commands"
 )
 
-func main() {
+func init() {
 	// not started with arguments.
 	if len(os.Args) < 2 {
 		os.Exit(0)
@@ -45,7 +45,10 @@ func main() {
 		}
 		command += " " + os.Args[index]
 	}
+	os.Args[0] = command
+}
 
-	processCommand(commands.GetNamespace(command),
-		commands.RemoveNamespace(command))
+func main() {
+	processCommand(commands.GetNamespace(os.Args[0]),
+		commands.RemoveNamespace(os.Args[0]))
 }
