@@ -7,7 +7,7 @@ package arithmetic
 import (
 	"strconv"
 
-	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/fract/src/grammar"
 )
 
 // ToFloat64 String to double.

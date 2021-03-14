@@ -3,7 +3,7 @@ package objects
 import (
 	"os"
 
-	"../utils/vector"
+	"github.com/fract-lang/fract/src/utils/vector"
 )
 
 // CodeFile Code file instance.

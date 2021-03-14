@@ -7,7 +7,7 @@ package help
 import (
 	"fmt"
 
-	"github.com/fract-lang/src/utils/cli"
+	"github.com/fract-lang/fract/src/utils/cli"
 )
 
 // Process Process command in module.

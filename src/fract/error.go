@@ -5,7 +5,7 @@
 package fract
 
 import (
-	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/fract/src/objects"
 )
 
 // Error Exit with error.

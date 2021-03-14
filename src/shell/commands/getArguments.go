@@ -7,7 +7,7 @@ package commands
 import (
 	"regexp"
 
-	"github.com/fract-lang/src/utils/vector"
+	"github.com/fract-lang/fract/src/utils/vector"
 )
 
 // GetArguments Get arguments of command.

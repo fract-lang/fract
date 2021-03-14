@@ -5,8 +5,8 @@
 package lexer
 
 import (
-	"github.com/fract-lang/src/fract"
-	"github.com/fract-lang/src/utils/vector"
+	"github.com/fract-lang/fract/src/fract"
+	"github.com/fract-lang/fract/src/utils/vector"
 )
 
 // Next Lex next line.

@@ -5,8 +5,8 @@
 package interpreter
 
 import (
-	"github.com/fract-lang/src/lexer"
-	"github.com/fract-lang/src/utils/vector"
+	"github.com/fract-lang/fract/src/lexer"
+	"github.com/fract-lang/fract/src/utils/vector"
 )
 
 // Interpreter Interprater of Fract.

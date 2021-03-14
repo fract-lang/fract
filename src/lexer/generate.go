@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/fract-lang/src/fract"
-	"github.com/fract-lang/src/grammar"
-	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/fract/src/fract"
+	"github.com/fract-lang/fract/src/grammar"
+	"github.com/fract-lang/fract/src/objects"
 )
 
 // processEsacepeSequence Process char literal espace sequence.
