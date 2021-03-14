@@ -32,13 +32,9 @@ func init() {
 		os.Exit(0)
 	}
 
+	os.Args = os.Args[1:]
 	command := ""
-	skipped := false
 	for index := range os.Args {
-		if !skipped {
-			skipped = true
-			continue
-		}
 		if command == "" {
 			command += os.Args[index]
 			continue
