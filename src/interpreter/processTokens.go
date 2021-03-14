@@ -7,11 +7,11 @@ package interpreter
 import (
 	"fmt"
 
-	"../fract"
-	"../fract/arithmetic"
-	"../grammar"
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/fract/arithmetic"
+	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // printValue Print value to screen.

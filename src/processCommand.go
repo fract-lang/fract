@@ -7,10 +7,10 @@ package main
 import (
 	"fmt"
 
-	ModuleExit "./shell/modules/exit"
-	ModuleHelp "./shell/modules/help"
-	ModuleMake "./shell/modules/make"
-	ModuleVersion "./shell/modules/version"
+	ModuleExit "github.com/fract-lang/src/shell/modules/exit"
+	ModuleHelp "github.com/fract-lang/src/shell/modules/help"
+	ModuleMake "github.com/fract-lang/src/shell/modules/make"
+	ModuleVersion "github.com/fract-lang/src/shell/modules/version"
 )
 
 func processCommand(ns string, cmd string) {

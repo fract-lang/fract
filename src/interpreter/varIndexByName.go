@@ -5,7 +5,7 @@
 package interpreter
 
 import (
-	"../objects"
+	"github.com/fract-lang/src/objects"
 )
 
 // varIndexByName Find index of variable by name.

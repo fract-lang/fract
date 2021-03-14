@@ -5,9 +5,9 @@
 package parser
 
 import (
-	"../fract"
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // DecomposeBrace Returns range tokens and index of first parentheses.

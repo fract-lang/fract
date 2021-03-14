@@ -5,10 +5,10 @@
 package interpreter
 
 import (
-	"../fract"
-	"../grammar"
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // processIf Process if-elif-else blocks and returns loop keyword state.

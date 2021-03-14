@@ -5,7 +5,7 @@
 package dt
 
 import (
-	"../../grammar"
+	"github.com/fract-lang/src/grammar"
 )
 
 // IsDataType Check value is a data type or not?

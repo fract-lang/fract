@@ -1,10 +1,10 @@
 package parser
 
 import (
-	"../fract"
-	"../grammar"
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // IndexProcessPriority Find index of priority operator.

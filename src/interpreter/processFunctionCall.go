@@ -5,11 +5,11 @@
 package interpreter
 
 import (
-	"../fract"
-	"../grammar"
-	"../objects"
-	"../parser"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/parser"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // processArgument Process function argument.

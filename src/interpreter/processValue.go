@@ -7,12 +7,12 @@ package interpreter
 import (
 	"strings"
 
-	"../fract"
-	"../fract/arithmetic"
-	"../grammar"
-	"../objects"
-	"../parser"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/fract/arithmetic"
+	"github.com/fract-lang/src/grammar"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/parser"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // isConditional Expression is conditional?

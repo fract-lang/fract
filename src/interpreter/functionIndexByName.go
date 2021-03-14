@@ -5,7 +5,7 @@
 package interpreter
 
 import (
-	"../objects"
+	"github.com/fract-lang/src/objects"
 )
 
 // functionIndexByName Find index of function by name.
