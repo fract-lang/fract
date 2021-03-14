@@ -7,7 +7,7 @@ package arithmetic
 import (
 	"strings"
 
-	"../../grammar"
+	"github.com/fract-lang/src/grammar"
 )
 
 // IsFloatValue Value is float?

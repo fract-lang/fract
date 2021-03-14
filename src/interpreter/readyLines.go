@@ -7,8 +7,8 @@ package interpreter
 import (
 	"strings"
 
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // ReadyLines Ready lines to process.

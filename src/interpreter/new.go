@@ -5,7 +5,7 @@
 package interpreter
 
 import (
-	"../lexer"
+	"github.com/fract-lang/src/lexer"
 )
 
 // New Create new instance of Parser.

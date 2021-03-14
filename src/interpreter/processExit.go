@@ -7,10 +7,10 @@ package interpreter
 import (
 	"os"
 
-	"../fract"
-	"../fract/arithmetic"
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/fract/arithmetic"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // processExit Process exit keyword.

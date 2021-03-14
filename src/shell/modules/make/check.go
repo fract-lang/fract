@@ -7,8 +7,8 @@ package make
 import (
 	"strings"
 
-	"../../../fract"
-	"../../../utils/fs"
+	"github.com/fract-lang/src/fract"
+	"github.com/fract-lang/src/utils/fs"
 )
 
 // Check Check invalid state of value.

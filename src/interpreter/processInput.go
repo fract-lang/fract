@@ -8,9 +8,9 @@ import (
 	"bufio"
 	"os"
 
-	"../fract/arithmetic"
-	"../objects"
-	"../utils/vector"
+	"github.com/fract-lang/src/fract/arithmetic"
+	"github.com/fract-lang/src/objects"
+	"github.com/fract-lang/src/utils/vector"
 )
 
 // processInput Process user input.
