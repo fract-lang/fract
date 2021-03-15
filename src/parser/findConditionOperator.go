@@ -14,8 +14,8 @@ import (
 // FindConditionOperator Find next condition operator.
 // tokens Tokens to search.
 func FindConditionOperator(tokens vector.Vector) (int, string) {
-	for index := range tokens.Vals {
-		current := tokens.Vals[index].(objects.Token)
+	for index, current := range tokens.Vals {
+		current := current.(objects.Token)
 		if current.Type == fract.TypeOperator && (current.Value == grammar.Equals ||
 			current.Value == grammar.NotEquals || current.Value == grammar.TokenGreat ||
 			current.Value == grammar.TokenLess || current.Value == grammar.GreaterEquals ||

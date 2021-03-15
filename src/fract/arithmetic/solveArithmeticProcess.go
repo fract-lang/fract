@@ -83,23 +83,23 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
 
 		if len(process.FirstV.Content) == 1 {
 			first, _ := ToFloat64(process.FirstV.Content[0])
-			for index := range process.SecondV.Content {
-				second, _ := ToFloat64(process.SecondV.Content[index])
+			for index, current := range process.SecondV.Content {
+				second, _ := ToFloat64(current)
 				process.SecondV.Content[index] = fmt.Sprintf("%g",
 					solve(process.Operator, first, second))
 			}
 			value.Content = process.SecondV.Content
 		} else if len(process.SecondV.Content) == 1 {
 			second, _ := ToFloat64(process.SecondV.Content[0])
-			for index := range process.FirstV.Content {
-				first, _ := ToFloat64(process.FirstV.Content[index])
+			for index, current := range process.FirstV.Content {
+				first, _ := ToFloat64(current)
 				process.FirstV.Content[index] = fmt.Sprintf("%g",
 					solve(process.Operator, first, second))
 			}
 			value.Content = process.FirstV.Content
 		} else {
-			for index := range process.FirstV.Content {
-				first, _ := ToFloat64(process.FirstV.Content[index])
+			for index, current := range process.FirstV.Content {
+				first, _ := ToFloat64(current)
 				second, _ := ToFloat64(process.SecondV.Content[index])
 				process.FirstV.Content[index] = fmt.Sprintf("%g",
 					solve(process.Operator, first, second))
@@ -113,8 +113,8 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
 		}
 
 		second, _ := ToFloat64(process.SecondV.Content[0])
-		for index := range process.FirstV.Content {
-			first, _ := ToFloat64(process.FirstV.Content[index])
+		for index, current := range process.FirstV.Content {
+			first, _ := ToFloat64(current)
 			process.FirstV.Content[index] = fmt.Sprintf("%g",
 				solve(process.Operator, first, second))
 		}
@@ -126,8 +126,8 @@ func SolveArithmeticProcess(process objects.ArithmeticProcess) objects.Value {
 		}
 
 		first, _ := ToFloat64(process.FirstV.Content[0])
-		for index := range process.SecondV.Content {
-			second, _ := ToFloat64(process.SecondV.Content[index])
+		for index, current := range process.SecondV.Content {
+			second, _ := ToFloat64(current)
 			process.SecondV.Content[index] = fmt.Sprintf("%g",
 				solve(process.Operator, second, first))
 		}

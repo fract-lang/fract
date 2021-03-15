@@ -49,14 +49,13 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 
 	// Decompose function parameters.
 	paramName := true
-	for index := range paramList.Vals {
-		current := paramList.Vals[index].(objects.Token)
+	for _, current := range paramList.Vals {
+		current := current.(objects.Token)
 		if paramName {
 			if current.Type != fract.TypeName {
 				fract.Error(current, "Parameter name is not found!")
 			}
-			function.Parameters = append(function.Parameters,
-				paramList.Vals[index].(objects.Token).Value)
+			function.Parameters = append(function.Parameters, current.Value)
 			paramName = false
 		} else {
 			if current.Type != fract.TypeComma {

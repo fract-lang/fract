@@ -34,12 +34,12 @@ func init() {
 
 	os.Args = os.Args[1:]
 	command := ""
-	for index := range os.Args {
+	for _, current := range os.Args {
 		if command == "" {
-			command += os.Args[index]
+			command += current
 			continue
 		}
-		command += " " + os.Args[index]
+		command += " " + current
 	}
 	os.Args[0] = command
 }

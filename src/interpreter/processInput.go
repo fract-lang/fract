@@ -25,8 +25,8 @@ func (i *Interpreter) processInput(tokens vector.Vector) objects.Value {
 		Charray: true,
 		Array:   true,
 	}
-	for index := range input {
-		value.Content = append(value.Content, arithmetic.IntToString(input[index]))
+	for _, char := range input {
+		value.Content = append(value.Content, arithmetic.IntToString(char))
 	}
 	return value
 }

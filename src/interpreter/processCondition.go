@@ -75,8 +75,8 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(*tokens, grammar.TokenVerticalBar)
-	for index := range ors.Vals {
-		current := ors.Vals[index].(vector.Vector)
+	for _, current := range ors.Vals {
+		current := current.(vector.Vector)
 
 		// Decompose and conditions.
 		ands := parser.DecomposeConditionalProcess(current, grammar.TokenAmper)

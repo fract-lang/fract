@@ -37,7 +37,6 @@ func PrintMapAsTable(dict map[string]string) {
 	}
 	maxlen += 5
 	for key := range dict {
-		fmt.Println(key + " " + getws(maxlen-len(key)) +
-			dict[key])
+		fmt.Println(key + " " + getws(maxlen-len(key)) + dict[key])
 	}
 }
