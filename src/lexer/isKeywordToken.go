@@ -13,5 +13,5 @@ import (
 // kw Target keyword.
 func isKeywordToken(ln, kw string) bool {
 	return regexp.MustCompile(
-		"^" + kw + "(\\s+|$|[[:punct:]])").MatchString(ln)
+		"^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
 }

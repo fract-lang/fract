@@ -9,6 +9,6 @@ import "regexp"
 // RemoveArguments Remove arguments from command.
 // command Command.
 func RemoveArguments(command string) string {
-	pattern := regexp.MustCompile("(^|\\s+)-\\w+(?=($|\\s+))")
+	pattern := regexp.MustCompile(`(^|\s+)-\w+`)
 	return pattern.ReplaceAllString(command, "")
 }

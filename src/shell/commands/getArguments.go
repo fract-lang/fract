@@ -14,7 +14,7 @@ import (
 // command Command.
 func GetArguments(command string) vector.Vector {
 	var args vector.Vector
-	pattern := regexp.MustCompile("(^|\\s+)-\\w+(?=($|\\s+))")
+	pattern := regexp.MustCompile(`(^|\s+)-\w+`)
 	for arg := range pattern.FindAllString(command, -1) {
 		args.Vals = append(args.Vals, arg)
 	}
