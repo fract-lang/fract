@@ -6,21 +6,9 @@ package cli
 
 import (
 	"fmt"
+
+	"github.com/fract-lang/fract/src/utils/str"
 )
-
-// *********************
-//       PRIVATE
-// *********************
-
-// Returns string whitespace by count.
-// count Count of whitespace.
-func getws(count int) string {
-	var str string = ""
-	for counter := 1; counter <= count; counter++ {
-		str += " "
-	}
-	return str
-}
 
 // *********************
 //        PUBLIC
@@ -37,6 +25,6 @@ func PrintMapAsTable(dict map[string]string) {
 	}
 	maxlen += 5
 	for key := range dict {
-		fmt.Println(key + " " + getws(maxlen-len(key)) + dict[key])
+		fmt.Println(key + " " + str.GetWhitespace(maxlen-len(key)) + dict[key])
 	}
 }

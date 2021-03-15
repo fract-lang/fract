@@ -106,7 +106,7 @@ func (i *Interpreter) processTokens(tokens vector.Vector, do bool) int {
 		i.returnIndex = i.index
 		return fract.FUNCReturn
 	} else {
-		fract.Error(first, "What is this?: "+first.Value)
+		fract.Error(first, "What is this?")
 	}
 	return fract.TypeNone
 }

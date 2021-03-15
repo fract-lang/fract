@@ -37,7 +37,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	// Name is not defined?
 	nameIndex := i.functionIndexByName(_name.Value)
 	if nameIndex == -1 {
-		fract.Error(_name, "Function is not defined!: "+_name.Value)
+		fract.Error(_name, "Function is not defined in this name!: "+_name.Value)
 	}
 
 	function := i.funcs.Vals[nameIndex].(objects.Function)

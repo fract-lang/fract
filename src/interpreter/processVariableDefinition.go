@@ -21,7 +21,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	// Name is not defined?
 	if tokenLen < 2 {
 		first := tokens.Vals[0].(objects.Token)
-		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
+		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Name is not found!")
 	}
 
@@ -31,12 +31,12 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
 	} else if i.varIndexByName(_name.Value) != -1 { // Name is already defined?
-		fract.Error(_name, "Already defined this name!: "+_name.Value)
+		fract.Error(_name, "Variable already defined in this name!: "+_name.Value)
 	}
 
 	// Data type is not defined?
 	if tokenLen < 3 {
-		fract.ErrorCustom(_name.File.Path, _name.Line, _name.Column+len(_name.Value),
+		fract.ErrorCustom(_name.File, _name.Line, _name.Column+len(_name.Value),
 			"Setter is not found!")
 	}
 
@@ -49,7 +49,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 
 	// Value is not defined?
 	if tokenLen < 4 {
-		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
+		fract.ErrorCustom(setter.File, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
