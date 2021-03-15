@@ -49,8 +49,8 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	lastComma := 0
 	count := 0
 	vars := make([]interface{}, 0)
-	for index := range tokens.Vals {
-		current := tokens.Vals[index].(objects.Token)
+	for index, current := range tokens.Vals {
+		current := current.(objects.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == grammar.TokenLParenthes ||
 				current.Value == grammar.TokenLBrace ||

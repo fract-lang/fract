@@ -27,8 +27,8 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 	/* Find open parentheses. */
 	if nonCheck {
 		name := false
-		for index := range tokens.Vals {
-			current := tokens.Vals[index].(objects.Token)
+		for index, current := range tokens.Vals {
+			current := current.(objects.Token)
 			if current.Type == fract.TypeName {
 				name = true
 			} else if !name && current.Type == fract.TypeBrace && current.Value == open {
@@ -37,8 +37,8 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 			}
 		}
 	} else {
-		for index := range tokens.Vals {
-			current := tokens.Vals[index].(objects.Token)
+		for index, current := range tokens.Vals {
+			current := current.(objects.Token)
 			if current.Type == fract.TypeBrace && current.Value == open {
 				first = index
 				break

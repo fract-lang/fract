@@ -11,8 +11,8 @@ import (
 // varIndexByName Find index of variable by name.
 // name Name to find.
 func (i Interpreter) varIndexByName(name string) int {
-	for index := range i.vars.Vals {
-		if i.vars.Vals[index].(objects.Variable).Name == name {
+	for index, current := range i.vars.Vals {
+		if current.(objects.Variable).Name == name {
 			return index
 		}
 	}

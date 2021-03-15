@@ -17,8 +17,8 @@ func IndexProcessPriority(tokens vector.Vector) int {
 	multiplyOrDivive := fract.TypeNone
 	additionOrSubtraction := fract.TypeNone
 
-	for index := range tokens.Vals {
-		_token := tokens.Vals[index].(objects.Token)
+	for index, _token := range tokens.Vals {
+		_token := _token.(objects.Token)
 
 		if _token.Type == fract.TypeBrace {
 			if _token.Value == grammar.TokenLBracket ||

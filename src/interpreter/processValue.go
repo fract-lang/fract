@@ -19,8 +19,8 @@ import (
 // tokens Tokens to check?
 func isConditional(tokens vector.Vector) bool {
 	// Search conditional expression.
-	for index := range tokens.Vals {
-		current := tokens.Vals[index].(objects.Token)
+	for _, current := range tokens.Vals {
+		current := current.(objects.Token)
 		if current.Type == fract.TypeOperator &&
 			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
 				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
@@ -38,8 +38,8 @@ func isConditional(tokens vector.Vector) bool {
 func getRequiredOperatorCount(tokens []interface{}) int {
 	counter := 0
 	bracket := 0
-	for index := range tokens {
-		current := tokens[index].(objects.Token)
+	for _, current := range tokens {
+		current := current.(objects.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == grammar.TokenLBracket ||
 				current.Value == grammar.TokenLBrace ||
@@ -462,10 +462,10 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 				Value: grammar.TokenLBrace,
 				Type:  fract.TypeBrace,
 			})
-			for index := range val.Content {
+			for _, current := range val.Content {
 				found++
 				tokens.Insert(found, objects.Token{
-					Value: val.Content[index],
+					Value: current,
 					Type:  fract.TypeValue,
 				})
 				found++

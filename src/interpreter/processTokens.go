@@ -23,8 +23,8 @@ func printValue(value objects.Value) bool {
 
 	if value.Array {
 		if value.Charray {
-			for index := range value.Content {
-				ch, _ := arithmetic.ToInt64(value.Content[index])
+			for _, current := range value.Content {
+				ch, _ := arithmetic.ToInt64(current)
 				fmt.Printf("%c", ch)
 			}
 		} else {
@@ -59,8 +59,8 @@ func (i *Interpreter) processTokens(tokens vector.Vector, do bool) int {
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
 		if first.Type == fract.TypeName {
-			for index := range tokens.Vals {
-				current := tokens.Vals[index].(objects.Token)
+			for _, current := range tokens.Vals {
+				current := current.(objects.Token)
 				if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.TokenEquals ||
 						current.Value == grammar.Input) { // Variable setting.
