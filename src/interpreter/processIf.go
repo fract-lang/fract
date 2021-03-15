@@ -35,7 +35,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
-	for true {
+	for {
 		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		first := tokens.Vals[0].(objects.Token)
@@ -57,7 +57,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			state = i.processCondition(conditionList)
 
 			/* Interpret/skip block. */
-			for true {
+			for {
 				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
 				first := tokens.Vals[0].(objects.Token)
@@ -93,7 +93,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			}
 
 			/* Interpret/skip block. */
-			for true {
+			for {
 				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
 				first := tokens.Vals[0].(objects.Token)

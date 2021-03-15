@@ -106,7 +106,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	// Process block.
 	i.functions++
 	i.index = -1
-	for true {
+	for {
 		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		i.funcTempVariables = len(i.vars.Vals) - i.funcTempVariables

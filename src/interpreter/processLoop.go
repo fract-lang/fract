@@ -35,42 +35,42 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 		variableLen := len(i.vars.Vals)
 
 		/* Interpret/skip block. */
-	next:
-		i.index++
-		tokens := i.tokens.Vals[i.index].(vector.Vector)
-		condition := i.processCondition(contentList)
+		for {
+			i.index++
+			tokens := i.tokens.Vals[i.index].(vector.Vector)
+			condition := i.processCondition(contentList)
 
-		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
-			// Remove temporary variables.
-			i.vars.Vals = i.vars.Vals[:variableLen]
-			// Remove temporary functions.
-			i.funcs.Vals = i.funcs.Vals[:functionLen]
+			if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
+				// Remove temporary variables.
+				i.vars.Vals = i.vars.Vals[:variableLen]
+				// Remove temporary functions.
+				i.funcs.Vals = i.funcs.Vals[:functionLen]
 
-			if _break && condition != grammar.TRUE {
-				return kwstate
-			}
-
-			i.index = iindex
-			goto next
-		}
-
-		// Condition is true?
-		if condition == grammar.TRUE {
-			if do {
-				kwstate = i.processTokens(tokens, do)
-				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
-					_break = true
-					i.skipBlock()
-				} else if kwstate == fract.LOOPContinue { // Continue loop?
-					i.skipBlock()
+				if _break && condition != grammar.TRUE {
+					return kwstate
 				}
+
+				i.index = iindex
+				continue
 			}
-		} else {
-			_break = true
-			i.skipBlock()
-			i.index--
+
+			// Condition is true?
+			if condition == grammar.TRUE {
+				if do {
+					kwstate = i.processTokens(tokens, do)
+					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+						_break = true
+						i.skipBlock()
+					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						i.skipBlock()
+					}
+				}
+			} else {
+				_break = true
+				i.skipBlock()
+				i.index--
+			}
 		}
-		goto next
 	}
 
 	//*************
