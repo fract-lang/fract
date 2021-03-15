@@ -306,13 +306,13 @@ func (l *Lexer) Generate() objects.Token {
 
 			// Name is finished with dot?
 			if strings.HasSuffix(check, grammar.TokenDot) {
-				l.Error("What is this?: " + ln)
+				l.Error("What is this?")
 			}
 
 			token.Value = strings.TrimSpace(check)
 			token.Type = fract.TypeName
 		} else { // Error exactly
-			l.Error("What is this?: " + ln)
+			l.Error("What is this?")
 		}
 	}
 

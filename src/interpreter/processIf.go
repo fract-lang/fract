@@ -24,7 +24,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 	// Condition is empty?
 	if conditionList.Vals == nil {
 		first := tokens.Vals[0].(objects.Token)
-		fract.ErrorCustom(first.File.Path, first.Line, first.Column+len(first.Value),
+		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Condition is empty!")
 	}
 
@@ -50,7 +50,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 			// Condition is empty?
 			if conditionList.Vals == nil {
 				first := tokens.Vals[0].(objects.Token)
-				fract.ErrorCustom(first.File.Path, first.Line,
+				fract.ErrorCustom(first.File, first.Line,
 					first.Column+len(first.Value), "Condition is empty!")
 			}
 

@@ -82,7 +82,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 				if next.Value == grammar.TokenLBracket {
 					vindex := i.varIndexByName(token.Value)
 					if vindex == -1 {
-						fract.Error(token, "Name is not defined!: "+token.Value)
+						fract.Error(token, "Variable is not defined in this name!: "+token.Value)
 					}
 
 					// Find close bracket.
@@ -176,7 +176,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 
 		vindex := i.varIndexByName(token.Value)
 		if vindex == -1 {
-			fract.Error(token, "Name is not defined!: "+token.Value)
+			fract.Error(token, "Variable is not defined in this name!: "+token.Value)
 		}
 
 		variable := i.vars.Vals[vindex].(objects.Variable)
@@ -224,7 +224,7 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 			endToken := operations.Vals[oindex-1].(objects.Token)
 			vindex := i.varIndexByName(endToken.Value)
 			if vindex == -1 {
-				fract.Error(endToken, "Name is not defined!: "+endToken.Value)
+				fract.Error(endToken, "Variable is not defined in this name!: "+endToken.Value)
 			}
 			valueList := operations.Sublist(oindex+1, index-oindex-1)
 			// Index value is empty?

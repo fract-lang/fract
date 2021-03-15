@@ -84,7 +84,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 
 	// Name is already defined?
 	if i.varIndexByName(nameToken.Value) != -1 {
-		fract.Error(nameToken, "Already defined this name!: "+nameToken.Value)
+		fract.Error(nameToken, "Already defined variable in this name!: "+nameToken.Value)
 	}
 
 	value := i.processValue(contentList.Sublist(2, len(contentList.Vals)-2))

@@ -24,7 +24,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 
 	index := i.varIndexByName(_name.Value)
 	if index == -1 {
-		fract.Error(_name, "Name is not defined!: "+_name.Value)
+		fract.Error(_name, "Variable is not defined in this name!: "+_name.Value)
 	}
 
 	var setIndex int64 = -1
@@ -69,7 +69,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 
 	// Value are not defined?
 	if len(tokens.Vals) < 3 {
-		fract.ErrorCustom(setter.File.Path, setter.Line, setter.Column+len(setter.Value),
+		fract.ErrorCustom(setter.File, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
