@@ -13,7 +13,7 @@ import (
 	ModuleVersion "github.com/fract-lang/fract/src/shell/modules/version"
 )
 
-func processCommand(ns string, cmd string) {
+func processCommand(ns, cmd string) {
 	if ns == "help" {
 		ModuleHelp.Process(cmd)
 	} else if ns == "exit" {

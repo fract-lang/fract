@@ -58,10 +58,10 @@ func processEscapeSequence(l *Lexer, token *objects.Token, fln string) bool {
 
 // lexString Lex string literal.
 // l Lexer.
-// quote Quote style.
 // token Token.
+// quote Quote style.
 // fln Full line text of current code line.
-func lexString(l *Lexer, quote string, token *objects.Token, fln string) {
+func lexString(l *Lexer, token *objects.Token, quote, fln string) {
 	token.Value = quote
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
@@ -287,9 +287,9 @@ func (l *Lexer) Generate() objects.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
 		return token
 	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // String.
-		lexString(l, grammar.TokenQuote, &token, fln)
+		lexString(l, &token, grammar.TokenQuote, fln)
 	} else if strings.HasPrefix(ln, grammar.TokenDoubleQuote) { // String.
-		lexString(l, grammar.TokenDoubleQuote, &token, fln)
+		lexString(l, &token, grammar.TokenDoubleQuote, fln)
 	} else { // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(

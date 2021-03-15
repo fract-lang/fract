@@ -17,7 +17,7 @@ import (
 // open Open bracket.
 // close Close bracket.
 // nonCheck Check empty bracket content.
-func DecomposeBrace(tokens *vector.Vector, open string, close string,
+func DecomposeBrace(tokens *vector.Vector, open, close string,
 	nonCheck bool) (vector.Vector, int) {
 	var (
 		first int = -1

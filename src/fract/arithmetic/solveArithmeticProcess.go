@@ -17,7 +17,7 @@ import (
 // operator Operator.
 // first First value.
 // second Second value.
-func solve(operator objects.Token, first float64, second float64) float64 {
+func solve(operator objects.Token, first, second float64) float64 {
 	var result float64
 
 	if operator.Value == grammar.TokenBackslash ||
