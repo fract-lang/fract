@@ -447,45 +447,45 @@ func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticPro
 // tokens Tokens to process.
 func (i *Interpreter) processRange(tokens *vector.Vector) {
 	/* Check parentheses range. */
-next:
-	_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
-		grammar.TokenRParenthes, true)
+	for {
+		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
+			grammar.TokenRParenthes, true)
 
-	/* Parentheses are not found! */
-	if found == -1 {
-		return
-	}
+		/* Parentheses are not found! */
+		if found == -1 {
+			return
+		}
 
-	val := i.processValue(&_range)
-	if val.Array {
-		tokens.Insert(found, objects.Token{
-			Value: grammar.TokenLBrace,
-			Type:  fract.TypeBrace,
-		})
-		for index := range val.Content {
+		val := i.processValue(&_range)
+		if val.Array {
+			tokens.Insert(found, objects.Token{
+				Value: grammar.TokenLBrace,
+				Type:  fract.TypeBrace,
+			})
+			for index := range val.Content {
+				found++
+				tokens.Insert(found, objects.Token{
+					Value: val.Content[index],
+					Type:  fract.TypeValue,
+				})
+				found++
+				tokens.Insert(found, objects.Token{
+					Value: grammar.TokenComma,
+					Type:  fract.TypeComma,
+				})
+			}
 			found++
 			tokens.Insert(found, objects.Token{
-				Value: val.Content[index],
+				Value: grammar.TokenRBrace,
+				Type:  fract.TypeBrace,
+			})
+		} else {
+			tokens.Insert(found, objects.Token{
+				Value: val.Content[0],
 				Type:  fract.TypeValue,
 			})
-			found++
-			tokens.Insert(found, objects.Token{
-				Value: grammar.TokenComma,
-				Type:  fract.TypeComma,
-			})
 		}
-		found++
-		tokens.Insert(found, objects.Token{
-			Value: grammar.TokenRBrace,
-			Type:  fract.TypeBrace,
-		})
-	} else {
-		tokens.Insert(found, objects.Token{
-			Value: val.Content[0],
-			Type:  fract.TypeValue,
-		})
 	}
-	goto next
 }
 
 // processArrayValue Process array value.
