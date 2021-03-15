@@ -7,7 +7,7 @@ package vector
 // Sublist Get range.
 // pos Start position to take.
 // length Count of taken elements.
-func (v *Vector) Sublist(pos int, length int) *Vector {
+func (v *Vector) Sublist(pos, length int) *Vector {
 	if length == 0 {
 		return &Vector{}
 	}
