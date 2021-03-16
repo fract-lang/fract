@@ -39,12 +39,7 @@ func printValue(value objects.Value) bool {
 			}
 		}
 	} else {
-		if value.Type == fract.VALString {
-			ch, _ := arithmetic.ToInt64(value.Content[0])
-			fmt.Printf("%c\n", ch)
-		} else {
-			fmt.Print(value.Content[0])
-		}
+		fmt.Print(value.Content[0])
 	}
 	return true
 }
