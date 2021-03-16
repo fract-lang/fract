@@ -14,8 +14,6 @@ import (
 // processVariable Process variable defination.
 // tokens Tokens to process.
 func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
-	var variable objects.Variable
-
 	tokenLen := len(tokens.Vals)
 
 	// Name is not defined?
@@ -53,7 +51,6 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 			"Value is not defined!")
 	}
 
-	variable.Name = _name.Value
 	var value objects.Value
 	if setter.Value == grammar.TokenEquals { // =
 		value = i.processValue(tokens.Sublist(3, tokenLen-3))
@@ -61,10 +58,9 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 		value = i.processInput(*tokens.Sublist(3, tokenLen-3))
 	}
 
-	variable.Value = value
-
-	// Set const state.
-	variable.Const = tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable
-
-	i.vars.Vals = append(i.vars.Vals, variable)
+	i.vars.Vals = append(i.vars.Vals, objects.Variable{
+		Name:  _name.Value,
+		Value: value,
+		Const: tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable,
+	})
 }

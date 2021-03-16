@@ -40,24 +40,27 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 		// Find close bracket.
 		for cindex := 2; cindex < len(tokens.Vals); cindex++ {
 			current := tokens.Vals[cindex].(objects.Token)
-			if current.Type == fract.TypeBrace && current.Value == grammar.TokenRBracket {
-				valueList := tokens.Sublist(2, cindex-2)
-				// Index value is empty?
-				if valueList.Vals == nil {
-					fract.Error(setter, "Index is not defined!")
-				}
-				position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
-				if err != nil {
-					fract.Error(setter, "Value out of range!")
-				}
-				if position < 0 || position >= int64(len(variable.Value.Content)) {
-					fract.Error(setter, "Index is out of range!")
-				}
-				setIndex = position
-				tokens.RemoveRange(1, cindex)
-				setter = tokens.Vals[1].(objects.Token)
-				break
+			if current.Type != fract.TypeBrace ||
+				current.Value != grammar.TokenRBracket {
+				continue
 			}
+
+			valueList := tokens.Sublist(2, cindex-2)
+			// Index value is empty?
+			if valueList.Vals == nil {
+				fract.Error(setter, "Index is not defined!")
+			}
+			position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
+			if err != nil {
+				fract.Error(setter, "Value out of range!")
+			}
+			if position < 0 || position >= int64(len(variable.Value.Content)) {
+				fract.Error(setter, "Index is out of range!")
+			}
+			setIndex = position
+			tokens.RemoveRange(1, cindex)
+			setter = tokens.Vals[1].(objects.Token)
+			break
 		}
 	}
 
