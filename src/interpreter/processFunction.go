@@ -65,7 +65,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 		}
 	}
 
-	i.skipBlock()
+	i.skipBlock(false)
 	function.Tokens = i.tokens.Sublist(function.Start, i.index-function.Start+1).Vals
 	i.funcs.Vals = append(i.funcs.Vals, function)
 }
