@@ -70,7 +70,7 @@ func compare(value0, value1 objects.Value, operator string) bool {
 
 // processCondition Process conditional expression and return result.
 // tokens Tokens to process.
-func (i *Interpreter) processCondition(tokens *vector.Vector) int {
+func (i *Interpreter) processCondition(tokens *vector.Vector) string {
 	i.processRange(tokens)
 
 	// Process condition.
@@ -85,10 +85,10 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 			for aindex := range ands.Vals {
 				if !compare(i.processValue(
 					ands.Vals[aindex].(*vector.Vector)), TrueValueIns, grammar.Equals) {
-					return grammar.FALSE
+					return grammar.KwFalse
 				}
 			}
-			return grammar.TRUE
+			return grammar.KwTrue
 		}
 
 		operatorIndex, operator := parser.FindConditionOperator(current)
@@ -96,7 +96,7 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 		// Operator is not found?
 		if operatorIndex == -1 {
 			if compare(i.processValue(&current), TrueValueIns, grammar.Equals) {
-				return grammar.TRUE
+				return grammar.KwTrue
 			}
 			continue
 		}
@@ -114,9 +114,9 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) int {
 			current.Sublist(0, operatorIndex)), i.processValue(
 			current.Sublist(operatorIndex+1,
 				len(current.Vals)-operatorIndex-1)), operator) {
-			return grammar.TRUE
+			return grammar.KwTrue
 		}
 	}
 
-	return grammar.FALSE
+	return grammar.KwFalse
 }
