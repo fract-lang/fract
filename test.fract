@@ -127,12 +127,8 @@ func int.prime(x)
   ret true
 end
 
-if false
-  for number in range(0, 10)
-    number
-  end
-  for true
-    "Hello"
-    break
-  end
+for number in range(0, 10)
+  number
+  int.prime(number)
+  ""
 end

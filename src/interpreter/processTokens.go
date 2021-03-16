@@ -48,9 +48,8 @@ func printValue(value objects.Value) bool {
 // and returns loop keyword state.
 //
 // tokens Tokens to process.
-// do Do processes?
 // nested Is nested?
-func (i *Interpreter) processTokens(tokens vector.Vector, do bool) int {
+func (i *Interpreter) processTokens(tokens vector.Vector) int {
 	tokens = vector.Vector{Vals: append(make([]interface{}, 0), tokens.Vals...)}
 
 	first := tokens.Vals[0].(objects.Token)
@@ -82,10 +81,10 @@ func (i *Interpreter) processTokens(tokens vector.Vector, do bool) int {
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
 		i.processDelete(tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
-		return i.processIf(tokens, do)
+		return i.processIf(tokens)
 	} else if first.Type == fract.TypeLoop { // Loop.
 		i.loops++
-		state := i.processLoop(tokens, do)
+		state := i.processLoop(tokens)
 		i.loops--
 		return state
 	} else if first.Type == fract.TypeBreak { // Break loop.

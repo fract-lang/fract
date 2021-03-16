@@ -54,6 +54,6 @@ func (i *Interpreter) Interpret() {
 
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.tokens.Vals); i.index++ {
-		i.processTokens(i.tokens.Vals[i.index].(vector.Vector), true)
+		i.processTokens(i.tokens.Vals[i.index].(vector.Vector))
 	}
 }

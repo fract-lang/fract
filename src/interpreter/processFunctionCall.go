@@ -113,7 +113,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 
 		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			break
-		} else if i.processTokens(tokens, true) == fract.FUNCReturn {
+		} else if i.processTokens(tokens) == fract.FUNCReturn {
 			tokens := i.tokens.Vals[i.returnIndex].(vector.Vector)
 			i.returnIndex = fract.TypeNone
 			valueList := vector.Vector{Vals: tokens.Vals[1:]}
