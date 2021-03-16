@@ -46,7 +46,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 				// Remove temporary functions.
 				i.funcs.Vals = i.funcs.Vals[:functionLen]
 
-				if _break && condition != grammar.KwTrue {
+				if _break || condition != grammar.KwTrue {
 					return kwstate
 				}
 
@@ -60,14 +60,16 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 					kwstate = i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 						_break = true
-						i.skipBlock()
+						i.skipBlock(false)
+						i.index--
 					} else if kwstate == fract.LOOPContinue { // Continue loop?
-						i.skipBlock()
+						i.skipBlock(false)
+						i.index--
 					}
 				}
 			} else {
 				_break = true
-				i.skipBlock()
+				i.skipBlock(false)
 				i.index--
 			}
 		}
@@ -110,8 +112,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 	variableLen := len(i.vars.Vals)
 
 	if len(value.Content) == 0 {
-		i.index++
-		i.skipBlock()
+		i.skipBlock(true)
 	} else {
 		for vindex := 0; vindex < len(value.Content); {
 			i.index++
@@ -139,15 +140,15 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 				kwstate = i.processTokens(tokens, do)
 				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 					_break = true
-					i.skipBlock()
+					i.skipBlock(false)
 					i.index--
 				} else if kwstate == fract.LOOPContinue { // Continue next?
-					i.skipBlock()
+					i.skipBlock(false)
 					i.index--
 				}
 			} else {
 				_break = true
-				i.skipBlock()
+				i.skipBlock(false)
 				i.index--
 			}
 		}

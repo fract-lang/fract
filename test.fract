@@ -127,8 +127,12 @@ func int.prime(x)
   ret true
 end
 
-for number in range(0, 10)
-  number
-  if int.prime(number); "True"; else; "False"; end
-  ""
+if false
+  for number in range(0, 10)
+    number
+  end
+  for true
+    "Hello"
+    break
+  end
 end

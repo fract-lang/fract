@@ -11,7 +11,18 @@ import (
 )
 
 // skipBlock Skip to block end.
-func (i *Interpreter) skipBlock() {
+// ifBlock Enable skip if statement is block start?
+func (i *Interpreter) skipBlock(ifBlock bool) {
+	if ifBlock {
+		first := i.tokens.Vals[i.index].(vector.Vector).Vals[0].(objects.Token)
+		if first.Type == fract.TypeIf || first.Type == fract.TypeLoop ||
+			first.Type == fract.TypeFunction {
+			i.index++
+		} else {
+			return
+		}
+	}
+
 	count := 1
 	for ; i.index < len(i.tokens.Vals); i.index++ {
 		first := i.tokens.Vals[i.index].(vector.Vector).Vals[0].(objects.Token)
