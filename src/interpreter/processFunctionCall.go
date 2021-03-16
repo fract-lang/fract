@@ -94,11 +94,8 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	i.vars.Vals = append(i.vars.Vals[:i.funcTempVariables], vars...)
 	i.funcTempVariables = len(vars)
 
+	var returnValue objects.Value
 	functionLen := len(i.funcs.Vals)
-	returnValue := objects.Value{
-		Content: nil,
-	}
-
 	nameIndex = i.index
 	itokens := i.tokens
 	i.tokens.Vals = function.Tokens
