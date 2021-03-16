@@ -100,8 +100,7 @@ func (l *Lexer) Generate() objects.Token {
 	ln := fln[l.Column-1:]
 
 	/* Skip spaces. */
-	for index := 0; index < len(ln); index++ {
-		char := ln[index]
+	for index, char := range ln {
 		if char == ' ' || char == '\t' {
 			l.Column++
 			continue
