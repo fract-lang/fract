@@ -5,6 +5,8 @@
 package interpreter
 
 import (
+	"fmt"
+	"math"
 	"strings"
 
 	"github.com/fract-lang/fract/src/fract"
@@ -14,6 +16,20 @@ import (
 	"github.com/fract-lang/fract/src/parser"
 	"github.com/fract-lang/fract/src/utils/vector"
 )
+
+// valueProcess Value process instance.
+type valueProcess struct {
+	// First value of process.
+	First objects.Token
+	// Value instance of first value.
+	FirstV objects.Value
+	// Second value of process.
+	Second objects.Token
+	// Value instance of second value.
+	SecondV objects.Value
+	// Operator of process.
+	Operator objects.Token
+}
 
 // isConditional Expression is conditional?
 // tokens Tokens to check?
@@ -62,12 +78,138 @@ func getRequiredOperatorCount(tokens []interface{}) int {
 	return counter - 1
 }
 
+// solveProcess Solve arithmetic process.
+// process Process to solve.
+func solveProcess(process valueProcess) objects.Value {
+	solve := func(operator objects.Token, first, second float64) float64 {
+		var result float64
+
+		if operator.Value == grammar.TokenBackslash ||
+			operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
+			if operator.Value == grammar.TokenBackslash {
+				operator.Value = grammar.TokenSlash
+			} else {
+				operator.Value = grammar.IntegerDivision
+			}
+
+			if first < second {
+				cache := first
+				first = second
+				second = cache
+			}
+		}
+
+		if operator.Value == grammar.TokenPlus { // Addition.
+			result = first + second
+		} else if operator.Value == grammar.TokenMinus { // Subtraction.
+			result = first - second
+		} else if operator.Value == grammar.TokenStar { // Multiply.
+			result = first * second
+		} else if operator.Value == grammar.TokenSlash ||
+			operator.Value == grammar.IntegerDivision { // Division.
+			if first == 0 || second == 0 {
+				fract.Error(operator, "Divide by zero!")
+			}
+			result = first / second
+
+			if operator.Value == grammar.IntegerDivision {
+				result = math.RoundToEven(result)
+			}
+		} else if operator.Value == grammar.TokenCaret { // Exponentiation.
+			result = math.Pow(first, second)
+		} else if operator.Value == grammar.TokenPercent { // Mod.
+			result = math.Mod(first, second)
+		} else {
+			fract.Error(operator, "Operator is invalid!")
+		}
+
+		return result
+	}
+
+	value := objects.Value{
+		Charray: process.FirstV.Charray || process.SecondV.Charray,
+	}
+
+	if process.FirstV.Array && process.SecondV.Array {
+		if len(process.FirstV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		} else if len(process.SecondV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		}
+		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
+			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
+			fract.Error(process.Second,
+				"Array element count is not one or equals to first array!")
+		}
+
+		if len(process.FirstV.Content) == 1 {
+			first, _ := arithmetic.ToFloat64(process.FirstV.Content[0])
+			for index, current := range process.SecondV.Content {
+				second, _ := arithmetic.ToFloat64(current)
+				process.SecondV.Content[index] = fmt.Sprintf("%g",
+					solve(process.Operator, first, second))
+			}
+			value.Content = process.SecondV.Content
+		} else if len(process.SecondV.Content) == 1 {
+			second, _ := arithmetic.ToFloat64(process.SecondV.Content[0])
+			for index, current := range process.FirstV.Content {
+				first, _ := arithmetic.ToFloat64(current)
+				process.FirstV.Content[index] = fmt.Sprintf("%g",
+					solve(process.Operator, first, second))
+			}
+			value.Content = process.FirstV.Content
+		} else {
+			for index, current := range process.FirstV.Content {
+				first, _ := arithmetic.ToFloat64(current)
+				second, _ := arithmetic.ToFloat64(process.SecondV.Content[index])
+				process.FirstV.Content[index] = fmt.Sprintf("%g",
+					solve(process.Operator, first, second))
+			}
+			value.Content = process.FirstV.Content
+		}
+		value.Array = true
+	} else if process.FirstV.Array {
+		if len(process.FirstV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		}
+
+		second, _ := arithmetic.ToFloat64(process.SecondV.Content[0])
+		for index, current := range process.FirstV.Content {
+			first, _ := arithmetic.ToFloat64(current)
+			process.FirstV.Content[index] = fmt.Sprintf("%g",
+				solve(process.Operator, first, second))
+		}
+		value.Array = true
+		value.Content = process.FirstV.Content
+	} else if process.SecondV.Array {
+		if len(process.SecondV.Content) == 0 {
+			fract.Error(process.First, "Array is empty!")
+		}
+
+		first, _ := arithmetic.ToFloat64(process.FirstV.Content[0])
+		for index, current := range process.SecondV.Content {
+			second, _ := arithmetic.ToFloat64(current)
+			process.SecondV.Content[index] = fmt.Sprintf("%g",
+				solve(process.Operator, second, first))
+		}
+		value.Array = true
+		value.Content = process.SecondV.Content
+	} else {
+		first, _ := arithmetic.ToFloat64(process.FirstV.Content[0])
+		second, _ := arithmetic.ToFloat64(process.SecondV.Content[0])
+		value.Content = []string{fmt.Sprintf("%g",
+			solve(process.Operator, first, second))}
+	}
+
+	return value
+}
+
 // __processValue Process value.
 // first This is first value.
 // token Token to process.
 // operations All operations.
 // index Index of token.
-func (i *Interpreter) _processValue(first bool, operation *objects.ArithmeticProcess,
+func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	operations *vector.Vector, index int) int {
 	token := operation.First
 	if !first {
@@ -578,7 +720,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	looped := priorityIndex != -1
 	for priorityIndex != -1 {
 		data_count--
-		var operation objects.ArithmeticProcess
+		var operation valueProcess
 
 		operation.First = tokens.Vals[priorityIndex-1].(objects.Token)
 		priorityIndex -= i._processValue(true, &operation,
@@ -589,14 +731,14 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 		priorityIndex -= i._processValue(false, &operation,
 			tokens, priorityIndex+1)
 
-		resultValue := arithmetic.SolveArithmeticProcess(operation)
+		resultValue := solveProcess(operation)
 
 		operation.Operator.Value = grammar.TokenPlus
 		operation.Second = tokens.Vals[priorityIndex+1].(objects.Token)
 		operation.FirstV = value
 		operation.SecondV = resultValue
 
-		resultValue = arithmetic.SolveArithmeticProcess(operation)
+		resultValue = solveProcess(operation)
 		value = resultValue
 
 		// Remove processed processes.
@@ -609,7 +751,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 
 	// Not operatored?
 	if !looped {
-		var operation objects.ArithmeticProcess
+		var operation valueProcess
 		operation.First = tokens.Vals[0].(objects.Token)
 		operation.FirstV.Array = true // Ignore nil control if function call.
 		i._processValue(true, &operation, tokens, 0)
