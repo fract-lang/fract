@@ -62,23 +62,25 @@ func processEscapeSequence(l *Lexer, token *objects.Token, fln string) bool {
 // quote Quote style.
 // fln Full line text of current code line.
 func lexString(l *Lexer, token *objects.Token, quote, fln string) {
-	token.Value = quote
+	var sb strings.Builder
+	sb.WriteString(quote)
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
 		current := string(fln[l.Column-1])
 		if current == quote { // Finish?
-			token.Value += current
+			sb.WriteString(current)
 			break
 		} else if !processEscapeSequence(l, token, fln) {
-			token.Value += current
+			sb.WriteString(current)
 		}
 	}
+	token.Value = sb.String()
 	if !strings.HasSuffix(token.Value, quote) {
 		l.Error("Close quote is not found!")
 	}
 	token.Type = fract.TypeValue
 
-	l.Column -= len(token.Value) - 1
+	l.Column -= sb.Len() - 1
 }
 
 // Generate Generate next token.

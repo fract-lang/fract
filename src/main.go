@@ -22,6 +22,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/fract-lang/fract/src/shell/commands"
 )
@@ -32,16 +33,12 @@ func init() {
 		os.Exit(0)
 	}
 
+	var sb strings.Builder
 	os.Args = os.Args[1:]
-	command := ""
 	for _, current := range os.Args {
-		if command == "" {
-			command += current
-			continue
-		}
-		command += " " + current
+		sb.WriteString(" " + current)
 	}
-	os.Args[0] = command
+	os.Args[0] = sb.String()[1:]
 }
 
 func main() {
