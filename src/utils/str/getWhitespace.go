@@ -1,11 +1,13 @@
 package str
 
+import "strings"
+
 // Returns string whitespace by count.
 // count Count of whitespace.
 func GetWhitespace(count int) string {
-	str := ""
+	var sb strings.Builder
 	for counter := 1; counter <= count; counter++ {
-		str += " "
+		sb.WriteRune(' ')
 	}
-	return str
+	return sb.String()
 }
