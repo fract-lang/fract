@@ -78,6 +78,51 @@ func getRequiredOperatorCount(tokens []interface{}) int {
 	return counter - 1
 }
 
+// processRange Process range by value processor principles.
+// tokens Tokens to process.
+func (i *Interpreter) processRange(tokens *vector.Vector) {
+	/* Check parentheses range. */
+	for {
+		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
+			grammar.TokenRParenthes, true)
+
+		/* Parentheses are not found! */
+		if found == -1 {
+			return
+		}
+
+		val := i.processValue(&_range)
+		if val.Array {
+			tokens.Insert(found, objects.Token{
+				Value: grammar.TokenLBrace,
+				Type:  fract.TypeBrace,
+			})
+			for _, current := range val.Content {
+				found++
+				tokens.Insert(found, objects.Token{
+					Value: current,
+					Type:  fract.TypeValue,
+				})
+				found++
+				tokens.Insert(found, objects.Token{
+					Value: grammar.TokenComma,
+					Type:  fract.TypeComma,
+				})
+			}
+			found++
+			tokens.Insert(found, objects.Token{
+				Value: grammar.TokenRBrace,
+				Type:  fract.TypeBrace,
+			})
+		} else {
+			tokens.Insert(found, objects.Token{
+				Value: val.Content[0],
+				Type:  fract.TypeValue,
+			})
+		}
+	}
+}
+
 // solveProcess Solve arithmetic process.
 // process Process to solve.
 func solveProcess(process valueProcess) objects.Value {
@@ -588,51 +633,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	}
 
 	return 0
-}
-
-// processRange Process range by value processor principles.
-// tokens Tokens to process.
-func (i *Interpreter) processRange(tokens *vector.Vector) {
-	/* Check parentheses range. */
-	for {
-		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
-			grammar.TokenRParenthes, true)
-
-		/* Parentheses are not found! */
-		if found == -1 {
-			return
-		}
-
-		val := i.processValue(&_range)
-		if val.Array {
-			tokens.Insert(found, objects.Token{
-				Value: grammar.TokenLBrace,
-				Type:  fract.TypeBrace,
-			})
-			for _, current := range val.Content {
-				found++
-				tokens.Insert(found, objects.Token{
-					Value: current,
-					Type:  fract.TypeValue,
-				})
-				found++
-				tokens.Insert(found, objects.Token{
-					Value: grammar.TokenComma,
-					Type:  fract.TypeComma,
-				})
-			}
-			found++
-			tokens.Insert(found, objects.Token{
-				Value: grammar.TokenRBrace,
-				Type:  fract.TypeBrace,
-			})
-		} else {
-			tokens.Insert(found, objects.Token{
-				Value: val.Content[0],
-				Type:  fract.TypeValue,
-			})
-		}
-	}
 }
 
 // processArrayValue Process array value.
