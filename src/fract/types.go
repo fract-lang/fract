@@ -66,4 +66,11 @@ const (
 
 	// FUNCReturn Return value.
 	FUNCReturn = 2
+
+	// VALNone Not special value, classic arithmetic.
+	VALNone = 0
+	// VALString String value.
+	VALString = 1
+	// Boolean Boolean value.
+	VALBoolean = 2
 )

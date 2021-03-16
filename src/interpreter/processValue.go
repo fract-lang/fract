@@ -126,8 +126,10 @@ func solveProcess(process valueProcess) objects.Value {
 		return result
 	}
 
-	value := objects.Value{
-		Charray: process.FirstV.Charray || process.SecondV.Charray,
+	value := objects.Value{}
+	if process.FirstV.Type == fract.VALString ||
+		process.SecondV.Type == fract.VALString {
+		value.Type = fract.VALString
 	}
 
 	if process.FirstV.Array && process.SecondV.Array {
@@ -547,18 +549,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		}
 	}
 
-	// Boolean check.
-	if token.Type == fract.TypeBooleanTrue {
-		token.Value = "1"
-	} else if token.Type == fract.TypeBooleanFalse {
-		token.Value = "0"
-	}
-
 	if first {
 		operation.FirstV.Array = false
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
-			operation.FirstV.Charray = true
+			operation.FirstV.Type = fract.VALString
 			operation.FirstV.Array = true
 			for index := 1; index < len(token.Value)-1; index++ {
 				operation.FirstV.Content = append(
@@ -571,7 +566,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		operation.SecondV.Array = false
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
-			operation.SecondV.Charray = true
+			operation.SecondV.Type = fract.VALString
 			operation.SecondV.Array = true
 			for index := 1; index < len(token.Value)-1; index++ {
 				operation.SecondV.Content = append(
@@ -579,6 +574,16 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			}
 		} else {
 			operation.SecondV.Content = []string{token.Value}
+		}
+	}
+
+	// Boolean check.
+	if token.Type == fract.TypeBooleanTrue ||
+		token.Type == fract.TypeBooleanFalse {
+		if first {
+			operation.FirstV.Type = fract.VALBoolean
+		} else {
+			operation.SecondV.Type = fract.VALBoolean
 		}
 	}
 
@@ -675,8 +680,8 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 			}
 			val := i.processValue(lst)
 			value.Content = append(value.Content, val.Content...)
-			if !value.Charray {
-				value.Charray = val.Charray
+			if value.Type != fract.VALString {
+				value.Type = val.Type
 			}
 			comma = index + 1
 		}
@@ -689,8 +694,8 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		}
 		val := i.processValue(lst)
 		value.Content = append(value.Content, val.Content...)
-		if !value.Charray {
-			value.Charray = val.Charray
+		if value.Type != fract.VALString {
+			value.Type = val.Type
 		}
 	}
 

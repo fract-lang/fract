@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"os"
 
+	"github.com/fract-lang/fract/src/fract"
 	"github.com/fract-lang/fract/src/fract/arithmetic"
 	"github.com/fract-lang/fract/src/objects"
 	"github.com/fract-lang/fract/src/utils/vector"
@@ -22,7 +23,7 @@ func (i *Interpreter) processInput(tokens vector.Vector) objects.Value {
 	input := scanner.Text()
 	value := objects.Value{
 		Content: []string{},
-		Charray: true,
+		Type:    fract.VALString,
 		Array:   true,
 	}
 	for _, char := range input {
