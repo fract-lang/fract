@@ -29,7 +29,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 	}
 
 	state := i.processCondition(conditionList)
-	actioned := state == grammar.TRUE
+	actioned := state == grammar.KwTrue
 	variableLen := len(i.vars.Vals)
 	functionLen := len(i.funcs.Vals)
 	kwstate := fract.TypeNone
@@ -65,7 +65,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret
 				} else if first.Type == fract.TypeIf { // If block.
-					i.processIf(tokens, state == grammar.TRUE && !actioned && do)
+					i.processIf(tokens, state == grammar.KwTrue && !actioned && do)
 					continue
 				} else if first.Type == fract.TypeElseIf ||
 					first.Type == fract.TypeElse { // Else if or else block.
@@ -73,18 +73,18 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 				}
 
 				// Condition is true?
-				if state == grammar.TRUE && !actioned && do {
+				if state == grammar.KwTrue && !actioned && do {
 					if kwstate = i.processTokens(tokens, true); kwstate != fract.TypeNone {
 						i.skipBlock()
 					}
 				}
 			}
 
-			if state == grammar.TRUE {
+			if state == grammar.KwTrue {
 				i.skipBlock()
 				i.index--
 			} else if !actioned {
-				actioned = state == grammar.TRUE
+				actioned = state == grammar.KwTrue
 			}
 			continue
 		} else if first.Type == fract.TypeElse { // Else block.
@@ -115,7 +115,7 @@ func (i *Interpreter) processIf(tokens vector.Vector, do bool) int {
 		}
 
 		// Condition is true?
-		if state == grammar.TRUE && do {
+		if state == grammar.KwTrue && do {
 			if kwstate = i.processTokens(tokens, do); kwstate != fract.TypeNone {
 				i.skipBlock()
 			}

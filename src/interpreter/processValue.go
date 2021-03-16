@@ -714,7 +714,7 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 
 	// Is conditional expression?
 	if isConditional(*tokens) {
-		value.Content = []string{arithmetic.IntToString(i.processCondition(tokens))}
+		value.Content = []string{i.processCondition(tokens)}
 		return value
 	}
 

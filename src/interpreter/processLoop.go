@@ -46,7 +46,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 				// Remove temporary functions.
 				i.funcs.Vals = i.funcs.Vals[:functionLen]
 
-				if _break && condition != grammar.TRUE {
+				if _break && condition != grammar.KwTrue {
 					return kwstate
 				}
 
@@ -55,7 +55,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector, do bool) int {
 			}
 
 			// Condition is true?
-			if condition == grammar.TRUE {
+			if condition == grammar.KwTrue {
 				if do {
 					kwstate = i.processTokens(tokens, do)
 					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
