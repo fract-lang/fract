@@ -86,11 +86,19 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 		fract.Error(nameToken, "Already defined variable in this name!: "+nameToken.Value)
 	}
 
-	value := i.processValue(contentList.Sublist(2, len(contentList.Vals)-2))
+	inToken := contentList.Vals[1].(objects.Token)
+	contentList = contentList.Sublist(2, len(contentList.Vals)-2)
+
+	// Value is not defined?
+	if contentList.Vals == nil {
+		fract.Error(inToken, "Value is not defined!")
+	}
+
+	value := i.processValue(contentList)
 
 	// Type is not array?
 	if !value.Array {
-		fract.Error(contentList.Vals[0].(objects.Token),
+		fract.Error(contentList.Vals[2].(objects.Token),
 			"Foreach loop must defined array value!")
 	}
 

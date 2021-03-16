@@ -20,7 +20,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 	if tokenLen < 2 {
 		first := tokens.Vals[0].(objects.Token)
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
-			"Value is not found!")
+			"Value is not defined!")
 	}
 
 	comma := false

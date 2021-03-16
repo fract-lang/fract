@@ -31,6 +31,11 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 	variable := i.vars.Vals[index].(objects.Variable)
 	setter := tokens.Vals[1].(objects.Token)
 
+	// Check const state
+	if variable.Const {
+		fract.Error(setter, "Values is can not changed of const defines!")
+	}
+
 	// Array setter?
 	if setter.Type == fract.TypeBrace && setter.Value == grammar.TokenLBracket {
 		// Variable is not array?
@@ -79,13 +84,11 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 	var value objects.Value
 	if setter.Value == grammar.TokenEquals { // =
 		value = i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
+		if value.Content == nil {
+			fract.Error(tokens.Vals[2].(objects.Token), "Invalid value!")
+		}
 	} else { // <<
 		value = i.processInput(*tokens.Sublist(2, len(tokens.Vals)-2))
-	}
-
-	// Check const state
-	if variable.Const {
-		fract.Error(setter, "Values is can not changed of const defines!")
 	}
 
 	if setIndex != -1 {

@@ -54,6 +54,9 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	var value objects.Value
 	if setter.Value == grammar.TokenEquals { // =
 		value = i.processValue(tokens.Sublist(3, tokenLen-3))
+		if value.Content == nil {
+			fract.Error(tokens.Vals[3].(objects.Token), "Invalid value!")
+		}
 	} else { // <<
 		value = i.processInput(*tokens.Sublist(3, tokenLen-3))
 	}

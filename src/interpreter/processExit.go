@@ -21,7 +21,7 @@ func (i *Interpreter) processExit(tokens vector.Vector) {
 	// Value is not defined?
 	if len(tokens.Vals) < 2 {
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
-			"Value is not found!")
+			"Value is not defined!")
 	}
 
 	value := i.processValue(&vector.Vector{Vals: tokens.Vals[1:]})
