@@ -17,21 +17,29 @@ import (
 // printValue Print value to screen.
 // value Value to print.
 func printValue(value objects.Value) bool {
-	if !value.Charray && value.Content == nil {
+	if value.Type != fract.VALString && value.Content == nil {
 		return false
 	}
 
 	if value.Array {
-		if value.Charray {
+		if value.Type == fract.VALString {
 			for _, current := range value.Content {
 				ch, _ := arithmetic.ToInt64(current)
 				fmt.Printf("%c", ch)
 			}
 		} else {
-			fmt.Print(value.Content)
+			if value.Type == fract.VALBoolean {
+				if value.Content[0] == "1" {
+					fmt.Print(grammar.KwTrue)
+				} else {
+					fmt.Print(grammar.KwFalse)
+				}
+			} else {
+				fmt.Print(value.Content)
+			}
 		}
 	} else {
-		if value.Charray {
+		if value.Type == fract.VALString {
 			ch, _ := arithmetic.ToInt64(value.Content[0])
 			fmt.Printf("%c\n", ch)
 		} else {

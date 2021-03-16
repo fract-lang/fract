@@ -94,6 +94,13 @@
 #array
 #del array, array2
 
+"Test"
+true
+false
+1
+
+exit 0
+
 # FUNCTION TEST
 func len(list)
   var counter = 0
