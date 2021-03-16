@@ -96,7 +96,8 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 	// Empty array?
 	if len(value.Content) == 0 {
-		i.skipBlock(true)
+		i.index++
+		i.skipBlock(false)
 		return kwstate
 	}
 
