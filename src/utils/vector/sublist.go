@@ -11,5 +11,7 @@ func (v *Vector) Sublist(pos, length int) *Vector {
 	if length == 0 {
 		return &Vector{}
 	}
-	return &Vector{Vals: v.Vals[pos : pos+length]}
+	return &Vector{
+		Vals: append(make([]interface{}, 0), v.Vals[pos:pos+length]...),
+	}
 }
