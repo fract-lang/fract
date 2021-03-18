@@ -8,15 +8,14 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/src/objects"
-	"github.com/fract-lang/fract/src/utils/vector"
 )
 
 // ReadyLines Ready lines to process.
 // lines Lines to ready.
-func ReadyLines(lines []string) vector.Vector {
-	readyLines := vector.Vector{}
+func ReadyLines(lines []string) []objects.CodeLine {
+	readyLines := make([]objects.CodeLine, 0)
 	for index := 0; index < len(lines); index++ {
-		readyLines.Vals = append(readyLines.Vals, objects.CodeLine{Line: index + 1,
+		readyLines = append(readyLines, objects.CodeLine{Line: index + 1,
 			Text: strings.TrimRight(lines[index], " \t\n\r")})
 	}
 	return readyLines

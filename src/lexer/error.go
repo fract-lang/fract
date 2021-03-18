@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/fract-lang/fract/src/objects"
 	"github.com/fract-lang/fract/src/utils/str"
 )
 
@@ -17,7 +16,7 @@ import (
 func (l Lexer) Error(message string) {
 	fmt.Printf("File: %s\nPosition: %d:%d\n",
 		l.File.Path, l.Line, l.Column)
-	fmt.Println("    " + l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text)
+	fmt.Println("    " + l.File.Lines[l.Line-1].Text)
 	fmt.Println(str.GetWhitespace(4+l.Column-1) + "^")
 	fmt.Println(message)
 	os.Exit(1)
