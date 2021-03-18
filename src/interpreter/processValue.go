@@ -34,10 +34,19 @@ type valueProcess struct {
 // isConditional Expression is conditional?
 // tokens Tokens to check?
 func isConditional(tokens vector.Vector) bool {
+	brace := 0
 	// Search conditional expression.
 	for _, current := range tokens.Vals {
 		current := current.(objects.Token)
-		if current.Type == fract.TypeOperator &&
+		if current.Type == fract.TypeBrace {
+			if current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLBracket ||
+				current.Value == grammar.TokenLParenthes {
+				brace++
+			} else {
+				brace--
+			}
+		} else if brace == 0 && current.Type == fract.TypeOperator &&
 			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
 				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
 				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
