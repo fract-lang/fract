@@ -92,7 +92,9 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 				"After the parameter has been given a special value, all parameters must be shown privately!")
 		}
 
-		count++
+		if function.Parameters[count].Default.Content == nil {
+			count++
+		}
 		names = append(names, variable.Name)
 		variable.Value = i.processValue(valueList)
 		return variable
