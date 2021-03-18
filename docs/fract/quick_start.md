@@ -5,7 +5,7 @@
 + [Operators](https://github.com/fract-lang/fract/blob/main/docs/Fract/operators.md)
 
 ## Comments
-Fract does not support multiline comments. ``#`` Is used for comments.
+Fract does not support multiline comments. ``#`` Is used for singline comments.
 ### Examples
 ```
 555 + 5 # Comment
@@ -294,15 +294,40 @@ func [NAME]([PARAM], [PARAM], [PARAM],...)
   ...
 end
 ```
+Define with default values:
+```
+func [NAME]([PARAM], [PARAM]=[VALUE],[PARAM]=[VALUE],...)
+  ...
+end
+```
 Call:
 ```
 [NAME]([PARAM], [PARAM],...)
 ```
+Call with parameter setter:
+```
+[NAME]([PARAM_NAME]=[VALUE], [PARAM_NAME]=[VALUE],...)
+```
 
 ### Examples
 ```
+func range(start, to, step=1)
+  var lst = [0]
+  var index = 0
+  for start < to
+    lst = { lst, start }
+    start = start + step
+    index = index + 1
+  end
+  ret lst
+end
+
 func int.prime(x)
-  for y in range(2, x)
+  if x < 2
+    ret false
+  end
+
+  for y in range(to=x, start=2, step=1)
     if x % y == 0
       ret false
     end
