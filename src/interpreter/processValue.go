@@ -70,9 +70,7 @@ func getRequiredOperatorCount(tokens []interface{}) int {
 				current.Value == grammar.TokenLBrace ||
 				current.Value == grammar.TokenLParenthes {
 				bracket++
-			} else if current.Value == grammar.TokenRBracket ||
-				current.Value == grammar.TokenRBrace ||
-				current.Value == grammar.TokenRParenthes {
+			} else {
 				bracket--
 			}
 		}
