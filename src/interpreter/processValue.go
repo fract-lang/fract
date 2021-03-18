@@ -31,60 +31,6 @@ type valueProcess struct {
 	Operator objects.Token
 }
 
-// isConditional Expression is conditional?
-// tokens Tokens to check?
-func isConditional(tokens vector.Vector) bool {
-	brace := 0
-	// Search conditional expression.
-	for _, current := range tokens.Vals {
-		current := current.(objects.Token)
-		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLBracket ||
-				current.Value == grammar.TokenLParenthes {
-				brace++
-			} else {
-				brace--
-			}
-		} else if brace == 0 && current.Type == fract.TypeOperator &&
-			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
-				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
-				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
-				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// checkValue Returns count of required operators.
-// tokens Tokens of statement.
-func getRequiredOperatorCount(tokens []interface{}) int {
-	counter := 0
-	bracket := 0
-	for _, current := range tokens {
-		current := current.(objects.Token)
-		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLBracket ||
-				current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLParenthes {
-				bracket++
-			} else {
-				bracket--
-			}
-		}
-		if bracket > 0 {
-			continue
-		}
-		if current.Type == fract.TypeValue ||
-			current.Type == fract.TypeName {
-			counter++
-		}
-	}
-	return counter - 1
-}
-
 // processRange Process range by value processor principles.
 // tokens Tokens to process.
 func (i *Interpreter) processRange(tokens *vector.Vector) {
@@ -720,12 +666,50 @@ func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	i.processRange(tokens)
 
 	// Is conditional expression?
-	if isConditional(*tokens) {
-		value.Content = []string{i.processCondition(tokens)}
-		return value
+	brace := 0
+	for _, current := range tokens.Vals {
+		current := current.(objects.Token)
+		if current.Type == fract.TypeBrace {
+			if current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLBracket ||
+				current.Value == grammar.TokenLParenthes {
+				brace++
+			} else {
+				brace--
+			}
+		} else if brace == 0 && current.Type == fract.TypeOperator &&
+			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
+				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
+				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
+				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
+			value.Content = []string{i.processCondition(tokens)}
+			return value
+		}
 	}
 
-	data_count := getRequiredOperatorCount(tokens.Vals)
+	// Calculate data count.
+	data_count := 0
+	bracket := 0
+	for _, current := range tokens.Vals {
+		current := current.(objects.Token)
+		if current.Type == fract.TypeBrace {
+			if current.Value == grammar.TokenLBracket ||
+				current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLParenthes {
+				bracket++
+			} else {
+				bracket--
+			}
+		}
+		if bracket > 0 {
+			continue
+		}
+		if current.Type == fract.TypeValue ||
+			current.Type == fract.TypeName {
+			data_count++
+		}
+	}
+	data_count -= 1
 
 	// Decompose arithmetic operations.
 	priorityIndex := parser.IndexProcessPriority(*tokens)
