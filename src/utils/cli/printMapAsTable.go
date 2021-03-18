@@ -10,10 +10,6 @@ import (
 	"github.com/fract-lang/fract/src/utils/str"
 )
 
-// *********************
-//        PUBLIC
-// *********************
-
 // PrintMapAsTable Print map to cli screen as table.
 // dict Map to print.
 func PrintMapAsTable(dict map[string]string) {
