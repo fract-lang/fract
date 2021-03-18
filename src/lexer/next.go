@@ -48,7 +48,7 @@ tokenize:
 	l.Line++
 
 	// Line equals to or bigger then last line.
-	l.Finished = l.Line > len(l.File.Lines.Vals)
+	l.Finished = l.Line > len(l.File.Lines)
 
 	if l.parenthesCount > 0 { // Check parentheses.
 		if l.Finished {

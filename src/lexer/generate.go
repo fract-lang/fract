@@ -89,7 +89,7 @@ func (l *Lexer) Generate() objects.Token {
 		Type: fract.TypeNone,
 		File: l.File,
 	}
-	fln := l.File.Lines.Vals[l.Line-1].(objects.CodeLine).Text // Full line.
+	fln := l.File.Lines[l.Line-1].Text // Full line.
 
 	/* Line is finished. */
 	if l.Column > len(fln) {

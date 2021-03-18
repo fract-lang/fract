@@ -19,7 +19,7 @@ import (
 // message Message of error.
 func ErrorCustom(file objects.CodeFile, line, column int, message string) {
 	fmt.Printf("File: %s\nPosition: %d:%d\n", file.Path, line, column)
-	fmt.Println("    " + file.Lines.Vals[line-1].(objects.CodeLine).Text)
+	fmt.Println("    " + file.Lines[line-1].Text)
 	fmt.Println(str.GetWhitespace(4+column-1) + "^")
 	fmt.Println(message)
 	os.Exit(1)
