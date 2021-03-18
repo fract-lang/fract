@@ -36,7 +36,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 	function := objects.Function{
 		Name:       _name.Value,
 		Start:      i.index,
-		Parameters: []string{},
+		Parameters: []objects.Parameter{},
 	}
 
 	dtToken := tokens.Vals[tokenLen-1].(objects.Token)
@@ -48,21 +48,67 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 	paramList := tokens.Sublist(3, tokenLen-4)
 
 	// Decompose function parameters.
-	paramName := true
-	for _, current := range paramList.Vals {
-		current := current.(objects.Token)
+	paramName, defaultDefined := true, false
+	var lastParameter objects.Parameter
+	for index := 0; index < len(paramList.Vals); index++ {
+		current := paramList.Vals[index].(objects.Token)
 		if paramName {
 			if current.Type != fract.TypeName {
 				fract.Error(current, "Parameter name is not found!")
 			}
-			function.Parameters = append(function.Parameters, current.Value)
+
+			lastParameter = objects.Parameter{Name: current.Value}
+			function.Parameters = append(function.Parameters, lastParameter)
 			paramName = false
+			continue
 		} else {
+			paramName = true
+
+			// Default value definition?
+			if current.Value == grammar.TokenEquals {
+				brace := 0
+				index++
+				start := index
+				for ; index < len(paramList.Vals); index++ {
+					current = paramList.Vals[index].(objects.Token)
+					if current.Type == fract.TypeBrace {
+						if current.Value == grammar.TokenLBrace ||
+							current.Value == grammar.TokenLParenthes ||
+							current.Value == grammar.TokenLBracket {
+							brace++
+						} else {
+							brace--
+						}
+					} else if current.Type == fract.TypeComma {
+						break
+					}
+				}
+				if index-start < 1 {
+					fract.Error(paramList.Vals[start-1].(objects.Token),
+						"Value is not defined!")
+				}
+				lastParameter.Default = i.processValue(
+					paramList.Sublist(start, index-start))
+				function.Parameters[len(function.Parameters)-1] = lastParameter
+				function.DefaultParameterCount++
+				defaultDefined = true
+				continue
+			}
+
+			if lastParameter.Default.Content == nil && defaultDefined {
+				fract.Error(current,
+					"All parameters after a given parameter with a default value must take a default value!")
+			}
+
 			if current.Type != fract.TypeComma {
 				fract.Error(current, "Comma is not found!")
 			}
-			paramName = true
 		}
+	}
+
+	if lastParameter.Default.Content == nil && defaultDefined {
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+			"All parameters after a given parameter with a default value must take a default value!")
 	}
 
 	i.skipBlock(false)

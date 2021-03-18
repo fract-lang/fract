@@ -63,11 +63,13 @@ func (i *Interpreter) processTokens(tokens vector.Vector) int {
 		if first.Type == fract.TypeName {
 			for _, current := range tokens.Vals {
 				current := current.(objects.Token)
-				if current.Type == fract.TypeOperator &&
+				if current.Type == fract.TypeBrace {
+					break
+				} else if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.TokenEquals ||
 						current.Value == grammar.Input) { // Variable setting.
 					i.processVariableSet(tokens)
-					return -1
+					return fract.TypeNone
 				}
 			}
 		}

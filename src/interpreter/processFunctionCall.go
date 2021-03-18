@@ -5,29 +5,14 @@
 package interpreter
 
 import (
+	"strings"
+
 	"github.com/fract-lang/fract/src/fract"
 	"github.com/fract-lang/fract/src/grammar"
 	"github.com/fract-lang/fract/src/objects"
 	"github.com/fract-lang/fract/src/parser"
 	"github.com/fract-lang/fract/src/utils/vector"
 )
-
-// processArgument Process function argument.
-// function Function.
-// current Current token.
-// count Count of appended arguments.
-// value Value instance.
-func processArgument(function objects.Function, current objects.Token,
-	count int, value objects.Value) objects.Variable {
-	if count >= len(function.Parameters) {
-		fract.Error(current, "Argument overflow!")
-	}
-	return objects.Variable{
-		Name:  function.Parameters[count],
-		Const: false,
-		Value: value,
-	}
-}
 
 // processFunctionCall Process function call.
 // tokens Tokens to process.
@@ -45,48 +30,124 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	// Decompose arguments.
 	tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
 		grammar.TokenRParenthes, false)
-	braceCount := 0
-	lastComma := 0
-	count := 0
-	vars := make([]interface{}, 0)
-	for index, current := range tokens.Vals {
-		current := current.(objects.Token)
+	braceCount, lastComma, count := 0, 0, 0
+	vars, names := make([]interface{}, 0), []string{}
+	paramSet := false
+
+	// processArgument Process function argument.
+	// current Current token.
+	// count Count of appended arguments.
+	// index Index of tokens state.
+	processArgument := func(current objects.Token, index *int) objects.Variable {
+		length := *index - lastComma
+		if length < 1 {
+			fract.Error(current, "Value is not defined!")
+		}
+
+		if count > len(function.Parameters)-function.DefaultParameterCount {
+			fract.Error(current, "Argument overflow!")
+		}
+
+		variable := objects.Variable{Name: function.Parameters[count].Name}
+		valueList := tokens.Sublist(lastComma, length)
+		current = valueList.Vals[0].(objects.Token)
+
+		// Check param set.
+		if current.Type == fract.TypeName {
+			if length >= 2 {
+				second := valueList.Vals[1].(objects.Token)
+				if second.Value == grammar.TokenEquals {
+					length -= 2
+					if length < 1 {
+						fract.Error(current, "Value is not defined!")
+					}
+
+					for _, parameter := range function.Parameters {
+						if parameter.Name == current.Value {
+							for _, name := range names {
+								if name == current.Value {
+									fract.Error(current, "Keyword argument repeated!")
+								}
+							}
+							if parameter.Default.Content == nil {
+								count++
+							}
+							valueList.Vals = valueList.Vals[2:]
+							paramSet = true
+							names = append(names, current.Value)
+							return objects.Variable{
+								Name:  current.Value,
+								Value: i.processValue(valueList),
+							}
+						}
+					}
+
+					fract.Error(current, "Parameter is not defined in this name!")
+				}
+			}
+		}
+
+		if paramSet {
+			fract.Error(current,
+				"After the parameter has been given a special value, all parameters must be shown privately!")
+		}
+
+		count++
+		names = append(names, variable.Name)
+		variable.Value = i.processValue(valueList)
+		return variable
+	}
+
+	for index := 0; index < len(tokens.Vals); index++ {
+		current := tokens.Vals[index].(objects.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == grammar.TokenLParenthes ||
 				current.Value == grammar.TokenLBrace ||
 				current.Value == grammar.TokenLBracket {
 				braceCount++
-			} else if current.Value == grammar.TokenRParenthes ||
-				current.Value == grammar.TokenRBrace ||
-				current.Value == grammar.TokenRBracket {
+			} else {
 				braceCount--
 			}
 		} else if current.Type == fract.TypeComma && braceCount == 0 {
-			valueList := tokens.Sublist(lastComma, index-lastComma)
-			if valueList.Vals == nil {
-				fract.Error(current, "Value is not defined!")
-			}
-			vars = append(vars, processArgument(function, current, count,
-				i.processValue(valueList)))
-			count++
+			vars = append(vars, processArgument(current, &index))
 			lastComma = index + 1
 		}
 	}
 
 	if tokenLen := len(tokens.Vals); lastComma < tokenLen {
 		current := tokens.Vals[lastComma].(objects.Token)
-		valueList := tokens.Sublist(lastComma, tokenLen-lastComma)
-		if valueList.Vals == nil {
-			fract.Error(current, "Value is not defined!")
-		}
-		vars = append(vars, processArgument(function, current, count,
-			i.processValue(valueList)))
-		count++
+		vars = append(vars, processArgument(current, &tokenLen))
 	}
 
 	// All parameters is not defined?
-	if count != len(function.Parameters) {
-		fract.Error(_name, "All parameters is not defined!")
+	if count != len(function.Parameters)-function.DefaultParameterCount {
+		var sb strings.Builder
+		sb.WriteString("All required positional parameters is not defined:")
+		for _, parameter := range function.Parameters {
+			if parameter.Default.Content != nil {
+				break
+			}
+			argMsg := " '" + parameter.Name + "',"
+			for _, name := range names {
+				if parameter.Name == name {
+					argMsg = ""
+					break
+				}
+			}
+			sb.WriteString(argMsg)
+		}
+		fract.Error(_name, sb.String()[:sb.Len()-1])
+	}
+
+	// Check default values.
+	for ; count < len(function.Parameters); count++ {
+		current := function.Parameters[count]
+		if current.Default.Content != nil {
+			vars = append(vars, objects.Variable{
+				Name:  current.Name,
+				Value: current.Default,
+			})
+		}
 	}
 
 	old := i.funcTempVariables

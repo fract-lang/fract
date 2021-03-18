@@ -103,7 +103,7 @@ func len(list)
   ret counter
 end
 
-func range(start, to, step)
+func range(start, to, step=1)
   var lst = [0]
   var index = 0
   for start < to
@@ -119,7 +119,7 @@ func int.prime(x)
     ret false
   end
 
-  for y in range(2, x, 1)
+  for y in range(2, x)
     if x % y == 0
       ret false
     end
@@ -127,7 +127,7 @@ func int.prime(x)
   ret true
 end
 
-for number in range(0, 10, 1)
+for number in range(0, 10)
   number
   int.prime(number)
   ""
