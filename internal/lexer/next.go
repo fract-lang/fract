@@ -37,8 +37,10 @@ tokenize:
 	// Tokenize line.
 	token := l.Generate()
 	for token.Type != fract.TypeNone && token.Type != fract.TypeStatementTerminator {
-		tokens.Vals = append(tokens.Vals, token)
-		l.lastToken = token
+		if !l.multilineComment && token.Type != fract.TypeIgnore {
+			tokens.Vals = append(tokens.Vals, token)
+			l.lastToken = token
+		}
 		token = l.Generate()
 	}
 
@@ -66,6 +68,12 @@ tokenize:
 		if l.Finished {
 			l.Line-- // Subrract for correct line number.
 			l.Error("Bracket is expected to close...")
+		}
+		goto tokenize
+	} else if l.multilineComment {
+		if l.Finished {
+			l.Line--
+			l.Error("Multiline comment is expected to close...")
 		}
 		goto tokenize
 	}

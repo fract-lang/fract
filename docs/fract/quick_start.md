@@ -5,10 +5,20 @@
 + [Operators](https://github.com/fract-lang/fract/blob/main/docs/Fract/operators.md)
 
 ## Comments
-Fract does not support multiline comments. ``#`` Is used for singline comments.
+``#`` Is used for singline comments.
 ### Examples
 ```
 555 + 5 # Comment
+```
+``#> ... <#`` are ısed for multiline comments.
+### Examples
+```
+#>
+  Hello Function
+  Desc: Print hello to screen.
+  func Hello()
+    ...
+<#
 ```
 
 ## Process Priority

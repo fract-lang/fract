@@ -120,6 +120,15 @@ func (l *Lexer) Generate() objects.Token {
 
 	/* Tokenize. */
 
+	if l.multilineComment { // Multiline comment.
+		if strings.HasPrefix(ln, grammar.MultilineCommentClose) { // Multiline comment close.
+			l.multilineComment = false
+			l.Column += len(grammar.MultilineCommentClose)
+			token.Type = fract.TypeIgnore
+			return token
+		}
+	}
+
 	/* Check arithmetic value? */
 	if check := strings.TrimSpace(regexp.MustCompile(
 		`^(-|)\s*[0-9]+(\.[0-9]+)?(\s|[[:punct:]]|$)`).FindString(ln)); check != "" &&
@@ -285,7 +294,11 @@ func (l *Lexer) Generate() objects.Token {
 	} else if isKeywordToken(ln, grammar.KwFalse) { // False.
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
-	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Comment.
+	} else if strings.HasPrefix(ln, grammar.MultilineCommentOpen) { // Multiline comment open.
+		l.multilineComment = true
+		token.Value = grammar.MultilineCommentOpen
+		token.Type = fract.TypeIgnore
+	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Singleline comment.
 		return token
 	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // String.
 		lexString(l, &token, grammar.TokenQuote, fln)
@@ -307,12 +320,22 @@ func (l *Lexer) Generate() objects.Token {
 
 			// Name is finished with dot?
 			if strings.HasSuffix(check, grammar.TokenDot) {
+				if l.multilineComment { // Ignore comment content.
+					l.Column++
+					token.Type = fract.TypeIgnore
+					return token
+				}
 				l.Error("What is this?")
 			}
 
 			token.Value = strings.TrimSpace(check)
 			token.Type = fract.TypeName
 		} else { // Error exactly
+			if l.multilineComment { // Ignore comment content.
+				l.Column++
+				token.Type = fract.TypeIgnore
+				return token
+			}
 			l.Error("What is this?")
 		}
 	}

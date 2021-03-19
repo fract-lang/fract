@@ -5,6 +5,10 @@
 package grammar
 
 const (
+	// MultilineCommentOpen Multiline comment open.
+	MultilineCommentOpen = "#>"
+	// MultilineCommentClose Multiline comment close.
+	MultilineCommentClose = "<#"
 	// IntegerDivision Integer divide.
 	IntegerDivision = "//"
 	// IntegerDivideWithBigger Integer division with bigger.
