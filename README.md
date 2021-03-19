@@ -9,7 +9,7 @@ Fract gets its name from Fraction. It is a programming language focused on mathe
 
 ## How to compile?
 Fract is written in Go. <br>
-Run one of the scripts ``scripts/build.bat`` or ``scripts/build.ps1`` to compile.
+Run one of the scripts ``scripts/brun.bat`` or ``scripts/brun.ps1`` to compile.
 
 ## Contributing
 
