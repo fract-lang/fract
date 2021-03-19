@@ -1,9 +1,18 @@
 # MAKE
 
-Make module used for interprete Fract codes.
+Make module used for interpret Fract codes.
 <br>
-Example:
+
+> File extension does not need to be specified, but can be specified if desired.
+
+Examples:
 ```
->make main
->make main.fract
+dir$ fract make main.fract
+[Your Code Output]
+dir$ 
+```
+```
+dir$ fract make main
+[Your Code Output]
+dir$ 
 ```
