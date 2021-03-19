@@ -69,7 +69,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 			fract.Error(current, "Name is not defined!")
 		}
 
-		i.funcs = append(i.funcs[:position], i.funcs[position+1:]...)
+		i.vars = append(i.vars[:position], i.vars[position+1:]...)
 		comma = true
 	}
 }
