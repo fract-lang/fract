@@ -7,6 +7,8 @@ package fract
 const (
 	// TypeNone NA
 	TypeNone = -1
+	// TypeIgnore Ignore.
+	TypeIgnore = 1
 	// TypeEntryFile Entry file.
 	TypeEntryFile = 1000
 	// TypeImportedFile Imported file.

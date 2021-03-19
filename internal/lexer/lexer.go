@@ -10,6 +10,8 @@ type Lexer struct {
 
 	// Last generated token.
 	lastToken objects.Token
+	// Multiline comment process state.
+	multilineComment bool
 	// Brace count.
 	braceCount int
 	// Bracket cout.
