@@ -27,7 +27,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 	// Name is already defined?
 	if index := i.functionIndexByName(_name.Value); index != -1 {
 		fract.Error(_name, "Already defined function in this name at line: "+
-			fmt.Sprint(i.funcs.Vals[index].(objects.Function).Line))
+			fmt.Sprint(i.funcs[index].Line))
 	}
 
 	// Function parentheses are not defined?
@@ -117,5 +117,5 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 
 	i.skipBlock(false)
 	function.Tokens = i.tokens.Sublist(function.Start, i.index-function.Start+1).Vals
-	i.funcs.Vals = append(i.funcs.Vals, function)
+	i.funcs = append(i.funcs, function)
 }

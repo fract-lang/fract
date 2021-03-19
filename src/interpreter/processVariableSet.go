@@ -28,7 +28,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 	}
 
 	var setIndex int64 = -1
-	variable := i.vars.Vals[index].(objects.Variable)
+	variable := i.vars[index]
 	setter := tokens.Vals[1].(objects.Token)
 
 	// Check const state
@@ -100,5 +100,5 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 		variable.Value = value
 	}
 
-	i.vars.Vals[index] = variable
+	i.vars[index] = variable
 }
