@@ -16,3 +16,16 @@ dir$ fract make main
 [Your Code Output]
 dir$ 
 ```
+
+Make module is can be directly called with file name. <br>
+Examples:
+```
+dir$ fract main.fract
+[Your Code Output]
+dir$ 
+```
+```
+dir$ fract main
+[Your Code Output]
+dir$ 
+```
