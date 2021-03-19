@@ -5,6 +5,8 @@
 package interpreter
 
 import (
+	"fmt"
+
 	"github.com/fract-lang/fract/src/fract"
 	"github.com/fract-lang/fract/src/grammar"
 	"github.com/fract-lang/fract/src/objects"
@@ -82,8 +84,9 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	}
 
 	// Name is already defined?
-	if i.varIndexByName(nameToken.Value) != -1 {
-		fract.Error(nameToken, "Already defined variable in this name!: "+nameToken.Value)
+	if index := i.varIndexByName(nameToken.Value); index != -1 {
+		fract.Error(nameToken, "Already defined variable in this name at line: "+
+			fmt.Sprint(i.vars.Vals[index].(objects.Variable).Line))
 	}
 
 	inToken := contentList.Vals[1].(objects.Token)

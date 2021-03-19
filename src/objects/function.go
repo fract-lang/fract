@@ -6,6 +6,8 @@ type Function struct {
 	Name string
 	// Block start of function.
 	Start int
+	// Line of define.
+	Line int
 	// Block content of function.
 	Tokens []interface{}
 	// Parameters of function.
