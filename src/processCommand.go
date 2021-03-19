@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 
-	ModuleExit "github.com/fract-lang/fract/src/shell/modules/exit"
 	ModuleHelp "github.com/fract-lang/fract/src/shell/modules/help"
 	ModuleMake "github.com/fract-lang/fract/src/shell/modules/make"
 	ModuleVersion "github.com/fract-lang/fract/src/shell/modules/version"
@@ -16,8 +15,6 @@ import (
 func processCommand(ns, cmd string) {
 	if ns == "help" {
 		ModuleHelp.Process(cmd)
-	} else if ns == "exit" {
-		ModuleExit.Process(cmd)
 	} else if ns == "version" {
 		ModuleVersion.Process(cmd)
 	} else if ns == "make" {
