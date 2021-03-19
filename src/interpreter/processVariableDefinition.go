@@ -5,6 +5,8 @@
 package interpreter
 
 import (
+	"fmt"
+
 	"github.com/fract-lang/fract/src/fract"
 	"github.com/fract-lang/fract/src/grammar"
 	"github.com/fract-lang/fract/src/objects"
@@ -28,8 +30,9 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
-	} else if i.varIndexByName(_name.Value) != -1 { // Name is already defined?
-		fract.Error(_name, "Variable already defined in this name!: "+_name.Value)
+	} else if index := i.varIndexByName(_name.Value); index != -1 { // Name is already defined?
+		fract.Error(_name, "Variable already defined in this name at line: "+
+			fmt.Sprint(i.vars.Vals[index].(objects.Variable).Line))
 	}
 
 	// Data type is not defined?
@@ -64,6 +67,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	i.vars.Vals = append(i.vars.Vals, objects.Variable{
 		Name:  _name.Value,
 		Value: value,
+		Line:  _name.Line,
 		Const: tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable,
 	})
 }

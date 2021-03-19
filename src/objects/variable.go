@@ -4,6 +4,8 @@ package objects
 type Variable struct {
 	// Name of variable.
 	Name string
+	// Line of define.
+	Line int
 	// Value of variable.
 	Value Value
 	// Is const variable.

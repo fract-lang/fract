@@ -5,6 +5,8 @@
 package interpreter
 
 import (
+	"fmt"
+
 	"github.com/fract-lang/fract/src/fract"
 	"github.com/fract-lang/fract/src/grammar"
 	"github.com/fract-lang/fract/src/objects"
@@ -23,8 +25,9 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 	}
 
 	// Name is already defined?
-	if i.functionIndexByName(_name.Value) != -1 {
-		fract.Error(_name, "Already defined function in this name!: "+_name.Value)
+	if index := i.functionIndexByName(_name.Value); index != -1 {
+		fract.Error(_name, "Already defined function in this name at line: "+
+			fmt.Sprint(i.funcs.Vals[index].(objects.Function).Line))
 	}
 
 	// Function parentheses are not defined?
@@ -36,6 +39,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 	function := objects.Function{
 		Name:       _name.Value,
 		Start:      i.index,
+		Line:       _name.Line,
 		Parameters: []objects.Parameter{},
 	}
 
