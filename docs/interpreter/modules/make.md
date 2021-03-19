@@ -1,9 +1,10 @@
 # MAKE
 
-Make module used for interprete Fract codes.
+Make module used for interpret Fract codes.
 <br>
 Example:
 ```
->make main
->make main.fract
+dir$ fract make main
+[Your Code Output]
+dir$ 
 ```
