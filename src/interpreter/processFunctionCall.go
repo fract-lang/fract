@@ -25,13 +25,13 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 		fract.Error(_name, "Function is not defined in this name!: "+_name.Value)
 	}
 
-	function := i.funcs.Vals[nameIndex].(objects.Function)
+	function := i.funcs[nameIndex]
 
 	// Decompose arguments.
 	tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
 		grammar.TokenRParenthes, false)
 	braceCount, lastComma, count := 0, 0, 0
-	vars, names := make([]interface{}, 0), []string{}
+	vars, names := make([]objects.Variable, 0), []string{}
 	paramSet := false
 
 	// processArgument Process function argument.
@@ -153,12 +153,12 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	}
 
 	old := i.funcTempVariables
-	variables := append(make([]interface{}, 0), i.vars.Vals...)
-	i.vars.Vals = append(i.vars.Vals[:i.funcTempVariables], vars...)
+	variables := append(make([]objects.Variable, 0), i.vars...)
+	i.vars = append(i.vars[:i.funcTempVariables], vars...)
 	i.funcTempVariables = len(vars)
 
 	var returnValue objects.Value
-	functionLen := len(i.funcs.Vals)
+	functionLen := len(i.funcs)
 	nameIndex = i.index
 	itokens := i.tokens
 	i.tokens.Vals = function.Tokens
@@ -169,7 +169,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	for {
 		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
-		i.funcTempVariables = len(i.vars.Vals) - i.funcTempVariables
+		i.funcTempVariables = len(i.vars) - i.funcTempVariables
 
 		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			break
@@ -186,9 +186,9 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	}
 
 	// Remove temporary variables.
-	i.vars.Vals = variables
+	i.vars = variables
 	// Remove temporary functions.
-	i.funcs.Vals = i.funcs.Vals[:functionLen]
+	i.funcs = i.funcs[:functionLen]
 
 	i.functions--
 	i.funcTempVariables = old

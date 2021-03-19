@@ -56,7 +56,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 					fract.Error(current, "Name is not defined!")
 				}
 
-				i.funcs.RemoveRange(position, 1)
+				i.funcs = append(i.funcs[:position], i.funcs[position+1:]...)
 				comma = true
 				continue
 			}
@@ -69,7 +69,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 			fract.Error(current, "Name is not defined!")
 		}
 
-		i.vars.RemoveRange(position, 1)
+		i.funcs = append(i.funcs[:position], i.funcs[position+1:]...)
 		comma = true
 	}
 }

@@ -23,7 +23,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")
 	}
 
-	functionLen := len(i.funcs.Vals)
+	functionLen := len(i.funcs)
 	_break := false
 	kwstate := fract.TypeNone
 	iindex := i.index
@@ -33,7 +33,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	//*************
 	if len(contentList.Vals) == 1 ||
 		contentList.Vals[1].(objects.Token).Type != fract.TypeIn {
-		variableLen := len(i.vars.Vals)
+		variableLen := len(i.vars)
 
 		/* Interpret/skip block. */
 		for {
@@ -43,9 +43,9 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 			if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
-				i.vars.Vals = i.vars.Vals[:variableLen]
+				i.vars = i.vars[:variableLen]
 				// Remove temporary functions.
-				i.funcs.Vals = i.funcs.Vals[:functionLen]
+				i.funcs = i.funcs[:functionLen]
 
 				if _break || condition != grammar.KwTrue {
 					return kwstate
@@ -86,7 +86,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	// Name is already defined?
 	if index := i.varIndexByName(nameToken.Value); index != -1 {
 		fract.Error(nameToken, "Already defined variable in this name at line: "+
-			fmt.Sprint(i.vars.Vals[index].(objects.Variable).Line))
+			fmt.Sprint(i.vars[index].Line))
 	}
 
 	inToken := contentList.Vals[1].(objects.Token)
@@ -122,9 +122,9 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 		},
 	}
 
-	i.vars.Vals = append(i.vars.Vals, variable)
+	i.vars = append(i.vars, variable)
 
-	variableLen := len(i.vars.Vals)
+	variableLen := len(i.vars)
 
 	for vindex := 0; vindex < len(value.Content); {
 		i.index++
@@ -134,9 +134,9 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
-			i.vars.Vals = i.vars.Vals[:variableLen]
+			i.vars = i.vars[:variableLen]
 			// Remove temporary functions.
-			i.funcs.Vals = i.funcs.Vals[:functionLen]
+			i.funcs = i.funcs[:functionLen]
 
 			vindex++
 			if _break || vindex == len(value.Content) {
@@ -160,6 +160,6 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	}
 
 	// Remove loop variable.
-	i.vars.Vals = i.vars.Vals[:variableLen-1]
+	i.vars = i.vars[:variableLen-1]
 	return kwstate
 }

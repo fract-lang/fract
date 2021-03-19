@@ -32,7 +32,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 		fract.Error(_name, "This is not a valid name!")
 	} else if index := i.varIndexByName(_name.Value); index != -1 { // Name is already defined?
 		fract.Error(_name, "Variable already defined in this name at line: "+
-			fmt.Sprint(i.vars.Vals[index].(objects.Variable).Line))
+			fmt.Sprint(i.vars[index].Line))
 	}
 
 	// Data type is not defined?
@@ -64,7 +64,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 		value = i.processInput(*tokens.Sublist(3, tokenLen-3))
 	}
 
-	i.vars.Vals = append(i.vars.Vals, objects.Variable{
+	i.vars = append(i.vars, objects.Variable{
 		Name:  _name.Value,
 		Value: value,
 		Line:  _name.Line,
