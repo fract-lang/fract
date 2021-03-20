@@ -15,5 +15,5 @@ func ToInt64(value string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return int64(result), err
+	return result, err
 }
