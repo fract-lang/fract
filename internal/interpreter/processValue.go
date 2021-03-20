@@ -217,18 +217,18 @@ func solveProcess(process valueProcess) objects.Value {
 // __processValue Process value.
 // first This is first value.
 // token Token to process.
-// operations All operations.
+// tokens Tokens to process.
 // index Index of token.
 func (i *Interpreter) _processValue(first bool, operation *valueProcess,
-	operations *vector.Vector, index int) int {
+	tokens *vector.Vector, index int) int {
 	token := operation.First
 	if !first {
 		token = operation.Second
 	}
 
 	if token.Type == fract.TypeName {
-		if index < len(operations.Vals)-1 {
-			next := operations.Vals[index+1].(objects.Token)
+		if index < len(tokens.Vals)-1 {
+			next := tokens.Vals[index+1].(objects.Token)
 			// Array?
 			if next.Type == fract.TypeBrace {
 				if next.Value == grammar.TokenLBracket {
@@ -240,8 +240,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					// Find close bracket.
 					cindex := index + 1
 					bracketCount := 1
-					for ; cindex < len(operations.Vals); cindex++ {
-						current := operations.Vals[cindex].(objects.Token)
+					for ; cindex < len(tokens.Vals); cindex++ {
+						current := tokens.Vals[cindex].(objects.Token)
 						if current.Type == fract.TypeBrace {
 							if current.Value == grammar.TokenLBracket {
 								bracketCount++
@@ -254,7 +254,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						}
 					}
 
-					valueList := operations.Sublist(index+2, cindex-index-3)
+					valueList := tokens.Sublist(index+2, cindex-index-3)
 					// Index value is empty?
 					if valueList.Vals == nil {
 						fract.Error(token, "Index is not defined!")
@@ -262,32 +262,32 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 					value := i.processValue(valueList)
 					if value.Array {
-						fract.Error(operations.Vals[index].(objects.Token),
+						fract.Error(tokens.Vals[index].(objects.Token),
 							"Arrays is not used in index access!")
 					} else if value.Type != fract.VALInteger {
-						fract.Error(operations.Vals[index].(objects.Token),
+						fract.Error(tokens.Vals[index].(objects.Token),
 							"Only integer values can used in index access!")
 					}
 					position, err := arithmetic.ToInt(value.Content[0])
 					if err != nil {
-						fract.Error(operations.Vals[index].(objects.Token),
+						fract.Error(tokens.Vals[index].(objects.Token),
 							"Value out of range!")
 					}
 
 					variable := i.vars[vindex]
 
 					if !variable.Value.Array {
-						fract.Error(operations.Vals[index].(objects.Token),
+						fract.Error(tokens.Vals[index].(objects.Token),
 							"Index accessor is cannot used with non-array variables!")
 					}
 
 					position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
 
 					if position == -1 {
-						fract.Error(operations.Vals[index].(objects.Token),
+						fract.Error(tokens.Vals[index].(objects.Token),
 							"Index is out of range!")
 					}
-					operations.RemoveRange(index+1, cindex-index-1)
+					tokens.RemoveRange(index+1, cindex-index-1)
 					if first {
 						operation.FirstV.Content = []string{variable.Value.Content[position]}
 						operation.FirstV.Array = false
@@ -300,8 +300,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					// Find close parentheses.
 					cindex := index + 1
 					bracketCount := 1
-					for ; cindex < len(operations.Vals); cindex++ {
-						current := operations.Vals[cindex].(objects.Token)
+					for ; cindex < len(tokens.Vals); cindex++ {
+						current := tokens.Vals[cindex].(objects.Token)
 						if current.Type == fract.TypeBrace {
 							if current.Value == grammar.TokenLParenthes {
 								bracketCount++
@@ -313,11 +313,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 							}
 						}
 					}
-					value := i.processFunctionCall(*operations.Sublist(index, cindex-index))
+					value := i.processFunctionCall(*tokens.Sublist(index, cindex-index))
 					if !operation.FirstV.Array && value.Content == nil {
 						fract.Error(token, "Function is not return any value!")
 					}
-					operations.RemoveRange(index+1, cindex-index-1)
+					tokens.RemoveRange(index+1, cindex-index-1)
 					if first {
 						operation.FirstV = value
 					} else {
@@ -347,7 +347,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			bracketCount := 1
 			oindex := index - 1
 			for ; oindex >= 0; oindex-- {
-				current := operations.Vals[oindex].(objects.Token)
+				current := tokens.Vals[oindex].(objects.Token)
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenRBracket {
 						bracketCount++
@@ -365,22 +365,22 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				if first {
 					operation.FirstV.Array = true
 					operation.FirstV.Content = i.processArrayValue(
-						operations.Sublist(oindex, index-oindex+1)).Content
+						tokens.Sublist(oindex, index-oindex+1)).Content
 				} else {
 					operation.SecondV.Array = true
 					operation.SecondV.Content = i.processArrayValue(
-						operations.Sublist(oindex, index-oindex+1)).Content
+						tokens.Sublist(oindex, index-oindex+1)).Content
 				}
-				operations.RemoveRange(oindex, index-oindex)
+				tokens.RemoveRange(oindex, index-oindex)
 				return index - oindex
 			}
 
-			endToken := operations.Vals[oindex-1].(objects.Token)
+			endToken := tokens.Vals[oindex-1].(objects.Token)
 			vindex := i.varIndexByName(endToken.Value)
 			if vindex == -1 {
 				fract.Error(endToken, "Variable is not defined in this name!: "+endToken.Value)
 			}
-			valueList := operations.Sublist(oindex+1, index-oindex-1)
+			valueList := tokens.Sublist(oindex+1, index-oindex-1)
 			// Index value is empty?
 			if valueList.Vals == nil {
 				fract.Error(endToken, "Index is not defined!")
@@ -388,32 +388,32 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 			value := i.processValue(valueList)
 			if value.Array {
-				fract.Error(operations.Vals[index].(objects.Token),
+				fract.Error(tokens.Vals[index].(objects.Token),
 					"Arrays is not used in index access!")
 			} else if value.Type != fract.VALInteger {
-				fract.Error(operations.Vals[index].(objects.Token),
+				fract.Error(tokens.Vals[index].(objects.Token),
 					"Only integer values can used in index access!")
 			}
 
 			position, err := arithmetic.ToInt(value.Content[0])
 			if err != nil {
-				fract.Error(operations.Vals[oindex].(objects.Token),
+				fract.Error(tokens.Vals[oindex].(objects.Token),
 					"Value out of range!")
 			}
 
 			variable := i.vars[vindex]
 
 			if !variable.Value.Array {
-				fract.Error(operations.Vals[oindex].(objects.Token),
+				fract.Error(tokens.Vals[oindex].(objects.Token),
 					"Index accessor is cannot used with non-array variables!")
 			}
 
 			position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
 			if position == -1 {
-				fract.Error(operations.Vals[oindex].(objects.Token),
+				fract.Error(tokens.Vals[oindex].(objects.Token),
 					"Index is out of range!")
 			}
-			operations.RemoveRange(oindex-1, index-oindex+1)
+			tokens.RemoveRange(oindex-1, index-oindex+1)
 
 			if first {
 				operation.FirstV.Content = []string{variable.Value.Content[position]}
@@ -428,8 +428,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			// Array constructor.
 			cindex := index + 1
 			bracketCount := 1
-			for ; cindex < len(operations.Vals); cindex++ {
-				current := operations.Vals[cindex].(objects.Token)
+			for ; cindex < len(tokens.Vals); cindex++ {
+				current := tokens.Vals[cindex].(objects.Token)
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenLBracket {
 						bracketCount++
@@ -445,13 +445,13 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if first {
 				operation.FirstV.Array = true
 				operation.FirstV.Content = i.processArrayValue(
-					operations.Sublist(index, cindex-index+1)).Content
+					tokens.Sublist(index, cindex-index+1)).Content
 			} else {
 				operation.SecondV.Array = true
 				operation.SecondV.Content = i.processArrayValue(
-					operations.Sublist(index, cindex-index+1)).Content
+					tokens.Sublist(index, cindex-index+1)).Content
 			}
-			operations.RemoveRange(index+1, cindex-index-1)
+			tokens.RemoveRange(index+1, cindex-index-1)
 			return 0
 		} else if token.Value == grammar.TokenLBrace {
 			// Array initializer.
@@ -459,8 +459,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			// Find close brace.
 			cindex := index + 1
 			braceCount := 1
-			for ; cindex < len(operations.Vals); cindex++ {
-				current := operations.Vals[cindex].(objects.Token)
+			for ; cindex < len(tokens.Vals); cindex++ {
+				current := tokens.Vals[cindex].(objects.Token)
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenLBrace {
 						fract.Error(current, "Arrays is cannot take array value as element!")
@@ -474,13 +474,13 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				}
 			}
 
-			value := i.processArrayValue(operations.Sublist(index, cindex-index+1))
+			value := i.processArrayValue(tokens.Sublist(index, cindex-index+1))
 			if first {
 				operation.FirstV = value
 			} else {
 				operation.SecondV = value
 			}
-			operations.RemoveRange(index+1, cindex-index-1)
+			tokens.RemoveRange(index+1, cindex-index-1)
 			return 0
 		} else if token.Value == grammar.TokenRBrace {
 			// Array initializer.
@@ -490,7 +490,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			oindex := index - 1
 			nestedArray := false
 			for ; oindex >= 0; oindex-- {
-				current := operations.Vals[oindex].(objects.Token)
+				current := tokens.Vals[oindex].(objects.Token)
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenRBrace {
 						braceCount++
@@ -507,13 +507,13 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				}
 			}
 
-			value := i.processArrayValue(operations.Sublist(oindex, index-oindex+1))
+			value := i.processArrayValue(tokens.Sublist(oindex, index-oindex+1))
 			if first {
 				operation.FirstV = value
 			} else {
 				operation.SecondV = value
 			}
-			operations.RemoveRange(oindex, index-oindex)
+			tokens.RemoveRange(oindex, index-oindex)
 			return index - oindex
 		} else if token.Value == grammar.TokenRParenthes {
 			// Function.
@@ -522,7 +522,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			bracketCount := 1
 			oindex := index - 1
 			for ; oindex >= 0; oindex-- {
-				current := operations.Vals[oindex].(objects.Token)
+				current := tokens.Vals[oindex].(objects.Token)
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenRBracket {
 						bracketCount++
@@ -535,9 +535,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				}
 			}
 			oindex++
-			value := i.processFunctionCall(*operations.Sublist(oindex, index-oindex+1))
+			value := i.processFunctionCall(*tokens.Sublist(oindex, index-oindex+1))
 			if value.Content == nil {
-				fract.Error(operations.Vals[oindex].(objects.Token),
+				fract.Error(tokens.Vals[oindex].(objects.Token),
 					"Function is not return any value!")
 			}
 			if first {
@@ -545,7 +545,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			} else {
 				operation.SecondV = value
 			}
-			operations.RemoveRange(oindex, index-oindex)
+			tokens.RemoveRange(oindex, index-oindex)
 			return index - oindex
 		}
 	}
