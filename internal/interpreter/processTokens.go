@@ -7,7 +7,6 @@ package interpreter
 import (
 	"fmt"
 
-	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
@@ -22,14 +21,7 @@ func printValue(value objects.Value) bool {
 	}
 
 	if value.Array {
-		if value.Type == fract.VALString {
-			for _, current := range value.Content {
-				ch, _ := arithmetic.ToInt64(current)
-				fmt.Printf("%c", ch)
-			}
-		} else {
-			fmt.Print(value.Content)
-		}
+		fmt.Print(value.Content)
 	} else {
 		fmt.Print(value.Content[0])
 	}
