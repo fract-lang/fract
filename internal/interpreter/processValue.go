@@ -46,6 +46,13 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 
 		val := i.processValue(&_range)
 		if val.Array {
+			if val.Type == fract.VALString {
+				tokens.Insert(found, objects.Token{
+					Value: grammar.TokenDoubleQuote + val.Content[0] + grammar.TokenDoubleQuote,
+					Type:  fract.TypeValue,
+				})
+				continue
+			}
 			tokens.Insert(found, objects.Token{
 				Value: grammar.TokenLBrace,
 				Type:  fract.TypeBrace,
@@ -276,24 +283,42 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 					variable := i.vars[vindex]
 
-					if !variable.Value.Array {
+					if !variable.Value.Array && variable.Value.Type != fract.VALString {
 						fract.Error(tokens.Vals[index].(objects.Token),
 							"Index accessor is cannot used with non-array variables!")
 					}
 
-					position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+					if variable.Value.Array {
+						position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+					} else {
+						position = parser.ProcessArrayIndex(len(variable.Value.Content[0]), position)
+					}
 
 					if position == -1 {
 						fract.Error(tokens.Vals[index].(objects.Token),
 							"Index is out of range!")
 					}
 					tokens.RemoveRange(index+1, cindex-index-1)
-					if first {
-						operation.FirstV.Content = []string{variable.Value.Content[position]}
-						operation.FirstV.Array = false
+
+					var val string
+					if variable.Value.Array {
+						val = variable.Value.Content[position]
 					} else {
-						operation.SecondV.Content = []string{variable.Value.Content[position]}
+						val = arithmetic.IntToString(variable.Value.Content[0][position])
+					}
+
+					if first {
+						operation.FirstV.Content = []string{val}
+						operation.FirstV.Array = false
+						if variable.Value.Type == fract.VALString {
+							operation.FirstV.Type = fract.VALString
+						}
+					} else {
+						operation.SecondV.Content = []string{val}
 						operation.SecondV.Array = false
+						if variable.Value.Type == fract.VALString {
+							operation.SecondV.Type = fract.VALString
+						}
 					}
 					return 0
 				} else if next.Value == grammar.TokenLParenthes { // Function?
@@ -403,24 +428,39 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 			variable := i.vars[vindex]
 
-			if !variable.Value.Array {
+			if !variable.Value.Array && variable.Value.Type != fract.VALString {
 				fract.Error(tokens.Vals[oindex].(objects.Token),
 					"Index accessor is cannot used with non-array variables!")
 			}
 
-			position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+			if variable.Value.Array {
+				position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+			} else {
+				position = parser.ProcessArrayIndex(len(variable.Value.Content[0]), position)
+			}
+
 			if position == -1 {
 				fract.Error(tokens.Vals[oindex].(objects.Token),
 					"Index is out of range!")
 			}
 			tokens.RemoveRange(oindex-1, index-oindex+1)
 
-			if first {
-				operation.FirstV.Content = []string{variable.Value.Content[position]}
-				operation.FirstV.Array = false
+			var val string
+			if variable.Value.Array {
+				val = variable.Value.Content[position]
 			} else {
-				operation.SecondV.Content = []string{variable.Value.Content[position]}
-				operation.SecondV.Array = false
+				val = arithmetic.IntToString(variable.Value.Content[0][position])
+			}
+
+			if first {
+				operation.FirstV.Content = []string{val}
+				operation.FirstV.Array = false
+				if variable.Value.Type == fract.VALString {
+					operation.FirstV.Type = fract.VALString
+				}
+			} else {
+				operation.SecondV.Content = []string{val}
+				operation.FirstV.Array = false
 			}
 
 			return index - oindex + 1
@@ -569,7 +609,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
 			operation.FirstV.Type = fract.VALString
-			operation.FirstV.Array = true
 			for index := 1; index < len(token.Value)-1; index++ {
 				operation.FirstV.Content = append(
 					operation.FirstV.Content, arithmetic.IntToString(token.Value[index]))
@@ -582,7 +621,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
 			operation.SecondV.Type = fract.VALString
-			operation.SecondV.Array = true
 			for index := 1; index < len(token.Value)-1; index++ {
 				operation.SecondV.Content = append(
 					operation.SecondV.Content, arithmetic.IntToString(token.Value[index]))
@@ -655,7 +693,16 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 				fract.Error(first, "Value is not defined!")
 			}
 			val := i.processValue(lst)
-			value.Content = append(value.Content, val.Content...)
+			if val.Type == fract.VALString {
+				var sb strings.Builder
+				for _, current := range val.Content {
+					code, _ := arithmetic.ToInt(current)
+					sb.WriteRune(rune(code))
+				}
+				value.Content = append(value.Content, sb.String())
+			} else {
+				value.Content = append(value.Content, val.Content...)
+			}
 			if value.Type != fract.VALString {
 				value.Type = val.Type
 			}
@@ -669,7 +716,16 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 			fract.Error(first, "Value is not defined!")
 		}
 		val := i.processValue(lst)
-		value.Content = append(value.Content, val.Content...)
+		if val.Type == fract.VALString {
+			var sb strings.Builder
+			for _, current := range val.Content {
+				code, _ := arithmetic.ToInt(current)
+				sb.WriteRune(rune(code))
+			}
+			value.Content = append(value.Content, sb.String())
+		} else {
+			value.Content = append(value.Content, val.Content...)
+		}
 		if value.Type != fract.VALString {
 			value.Type = val.Type
 		}
