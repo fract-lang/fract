@@ -10,7 +10,7 @@
 ```
 555 + 5 # Comment
 ```
-``#> ... <#`` are ısed for multiline comments.
+``#> ... <#`` are used for multiline comments.
 ### Examples
 ```
 #>
