@@ -28,15 +28,7 @@ func printValue(value objects.Value) bool {
 				fmt.Printf("%c", ch)
 			}
 		} else {
-			if value.Type == fract.VALBoolean {
-				if value.Content[0] == "1" {
-					fmt.Print(grammar.KwTrue)
-				} else {
-					fmt.Print(grammar.KwFalse)
-				}
-			} else {
-				fmt.Print(value.Content)
-			}
+			fmt.Print(value.Content)
 		}
 	} else {
 		fmt.Print(value.Content[0])

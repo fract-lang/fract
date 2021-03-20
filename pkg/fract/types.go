@@ -69,10 +69,12 @@ const (
 	// FUNCReturn Return value.
 	FUNCReturn = 2
 
-	// VALNone Not special value, classic arithmetic.
-	VALNone = 0
+	// VALInteger Integer value.
+	VALInteger = 0
+	// VALFloat Float value.
+	VALFloat = 1
 	// VALString String value.
-	VALString = 1
+	VALString = 2
 	// Boolean Boolean value.
-	VALBoolean = 2
+	VALBoolean = 3
 )
