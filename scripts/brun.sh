@@ -23,4 +23,4 @@
 # SOFTWARE.
 
 go build -v cmd/main.go
-./main
+./main $@
