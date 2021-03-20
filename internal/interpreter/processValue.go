@@ -600,7 +600,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		} else {
 			operation.SecondV.Type = fract.VALBoolean
 		}
-	} else if arithmetic.IsFloatValue(token.Value) {
+	} else if strings.Contains(token.Value, grammar.TokenDot) { // Float?
 		if first {
 			operation.FirstV.Type = fract.VALFloat
 		} else {
