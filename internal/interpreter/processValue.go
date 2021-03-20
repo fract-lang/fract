@@ -258,7 +258,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						fract.Error(operations.Vals[index].(objects.Token),
 							"Float values is not used in index access!")
 					}
-					position, err := arithmetic.ToInt64(value.Content[0])
+					position, err := arithmetic.ToInt(value.Content[0])
 					if err != nil {
 						fract.Error(operations.Vals[index].(objects.Token),
 							"Value out of range!")
@@ -271,7 +271,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 							"Index accessor is cannot used with non-array variables!")
 					}
 
-					if position < 0 || position >= int64(len(variable.Value.Content)) {
+					position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+
+					if position == -1 {
 						fract.Error(operations.Vals[index].(objects.Token),
 							"Index is out of range!")
 					}
@@ -383,9 +385,10 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					"Float values is not used in index access!")
 			}
 
-			position, err := arithmetic.ToInt64(value.Content[0])
+			position, err := arithmetic.ToInt(value.Content[0])
 			if err != nil {
-				fract.Error(operations.Vals[oindex].(objects.Token), "Value out of range!")
+				fract.Error(operations.Vals[oindex].(objects.Token),
+					"Value out of range!")
 			}
 
 			variable := i.vars[vindex]
@@ -395,8 +398,10 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					"Index accessor is cannot used with non-array variables!")
 			}
 
-			if position < 0 || position >= int64(len(variable.Value.Content)) {
-				fract.Error(operations.Vals[oindex].(objects.Token), "Index is out of range!")
+			position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+			if position == -1 {
+				fract.Error(operations.Vals[oindex].(objects.Token),
+					"Index is out of range!")
 			}
 			operations.RemoveRange(oindex-1, index-oindex+1)
 

@@ -9,6 +9,7 @@ import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -27,7 +28,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 		fract.Error(_name, "Variable is not defined in this name!: "+_name.Value)
 	}
 
-	var setIndex int64 = -1
+	setIndex := -1
 	variable := i.vars[index]
 	setter := tokens.Vals[1].(objects.Token)
 
@@ -55,11 +56,12 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 			if valueList.Vals == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			position, err := arithmetic.ToInt64(i.processValue(valueList).Content[0])
+			position, err := arithmetic.ToInt(i.processValue(valueList).Content[0])
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}
-			if position < 0 || position >= int64(len(variable.Value.Content)) {
+			position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+			if position == -1 {
 				fract.Error(setter, "Index is out of range!")
 			}
 			setIndex = position
