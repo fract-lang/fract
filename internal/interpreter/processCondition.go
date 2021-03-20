@@ -34,33 +34,27 @@ func compare(value0, value1 objects.Value, operator string) bool {
 		item1, _ := arithmetic.ToFloat64(value1.Content[index])
 		switch operator {
 		case grammar.Equals: // Equals.
-			if item0 == item1 {
-			} else {
+			if item0 != item1 {
 				return false
 			}
 		case grammar.NotEquals: // Not equals.
-			if item0 != item1 {
-			} else {
+			if item0 == item1 {
 				return false
 			}
 		case grammar.TokenGreat: // Greater.
-			if item0 > item1 {
-			} else {
+			if item0 <= item1 {
 				return false
 			}
 		case grammar.TokenLess: // Less.
-			if item0 < item1 {
-			} else {
+			if item0 >= item1 {
 				return false
 			}
 		case grammar.GreaterEquals: // Greater or equals.
-			if item0 >= item1 {
-			} else {
+			if item0 < item1 {
 				return false
 			}
 		case grammar.LessEquals: // Less or equals.
-			if item0 <= item1 {
-			} else {
+			if item0 > item1 {
 				return false
 			}
 		}
