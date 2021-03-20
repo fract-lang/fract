@@ -17,7 +17,7 @@ var (
 	// TrueValueIns True condition value instance.
 	TrueValueIns objects.Value = objects.Value{
 		Array:   false,
-		Content: []string{"1"},
+		Content: []string{grammar.KwTrue},
 	}
 )
 

@@ -79,6 +79,22 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 // solveProcess Solve arithmetic process.
 // process Process to solve.
 func solveProcess(process valueProcess) objects.Value {
+	// Parse arithmetic value.
+	// value Value to parse.
+	toArithmetic := func(value string) float64 {
+		if value == grammar.KwTrue {
+			return 1
+		} else if value == grammar.KwFalse {
+			return 0
+		}
+		flt, _ := arithmetic.ToFloat64(value)
+		return flt
+	}
+
+	// Solve process.
+	// operator Operator of process.
+	// first First value.
+	// second Second value.
 	solve := func(operator objects.Token, first, second float64) float64 {
 		var result float64
 
@@ -143,27 +159,24 @@ func solveProcess(process valueProcess) objects.Value {
 		}
 
 		if len(process.FirstV.Content) == 1 {
-			first, _ := arithmetic.ToFloat64(process.FirstV.Content[0])
+			first := toArithmetic(process.FirstV.Content[0])
 			for index, current := range process.SecondV.Content {
-				second, _ := arithmetic.ToFloat64(current)
 				process.SecondV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, first, second))
+					solve(process.Operator, first, toArithmetic(current)))
 			}
 			value.Content = process.SecondV.Content
 		} else if len(process.SecondV.Content) == 1 {
-			second, _ := arithmetic.ToFloat64(process.SecondV.Content[0])
+			second := toArithmetic(process.SecondV.Content[0])
 			for index, current := range process.FirstV.Content {
-				first, _ := arithmetic.ToFloat64(current)
 				process.FirstV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, first, second))
+					solve(process.Operator, toArithmetic(current), second))
 			}
 			value.Content = process.FirstV.Content
 		} else {
 			for index, current := range process.FirstV.Content {
-				first, _ := arithmetic.ToFloat64(current)
-				second, _ := arithmetic.ToFloat64(process.SecondV.Content[index])
 				process.FirstV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, first, second))
+					solve(process.Operator, toArithmetic(current),
+						toArithmetic(process.SecondV.Content[index])))
 			}
 			value.Content = process.FirstV.Content
 		}
@@ -173,11 +186,10 @@ func solveProcess(process valueProcess) objects.Value {
 			fract.Error(process.First, "Array is empty!")
 		}
 
-		second, _ := arithmetic.ToFloat64(process.SecondV.Content[0])
+		second := toArithmetic(process.SecondV.Content[0])
 		for index, current := range process.FirstV.Content {
-			first, _ := arithmetic.ToFloat64(current)
 			process.FirstV.Content[index] = fmt.Sprintf("%g",
-				solve(process.Operator, first, second))
+				solve(process.Operator, toArithmetic(current), second))
 		}
 		value.Array = true
 		value.Content = process.FirstV.Content
@@ -186,19 +198,17 @@ func solveProcess(process valueProcess) objects.Value {
 			fract.Error(process.First, "Array is empty!")
 		}
 
-		first, _ := arithmetic.ToFloat64(process.FirstV.Content[0])
+		first := toArithmetic(process.FirstV.Content[0])
 		for index, current := range process.SecondV.Content {
-			second, _ := arithmetic.ToFloat64(current)
 			process.SecondV.Content[index] = fmt.Sprintf("%g",
-				solve(process.Operator, second, first))
+				solve(process.Operator, toArithmetic(current), first))
 		}
 		value.Array = true
 		value.Content = process.SecondV.Content
 	} else {
-		first, _ := arithmetic.ToFloat64(process.FirstV.Content[0])
-		second, _ := arithmetic.ToFloat64(process.SecondV.Content[0])
 		value.Content = []string{fmt.Sprintf("%g",
-			solve(process.Operator, first, second))}
+			solve(process.Operator, toArithmetic(process.FirstV.Content[0]),
+				toArithmetic(process.SecondV.Content[0])))}
 	}
 
 	return value
@@ -254,9 +264,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if value.Array {
 						fract.Error(operations.Vals[index].(objects.Token),
 							"Arrays is not used in index access!")
-					} else if arithmetic.IsFloatValue(value.Content[0]) {
+					} else if value.Type != fract.VALInteger {
 						fract.Error(operations.Vals[index].(objects.Token),
-							"Float values is not used in index access!")
+							"Only integer values can used in index access!")
 					}
 					position, err := arithmetic.ToInt(value.Content[0])
 					if err != nil {
@@ -380,9 +390,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if value.Array {
 				fract.Error(operations.Vals[index].(objects.Token),
 					"Arrays is not used in index access!")
-			} else if arithmetic.IsFloatValue(value.Content[0]) {
+			} else if value.Type != fract.VALInteger {
 				fract.Error(operations.Vals[index].(objects.Token),
-					"Float values is not used in index access!")
+					"Only integer values can used in index access!")
 			}
 
 			position, err := arithmetic.ToInt(value.Content[0])
@@ -544,7 +554,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	// Single value.
 	//
 
-	if !strings.HasPrefix(token.Value, grammar.TokenQuote) &&
+	if token.Type != fract.TypeBooleanTrue &&
+		token.Type != fract.TypeBooleanFalse &&
+		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
 		_, err := arithmetic.ToFloat64(token.Value)
 		if err != nil {
@@ -580,13 +592,19 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		}
 	}
 
-	// Boolean check.
+	// Type check.
 	if token.Type == fract.TypeBooleanTrue ||
 		token.Type == fract.TypeBooleanFalse {
 		if first {
 			operation.FirstV.Type = fract.VALBoolean
 		} else {
 			operation.SecondV.Type = fract.VALBoolean
+		}
+	} else if arithmetic.IsFloatValue(token.Value) {
+		if first {
+			operation.FirstV.Type = fract.VALFloat
+		} else {
+			operation.SecondV.Type = fract.VALFloat
 		}
 	}
 
@@ -613,8 +631,8 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 		value := i.processValue(valueList)
 		if value.Array {
 			fract.Error(first, "Arrays is not used in array constructors!")
-		} else if arithmetic.IsFloatValue(value.Content[0]) {
-			fract.Error(first, "Float values is not used in array constructors!")
+		} else if value.Type != fract.VALInteger {
+			fract.Error(first, "Only integer values can used in array constructors!")
 		}
 
 		val, _ := arithmetic.ToInt64(value.Content[0])
