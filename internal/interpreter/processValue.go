@@ -609,10 +609,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
 			operation.FirstV.Type = fract.VALString
-			for index := 1; index < len(token.Value)-1; index++ {
-				operation.FirstV.Content = append(
-					operation.FirstV.Content, arithmetic.IntToString(token.Value[index]))
-			}
+			operation.FirstV.Content = []string{token.Value[1 : len(token.Value)-1]}
 		} else {
 			operation.FirstV.Content = []string{token.Value}
 		}
@@ -621,10 +618,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
 			operation.SecondV.Type = fract.VALString
-			for index := 1; index < len(token.Value)-1; index++ {
-				operation.SecondV.Content = append(
-					operation.SecondV.Content, arithmetic.IntToString(token.Value[index]))
-			}
+			operation.SecondV.Content = []string{token.Value[1 : len(token.Value)-1]}
 		} else {
 			operation.SecondV.Content = []string{token.Value}
 		}
@@ -693,16 +687,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 				fract.Error(first, "Value is not defined!")
 			}
 			val := i.processValue(lst)
-			if val.Type == fract.VALString {
-				var sb strings.Builder
-				for _, current := range val.Content {
-					code, _ := arithmetic.ToInt(current)
-					sb.WriteRune(rune(code))
-				}
-				value.Content = append(value.Content, sb.String())
-			} else {
-				value.Content = append(value.Content, val.Content...)
-			}
+			value.Content = append(value.Content, val.Content...)
 			if value.Type != fract.VALString {
 				value.Type = val.Type
 			}
@@ -716,16 +701,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 			fract.Error(first, "Value is not defined!")
 		}
 		val := i.processValue(lst)
-		if val.Type == fract.VALString {
-			var sb strings.Builder
-			for _, current := range val.Content {
-				code, _ := arithmetic.ToInt(current)
-				sb.WriteRune(rune(code))
-			}
-			value.Content = append(value.Content, sb.String())
-		} else {
-			value.Content = append(value.Content, val.Content...)
-		}
+		value.Content = append(value.Content, val.Content...)
 		if value.Type != fract.VALString {
 			value.Type = val.Type
 		}
