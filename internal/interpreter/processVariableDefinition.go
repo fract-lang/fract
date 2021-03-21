@@ -9,7 +9,7 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -22,12 +22,12 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
 
 	// Name is not defined?
 	if tokenLen < 2 {
-		first := tokens.Vals[0].(objects.Token)
+		first := tokens.Vals[0].(obj.Token)
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Name is not found!")
 	}
 
-	_name := tokens.Vals[1].(objects.Token)
+	_name := tokens.Vals[1].(obj.Token)
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -43,7 +43,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
 			"Setter is not found!")
 	}
 
-	setter := tokens.Vals[2].(objects.Token)
+	setter := tokens.Vals[2].(obj.Token)
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals &&
 		setter.Value != grammar.Input {
@@ -56,21 +56,21 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
 			"Value is not defined!")
 	}
 
-	var value objects.Value
+	var value obj.Value
 	if setter.Value == grammar.TokenEquals { // =
 		value = i.processValue(tokens.Sublist(3, tokenLen-3))
 		if value.Content == nil {
-			fract.Error(tokens.Vals[3].(objects.Token), "Invalid value!")
+			fract.Error(tokens.Vals[3].(obj.Token), "Invalid value!")
 		}
 	} else { // <<
 		value = i.processInput(*tokens.Sublist(3, tokenLen-3))
 	}
 
-	i.vars = append(i.vars, objects.Variable{
+	i.vars = append(i.vars, obj.Variable{
 		Name:      _name.Value,
 		Value:     value,
 		Line:      _name.Line,
-		Const:     tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable,
+		Const:     tokens.Vals[0].(obj.Token).Value == grammar.KwConstVariable,
 		Protected: protected,
 	})
 }

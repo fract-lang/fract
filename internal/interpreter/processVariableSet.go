@@ -8,7 +8,7 @@ import (
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
@@ -16,7 +16,7 @@ import (
 // ProcessVariableSet Process variable set statement.
 // tokens Tokens to process.
 func (i *Interpreter) processVariableSet(tokens vector.Vector) {
-	_name := tokens.Vals[0].(objects.Token)
+	_name := tokens.Vals[0].(obj.Token)
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -30,7 +30,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 
 	setIndex := -1
 	variable := i.vars[index]
-	setter := tokens.Vals[1].(objects.Token)
+	setter := tokens.Vals[1].(obj.Token)
 
 	// Check const state
 	if variable.Const {
@@ -45,7 +45,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 		}
 		// Find close bracket.
 		for cindex := 2; cindex < len(tokens.Vals); cindex++ {
-			current := tokens.Vals[cindex].(objects.Token)
+			current := tokens.Vals[cindex].(obj.Token)
 			if current.Type != fract.TypeBrace ||
 				current.Value != grammar.TokenRBracket {
 				continue
@@ -66,7 +66,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 			}
 			setIndex = position
 			tokens.RemoveRange(1, cindex)
-			setter = tokens.Vals[1].(objects.Token)
+			setter = tokens.Vals[1].(obj.Token)
 			break
 		}
 	}
@@ -83,11 +83,11 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 			"Value is not defined!")
 	}
 
-	var value objects.Value
+	var value obj.Value
 	if setter.Value == grammar.TokenEquals { // =
 		value = i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
 		if value.Content == nil {
-			fract.Error(tokens.Vals[2].(objects.Token), "Invalid value!")
+			fract.Error(tokens.Vals[2].(obj.Token), "Invalid value!")
 		}
 	} else { // <<
 		value = i.processInput(*tokens.Sublist(2, len(tokens.Vals)-2))

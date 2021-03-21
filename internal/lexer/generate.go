@@ -10,14 +10,14 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
 // processEsacepeSequence Process char literal espace sequence.
 // l Lexer.
 // token Token.
 // fln Full line text of current code line.
-func processEscapeSequence(l *Lexer, token *objects.Token, fln string) bool {
+func processEscapeSequence(l *Lexer, token *obj.Token, fln string) bool {
 	// Is not espace sequence?
 	if fln[l.Column-1] != '\\' {
 		return false
@@ -61,7 +61,7 @@ func processEscapeSequence(l *Lexer, token *objects.Token, fln string) bool {
 // token Token.
 // quote Quote style.
 // fln Full line text of current code line.
-func lexString(l *Lexer, token *objects.Token, quote, fln string) {
+func lexString(l *Lexer, token *obj.Token, quote, fln string) {
 	var sb strings.Builder
 	sb.WriteString(quote)
 	l.Column++
@@ -84,8 +84,8 @@ func lexString(l *Lexer, token *objects.Token, quote, fln string) {
 }
 
 // Generate Generate next token.
-func (l *Lexer) Generate() objects.Token {
-	token := objects.Token{
+func (l *Lexer) Generate() obj.Token {
+	token := obj.Token{
 		Type: fract.TypeNone,
 		File: l.File,
 	}

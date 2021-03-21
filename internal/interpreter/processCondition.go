@@ -8,14 +8,14 @@ import (
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 var (
 	// TrueValueIns True condition value instance.
-	TrueValueIns objects.Value = objects.Value{
+	TrueValueIns obj.Value = obj.Value{
 		Array:   false,
 		Content: []string{grammar.KwTrue},
 	}
@@ -25,7 +25,7 @@ var (
 // value0 First value of comparison.
 // value1 Second value of comparison.
 // operator Operator of comparison.
-func compare(value0, value1 objects.Value, operator string) bool {
+func compare(value0, value1 obj.Value, operator string) bool {
 	if value0.Array != value1.Array || len(value0.Content) != len(value1.Content) {
 		return false
 	}
@@ -97,10 +97,10 @@ func (i *Interpreter) processCondition(tokens *vector.Vector) string {
 
 		// Operator is first or last?
 		if operatorIndex == 0 {
-			fract.Error(current.Vals[0].(objects.Token),
+			fract.Error(current.Vals[0].(obj.Token),
 				"Comparison values are missing!")
 		} else if operatorIndex == len(current.Vals)-1 {
-			fract.Error(current.Vals[len(current.Vals)-1].(objects.Token),
+			fract.Error(current.Vals[len(current.Vals)-1].(obj.Token),
 				"Comparison values are missing!")
 		}
 

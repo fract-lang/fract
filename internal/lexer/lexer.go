@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
 // Lexer of Fract.
@@ -9,7 +9,7 @@ type Lexer struct {
 	/* PRIVITE */
 
 	// Last generated token.
-	lastToken objects.Token
+	lastToken obj.Token
 	// Multiline comment process state.
 	multilineComment bool
 	// Brace count.
@@ -22,7 +22,7 @@ type Lexer struct {
 	/* PUBLIC */
 
 	// Destination file.
-	File objects.CodeFile
+	File obj.CodeFile
 	// Last column.
 	Column int
 	// Last line.
