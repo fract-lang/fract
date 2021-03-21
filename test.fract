@@ -94,11 +94,6 @@
 #array
 #del array, array2
 
-"Mertcan" + 1
-"Mertcan" + "Mertcan"
-
-exit 0
-
 # FUNCTION TEST
 func len(list)
   var counter = 0
