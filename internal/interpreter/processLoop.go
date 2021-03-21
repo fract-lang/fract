@@ -15,12 +15,12 @@ import (
 
 // processLoop Process loop block.
 // tokens Tokens to process.
-func (i *Interpreter) processLoop(tokens vector.Vector) int {
-	contentList := tokens.Sublist(1, len(tokens.Vals)-1)
+func (i *Interpreter) processLoop(tokens []obj.Token) int {
+	contentList := *vector.Sublist(tokens, 1, len(tokens)-1)
 
 	// Content is empty?
-	if contentList.Vals == nil {
-		fract.Error(tokens.Vals[0].(obj.Token), "Content is empty!")
+	if contentList == nil {
+		fract.Error(tokens[0], "Content is empty!")
 	}
 
 	functionLen := len(i.funcs)
@@ -31,17 +31,17 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	//*************
 	//    WHILE
 	//*************
-	if len(contentList.Vals) == 1 ||
-		contentList.Vals[1].(obj.Token).Type != fract.TypeIn {
+	if len(contentList) == 1 ||
+		contentList[1].Type != fract.TypeIn {
 		variableLen := len(i.vars)
 
 		/* Interpret/skip block. */
 		for {
 			i.index++
-			tokens := i.tokens.Vals[i.index].(vector.Vector)
-			condition := i.processCondition(contentList)
+			tokens := i.tokens[i.index]
+			condition := i.processCondition(&contentList)
 
-			if tokens.Vals[0].(obj.Token).Type == fract.TypeBlockEnd { // Block is ended.
+			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
 				i.vars = i.vars[:variableLen]
 				// Remove temporary functions.
@@ -77,7 +77,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	//*************
 	//   FOREACH
 	//*************
-	nameToken := contentList.Vals[0].(obj.Token)
+	nameToken := contentList[0]
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {
 		fract.Error(nameToken, "This is not a valid name!")
@@ -89,20 +89,19 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 			fmt.Sprint(i.vars[index].Line))
 	}
 
-	inToken := contentList.Vals[1].(obj.Token)
-	contentList = contentList.Sublist(2, len(contentList.Vals)-2)
+	inToken := contentList[1]
+	contentList = *vector.Sublist(contentList, 2, len(contentList)-2)
 
 	// Value is not defined?
-	if contentList.Vals == nil {
+	if contentList == nil {
 		fract.Error(inToken, "Value is not defined!")
 	}
 
-	value := i.processValue(contentList)
+	value := i.processValue(&contentList)
 
 	// Type is not array?
 	if !value.Array {
-		fract.Error(contentList.Vals[2].(obj.Token),
-			"Foreach loop must defined array value!")
+		fract.Error(contentList[2], "Foreach loop must defined array value!")
 	}
 
 	// Empty array?
@@ -128,11 +127,11 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 	for vindex := 0; vindex < len(value.Content); {
 		i.index++
-		tokens := i.tokens.Vals[i.index].(vector.Vector)
+		tokens := i.tokens[i.index]
 
 		variable.Value.Content[0] = value.Content[vindex]
 
-		if tokens.Vals[0].(obj.Token).Type == fract.TypeBlockEnd { // Block is ended.
+		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
 			i.vars = i.vars[:variableLen]
 			// Remove temporary functions.

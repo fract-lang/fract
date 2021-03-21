@@ -7,7 +7,6 @@ package interpreter
 import (
 	"github.com/fract-lang/fract/internal/lexer"
 	obj "github.com/fract-lang/fract/pkg/objects"
-	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // Interpreter Interprater of Fract.
@@ -27,7 +26,7 @@ type Interpreter struct {
 	// Function count.
 	functions int
 	// All tokens of code file.
-	tokens vector.Vector
+	tokens [][]obj.Token
 	// Interpreter index.
 	index int
 	// Last return index.

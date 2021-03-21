@@ -16,8 +16,8 @@ import (
 
 // processFunctionCall Process function call.
 // tokens Tokens to process.
-func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
-	_name := tokens.Vals[0].(obj.Token)
+func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
+	_name := tokens[0]
 
 	// Name is not defined?
 	nameIndex := i.functionIndexByName(_name.Value)
@@ -49,13 +49,13 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
 		}
 
 		variable := obj.Variable{Name: function.Parameters[count].Name}
-		valueList := tokens.Sublist(lastComma, length)
-		current = valueList.Vals[0].(obj.Token)
+		valueList := *vector.Sublist(tokens, lastComma, length)
+		current = valueList[0]
 
 		// Check param set.
 		if current.Type == fract.TypeName {
 			if length >= 2 {
-				second := valueList.Vals[1].(obj.Token)
+				second := valueList[1]
 				if second.Value == grammar.TokenEquals {
 					length -= 2
 					if length < 1 {
@@ -72,12 +72,12 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
 							if parameter.Default.Content == nil {
 								count++
 							}
-							valueList.Vals = valueList.Vals[2:]
+							valueList = valueList[2:]
 							paramSet = true
 							names = append(names, current.Value)
 							return obj.Variable{
 								Name:  current.Value,
-								Value: i.processValue(valueList),
+								Value: i.processValue(&valueList),
 							}
 						}
 					}
@@ -96,12 +96,12 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
 			count++
 		}
 		names = append(names, variable.Name)
-		variable.Value = i.processValue(valueList)
+		variable.Value = i.processValue(&valueList)
 		return variable
 	}
 
-	for index := 0; index < len(tokens.Vals); index++ {
-		current := tokens.Vals[index].(obj.Token)
+	for index := 0; index < len(tokens); index++ {
+		current := tokens[index]
 		if current.Type == fract.TypeBrace {
 			if current.Value == grammar.TokenLParenthes ||
 				current.Value == grammar.TokenLBrace ||
@@ -116,9 +116,8 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
 		}
 	}
 
-	if tokenLen := len(tokens.Vals); lastComma < tokenLen {
-		current := tokens.Vals[lastComma].(obj.Token)
-		vars = append(vars, processArgument(current, &tokenLen))
+	if tokenLen := len(tokens); lastComma < tokenLen {
+		vars = append(vars, processArgument(tokens[lastComma], &tokenLen))
 	}
 
 	// All parameters is not defined?
@@ -161,23 +160,23 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
 	functionLen := len(i.funcs)
 	nameIndex = i.index
 	itokens := i.tokens
-	i.tokens.Vals = function.Tokens
+	i.tokens = function.Tokens
 
 	// Process block.
 	i.functions++
 	i.index = -1
 	for {
 		i.index++
-		tokens := i.tokens.Vals[i.index].(vector.Vector)
+		tokens := i.tokens[i.index]
 		i.funcTempVariables = len(i.vars) - i.funcTempVariables
 
-		if tokens.Vals[0].(obj.Token).Type == fract.TypeBlockEnd { // Block is ended.
+		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			break
 		} else if i.processTokens(tokens) == fract.FUNCReturn {
-			tokens := i.tokens.Vals[i.returnIndex].(vector.Vector)
+			tokens := i.tokens[i.returnIndex]
 			i.returnIndex = fract.TypeNone
-			valueList := vector.Vector{Vals: tokens.Vals[1:]}
-			if valueList.Vals == nil {
+			valueList := tokens[1:]
+			if valueList == nil {
 				break
 			}
 			returnValue = i.processValue(&valueList)

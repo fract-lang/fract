@@ -15,8 +15,8 @@ import (
 
 // ProcessVariableSet Process variable set statement.
 // tokens Tokens to process.
-func (i *Interpreter) processVariableSet(tokens vector.Vector) {
-	_name := tokens.Vals[0].(obj.Token)
+func (i *Interpreter) processVariableSet(tokens []obj.Token) {
+	_name := tokens[0]
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -30,7 +30,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 
 	setIndex := -1
 	variable := i.vars[index]
-	setter := tokens.Vals[1].(obj.Token)
+	setter := tokens[1]
 
 	// Check const state
 	if variable.Const {
@@ -44,16 +44,16 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 			fract.Error(setter, "Variable is not array!")
 		}
 		// Find close bracket.
-		for cindex := 2; cindex < len(tokens.Vals); cindex++ {
-			current := tokens.Vals[cindex].(obj.Token)
+		for cindex := 2; cindex < len(tokens); cindex++ {
+			current := tokens[cindex]
 			if current.Type != fract.TypeBrace ||
 				current.Value != grammar.TokenRBracket {
 				continue
 			}
 
-			valueList := tokens.Sublist(2, cindex-2)
+			valueList := vector.Sublist(tokens, 2, cindex-2)
 			// Index value is empty?
-			if valueList.Vals == nil {
+			if valueList == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
 			position, err := arithmetic.ToInt(i.processValue(valueList).Content[0])
@@ -65,8 +65,8 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 				fract.Error(setter, "Index is out of range!")
 			}
 			setIndex = position
-			tokens.RemoveRange(1, cindex)
-			setter = tokens.Vals[1].(obj.Token)
+			vector.RemoveRange(&tokens, 1, cindex)
+			setter = tokens[1]
 			break
 		}
 	}
@@ -78,19 +78,19 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 	}
 
 	// Value are not defined?
-	if len(tokens.Vals) < 3 {
+	if len(tokens) < 3 {
 		fract.ErrorCustom(setter.File, setter.Line, setter.Column+len(setter.Value),
 			"Value is not defined!")
 	}
 
 	var value obj.Value
 	if setter.Value == grammar.TokenEquals { // =
-		value = i.processValue(tokens.Sublist(2, len(tokens.Vals)-2))
+		value = i.processValue(vector.Sublist(tokens, 2, len(tokens)-2))
 		if value.Content == nil {
-			fract.Error(tokens.Vals[2].(obj.Token), "Invalid value!")
+			fract.Error(tokens[2], "Invalid value!")
 		}
 	} else { // <<
-		value = i.processInput(*tokens.Sublist(2, len(tokens.Vals)-2))
+		value = i.processInput(*vector.Sublist(tokens, 2, len(tokens)-2))
 	}
 
 	if setIndex != -1 {

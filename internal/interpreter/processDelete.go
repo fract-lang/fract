@@ -8,24 +8,23 @@ import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
-	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // processDelete Process delete keyword.
 // tokens Tokens to process.
-func (i *Interpreter) processDelete(tokens vector.Vector) {
-	tokenLen := len(tokens.Vals)
+func (i *Interpreter) processDelete(tokens []obj.Token) {
+	tokenLen := len(tokens)
 
 	// Value is not defined?
 	if tokenLen < 2 {
-		first := tokens.Vals[0].(obj.Token)
+		first := tokens[0]
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Value is not defined!")
 	}
 
 	comma := false
 	for index := 1; index < tokenLen; index++ {
-		current := tokens.Vals[index].(obj.Token)
+		current := tokens[index]
 
 		if comma {
 			if current.Type != fract.TypeComma {
@@ -41,9 +40,9 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 		}
 
 		if index < tokenLen-1 {
-			next := tokens.Vals[index+1].(obj.Token)
+			next := tokens[index+1]
 			if next.Type == fract.TypeBrace && next.Value == grammar.TokenLParenthes {
-				nnext := tokens.Vals[index+2].(obj.Token)
+				nnext := tokens[index+2]
 				if !(nnext.Type == fract.TypeBrace && nnext.Value == grammar.TokenRParenthes) {
 					fract.Error(nnext, "Invalid syntax!")
 				}

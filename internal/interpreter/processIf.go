@@ -15,19 +15,19 @@ import (
 // And returns loop keyword state.
 //
 // tokens Tokens to process.
-func (i *Interpreter) processIf(tokens vector.Vector) int {
+func (i *Interpreter) processIf(tokens []obj.Token) int {
 	/* IF */
-	tokenLen := len(tokens.Vals)
-	conditionList := tokens.Sublist(1, tokenLen-1)
+	tokenLen := len(tokens)
+	conditionList := *vector.Sublist(tokens, 1, tokenLen-1)
 
 	// Condition is empty?
-	if conditionList.Vals == nil {
-		first := tokens.Vals[0].(obj.Token)
+	if conditionList == nil {
+		first := tokens[0]
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Condition is empty!")
 	}
 
-	state := i.processCondition(conditionList)
+	state := i.processCondition(&conditionList)
 	actioned := state == grammar.KwTrue
 	variableLen := len(i.vars)
 	functionLen := len(i.funcs)
@@ -36,18 +36,18 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 	/* Interpret/skip block. */
 	for {
 		i.index++
-		tokens := i.tokens.Vals[i.index].(vector.Vector)
-		first := tokens.Vals[0].(obj.Token)
+		tokens := i.tokens[i.index]
+		first := tokens[0]
 
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			goto ret
 		} else if first.Type == fract.TypeElseIf { // Else if block.
-			tokenLen = len(tokens.Vals)
-			conditionList := tokens.Sublist(1, tokenLen-1)
+			tokenLen = len(tokens)
+			conditionList := vector.Sublist(tokens, 1, tokenLen-1)
 
 			// Condition is empty?
-			if conditionList.Vals == nil {
-				first := tokens.Vals[0].(obj.Token)
+			if conditionList == nil {
+				first := tokens[0]
 				fract.ErrorCustom(first.File, first.Line,
 					first.Column+len(first.Value), "Condition is empty!")
 			}
@@ -57,8 +57,8 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 			/* Interpret/skip block. */
 			for {
 				i.index++
-				tokens := i.tokens.Vals[i.index].(vector.Vector)
-				first := tokens.Vals[0].(obj.Token)
+				tokens := i.tokens[i.index]
+				first := tokens[0]
 
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret
@@ -92,15 +92,15 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 			}
 			continue
 		} else if first.Type == fract.TypeElse { // Else block.
-			if len(tokens.Vals) > 1 {
+			if len(tokens) > 1 {
 				fract.Error(first, "Else block is not take any arguments!")
 			}
 
 			/* Interpret/skip block. */
 			for {
 				i.index++
-				tokens := i.tokens.Vals[i.index].(vector.Vector)
-				first := tokens.Vals[0].(obj.Token)
+				tokens := i.tokens[i.index]
+				first := tokens[0]
 
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret

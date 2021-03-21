@@ -16,18 +16,17 @@ import (
 // processVariable Process variable defination.
 // tokens Tokens to process.
 // protected Protected?
-func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
-	protected bool) {
-	tokenLen := len(tokens.Vals)
+func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bool) {
+	tokenLen := len(tokens)
 
 	// Name is not defined?
 	if tokenLen < 2 {
-		first := tokens.Vals[0].(obj.Token)
+		first := tokens[0]
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Name is not found!")
 	}
 
-	_name := tokens.Vals[1].(obj.Token)
+	_name := tokens[1]
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -43,7 +42,7 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
 			"Setter is not found!")
 	}
 
-	setter := tokens.Vals[2].(obj.Token)
+	setter := tokens[2]
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals &&
 		setter.Value != grammar.Input {
@@ -58,19 +57,19 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
 
 	var value obj.Value
 	if setter.Value == grammar.TokenEquals { // =
-		value = i.processValue(tokens.Sublist(3, tokenLen-3))
+		value = i.processValue(vector.Sublist(tokens, 3, tokenLen-3))
 		if value.Content == nil {
-			fract.Error(tokens.Vals[3].(obj.Token), "Invalid value!")
+			fract.Error(tokens[3], "Invalid value!")
 		}
 	} else { // <<
-		value = i.processInput(*tokens.Sublist(3, tokenLen-3))
+		value = i.processInput(*vector.Sublist(tokens, 3, tokenLen-3))
 	}
 
 	i.vars = append(i.vars, obj.Variable{
 		Name:      _name.Value,
 		Value:     value,
 		Line:      _name.Line,
-		Const:     tokens.Vals[0].(obj.Token).Value == grammar.KwConstVariable,
+		Const:     tokens[0].Value == grammar.KwConstVariable,
 		Protected: protected,
 	})
 }
