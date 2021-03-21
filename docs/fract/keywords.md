@@ -4,7 +4,7 @@
   </tr>
   <tr>
     <td align="center"><b>protected</b></td>
-    <td>Protect definition from manuel memory deletion.</td>
+    <td>Protect object from manuel memory deletion.</td>
   </tr>
   <tr>
     <td align="center"><b>var</b></td>
