@@ -1,4 +1,4 @@
-# QUICK START TO FRACT
+# Quick Start to Fract
 
 + [Keywords](https://github.com/fract-lang/fract/blob/main/docs/Fract/keywords.md)
 + [Data Types](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
@@ -152,6 +152,16 @@ del a, b         # Remove 'a' and 'b' variables from memory
 
 del a()          # Remove 'a' function from memory
 del a, a()       # Remove 'a' variable and function from memory
+```
+
+### Protected Keyword
+Protected objects is can not remove manually from memory.
+
+#### Examples
+```
+protected var example = 4
+var # Print 4
+del var # Error: Protected objects can not be deleted manually from memory!
 ```
 
 ## Arrays
