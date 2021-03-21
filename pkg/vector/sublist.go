@@ -4,14 +4,18 @@
 
 package vector
 
+import (
+	obj "github.com/fract-lang/fract/pkg/objects"
+)
+
 // Sublist Get range.
+// slice Source slice.
 // pos Start position to take.
 // length Count of taken elements.
-func (v *Vector) Sublist(pos, length int) *Vector {
+func Sublist(slice []obj.Token, pos, length int) *[]obj.Token {
 	if length == 0 {
-		return &Vector{}
+		return nil
 	}
-	return &Vector{
-		Vals: append(make([]interface{}, 0), v.Vals[pos:pos+length]...),
-	}
+	slice = append(make([]obj.Token, 0), slice[pos:pos+length]...)
+	return &slice
 }

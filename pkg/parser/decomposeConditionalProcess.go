@@ -14,9 +14,9 @@ import (
 // tokens Tokens to find.
 // pos Position of start to find.
 // operator Operator to find.
-func findNextOperator(tokens vector.Vector, pos int, operator string) int {
-	for ; pos < len(tokens.Vals); pos++ {
-		current := tokens.Vals[pos].(obj.Token)
+func findNextOperator(tokens []obj.Token, pos int, operator string) int {
+	for ; pos < len(tokens); pos++ {
+		current := tokens[pos]
 		if current.Type == fract.TypeOperator && current.Value == operator {
 			return pos
 		}
@@ -27,25 +27,24 @@ func findNextOperator(tokens vector.Vector, pos int, operator string) int {
 // DecomposeConditionalProcess Decompose and returns conditional expressions by operators.
 // tokens Tokens to process.
 // operator Operator to decompose.
-func DecomposeConditionalProcess(tokens vector.Vector, operator string) *vector.Vector {
-	expressions := vector.Vector{}
+func DecomposeConditionalProcess(tokens []obj.Token, operator string) *[][]obj.Token {
+	expressions := make([][]obj.Token, 0)
 
 	last := 0
 	index := findNextOperator(tokens, last, operator)
 	if index == 0 { // Operator is first element of vector?
-		fract.Error(tokens.Vals[0].(obj.Token), "Operator spam!")
+		fract.Error(tokens[0], "Operator spam!")
 	}
 	for index != -1 {
-		expressions.Vals = append(expressions.Vals, *tokens.Sublist(last, index-last))
+		expressions = append(expressions, *vector.Sublist(tokens, last, index-last))
 		last = index + 1
 		index = findNextOperator(tokens, last, operator) // Find next.
-		if index == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[len(tokens.Vals)-1].(obj.Token),
-				"Operator defined, but for what?")
+		if index == len(tokens)-1 {
+			fract.Error(tokens[len(tokens)-1], "Operator defined, but for what?")
 		}
 	}
-	if last != len(tokens.Vals) {
-		expressions.Vals = append(expressions.Vals, *tokens.Sublist(last, len(tokens.Vals)-last))
+	if last != len(tokens) {
+		expressions = append(expressions, *vector.Sublist(tokens, last, len(tokens)-last))
 	}
 
 	return &expressions

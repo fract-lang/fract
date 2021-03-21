@@ -11,12 +11,11 @@ import (
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	obj "github.com/fract-lang/fract/pkg/objects"
-	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // processInput Process user input.
 // tokens Tokens to process.
-func (i *Interpreter) processInput(tokens vector.Vector) obj.Value {
+func (i *Interpreter) processInput(tokens []obj.Token) obj.Value {
 	printValue(i.processValue(&tokens))
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()

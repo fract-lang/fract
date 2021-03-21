@@ -6,12 +6,12 @@ package lexer
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/vector"
+	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
 // Next Lex next line.
-func (l *Lexer) Next() vector.Vector {
-	tokens := vector.Vector{}
+func (l *Lexer) Next() []obj.Token {
+	var tokens []obj.Token
 
 	// If file is finished?
 	if l.Finished {
@@ -38,7 +38,7 @@ tokenize:
 	token := l.Generate()
 	for token.Type != fract.TypeNone && token.Type != fract.TypeStatementTerminator {
 		if !l.multilineComment && token.Type != fract.TypeIgnore {
-			tokens.Vals = append(tokens.Vals, token)
+			tokens = append(tokens, token)
 			l.lastToken = token
 		}
 		token = l.Generate()

@@ -17,8 +17,8 @@ import (
 // open Open bracket.
 // close Close bracket.
 // nonCheck Check empty bracket content.
-func DecomposeBrace(tokens *vector.Vector, open, close string,
-	nonCheck bool) (vector.Vector, int) {
+func DecomposeBrace(tokens *[]obj.Token, open, close string,
+	nonCheck bool) ([]obj.Token, int) {
 	var (
 		first int = -1
 		last  int
@@ -27,8 +27,7 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 	/* Find open parentheses. */
 	if nonCheck {
 		name := false
-		for index, current := range tokens.Vals {
-			current := current.(obj.Token)
+		for index, current := range *tokens {
 			if current.Type == fract.TypeName {
 				name = true
 			} else if !name && current.Type == fract.TypeBrace && current.Value == open {
@@ -37,8 +36,7 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 			}
 		}
 	} else {
-		for index, current := range tokens.Vals {
-			current := current.(obj.Token)
+		for index, current := range *tokens {
 			if current.Type == fract.TypeBrace && current.Value == open {
 				first = index
 				break
@@ -51,14 +49,14 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 		if open parentheses is not found.
 	*/
 	if first == -1 {
-		return *new(vector.Vector), -1
+		return nil, -1
 	}
 
 	/* Find close parentheses. */
 	count := 1
 	length := 0
-	for index := first + 1; index < len(tokens.Vals); index++ {
-		current := tokens.Vals[index].(obj.Token)
+	for index := first + 1; index < len(*tokens); index++ {
+		current := (*tokens)[index]
 		if current.Type == fract.TypeBrace {
 			if current.Value == open {
 				count++
@@ -72,16 +70,15 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 		}
 		length++
 	}
-	_range := *tokens.Sublist(first+1, length)
+	_range := *vector.Sublist(*tokens, first+1, length)
 
 	// Bracket content is empty?
-	if nonCheck && _range.Vals == nil {
-		fract.Error(tokens.Vals[first].(obj.Token),
-			"Brackets content are empty!")
+	if nonCheck && _range == nil {
+		fract.Error((*tokens)[first], "Brackets content are empty!")
 	}
 
 	/* Remove range from original tokens. */
-	tokens.RemoveRange(first, last-first+1)
+	vector.RemoveRange(tokens, first, last-first+1)
 
 	return _range, first
 }

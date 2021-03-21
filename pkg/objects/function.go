@@ -9,7 +9,7 @@ type Function struct {
 	// Line of define.
 	Line int
 	// Block content of function.
-	Tokens []interface{}
+	Tokens [][]Token
 	// Parameters of function.
 	Parameters []Parameter
 	// Count of parameters with default value.

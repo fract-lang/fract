@@ -16,9 +16,9 @@ import (
 // processFunction Process function.
 // tokens Tokens to process.
 // protected Protected?
-func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
-	tokenLen := len(tokens.Vals)
-	_name := tokens.Vals[1].(obj.Token)
+func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
+	tokenLen := len(tokens)
+	_name := tokens[1]
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -45,19 +45,19 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 		Protected:  protected,
 	}
 
-	dtToken := tokens.Vals[tokenLen-1].(obj.Token)
+	dtToken := tokens[tokenLen-1]
 	if dtToken.Type != fract.TypeBrace ||
 		dtToken.Value != grammar.TokenRParenthes {
 		fract.Error(dtToken, "Invalid syntax!")
 	}
 
-	paramList := tokens.Sublist(3, tokenLen-4)
+	paramList := *vector.Sublist(tokens, 3, tokenLen-4)
 
 	// Decompose function parameters.
 	paramName, defaultDefined := true, false
 	var lastParameter obj.Parameter
-	for index := 0; index < len(paramList.Vals); index++ {
-		current := paramList.Vals[index].(obj.Token)
+	for index := 0; index < len(paramList); index++ {
+		current := paramList[index]
 		if paramName {
 			if current.Type != fract.TypeName {
 				fract.Error(current, "Parameter name is not found!")
@@ -75,8 +75,8 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 				brace := 0
 				index++
 				start := index
-				for ; index < len(paramList.Vals); index++ {
-					current = paramList.Vals[index].(obj.Token)
+				for ; index < len(paramList); index++ {
+					current = paramList[index]
 					if current.Type == fract.TypeBrace {
 						if current.Value == grammar.TokenLBrace ||
 							current.Value == grammar.TokenLParenthes ||
@@ -90,11 +90,10 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 					}
 				}
 				if index-start < 1 {
-					fract.Error(paramList.Vals[start-1].(obj.Token),
-						"Value is not defined!")
+					fract.Error(paramList[start-1], "Value is not defined!")
 				}
 				lastParameter.Default = i.processValue(
-					paramList.Sublist(start, index-start))
+					vector.Sublist(paramList, start, index-start))
 				function.Parameters[len(function.Parameters)-1] = lastParameter
 				function.DefaultParameterCount++
 				defaultDefined = true
@@ -113,11 +112,11 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 	}
 
 	if lastParameter.Default.Content == nil && defaultDefined {
-		fract.Error(tokens.Vals[len(tokens.Vals)-1].(obj.Token),
+		fract.Error(tokens[len(tokens)-1],
 			"All parameters after a given parameter with a default value must take a default value!")
 	}
 
 	i.skipBlock(false)
-	function.Tokens = i.tokens.Sublist(function.Start, i.index-function.Start+1).Vals
+	function.Tokens = i.tokens[function.Start : function.Start+i.index-function.Start+1]
 	i.funcs = append(i.funcs, function)
 }

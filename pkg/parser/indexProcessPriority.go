@@ -4,22 +4,19 @@ import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
-	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // IndexProcessPriority Find index of priority operator.
 // Returns index of operator if found, returns -1 if not.
 //
 // tokens Tokens to search.
-func IndexProcessPriority(tokens vector.Vector) int {
+func IndexProcessPriority(tokens []obj.Token) int {
 	bracket := 0
 	modulus := fract.TypeNone
 	multiplyOrDivive := fract.TypeNone
 	additionOrSubtraction := fract.TypeNone
 
-	for index, _token := range tokens.Vals {
-		_token := _token.(obj.Token)
-
+	for index, _token := range tokens {
 		if _token.Type == fract.TypeBrace {
 			if _token.Value == grammar.TokenLBracket ||
 				_token.Value == grammar.TokenLBrace {
@@ -58,21 +55,18 @@ func IndexProcessPriority(tokens vector.Vector) int {
 	}
 
 	if modulus != fract.TypeNone {
-		if modulus == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[modulus].(obj.Token),
-				"Operator defined, but for what?")
+		if modulus == len(tokens)-1 {
+			fract.Error(tokens[modulus], "Operator defined, but for what?")
 		}
 		return modulus
 	} else if multiplyOrDivive != fract.TypeNone {
-		if multiplyOrDivive == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[multiplyOrDivive].(obj.Token),
-				"Operator defined, but for what?")
+		if multiplyOrDivive == len(tokens)-1 {
+			fract.Error(tokens[multiplyOrDivive], "Operator defined, but for what?")
 		}
 		return multiplyOrDivive
 	} else if additionOrSubtraction != fract.TypeNone {
-		if additionOrSubtraction == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[additionOrSubtraction].(obj.Token),
-				"Operator defined, but for what?")
+		if additionOrSubtraction == len(tokens)-1 {
+			fract.Error(tokens[additionOrSubtraction], "Operator defined, but for what?")
 		}
 		return additionOrSubtraction
 	}
