@@ -34,7 +34,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 
 	// Check const state
 	if variable.Const {
-		fract.Error(setter, "Values is can not changed of const defines!")
+		fract.Error(setter, "Values is can not changed of constant defines!")
 	}
 
 	// Array setter?
@@ -95,7 +95,7 @@ func (i *Interpreter) processVariableSet(tokens vector.Vector) {
 
 	if setIndex != -1 {
 		if value.Array {
-			fract.Error(setter, "Array is cannot set as indexed value!")
+			fract.Error(setter, "Array is can not set as indexed value!")
 		}
 		variable.Value.Content[setIndex] = value.Content[0]
 	} else {

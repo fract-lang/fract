@@ -92,7 +92,7 @@ Until the brackets are closed, they are tokenized.
 
 > Variable names are must comply to [naming conventions](https://github.com/fract-lang/fract/blob/main/docs/Fract/naming_conventions.md).
 
-> Cannot change values of const variables!
+> Can not change values of const variables!
 
 ### Syntax
 ```
