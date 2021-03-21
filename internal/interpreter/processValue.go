@@ -46,13 +46,6 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 
 		val := i.processValue(&_range)
 		if val.Array {
-			if val.Type == fract.VALString {
-				tokens.Insert(found, objects.Token{
-					Value: grammar.TokenDoubleQuote + val.Content[0] + grammar.TokenDoubleQuote,
-					Type:  fract.TypeValue,
-				})
-				continue
-			}
 			tokens.Insert(found, objects.Token{
 				Value: grammar.TokenLBrace,
 				Type:  fract.TypeBrace,
@@ -75,6 +68,13 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 				Type:  fract.TypeBrace,
 			})
 		} else {
+			if val.Type == fract.VALString {
+				tokens.Insert(found, objects.Token{
+					Value: grammar.TokenDoubleQuote + val.Content[0] + grammar.TokenDoubleQuote,
+					Type:  fract.TypeValue,
+				})
+				continue
+			}
 			tokens.Insert(found, objects.Token{
 				Value: val.Content[0],
 				Type:  fract.TypeValue,
