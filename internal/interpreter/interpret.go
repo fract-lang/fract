@@ -35,8 +35,12 @@ func (i *Interpreter) Interpret() {
 		last := -1
 		for i.index = range i.tokens.Vals {
 			first := i.tokens.Vals[i.index].(vector.Vector).Vals[0].(objects.Token)
+
 			if first.Type == fract.TypeBlockEnd {
 				count--
+				if count < 0 {
+					fract.Error(first, "The extra block end defined!")
+				}
 			} else if first.Type == fract.TypeIf || first.Type == fract.TypeLoop ||
 				first.Type == fract.TypeFunction {
 				count++
