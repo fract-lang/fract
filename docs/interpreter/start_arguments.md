@@ -1,4 +1,4 @@
-# ARGUMENTS
+# Arguments
 
 Arguments allow the interpreter to execute the command directly.
 <br>

@@ -1,4 +1,4 @@
-# MAKE
+# Make Module
 
 Make module used for interpret Fract codes.
 <br>
