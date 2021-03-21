@@ -141,6 +141,15 @@ func solveProcess(process valueProcess) objects.Value {
 	if process.FirstV.Type == fract.VALString ||
 		process.SecondV.Type == fract.VALString {
 		value.Type = fract.VALString
+
+		if len(process.FirstV.Content) == 0 {
+			value.Content = process.SecondV.Content
+			return value
+		} else if len(process.SecondV.Content) == 0 {
+			value.Content = process.FirstV.Content
+			return value
+		}
+
 		if process.FirstV.Type == process.SecondV.Type { // Both string?
 			value.Content = []string{process.FirstV.Content[0] +
 				process.SecondV.Content[0]}
@@ -150,7 +159,8 @@ func solveProcess(process valueProcess) objects.Value {
 		if process.FirstV.Type == fract.VALString {
 			if process.SecondV.Array {
 				if len(process.SecondV.Content) == 0 {
-					fract.Error(process.Second, "Array is empty!")
+					value.Content = process.FirstV.Content
+					return value
 				}
 				if len(process.FirstV.Content[0]) != len(process.SecondV.Content) &&
 					(len(process.FirstV.Content[0]) != 1 && len(process.SecondV.Content) != 1) {
@@ -179,7 +189,8 @@ func solveProcess(process valueProcess) objects.Value {
 		} else {
 			if process.FirstV.Array {
 				if len(process.FirstV.Content) == 0 {
-					fract.Error(process.First, "Array is empty!")
+					value.Content = process.SecondV.Content
+					return value
 				}
 				if len(process.FirstV.Content[0]) != len(process.SecondV.Content) &&
 					(len(process.FirstV.Content[0]) != 1 && len(process.SecondV.Content) != 1) {
@@ -210,10 +221,13 @@ func solveProcess(process valueProcess) objects.Value {
 	}
 
 	if process.FirstV.Array && process.SecondV.Array {
+		value.Array = true
 		if len(process.FirstV.Content) == 0 {
-			fract.Error(process.First, "Array is empty!")
+			value.Content = process.SecondV.Content
+			return value
 		} else if len(process.SecondV.Content) == 0 {
-			fract.Error(process.First, "Array is empty!")
+			value.Content = process.FirstV.Content
+			return value
 		}
 		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
 			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
@@ -243,10 +257,14 @@ func solveProcess(process valueProcess) objects.Value {
 			}
 			value.Content = process.FirstV.Content
 		}
-		value.Array = true
 	} else if process.FirstV.Array {
+		value.Array = true
 		if len(process.FirstV.Content) == 0 {
-			fract.Error(process.First, "Array is empty!")
+			value.Content = process.SecondV.Content
+			return value
+		} else if len(process.SecondV.Content) == 0 {
+			value.Content = process.FirstV.Content
+			return value
 		}
 
 		second := arithmetic.ToArithmetic(process.SecondV.Content[0])
@@ -254,11 +272,15 @@ func solveProcess(process valueProcess) objects.Value {
 			process.FirstV.Content[index] = fmt.Sprintf("%g",
 				solve(process.Operator, arithmetic.ToArithmetic(current), second))
 		}
-		value.Array = true
 		value.Content = process.FirstV.Content
 	} else if process.SecondV.Array {
-		if len(process.SecondV.Content) == 0 {
-			fract.Error(process.First, "Array is empty!")
+		value.Array = true
+		if len(process.FirstV.Content) == 0 {
+			value.Content = process.SecondV.Content
+			return value
+		} else if len(process.SecondV.Content) == 0 {
+			value.Content = process.FirstV.Content
+			return value
 		}
 
 		first := arithmetic.ToArithmetic(process.FirstV.Content[0])
@@ -266,9 +288,11 @@ func solveProcess(process valueProcess) objects.Value {
 			process.SecondV.Content[index] = fmt.Sprintf("%g",
 				solve(process.Operator, arithmetic.ToArithmetic(current), first))
 		}
-		value.Array = true
 		value.Content = process.SecondV.Content
 	} else {
+		if len(process.FirstV.Content) == 0 {
+			process.FirstV.Content = []string{"0"}
+		}
 		value.Content = []string{fmt.Sprintf("%g",
 			solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0]),
 				arithmetic.ToArithmetic(process.SecondV.Content[0])))}
@@ -770,7 +794,7 @@ func (i *Interpreter) processArrayValue(tokens *vector.Vector) objects.Value {
 // tokens Tokens to process.
 func (i *Interpreter) processValue(tokens *vector.Vector) objects.Value {
 	value := objects.Value{
-		Content: []string{"0"},
+		Content: []string{},
 		Array:   false,
 	}
 

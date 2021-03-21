@@ -15,17 +15,12 @@ import (
 
 // printValue Print value to screen.
 // value Value to print.
-func printValue(value objects.Value) bool {
-	if value.Type != fract.VALString && value.Content == nil {
-		return false
-	}
-
+func printValue(value objects.Value) {
 	if value.Array {
 		fmt.Print(value.Content)
 	} else {
 		fmt.Print(value.Content[0])
 	}
-	return true
 }
 
 // processTokens Process tokens and returns true if block end, returns false if not.
@@ -59,9 +54,8 @@ func (i *Interpreter) processTokens(tokens vector.Vector) int {
 		}
 
 		// Println
-		if printValue(i.processValue(&tokens)) { // If printed?
-			fmt.Println()
-		}
+		printValue(i.processValue(&tokens))
+		fmt.Println()
 	} else if first.Type == fract.TypeProtected { // Protected declaration.
 		if len(tokens.Vals) < 2 {
 			fract.Error(first, "Protected but what is it protected?")
