@@ -1,7 +1,5 @@
 # Fract
 
-Say hello to Fract!
-
 [Quick Start](https://github.com/fract-lang/fract/blob/main/docs/fract/quick_start.md)
 
 ## About of Fract
