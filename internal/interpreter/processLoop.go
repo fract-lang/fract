@@ -9,7 +9,7 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -20,7 +20,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 	// Content is empty?
 	if contentList.Vals == nil {
-		fract.Error(tokens.Vals[0].(objects.Token), "Content is empty!")
+		fract.Error(tokens.Vals[0].(obj.Token), "Content is empty!")
 	}
 
 	functionLen := len(i.funcs)
@@ -32,7 +32,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	//    WHILE
 	//*************
 	if len(contentList.Vals) == 1 ||
-		contentList.Vals[1].(objects.Token).Type != fract.TypeIn {
+		contentList.Vals[1].(obj.Token).Type != fract.TypeIn {
 		variableLen := len(i.vars)
 
 		/* Interpret/skip block. */
@@ -41,7 +41,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 			tokens := i.tokens.Vals[i.index].(vector.Vector)
 			condition := i.processCondition(contentList)
 
-			if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
+			if tokens.Vals[0].(obj.Token).Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
 				i.vars = i.vars[:variableLen]
 				// Remove temporary functions.
@@ -77,7 +77,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	//*************
 	//   FOREACH
 	//*************
-	nameToken := contentList.Vals[0].(objects.Token)
+	nameToken := contentList.Vals[0].(obj.Token)
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {
 		fract.Error(nameToken, "This is not a valid name!")
@@ -89,7 +89,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 			fmt.Sprint(i.vars[index].Line))
 	}
 
-	inToken := contentList.Vals[1].(objects.Token)
+	inToken := contentList.Vals[1].(obj.Token)
 	contentList = contentList.Sublist(2, len(contentList.Vals)-2)
 
 	// Value is not defined?
@@ -101,7 +101,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 	// Type is not array?
 	if !value.Array {
-		fract.Error(contentList.Vals[2].(objects.Token),
+		fract.Error(contentList.Vals[2].(obj.Token),
 			"Foreach loop must defined array value!")
 	}
 
@@ -113,10 +113,10 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 	}
 
 	// Create loop variable.
-	variable := objects.Variable{
+	variable := obj.Variable{
 		Name:  nameToken.Value,
 		Const: false,
-		Value: objects.Value{
+		Value: obj.Value{
 			Array:   false,
 			Content: []string{""},
 		},
@@ -132,7 +132,7 @@ func (i *Interpreter) processLoop(tokens vector.Vector) int {
 
 		variable.Value.Content[0] = value.Content[vindex]
 
-		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
+		if tokens.Vals[0].(obj.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
 			i.vars = i.vars[:variableLen]
 			// Remove temporary functions.

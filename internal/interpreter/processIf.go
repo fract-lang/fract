@@ -7,7 +7,7 @@ package interpreter
 import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -22,7 +22,7 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 
 	// Condition is empty?
 	if conditionList.Vals == nil {
-		first := tokens.Vals[0].(objects.Token)
+		first := tokens.Vals[0].(obj.Token)
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
 			"Condition is empty!")
 	}
@@ -37,7 +37,7 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 	for {
 		i.index++
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
-		first := tokens.Vals[0].(objects.Token)
+		first := tokens.Vals[0].(obj.Token)
 
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
 			goto ret
@@ -47,7 +47,7 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 
 			// Condition is empty?
 			if conditionList.Vals == nil {
-				first := tokens.Vals[0].(objects.Token)
+				first := tokens.Vals[0].(obj.Token)
 				fract.ErrorCustom(first.File, first.Line,
 					first.Column+len(first.Value), "Condition is empty!")
 			}
@@ -58,7 +58,7 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 			for {
 				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
-				first := tokens.Vals[0].(objects.Token)
+				first := tokens.Vals[0].(obj.Token)
 
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret
@@ -100,7 +100,7 @@ func (i *Interpreter) processIf(tokens vector.Vector) int {
 			for {
 				i.index++
 				tokens := i.tokens.Vals[i.index].(vector.Vector)
-				first := tokens.Vals[0].(objects.Token)
+				first := tokens.Vals[0].(obj.Token)
 
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret

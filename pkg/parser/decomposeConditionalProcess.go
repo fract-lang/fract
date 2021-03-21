@@ -6,7 +6,7 @@ package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -16,7 +16,7 @@ import (
 // operator Operator to find.
 func findNextOperator(tokens vector.Vector, pos int, operator string) int {
 	for ; pos < len(tokens.Vals); pos++ {
-		current := tokens.Vals[pos].(objects.Token)
+		current := tokens.Vals[pos].(obj.Token)
 		if current.Type == fract.TypeOperator && current.Value == operator {
 			return pos
 		}
@@ -33,14 +33,14 @@ func DecomposeConditionalProcess(tokens vector.Vector, operator string) *vector.
 	last := 0
 	index := findNextOperator(tokens, last, operator)
 	if index == 0 { // Operator is first element of vector?
-		fract.Error(tokens.Vals[0].(objects.Token), "Operator spam!")
+		fract.Error(tokens.Vals[0].(obj.Token), "Operator spam!")
 	}
 	for index != -1 {
 		expressions.Vals = append(expressions.Vals, *tokens.Sublist(last, index-last))
 		last = index + 1
 		index = findNextOperator(tokens, last, operator) // Find next.
 		if index == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+			fract.Error(tokens.Vals[len(tokens.Vals)-1].(obj.Token),
 				"Operator defined, but for what?")
 		}
 	}

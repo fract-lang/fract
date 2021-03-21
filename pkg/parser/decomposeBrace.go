@@ -6,7 +6,7 @@ package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -28,7 +28,7 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 	if nonCheck {
 		name := false
 		for index, current := range tokens.Vals {
-			current := current.(objects.Token)
+			current := current.(obj.Token)
 			if current.Type == fract.TypeName {
 				name = true
 			} else if !name && current.Type == fract.TypeBrace && current.Value == open {
@@ -38,7 +38,7 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 		}
 	} else {
 		for index, current := range tokens.Vals {
-			current := current.(objects.Token)
+			current := current.(obj.Token)
 			if current.Type == fract.TypeBrace && current.Value == open {
 				first = index
 				break
@@ -58,7 +58,7 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 	count := 1
 	length := 0
 	for index := first + 1; index < len(tokens.Vals); index++ {
-		current := tokens.Vals[index].(objects.Token)
+		current := tokens.Vals[index].(obj.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == open {
 				count++
@@ -76,7 +76,7 @@ func DecomposeBrace(tokens *vector.Vector, open, close string,
 
 	// Bracket content is empty?
 	if nonCheck && _range.Vals == nil {
-		fract.Error(tokens.Vals[first].(objects.Token),
+		fract.Error(tokens.Vals[first].(obj.Token),
 			"Brackets content are empty!")
 	}
 

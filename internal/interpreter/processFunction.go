@@ -9,7 +9,7 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -18,7 +18,7 @@ import (
 // protected Protected?
 func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 	tokenLen := len(tokens.Vals)
-	_name := tokens.Vals[1].(objects.Token)
+	_name := tokens.Vals[1].(obj.Token)
 
 	// Name is not name?
 	if _name.Type != fract.TypeName {
@@ -37,15 +37,15 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 	}
 
 	i.index++
-	function := objects.Function{
+	function := obj.Function{
 		Name:       _name.Value,
 		Start:      i.index,
 		Line:       _name.Line,
-		Parameters: []objects.Parameter{},
+		Parameters: []obj.Parameter{},
 		Protected:  protected,
 	}
 
-	dtToken := tokens.Vals[tokenLen-1].(objects.Token)
+	dtToken := tokens.Vals[tokenLen-1].(obj.Token)
 	if dtToken.Type != fract.TypeBrace ||
 		dtToken.Value != grammar.TokenRParenthes {
 		fract.Error(dtToken, "Invalid syntax!")
@@ -55,15 +55,15 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 
 	// Decompose function parameters.
 	paramName, defaultDefined := true, false
-	var lastParameter objects.Parameter
+	var lastParameter obj.Parameter
 	for index := 0; index < len(paramList.Vals); index++ {
-		current := paramList.Vals[index].(objects.Token)
+		current := paramList.Vals[index].(obj.Token)
 		if paramName {
 			if current.Type != fract.TypeName {
 				fract.Error(current, "Parameter name is not found!")
 			}
 
-			lastParameter = objects.Parameter{Name: current.Value}
+			lastParameter = obj.Parameter{Name: current.Value}
 			function.Parameters = append(function.Parameters, lastParameter)
 			paramName = false
 			continue
@@ -76,7 +76,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 				index++
 				start := index
 				for ; index < len(paramList.Vals); index++ {
-					current = paramList.Vals[index].(objects.Token)
+					current = paramList.Vals[index].(obj.Token)
 					if current.Type == fract.TypeBrace {
 						if current.Value == grammar.TokenLBrace ||
 							current.Value == grammar.TokenLParenthes ||
@@ -90,7 +90,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 					}
 				}
 				if index-start < 1 {
-					fract.Error(paramList.Vals[start-1].(objects.Token),
+					fract.Error(paramList.Vals[start-1].(obj.Token),
 						"Value is not defined!")
 				}
 				lastParameter.Default = i.processValue(
@@ -113,7 +113,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 	}
 
 	if lastParameter.Default.Content == nil && defaultDefined {
-		fract.Error(tokens.Vals[len(tokens.Vals)-1].(objects.Token),
+		fract.Error(tokens.Vals[len(tokens.Vals)-1].(obj.Token),
 			"All parameters after a given parameter with a default value must take a default value!")
 	}
 

@@ -9,14 +9,14 @@ import (
 
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // processExit Process exit keyword.
 // tokens Tokens to process.
 func (i *Interpreter) processExit(tokens vector.Vector) {
-	first := tokens.Vals[0].(objects.Token)
+	first := tokens.Vals[0].(obj.Token)
 
 	// Value is not defined?
 	if len(tokens.Vals) < 2 {

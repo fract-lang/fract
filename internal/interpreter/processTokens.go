@@ -9,13 +9,13 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // printValue Print value to screen.
 // value Value to print.
-func printValue(value objects.Value) {
+func printValue(value obj.Value) {
 	if value.Array {
 		fmt.Print(value.Content)
 	} else {
@@ -31,14 +31,14 @@ func printValue(value objects.Value) {
 func (i *Interpreter) processTokens(tokens vector.Vector) int {
 	tokens = vector.Vector{Vals: append(make([]interface{}, 0), tokens.Vals...)}
 
-	first := tokens.Vals[0].(objects.Token)
+	first := tokens.Vals[0].(obj.Token)
 
 	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
 		if first.Type == fract.TypeName {
 			for _, current := range tokens.Vals {
-				current := current.(objects.Token)
+				current := current.(obj.Token)
 				if current.Type == fract.TypeBrace {
 					break
 				} else if current.Type == fract.TypeOperator &&
@@ -57,7 +57,7 @@ func (i *Interpreter) processTokens(tokens vector.Vector) int {
 		if len(tokens.Vals) < 2 {
 			fract.Error(first, "Protected but what is it protected?")
 		}
-		second := tokens.Vals[1].(objects.Token)
+		second := tokens.Vals[1].(obj.Token)
 		tokens.Vals = tokens.Vals[1:]
 		if second.Type == fract.TypeVariable { // Variable definition.
 			i.processVariableDefinition(tokens, true)

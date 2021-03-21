@@ -9,15 +9,15 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // processFunctionCall Process function call.
 // tokens Tokens to process.
-func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
-	_name := tokens.Vals[0].(objects.Token)
+func (i *Interpreter) processFunctionCall(tokens vector.Vector) obj.Value {
+	_name := tokens.Vals[0].(obj.Token)
 
 	// Name is not defined?
 	nameIndex := i.functionIndexByName(_name.Value)
@@ -31,14 +31,14 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
 		grammar.TokenRParenthes, false)
 	braceCount, lastComma, count := 0, 0, 0
-	vars, names := make([]objects.Variable, 0), []string{}
+	vars, names := make([]obj.Variable, 0), []string{}
 	paramSet := false
 
 	// processArgument Process function argument.
 	// current Current token.
 	// count Count of appended arguments.
 	// index Index of tokens state.
-	processArgument := func(current objects.Token, index *int) objects.Variable {
+	processArgument := func(current obj.Token, index *int) obj.Variable {
 		length := *index - lastComma
 		if length < 1 {
 			fract.Error(current, "Value is not defined!")
@@ -48,14 +48,14 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 			fract.Error(current, "Argument overflow!")
 		}
 
-		variable := objects.Variable{Name: function.Parameters[count].Name}
+		variable := obj.Variable{Name: function.Parameters[count].Name}
 		valueList := tokens.Sublist(lastComma, length)
-		current = valueList.Vals[0].(objects.Token)
+		current = valueList.Vals[0].(obj.Token)
 
 		// Check param set.
 		if current.Type == fract.TypeName {
 			if length >= 2 {
-				second := valueList.Vals[1].(objects.Token)
+				second := valueList.Vals[1].(obj.Token)
 				if second.Value == grammar.TokenEquals {
 					length -= 2
 					if length < 1 {
@@ -75,7 +75,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 							valueList.Vals = valueList.Vals[2:]
 							paramSet = true
 							names = append(names, current.Value)
-							return objects.Variable{
+							return obj.Variable{
 								Name:  current.Value,
 								Value: i.processValue(valueList),
 							}
@@ -101,7 +101,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	}
 
 	for index := 0; index < len(tokens.Vals); index++ {
-		current := tokens.Vals[index].(objects.Token)
+		current := tokens.Vals[index].(obj.Token)
 		if current.Type == fract.TypeBrace {
 			if current.Value == grammar.TokenLParenthes ||
 				current.Value == grammar.TokenLBrace ||
@@ -117,7 +117,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	}
 
 	if tokenLen := len(tokens.Vals); lastComma < tokenLen {
-		current := tokens.Vals[lastComma].(objects.Token)
+		current := tokens.Vals[lastComma].(obj.Token)
 		vars = append(vars, processArgument(current, &tokenLen))
 	}
 
@@ -145,7 +145,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	for ; count < len(function.Parameters); count++ {
 		current := function.Parameters[count]
 		if current.Default.Content != nil {
-			vars = append(vars, objects.Variable{
+			vars = append(vars, obj.Variable{
 				Name:  current.Name,
 				Value: current.Default,
 			})
@@ -153,11 +153,11 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 	}
 
 	old := i.funcTempVariables
-	variables := append(make([]objects.Variable, 0), i.vars...)
+	variables := append(make([]obj.Variable, 0), i.vars...)
 	i.vars = append(i.vars[:i.funcTempVariables], vars...)
 	i.funcTempVariables = len(vars)
 
-	var returnValue objects.Value
+	var returnValue obj.Value
 	functionLen := len(i.funcs)
 	nameIndex = i.index
 	itokens := i.tokens
@@ -171,7 +171,7 @@ func (i *Interpreter) processFunctionCall(tokens vector.Vector) objects.Value {
 		tokens := i.tokens.Vals[i.index].(vector.Vector)
 		i.funcTempVariables = len(i.vars) - i.funcTempVariables
 
-		if tokens.Vals[0].(objects.Token).Type == fract.TypeBlockEnd { // Block is ended.
+		if tokens.Vals[0].(obj.Token).Type == fract.TypeBlockEnd { // Block is ended.
 			break
 		} else if i.processTokens(tokens) == fract.FUNCReturn {
 			tokens := i.tokens.Vals[i.returnIndex].(vector.Vector)

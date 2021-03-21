@@ -6,7 +6,7 @@ package interpreter
 
 import (
 	"github.com/fract-lang/fract/internal/lexer"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -17,9 +17,9 @@ type Interpreter struct {
 	// Parser of this file.
 	lexer lexer.Lexer
 	// Variables.
-	vars []objects.Variable
+	vars []obj.Variable
 	// Functions.
-	funcs []objects.Function
+	funcs []obj.Function
 	// Count of function temporary variables.
 	funcTempVariables int
 	// Loop count.

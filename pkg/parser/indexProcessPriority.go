@@ -3,7 +3,7 @@ package parser
 import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -18,7 +18,7 @@ func IndexProcessPriority(tokens vector.Vector) int {
 	additionOrSubtraction := fract.TypeNone
 
 	for index, _token := range tokens.Vals {
-		_token := _token.(objects.Token)
+		_token := _token.(obj.Token)
 
 		if _token.Type == fract.TypeBrace {
 			if _token.Value == grammar.TokenLBracket ||
@@ -59,19 +59,19 @@ func IndexProcessPriority(tokens vector.Vector) int {
 
 	if modulus != fract.TypeNone {
 		if modulus == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[modulus].(objects.Token),
+			fract.Error(tokens.Vals[modulus].(obj.Token),
 				"Operator defined, but for what?")
 		}
 		return modulus
 	} else if multiplyOrDivive != fract.TypeNone {
 		if multiplyOrDivive == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[multiplyOrDivive].(objects.Token),
+			fract.Error(tokens.Vals[multiplyOrDivive].(obj.Token),
 				"Operator defined, but for what?")
 		}
 		return multiplyOrDivive
 	} else if additionOrSubtraction != fract.TypeNone {
 		if additionOrSubtraction == len(tokens.Vals)-1 {
-			fract.Error(tokens.Vals[additionOrSubtraction].(objects.Token),
+			fract.Error(tokens.Vals[additionOrSubtraction].(obj.Token),
 				"Operator defined, but for what?")
 		}
 		return additionOrSubtraction

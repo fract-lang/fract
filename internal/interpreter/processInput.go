@@ -10,18 +10,18 @@ import (
 
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/objects"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // processInput Process user input.
 // tokens Tokens to process.
-func (i *Interpreter) processInput(tokens vector.Vector) objects.Value {
+func (i *Interpreter) processInput(tokens vector.Vector) obj.Value {
 	printValue(i.processValue(&tokens))
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	input := scanner.Text()
-	value := objects.Value{
+	value := obj.Value{
 		Content: []string{},
 		Type:    fract.VALString,
 		Array:   true,
