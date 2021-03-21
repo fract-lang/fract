@@ -154,6 +154,16 @@ del a()          # Remove 'a' function from memory
 del a, a()       # Remove 'a' variable and function from memory
 ```
 
+### Protected Keyword
+Protected objects is can not remove manually from memory.
+
+#### Examples
+```
+protected var example = 4
+var # Print 4
+del var # Error: Protected objects can not be deleted manually from memory!
+```
+
 ## Arrays
 They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
 Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
