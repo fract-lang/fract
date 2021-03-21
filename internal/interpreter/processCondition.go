@@ -30,8 +30,8 @@ func compare(value0, value1 objects.Value, operator string) bool {
 		return false
 	}
 	for index := range value0.Content {
-		item0, _ := arithmetic.ToFloat64(value0.Content[index])
-		item1, _ := arithmetic.ToFloat64(value1.Content[index])
+		item0 := arithmetic.ToArithmetic(value0.Content[index])
+		item1 := arithmetic.ToArithmetic(value1.Content[index])
 		switch operator {
 		case grammar.Equals: // Equals.
 			if item0 != item1 {
