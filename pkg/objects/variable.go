@@ -10,4 +10,6 @@ type Variable struct {
 	Value Value
 	// Is const variable.
 	Const bool
+	// Protection state.
+	Protected bool
 }

@@ -15,7 +15,8 @@ import (
 
 // processFunction Process function.
 // tokens Tokens to process.
-func (i *Interpreter) processFunction(tokens vector.Vector) {
+// protected Protected?
+func (i *Interpreter) processFunction(tokens vector.Vector, protected bool) {
 	tokenLen := len(tokens.Vals)
 	_name := tokens.Vals[1].(objects.Token)
 
@@ -41,6 +42,7 @@ func (i *Interpreter) processFunction(tokens vector.Vector) {
 		Start:      i.index,
 		Line:       _name.Line,
 		Parameters: []objects.Parameter{},
+		Protected:  protected,
 	}
 
 	dtToken := tokens.Vals[tokenLen-1].(objects.Token)

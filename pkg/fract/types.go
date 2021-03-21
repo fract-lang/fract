@@ -60,6 +60,8 @@ const (
 	TypeFunction = 1121
 	// TypeReturn Return type.
 	TypeReturn = 1122
+	// TypeProtected Protected type.
+	TypeProtected = 1123
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0

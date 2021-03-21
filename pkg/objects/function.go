@@ -14,4 +14,6 @@ type Function struct {
 	Parameters []Parameter
 	// Count of parameters with default value.
 	DefaultParameterCount int
+	// Protection state?
+	Protected bool
 }

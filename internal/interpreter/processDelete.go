@@ -56,6 +56,11 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 					fract.Error(current, "Name is not defined!")
 				}
 
+				// Protected?
+				if i.funcs[position].Protected {
+					fract.Error(current, "Protected objects cannot be deleted manually from memory!")
+				}
+
 				i.funcs = append(i.funcs[:position], i.funcs[position+1:]...)
 				comma = true
 				continue
@@ -67,6 +72,11 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 		// Name is not defined?
 		if position == -1 {
 			fract.Error(current, "Name is not defined!")
+		}
+
+		// Protected?
+		if i.vars[position].Protected {
+			fract.Error(current, "Protected objects cannot be deleted manually from memory!")
 		}
 
 		i.vars = append(i.vars[:position], i.vars[position+1:]...)

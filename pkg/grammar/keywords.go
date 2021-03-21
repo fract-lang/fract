@@ -15,6 +15,8 @@ const (
 	KwVariable = "var"
 	// KwConstVariable Const variable define.
 	KwConstVariable = "const"
+	// KwProtected Protect from manuel memory deletion.
+	KwProtected = "protected"
 	// KwReturn Returns.
 	KwReturn = "ret"
 	//KwBlockEnd End of block.

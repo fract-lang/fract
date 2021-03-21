@@ -15,7 +15,9 @@ import (
 
 // processVariable Process variable defination.
 // tokens Tokens to process.
-func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
+// protected Protected?
+func (i *Interpreter) processVariableDefinition(tokens vector.Vector,
+	protected bool) {
 	tokenLen := len(tokens.Vals)
 
 	// Name is not defined?
@@ -65,9 +67,10 @@ func (i *Interpreter) processVariableDefinition(tokens vector.Vector) {
 	}
 
 	i.vars = append(i.vars, objects.Variable{
-		Name:  _name.Value,
-		Value: value,
-		Line:  _name.Line,
-		Const: tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable,
+		Name:      _name.Value,
+		Value:     value,
+		Line:      _name.Line,
+		Const:     tokens.Vals[0].(objects.Token).Value == grammar.KwConstVariable,
+		Protected: protected,
 	})
 }
