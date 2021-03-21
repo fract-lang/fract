@@ -1,6 +1,6 @@
 # Naming Conventions
 
-A naming can not begin with a number and a period. It can not end with a point. It can not contain any special characters except periods and underscores.
+A naming cannot begin with a number and a period. It cannot end with a point. It cannot contain any special characters except periods and underscores.
 
 ## Wrong Name Examples
 + .name

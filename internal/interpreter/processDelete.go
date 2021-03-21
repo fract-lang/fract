@@ -58,7 +58,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 
 				// Protected?
 				if i.funcs[position].Protected {
-					fract.Error(current, "Protected objects can not be deleted manually from memory!")
+					fract.Error(current, "Protected objects cannot be deleted manually from memory!")
 				}
 
 				i.funcs = append(i.funcs[:position], i.funcs[position+1:]...)
@@ -76,7 +76,7 @@ func (i *Interpreter) processDelete(tokens vector.Vector) {
 
 		// Protected?
 		if i.vars[position].Protected {
-			fract.Error(current, "Protected objects can not be deleted manually from memory!")
+			fract.Error(current, "Protected objects cannot be deleted manually from memory!")
 		}
 
 		i.vars = append(i.vars[:position], i.vars[position+1:]...)

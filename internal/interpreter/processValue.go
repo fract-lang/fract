@@ -341,7 +341,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 					if !variable.Value.Array && variable.Value.Type != fract.VALString {
 						fract.Error(tokens.Vals[index].(objects.Token),
-							"Index accessor is can not used with non-array variables!")
+							"Index accessor is cannot used with non-array variables!")
 					}
 
 					if variable.Value.Array {
@@ -486,7 +486,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 			if !variable.Value.Array && variable.Value.Type != fract.VALString {
 				fract.Error(tokens.Vals[oindex].(objects.Token),
-					"Index accessor is can not used with non-array variables!")
+					"Index accessor is cannot used with non-array variables!")
 			}
 
 			if variable.Value.Array {
@@ -559,7 +559,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				current := tokens.Vals[cindex].(objects.Token)
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenLBrace {
-						fract.Error(current, "Arrays is can not take array value as element!")
+						fract.Error(current, "Arrays is cannot take array value as element!")
 						braceCount++
 					} else if current.Value == grammar.TokenRBrace {
 						braceCount--
@@ -593,7 +593,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						nestedArray = true
 					} else if current.Value == grammar.TokenLBrace {
 						if nestedArray {
-							fract.Error(current, "Arrays is can not take array value as element!")
+							fract.Error(current, "Arrays is cannot take array value as element!")
 						}
 						braceCount--
 						if braceCount == 0 {
