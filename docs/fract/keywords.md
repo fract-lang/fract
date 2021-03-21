@@ -3,6 +3,10 @@
     <td colspan="2" align="center"><b>Keywords</b></td>
   </tr>
   <tr>
+    <td align="center"><b>protected</b></td>
+    <td>Protect definition from manuel memory deletion.</td>
+  </tr>
+  <tr>
     <td align="center"><b>var</b></td>
     <td>Define variable.</td>
   </tr>
