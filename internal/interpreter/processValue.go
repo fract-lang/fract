@@ -136,9 +136,77 @@ func solveProcess(process valueProcess) objects.Value {
 	}
 
 	value := objects.Value{}
+
+	// String?
 	if process.FirstV.Type == fract.VALString ||
 		process.SecondV.Type == fract.VALString {
 		value.Type = fract.VALString
+		if process.FirstV.Type == process.SecondV.Type { // Both string?
+			value.Content = []string{process.FirstV.Content[0] +
+				process.SecondV.Content[0]}
+			return value
+		}
+
+		if process.FirstV.Type == fract.VALString {
+			if process.SecondV.Array {
+				if len(process.SecondV.Content) == 0 {
+					fract.Error(process.Second, "Array is empty!")
+				}
+				if len(process.FirstV.Content[0]) != len(process.SecondV.Content) &&
+					(len(process.FirstV.Content[0]) != 1 && len(process.SecondV.Content) != 1) {
+					fract.Error(process.Second,
+						"Array element count is not one or equals to first array!")
+				}
+				var sb strings.Builder
+				for _, char := range process.FirstV.Content[0] {
+					if strings.Contains(process.SecondV.Content[0], grammar.TokenDot) {
+						fract.Error(process.Second, "Float values cannot concatenate string values!")
+					}
+					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0])))
+				}
+				value.Content = []string{sb.String()}
+			} else {
+				if process.SecondV.Type == fract.VALFloat {
+					fract.Error(process.Second, "Float values cannot concatenate string values!")
+				}
+				var sb strings.Builder
+				val := rune(arithmetic.ToArithmetic(process.SecondV.Content[0]))
+				for _, char := range process.FirstV.Content[0] {
+					sb.WriteRune(char + val)
+				}
+				value.Content = []string{sb.String()}
+			}
+		} else {
+			if process.FirstV.Array {
+				if len(process.FirstV.Content) == 0 {
+					fract.Error(process.First, "Array is empty!")
+				}
+				if len(process.FirstV.Content[0]) != len(process.SecondV.Content) &&
+					(len(process.FirstV.Content[0]) != 1 && len(process.SecondV.Content) != 1) {
+					fract.Error(process.Second,
+						"Array element count is not one or equals to first array!")
+				}
+				var sb strings.Builder
+				for _, char := range process.SecondV.Content[0] {
+					if strings.Contains(process.FirstV.Content[0], grammar.TokenDot) {
+						fract.Error(process.Second, "Float values cannot concatenate string values!")
+					}
+					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0])))
+				}
+				value.Content = []string{sb.String()}
+			} else {
+				if process.FirstV.Type == fract.VALFloat {
+					fract.Error(process.First, "Float values cannot concatenate string values!")
+				}
+				var sb strings.Builder
+				val := rune(arithmetic.ToArithmetic(process.FirstV.Content[0]))
+				for _, char := range process.SecondV.Content[0] {
+					sb.WriteRune(char + val)
+				}
+				value.Content = []string{sb.String()}
+			}
+		}
+		return value
 	}
 
 	if process.FirstV.Array && process.SecondV.Array {
