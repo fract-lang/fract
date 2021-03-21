@@ -7,6 +7,7 @@ package interpreter
 import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
@@ -34,15 +35,14 @@ func (i *Interpreter) Interpret() {
 		count := 0
 		last := -1
 		for i.index = range i.tokens.Vals {
-			first := i.tokens.Vals[i.index].(vector.Vector).Vals[0].(objects.Token)
+			tokens := i.tokens.Vals[i.index].(vector.Vector)
 
-			if first.Type == fract.TypeBlockEnd {
+			if first := tokens.Vals[0].(objects.Token); first.Type == fract.TypeBlockEnd {
 				count--
 				if count < 0 {
 					fract.Error(first, "The extra block end defined!")
 				}
-			} else if first.Type == fract.TypeIf || first.Type == fract.TypeLoop ||
-				first.Type == fract.TypeFunction {
+			} else if parser.IsBlockStatement(tokens) {
 				count++
 				if count == 1 {
 					last = i.index
