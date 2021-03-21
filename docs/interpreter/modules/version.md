@@ -1,4 +1,4 @@
-# VERSION
+# Version Module
 
 Version module used for learn version of Fract.
 <br>
