@@ -86,18 +86,6 @@ func (i *Interpreter) processRange(tokens *vector.Vector) {
 // solveProcess Solve arithmetic process.
 // process Process to solve.
 func solveProcess(process valueProcess) objects.Value {
-	// Parse arithmetic value.
-	// value Value to parse.
-	toArithmetic := func(value string) float64 {
-		if value == grammar.KwTrue {
-			return 1
-		} else if value == grammar.KwFalse {
-			return 0
-		}
-		flt, _ := arithmetic.ToFloat64(value)
-		return flt
-	}
-
 	// Solve process.
 	// operator Operator of process.
 	// first First value.
@@ -166,24 +154,24 @@ func solveProcess(process valueProcess) objects.Value {
 		}
 
 		if len(process.FirstV.Content) == 1 {
-			first := toArithmetic(process.FirstV.Content[0])
+			first := arithmetic.ToArithmetic(process.FirstV.Content[0])
 			for index, current := range process.SecondV.Content {
 				process.SecondV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, first, toArithmetic(current)))
+					solve(process.Operator, first, arithmetic.ToArithmetic(current)))
 			}
 			value.Content = process.SecondV.Content
 		} else if len(process.SecondV.Content) == 1 {
-			second := toArithmetic(process.SecondV.Content[0])
+			second := arithmetic.ToArithmetic(process.SecondV.Content[0])
 			for index, current := range process.FirstV.Content {
 				process.FirstV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, toArithmetic(current), second))
+					solve(process.Operator, arithmetic.ToArithmetic(current), second))
 			}
 			value.Content = process.FirstV.Content
 		} else {
 			for index, current := range process.FirstV.Content {
 				process.FirstV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, toArithmetic(current),
-						toArithmetic(process.SecondV.Content[index])))
+					solve(process.Operator, arithmetic.ToArithmetic(current),
+						arithmetic.ToArithmetic(process.SecondV.Content[index])))
 			}
 			value.Content = process.FirstV.Content
 		}
@@ -193,10 +181,10 @@ func solveProcess(process valueProcess) objects.Value {
 			fract.Error(process.First, "Array is empty!")
 		}
 
-		second := toArithmetic(process.SecondV.Content[0])
+		second := arithmetic.ToArithmetic(process.SecondV.Content[0])
 		for index, current := range process.FirstV.Content {
 			process.FirstV.Content[index] = fmt.Sprintf("%g",
-				solve(process.Operator, toArithmetic(current), second))
+				solve(process.Operator, arithmetic.ToArithmetic(current), second))
 		}
 		value.Array = true
 		value.Content = process.FirstV.Content
@@ -205,17 +193,17 @@ func solveProcess(process valueProcess) objects.Value {
 			fract.Error(process.First, "Array is empty!")
 		}
 
-		first := toArithmetic(process.FirstV.Content[0])
+		first := arithmetic.ToArithmetic(process.FirstV.Content[0])
 		for index, current := range process.SecondV.Content {
 			process.SecondV.Content[index] = fmt.Sprintf("%g",
-				solve(process.Operator, toArithmetic(current), first))
+				solve(process.Operator, arithmetic.ToArithmetic(current), first))
 		}
 		value.Array = true
 		value.Content = process.SecondV.Content
 	} else {
 		value.Content = []string{fmt.Sprintf("%g",
-			solve(process.Operator, toArithmetic(process.FirstV.Content[0]),
-				toArithmetic(process.SecondV.Content[0])))}
+			solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0]),
+				arithmetic.ToArithmetic(process.SecondV.Content[0])))}
 	}
 
 	return value
