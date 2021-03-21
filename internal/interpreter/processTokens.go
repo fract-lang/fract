@@ -62,13 +62,26 @@ func (i *Interpreter) processTokens(tokens vector.Vector) int {
 		if printValue(i.processValue(&tokens)) { // If printed?
 			fmt.Println()
 		}
+	} else if first.Type == fract.TypeProtected { // Protected declaration.
+		if len(tokens.Vals) < 2 {
+			fract.Error(first, "Protected but what is it protected?")
+		}
+		second := tokens.Vals[1].(objects.Token)
+		tokens.Vals = tokens.Vals[1:]
+		if second.Type == fract.TypeVariable { // Variable definition.
+			i.processVariableDefinition(tokens, true)
+		} else if second.Type == fract.TypeFunction { // Function definition.
+			i.processFunction(tokens, true)
+		} else {
+			fract.Error(second, "Syntax error, you can protect only deletable objects!")
+		}
 	} else if first.Type == fract.TypeVariable { // Variable definition.
-		i.processVariableDefinition(tokens)
+		i.processVariableDefinition(tokens, false)
 	} else if first.Type == fract.TypeDelete { // Delete from memory.
 		i.processDelete(tokens)
 	} else if first.Type == fract.TypeIf { // if-elif-else.
 		return i.processIf(tokens)
-	} else if first.Type == fract.TypeLoop { // Loop.
+	} else if first.Type == fract.TypeLoop { // Loop definition.
 		i.loops++
 		state := i.processLoop(tokens)
 		i.loops--
@@ -83,16 +96,16 @@ func (i *Interpreter) processTokens(tokens vector.Vector) int {
 			fract.Error(first, "Continue keyword only used in loops!")
 		}
 		return fract.LOOPContinue
-	} else if first.Type == fract.TypeExit { // Exit.
-		i.processExit(tokens)
-	} else if first.Type == fract.TypeFunction { // Function.
-		i.processFunction(tokens)
 	} else if first.Type == fract.TypeReturn { // Return.
 		if i.functions == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
 		}
 		i.returnIndex = i.index
 		return fract.FUNCReturn
+	} else if first.Type == fract.TypeFunction { // Function definiton.
+		i.processFunction(tokens, false)
+	} else if first.Type == fract.TypeExit { // Exit.
+		i.processExit(tokens)
 	} else {
 		fract.Error(first, "What is this?")
 	}
