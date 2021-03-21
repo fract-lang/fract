@@ -17,7 +17,7 @@ import (
 // command Command to process.
 func Process(command string) {
 	if command == "" {
-		fmt.Println("This module can not only be used!")
+		fmt.Println("This module cannot only be used!")
 		return
 	}
 	if !strings.HasSuffix(command, fract.FractExtension) {

@@ -92,7 +92,7 @@ Until the brackets are closed, they are tokenized.
 
 > Variable names are must comply to [naming conventions](https://github.com/fract-lang/fract/blob/main/docs/Fract/naming_conventions.md).
 
-> Can not change values of const variables!
+> cannot change values of const variables!
 
 ### Syntax
 ```
@@ -155,13 +155,13 @@ del a, a()       # Remove 'a' variable and function from memory
 ```
 
 ### Protected Keyword
-Protected objects is can not remove manually from memory.
+Protected objects is cannot remove manually from memory.
 
 #### Examples
 ```
 protected var example = 4
 var # Print 4
-del var # Error: Protected objects can not be deleted manually from memory!
+del var # Error: Protected objects cannot be deleted manually from memory!
 ```
 
 ## Arrays
