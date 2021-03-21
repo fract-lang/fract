@@ -1,4 +1,4 @@
-# QUICK START TO FRACT
+# Quick Start to Fract
 
 + [Keywords](https://github.com/fract-lang/fract/blob/main/docs/Fract/keywords.md)
 + [Data Types](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
