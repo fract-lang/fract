@@ -29,29 +29,27 @@ func (i *Interpreter) Interpret() {
 	}
 
 	// Change blocks.
-	{
-		count := 0
-		last := -1
-		for i.index = range i.tokens {
-			tokens := i.tokens[i.index]
+	count := 0
+	last := -1
+	for i.index = range i.tokens {
+		tokens := i.tokens[i.index]
 
-			if first := tokens[0]; first.Type == fract.TypeBlockEnd {
-				count--
-				if count < 0 {
-					fract.Error(first, "The extra block end defined!")
-				}
-			} else if parser.IsBlockStatement(tokens) {
-				count++
-				if count == 1 {
-					last = i.index
-				}
+		if first := tokens[0]; first.Type == fract.TypeBlockEnd {
+			count--
+			if count < 0 {
+				fract.Error(first, "The extra block end defined!")
+			}
+		} else if parser.IsBlockStatement(tokens) {
+			count++
+			if count == 1 {
+				last = i.index
 			}
 		}
+	}
 
-		if count > 0 { // Check blocks.
-			fract.Error(i.tokens[last][0],
-				"Block is expected ending...")
-		}
+	if count > 0 { // Check blocks.
+		fract.Error(i.tokens[last][0],
+			"Block is expected ending...")
 	}
 
 	// Interpret all lines.
