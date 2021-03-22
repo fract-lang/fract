@@ -28,6 +28,14 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	kwstate := fract.TypeNone
 	iindex := i.index
 
+	// processKwState Process and return return value of kwstate.
+	processKwState := func() int {
+		if kwstate != fract.FUNCReturn {
+			return fract.TypeNone
+		}
+		return kwstate
+	}
+
 	//*************
 	//    WHILE
 	//*************
@@ -48,7 +56,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 				i.funcs = i.funcs[:functionLen]
 
 				if _break || condition != grammar.KwTrue {
-					return kwstate
+					return processKwState()
 				}
 
 				i.index = iindex
@@ -152,6 +160,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 			_break = true
 			i.skipBlock(false)
 			i.index--
+			continue
 		} else if kwstate == fract.LOOPContinue { // Continue next?
 			i.skipBlock(false)
 			i.index--
@@ -160,5 +169,5 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 	// Remove loop variable.
 	i.vars = i.vars[:variableLen-1]
-	return kwstate
+	return processKwState()
 }

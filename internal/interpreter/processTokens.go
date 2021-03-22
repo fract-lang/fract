@@ -96,7 +96,7 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 	} else if first.Type == fract.TypeExit { // Exit.
 		i.processExit(tokens)
 	} else {
-		fract.Error(first, "What is this?")
+		fract.Error(first, "Invalid syntax!")
 	}
 	return fract.TypeNone
 }
