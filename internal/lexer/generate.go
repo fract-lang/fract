@@ -216,9 +216,6 @@ func (l *Lexer) Generate() obj.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
 		token.Value = grammar.TokenComma
 		token.Type = fract.TypeComma
-	} else if strings.HasPrefix(ln, grammar.Input) { // Input (<<).
-		token.Value = grammar.Input
-		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenAmper) { // Amper (&).
 		token.Value = grammar.TokenAmper
 		token.Type = fract.TypeOperator

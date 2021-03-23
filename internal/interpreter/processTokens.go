@@ -12,21 +12,6 @@ import (
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
-// printValue Print value to screen.
-// value Value to print.
-func printValue(value obj.Value) bool {
-	if value.Content == nil {
-		return false
-	}
-
-	if value.Array {
-		fmt.Print(value.Content)
-	} else {
-		fmt.Print(value.Content[0])
-	}
-	return true
-}
-
 // processTokens Process tokens and returns true if block end, returns false if not.
 // and returns loop keyword state.
 //
@@ -45,8 +30,7 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 				if current.Type == fract.TypeBrace {
 					break
 				} else if current.Type == fract.TypeOperator &&
-					(current.Value == grammar.TokenEquals ||
-						current.Value == grammar.Input) { // Variable setting.
+					current.Value == grammar.TokenEquals { // Variable setting.
 					i.processVariableSet(tokens)
 					return fract.TypeNone
 				}
@@ -54,7 +38,7 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 		}
 
 		// Println
-		if printValue(i.processValue(&tokens)) { // Printed?
+		if fract.PrintValue(i.processValue(&tokens)) { // Printed?
 			fmt.Println()
 		}
 	} else if first.Type == fract.TypeProtected { // Protected declaration.

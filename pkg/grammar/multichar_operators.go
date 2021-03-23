@@ -21,6 +21,4 @@ const (
 	GreaterEquals = ">="
 	// LessEquals Less than or equals to.
 	LessEquals = "<="
-	// Input Input from user.
-	Input = "<<"
 )

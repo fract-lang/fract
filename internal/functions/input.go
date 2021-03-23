@@ -1,8 +1,4 @@
-/*
-	processInput Function.
-*/
-
-package interpreter
+package functions
 
 import (
 	"github.com/fract-lang/fract/pkg/cli"
@@ -10,10 +6,10 @@ import (
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
-// processInput Process user input.
-// tokens Tokens to process.
-func (i *Interpreter) processInput(tokens []obj.Token) obj.Value {
-	printValue(i.processValue(&tokens))
+// Input get input from cli.
+// f Function.
+func Input(f obj.Function) obj.Value {
+	fract.PrintValue(f.Parameters[0].Default)
 	return obj.Value{
 		Content: []string{cli.Input("")},
 		Type:    fract.VALString,

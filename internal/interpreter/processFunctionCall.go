@@ -7,6 +7,7 @@ package interpreter
 import (
 	"strings"
 
+	"github.com/fract-lang/fract/internal/functions"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
@@ -153,6 +154,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		}
 	}
 
+	i.functionCount++
+
 	old := i.funcTempVariables
 	variables := append(make([]obj.Variable, 0), i.variables...)
 	i.variables = append(i.variables[:i.funcTempVariables], vars...)
@@ -164,9 +167,21 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	itokens := i.Tokens
 	i.Tokens = function.Tokens
 
-	// Process block.
-	i.functionCount++
 	i.index = -1
+
+	// Is embed function?
+	if function.Tokens == nil {
+		// Set parameter defaults to normal values.
+		for index, param := range function.Parameters {
+			function.Parameters[index].Default =
+				i.variables[i.varIndexByName(param.Name)].Value
+		}
+
+		returnValue = functions.Input(function)
+		goto ret
+	}
+
+	// Process block.
 	for {
 		i.index++
 		tokens := i.Tokens[i.index]
@@ -185,6 +200,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			break
 		}
 	}
+
+ret:
 
 	// Remove temporary variables.
 	i.variables = variables

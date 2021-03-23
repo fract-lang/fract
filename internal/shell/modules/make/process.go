@@ -30,6 +30,8 @@ func Process(command string) {
 	}
 
 	preter := interpreter.New(command, fract.TypeEntryFile)
+	preter.ApplyEmbedFunctions()
+
 	except.Block{
 		Try: func() {
 			preter.Interpret()
