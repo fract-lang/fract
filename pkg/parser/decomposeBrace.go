@@ -70,7 +70,7 @@ func DecomposeBrace(tokens *[]obj.Token, open, close string,
 		}
 		length++
 	}
-	_range := *vector.Sublist(*tokens, first+1, length)
+	_range := vector.Sublist(*tokens, first+1, length)
 
 	// Bracket content is empty?
 	if nonCheck && _range == nil {
@@ -80,5 +80,9 @@ func DecomposeBrace(tokens *[]obj.Token, open, close string,
 	/* Remove range from original tokens. */
 	vector.RemoveRange(tokens, first, last-first+1)
 
-	return _range, first
+	if _range == nil {
+		return nil, first
+	}
+
+	return *_range, first
 }

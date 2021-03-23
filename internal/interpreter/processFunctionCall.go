@@ -26,98 +26,100 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	function := i.funcs[nameIndex]
+	vars, names := make([]obj.Variable, 0), []string{}
+	count := 0
 
 	// Decompose arguments.
-	tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
-		grammar.TokenRParenthes, false)
-	braceCount, lastComma, count := 0, 0, 0
-	vars, names := make([]obj.Variable, 0), []string{}
-	paramSet := false
+	if tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
+		grammar.TokenRParenthes, false); tokens != nil {
+		braceCount, lastComma := 0, 0
+		paramSet := false
 
-	// processArgument Process function argument.
-	// current Current token.
-	// count Count of appended arguments.
-	// index Index of tokens state.
-	processArgument := func(current obj.Token, index *int) obj.Variable {
-		length := *index - lastComma
-		if length < 1 {
-			fract.Error(current, "Value is not defined!")
-		}
+		// processArgument Process function argument.
+		// current Current token.
+		// count Count of appended arguments.
+		// index Index of tokens state.
+		processArgument := func(current obj.Token, index *int) obj.Variable {
+			length := *index - lastComma
+			if length < 1 {
+				fract.Error(current, "Value is not defined!")
+			}
 
-		if count > len(function.Parameters)-function.DefaultParameterCount {
-			fract.Error(current, "Argument overflow!")
-		}
+			if count > len(function.Parameters)-function.DefaultParameterCount {
+				fract.Error(current, "Argument overflow!")
+			}
 
-		variable := obj.Variable{Name: function.Parameters[count].Name}
-		valueList := *vector.Sublist(tokens, lastComma, length)
-		current = valueList[0]
+			variable := obj.Variable{Name: function.Parameters[count].Name}
+			valueList := *vector.Sublist(tokens, lastComma, length)
+			current = valueList[0]
 
-		// Check param set.
-		if current.Type == fract.TypeName {
-			if length >= 2 {
-				second := valueList[1]
-				if second.Value == grammar.TokenEquals {
-					length -= 2
-					if length < 1 {
-						fract.Error(current, "Value is not defined!")
-					}
+			// Check param set.
+			if current.Type == fract.TypeName {
+				if length >= 2 {
+					second := valueList[1]
+					if second.Value == grammar.TokenEquals {
+						length -= 2
+						if length < 1 {
+							fract.Error(current, "Value is not defined!")
+						}
 
-					for _, parameter := range function.Parameters {
-						if parameter.Name == current.Value {
-							for _, name := range names {
-								if name == current.Value {
-									fract.Error(current, "Keyword argument repeated!")
+						for _, parameter := range function.Parameters {
+							if parameter.Name == current.Value {
+								for _, name := range names {
+									if name == current.Value {
+										fract.Error(current, "Keyword argument repeated!")
+									}
+								}
+								if parameter.Default.Content == nil {
+									count++
+								}
+								valueList = valueList[2:]
+								paramSet = true
+								names = append(names, current.Value)
+								return obj.Variable{
+									Name:  current.Value,
+									Value: i.processValue(&valueList),
 								}
 							}
-							if parameter.Default.Content == nil {
-								count++
-							}
-							valueList = valueList[2:]
-							paramSet = true
-							names = append(names, current.Value)
-							return obj.Variable{
-								Name:  current.Value,
-								Value: i.processValue(&valueList),
-							}
 						}
-					}
 
-					fract.Error(current, "Parameter is not defined in this name!")
+						fract.Error(current, "Parameter is not defined in this name!")
+					}
 				}
 			}
-		}
 
-		if paramSet {
-			fract.Error(current,
-				"After the parameter has been given a special value, all parameters must be shown privately!")
-		}
-
-		if function.Parameters[count].Default.Content == nil {
-			count++
-		}
-		names = append(names, variable.Name)
-		variable.Value = i.processValue(&valueList)
-		return variable
-	}
-
-	for index := 0; index < len(tokens); index++ {
-		current := tokens[index]
-		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLParenthes ||
-				current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLBracket {
-				braceCount++
-			} else {
-				braceCount--
+			if paramSet {
+				fract.Error(current,
+					"After the parameter has been given a special value, all parameters must be shown privately!")
 			}
-		} else if current.Type == fract.TypeComma && braceCount == 0 {
-			vars = append(vars, processArgument(current, &index))
-			lastComma = index + 1
-		}
-	}
 
-	if tokenLen := len(tokens); lastComma < tokenLen {
-		vars = append(vars, processArgument(tokens[lastComma], &tokenLen))
+			if function.Parameters[count].Default.Content == nil {
+				count++
+			}
+			names = append(names, variable.Name)
+			variable.Value = i.processValue(&valueList)
+			return variable
+		}
+
+		for index := 0; index < len(tokens); index++ {
+			current := tokens[index]
+			if current.Type == fract.TypeBrace {
+				if current.Value == grammar.TokenLParenthes ||
+					current.Value == grammar.TokenLBrace ||
+					current.Value == grammar.TokenLBracket {
+					braceCount++
+				} else {
+					braceCount--
+				}
+			} else if current.Type == fract.TypeComma && braceCount == 0 {
+				vars = append(vars, processArgument(current, &index))
+				lastComma = index + 1
+			}
+		}
+
+		if tokenLen := len(tokens); lastComma < tokenLen {
+			vars = append(vars, processArgument(tokens[lastComma], &tokenLen))
+		}
 	}
 
 	// All parameters is not defined?
@@ -156,7 +158,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	i.vars = append(i.vars[:i.funcTempVariables], vars...)
 	i.funcTempVariables = len(vars)
 
-	var returnValue obj.Value
+	returnValue := obj.Value{}
 	functionLen := len(i.funcs)
 	nameIndex = i.index
 	itokens := i.Tokens
