@@ -75,6 +75,7 @@ func main() {
 			"Developed by Fract Developer Team.\n")
 
 	preter := interpreter.NewStdin()
+	preter.ApplyEmbedFunctions()
 
 repeat:
 	except.Block{
