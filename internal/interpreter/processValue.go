@@ -359,7 +359,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						fract.Error((*tokens)[index], "Value out of range!")
 					}
 
-					variable := i.vars[vindex]
+					variable := i.variables[vindex]
 
 					if !variable.Value.Array && variable.Value.Type != fract.VALString {
 						fract.Error((*tokens)[index],
@@ -435,7 +435,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			fract.Error(token, "Variable is not defined in this name!: "+token.Value)
 		}
 
-		variable := i.vars[vindex]
+		variable := i.variables[vindex]
 
 		if first {
 			operation.FirstV = variable.Value
@@ -502,7 +502,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				fract.Error((*tokens)[oindex], "Value out of range!")
 			}
 
-			variable := i.vars[vindex]
+			variable := i.variables[vindex]
 
 			if !variable.Value.Array && variable.Value.Type != fract.VALString {
 				fract.Error((*tokens)[oindex],

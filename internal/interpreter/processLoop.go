@@ -23,7 +23,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		fract.Error(tokens[0], "Content is empty!")
 	}
 
-	functionLen := len(i.funcs)
+	functionLen := len(i.functions)
 	_break := false
 	kwstate := fract.TypeNone
 	iindex := i.index
@@ -41,7 +41,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//*************
 	if len(contentList) == 1 ||
 		contentList[1].Type != fract.TypeIn {
-		variableLen := len(i.vars)
+		variableLen := len(i.variables)
 
 		/* Interpret/skip block. */
 		for {
@@ -51,9 +51,9 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
-				i.vars = i.vars[:variableLen]
+				i.variables = i.variables[:variableLen]
 				// Remove temporary functions.
-				i.funcs = i.funcs[:functionLen]
+				i.functions = i.functions[:functionLen]
 
 				if _break || condition != grammar.KwTrue {
 					return processKwState()
@@ -94,7 +94,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	// Name is already defined?
 	if index := i.varIndexByName(nameToken.Value); index != -1 {
 		fract.Error(nameToken, "Already defined variable in this name at line: "+
-			fmt.Sprint(i.vars[index].Line))
+			fmt.Sprint(i.variables[index].Line))
 	}
 
 	inToken := contentList[1]
@@ -129,9 +129,9 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		},
 	}
 
-	i.vars = append(i.vars, variable)
+	i.variables = append(i.variables, variable)
 
-	variableLen := len(i.vars)
+	variableLen := len(i.variables)
 
 	for vindex := 0; vindex < len(value.Content); {
 		i.index++
@@ -141,9 +141,9 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
-			i.vars = i.vars[:variableLen]
+			i.variables = i.variables[:variableLen]
 			// Remove temporary functions.
-			i.funcs = i.funcs[:functionLen]
+			i.functions = i.functions[:functionLen]
 
 			vindex++
 			if _break || vindex == len(value.Content) {
@@ -168,6 +168,6 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	}
 
 	// Remove loop variable.
-	i.vars = i.vars[:variableLen-1]
+	i.variables = i.variables[:variableLen-1]
 	return processKwState()
 }
