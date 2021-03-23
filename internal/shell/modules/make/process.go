@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/internal/interpreter"
+	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/fs"
 )
@@ -29,5 +30,13 @@ func Process(command string) {
 	}
 
 	preter := interpreter.New(command, fract.TypeEntryFile)
-	preter.Interpret()
+	except.Block{
+		Try: func() {
+			preter.Interpret()
+		},
+		Catch: func(e except.Exception) {
+			fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
+			fmt.Println(e)
+		},
+	}.Do()
 }
