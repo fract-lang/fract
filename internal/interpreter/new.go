@@ -13,7 +13,7 @@ import (
 // type Type of file.
 func New(path string, _type int) Interpreter {
 	return Interpreter{
-		lexer: lexer.Lexer{
+		Lexer: lexer.Lexer{
 			File: ReadyFile(path),
 			Line: 1,
 		},

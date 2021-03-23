@@ -19,9 +19,9 @@ func (l *Lexer) Next() []obj.Token {
 	}
 
 	// Reset bracket counter.
-	l.parenthesCount = 0
-	l.braceCount = 0
-	l.bracketCount = 0
+	l.ParenthesCount = 0
+	l.BraceCount = 0
+	l.BracketCount = 0
 
 tokenize:
 
@@ -37,7 +37,7 @@ tokenize:
 	// Tokenize line.
 	token := l.Generate()
 	for token.Type != fract.TypeNone && token.Type != fract.TypeStatementTerminator {
-		if !l.multilineComment && token.Type != fract.TypeIgnore {
+		if !l.MultilineComment && token.Type != fract.TypeIgnore {
 			tokens = append(tokens, token)
 			l.lastToken = token
 		}
@@ -52,30 +52,42 @@ tokenize:
 	// Line equals to or bigger then last line.
 	l.Finished = l.Line > len(l.File.Lines)
 
-	if l.parenthesCount > 0 { // Check parentheses.
+	if l.ParenthesCount > 0 { // Check parentheses.
 		if l.Finished {
-			l.Line-- // Subtract for correct line number.
-			l.Error("Parentheses is expected to close...")
+			if l.File.Path != fract.Stdin {
+				l.Line-- // Subtract for correct line number.
+				l.Error("Parentheses is expected to close...")
+			}
+		} else {
+			goto tokenize
 		}
-		goto tokenize
-	} else if l.braceCount > 0 { // Check braces.
+	} else if l.BraceCount > 0 { // Check braces.
 		if l.Finished {
-			l.Line-- // Subtract for correct line number.
-			l.Error("Brace is expected to close...")
+			if l.File.Path != fract.Stdin {
+				l.Line-- // Subtract for correct line number.
+				l.Error("Brace is expected to close...")
+			}
+		} else {
+			goto tokenize
 		}
-		goto tokenize
-	} else if l.bracketCount > 0 { // Check brackets.
+	} else if l.BracketCount > 0 { // Check brackets.
 		if l.Finished {
-			l.Line-- // Subrract for correct line number.
-			l.Error("Bracket is expected to close...")
+			if l.File.Path != fract.Stdin {
+				l.Line-- // Subrract for correct line number.
+				l.Error("Bracket is expected to close...")
+			}
+		} else {
+			goto tokenize
 		}
-		goto tokenize
-	} else if l.multilineComment {
+	} else if l.MultilineComment {
 		if l.Finished {
-			l.Line--
-			l.Error("Multiline comment is expected to close...")
+			if l.File.Path != fract.Stdin {
+				l.Line--
+				l.Error("Multiline comment is expected to close...")
+			}
+		} else {
+			goto tokenize
 		}
-		goto tokenize
 	}
 
 	return tokens

@@ -117,6 +117,6 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	}
 
 	i.skipBlock(false)
-	function.Tokens = i.tokens[function.Start : function.Start+i.index-function.Start+1]
+	function.Tokens = i.Tokens[function.Start : function.Start+i.index-function.Start+1]
 	i.funcs = append(i.funcs, function)
 }

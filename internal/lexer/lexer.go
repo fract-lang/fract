@@ -10,14 +10,6 @@ type Lexer struct {
 
 	// Last generated token.
 	lastToken obj.Token
-	// Multiline comment process state.
-	multilineComment bool
-	// Brace count.
-	braceCount int
-	// Bracket cout.
-	bracketCount int
-	// Parenthes count.
-	parenthesCount int
 
 	/* PUBLIC */
 
@@ -29,4 +21,12 @@ type Lexer struct {
 	Line int
 	// Finished file.
 	Finished bool
+	// Multiline comment process state.
+	MultilineComment bool
+	// Brace count.
+	BraceCount int
+	// Bracket cout.
+	BracketCount int
+	// Parenthes count.
+	ParenthesCount int
 }

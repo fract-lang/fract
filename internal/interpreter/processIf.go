@@ -36,7 +36,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int {
 	/* Interpret/skip block. */
 	for {
 		i.index++
-		tokens := i.tokens[i.index]
+		tokens := i.Tokens[i.index]
 		first := tokens[0]
 
 		if first.Type == fract.TypeBlockEnd { // Block is ended.
@@ -57,7 +57,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int {
 			/* Interpret/skip block. */
 			for {
 				i.index++
-				tokens := i.tokens[i.index]
+				tokens := i.Tokens[i.index]
 				first := tokens[0]
 
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
@@ -99,7 +99,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int {
 			/* Interpret/skip block. */
 			for {
 				i.index++
-				tokens := i.tokens[i.index]
+				tokens := i.Tokens[i.index]
 				first := tokens[0]
 
 				if first.Type == fract.TypeBlockEnd { // Block is ended.

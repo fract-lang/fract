@@ -46,7 +46,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		/* Interpret/skip block. */
 		for {
 			i.index++
-			tokens := i.tokens[i.index]
+			tokens := i.Tokens[i.index]
 			condition := i.processCondition(&contentList)
 
 			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
@@ -135,7 +135,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 	for vindex := 0; vindex < len(value.Content); {
 		i.index++
-		tokens := i.tokens[i.index]
+		tokens := i.Tokens[i.index]
 
 		variable.Value.Content[0] = value.Content[vindex]
 

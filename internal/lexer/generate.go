@@ -120,9 +120,9 @@ func (l *Lexer) Generate() obj.Token {
 
 	/* Tokenize. */
 
-	if l.multilineComment { // Multiline comment.
+	if l.MultilineComment { // Multiline comment.
 		if strings.HasPrefix(ln, grammar.MultilineCommentClose) { // Multiline comment close.
-			l.multilineComment = false
+			l.MultilineComment = false
 			l.Column += len(grammar.MultilineCommentClose)
 			token.Type = fract.TypeIgnore
 			return token
@@ -181,34 +181,34 @@ func (l *Lexer) Generate() obj.Token {
 		token.Value = grammar.TokenBackslash
 		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
-		l.parenthesCount++
+		l.ParenthesCount++
 		token.Value = grammar.TokenLParenthes
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
-		l.parenthesCount--
-		if l.parenthesCount < 0 {
+		l.ParenthesCount--
+		if l.ParenthesCount < 0 {
 			l.Error("The extra parentheses are closed!")
 		}
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenLBrace) { // Open brace.
-		l.braceCount++
+		l.BraceCount++
 		token.Value = grammar.TokenLBrace
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenRBrace) { // Close brace.
-		l.braceCount--
-		if l.braceCount < 0 {
+		l.BraceCount--
+		if l.BraceCount < 0 {
 			l.Error("The extra brace are closed!")
 		}
 		token.Value = grammar.TokenRBrace
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenLBracket) { // Open bracket.
-		l.bracketCount++
+		l.BracketCount++
 		token.Value = grammar.TokenLBracket
 		token.Type = fract.TypeBrace
 	} else if strings.HasPrefix(ln, grammar.TokenRBracket) { // Close bracket.
-		l.bracketCount--
-		if l.bracketCount < 0 {
+		l.BracketCount--
+		if l.BracketCount < 0 {
 			l.Error("The extra bracket are closed!")
 		}
 		token.Value = grammar.TokenRBracket
@@ -298,7 +298,7 @@ func (l *Lexer) Generate() obj.Token {
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
 	} else if strings.HasPrefix(ln, grammar.MultilineCommentOpen) { // Multiline comment open.
-		l.multilineComment = true
+		l.MultilineComment = true
 		token.Value = grammar.MultilineCommentOpen
 		token.Type = fract.TypeIgnore
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Singleline comment.
@@ -323,7 +323,7 @@ func (l *Lexer) Generate() obj.Token {
 
 			// Name is finished with dot?
 			if strings.HasSuffix(check, grammar.TokenDot) {
-				if l.multilineComment { // Ignore comment content.
+				if l.MultilineComment { // Ignore comment content.
 					l.Column++
 					token.Type = fract.TypeIgnore
 					return token
@@ -334,7 +334,7 @@ func (l *Lexer) Generate() obj.Token {
 			token.Value = strings.TrimSpace(check)
 			token.Type = fract.TypeName
 		} else { // Error exactly
-			if l.multilineComment { // Ignore comment content.
+			if l.MultilineComment { // Ignore comment content.
 				l.Column++
 				token.Type = fract.TypeIgnore
 				return token
