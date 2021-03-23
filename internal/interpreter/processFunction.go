@@ -51,69 +51,71 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 		fract.Error(dtToken, "Invalid syntax!")
 	}
 
-	paramList := *vector.Sublist(tokens, 3, tokenLen-4)
+	if paramList := vector.Sublist(tokens, 3, tokenLen-4); paramList != nil {
+		paramList := *paramList
 
-	// Decompose function parameters.
-	paramName, defaultDefined := true, false
-	var lastParameter obj.Parameter
-	for index := 0; index < len(paramList); index++ {
-		current := paramList[index]
-		if paramName {
-			if current.Type != fract.TypeName {
-				fract.Error(current, "Parameter name is not found!")
-			}
-
-			lastParameter = obj.Parameter{Name: current.Value}
-			function.Parameters = append(function.Parameters, lastParameter)
-			paramName = false
-			continue
-		} else {
-			paramName = true
-
-			// Default value definition?
-			if current.Value == grammar.TokenEquals {
-				brace := 0
-				index++
-				start := index
-				for ; index < len(paramList); index++ {
-					current = paramList[index]
-					if current.Type == fract.TypeBrace {
-						if current.Value == grammar.TokenLBrace ||
-							current.Value == grammar.TokenLParenthes ||
-							current.Value == grammar.TokenLBracket {
-							brace++
-						} else {
-							brace--
-						}
-					} else if current.Type == fract.TypeComma {
-						break
-					}
+		// Decompose function parameters.
+		paramName, defaultDefined := true, false
+		var lastParameter obj.Parameter
+		for index := 0; index < len(paramList); index++ {
+			current := paramList[index]
+			if paramName {
+				if current.Type != fract.TypeName {
+					fract.Error(current, "Parameter name is not found!")
 				}
-				if index-start < 1 {
-					fract.Error(paramList[start-1], "Value is not defined!")
-				}
-				lastParameter.Default = i.processValue(
-					vector.Sublist(paramList, start, index-start))
-				function.Parameters[len(function.Parameters)-1] = lastParameter
-				function.DefaultParameterCount++
-				defaultDefined = true
+
+				lastParameter = obj.Parameter{Name: current.Value}
+				function.Parameters = append(function.Parameters, lastParameter)
+				paramName = false
 				continue
-			}
+			} else {
+				paramName = true
 
-			if lastParameter.Default.Content == nil && defaultDefined {
-				fract.Error(current,
-					"All parameters after a given parameter with a default value must take a default value!")
-			}
+				// Default value definition?
+				if current.Value == grammar.TokenEquals {
+					brace := 0
+					index++
+					start := index
+					for ; index < len(paramList); index++ {
+						current = paramList[index]
+						if current.Type == fract.TypeBrace {
+							if current.Value == grammar.TokenLBrace ||
+								current.Value == grammar.TokenLParenthes ||
+								current.Value == grammar.TokenLBracket {
+								brace++
+							} else {
+								brace--
+							}
+						} else if current.Type == fract.TypeComma {
+							break
+						}
+					}
+					if index-start < 1 {
+						fract.Error(paramList[start-1], "Value is not defined!")
+					}
+					lastParameter.Default = i.processValue(
+						vector.Sublist(paramList, start, index-start))
+					function.Parameters[len(function.Parameters)-1] = lastParameter
+					function.DefaultParameterCount++
+					defaultDefined = true
+					continue
+				}
 
-			if current.Type != fract.TypeComma {
-				fract.Error(current, "Comma is not found!")
+				if lastParameter.Default.Content == nil && defaultDefined {
+					fract.Error(current,
+						"All parameters after a given parameter with a default value must take a default value!")
+				}
+
+				if current.Type != fract.TypeComma {
+					fract.Error(current, "Comma is not found!")
+				}
 			}
 		}
-	}
 
-	if lastParameter.Default.Content == nil && defaultDefined {
-		fract.Error(tokens[len(tokens)-1],
-			"All parameters after a given parameter with a default value must take a default value!")
+		if lastParameter.Default.Content == nil && defaultDefined {
+			fract.Error(tokens[len(tokens)-1],
+				"All parameters after a given parameter with a default value must take a default value!")
+		}
 	}
 
 	i.skipBlock(false)
