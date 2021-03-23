@@ -11,28 +11,36 @@ import (
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {
+	if i.Lexer.File.Path == fract.Stdin {
+		// Interpret all lines.
+		for i.index = 0; i.index < len(i.Tokens); i.index++ {
+			i.processTokens(i.Tokens[i.index])
+		}
+		return
+	}
+
 	// Lexer is finished.
-	if i.lexer.Finished {
+	if i.Lexer.Finished {
 		return
 	}
 
 	/* Tokenize all lines. */
-	for !i.lexer.Finished {
-		cacheTokens := i.lexer.Next()
+	for !i.Lexer.Finished {
+		cacheTokens := i.Lexer.Next()
 
 		// cacheTokens are empty?
 		if cacheTokens == nil {
 			continue
 		}
 
-		i.tokens = append(i.tokens, cacheTokens)
+		i.Tokens = append(i.Tokens, cacheTokens)
 	}
 
 	// Change blocks.
 	count := 0
 	last := -1
-	for i.index = range i.tokens {
-		tokens := i.tokens[i.index]
+	for i.index = range i.Tokens {
+		tokens := i.Tokens[i.index]
 
 		if first := tokens[0]; first.Type == fract.TypeBlockEnd {
 			count--
@@ -48,12 +56,12 @@ func (i *Interpreter) Interpret() {
 	}
 
 	if count > 0 { // Check blocks.
-		fract.Error(i.tokens[last][0],
+		fract.Error(i.Tokens[last][0],
 			"Block is expected ending...")
 	}
 
 	// Interpret all lines.
-	for i.index = 0; i.index < len(i.tokens); i.index++ {
-		i.processTokens(i.tokens[i.index])
+	for i.index = 0; i.index < len(i.Tokens); i.index++ {
+		i.processTokens(i.Tokens[i.index])
 	}
 }

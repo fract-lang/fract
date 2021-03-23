@@ -10,4 +10,7 @@ const (
 
 	// FractExtension File extension of Fract.
 	FractExtension = ".fract"
+
+	// Stdin Standard input type.
+	Stdin = "<stdin>"
 )

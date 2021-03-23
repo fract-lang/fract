@@ -579,7 +579,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenLBrace {
 						fract.Error(current, "Arrays is cannot take array value as element!")
-						braceCount++
 					} else if current.Value == grammar.TokenRBrace {
 						braceCount--
 						if braceCount == 0 {
@@ -883,6 +882,7 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 
 	if data_count > 0 {
 		fract.Error((*tokens)[len(*tokens)-1], "Invalid value!")
+
 	}
 
 	return value

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fract-lang/fract/pkg/except"
 	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/str"
 )
@@ -22,5 +23,8 @@ func ErrorCustom(file obj.CodeFile, line, column int, message string) {
 	fmt.Println("    " + file.Lines[line-1].Text)
 	fmt.Println(str.GetWhitespace(4+column-1) + "^")
 	fmt.Println(message)
+	if file.Path == Stdin {
+		except.Raise("")
+	}
 	os.Exit(1)
 }

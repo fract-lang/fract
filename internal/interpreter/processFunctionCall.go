@@ -159,21 +159,21 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	var returnValue obj.Value
 	functionLen := len(i.funcs)
 	nameIndex = i.index
-	itokens := i.tokens
-	i.tokens = function.Tokens
+	itokens := i.Tokens
+	i.Tokens = function.Tokens
 
 	// Process block.
 	i.functions++
 	i.index = -1
 	for {
 		i.index++
-		tokens := i.tokens[i.index]
+		tokens := i.Tokens[i.index]
 		i.funcTempVariables = len(i.vars) - i.funcTempVariables
 
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			break
 		} else if i.processTokens(tokens) == fract.FUNCReturn {
-			tokens := i.tokens[i.returnIndex]
+			tokens := i.Tokens[i.returnIndex]
 			i.returnIndex = fract.TypeNone
 			valueList := tokens[1:]
 			if valueList == nil {
@@ -192,7 +192,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	i.functions--
 	i.funcTempVariables = old
 	i.index = nameIndex
-	i.tokens = itokens
+	i.Tokens = itokens
 
 	return returnValue
 }

@@ -25,10 +25,15 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fract-lang/fract/internal/interpreter"
 	"github.com/fract-lang/fract/internal/shell/commands"
 	ModuleHelp "github.com/fract-lang/fract/internal/shell/modules/help"
 	ModuleMake "github.com/fract-lang/fract/internal/shell/modules/make"
 	ModuleVersion "github.com/fract-lang/fract/internal/shell/modules/version"
+	"github.com/fract-lang/fract/pkg/cli"
+	"github.com/fract-lang/fract/pkg/except"
+	"github.com/fract-lang/fract/pkg/fract"
+	"github.com/fract-lang/fract/pkg/parser"
 )
 
 func processCommand(ns, cmd string) {
@@ -46,9 +51,9 @@ func processCommand(ns, cmd string) {
 }
 
 func init() {
-	// not started with arguments.
+	// Not started with arguments.
 	if len(os.Args) < 2 {
-		os.Exit(0)
+		return
 	}
 
 	var sb strings.Builder
@@ -57,9 +62,85 @@ func init() {
 		sb.WriteString(" " + current)
 	}
 	os.Args[0] = sb.String()[1:]
+
+	processCommand(commands.GetNamespace(os.Args[0]),
+		commands.RemoveNamespace(os.Args[0]))
+
+	os.Exit(0)
 }
 
 func main() {
-	processCommand(commands.GetNamespace(os.Args[0]),
-		commands.RemoveNamespace(os.Args[0]))
+	fmt.Println(
+		"Fract " + fract.FractVersion + " (c) MIT License\n" +
+			"Developed by Fract Developer Team.\n")
+
+	preter := interpreter.NewStdin()
+
+repeat:
+	except.Block{
+		Try: func() {
+			for {
+				input := cli.Input(">> ")
+				preter.Lexer.File.Lines = interpreter.ReadyLines([]string{input})
+			reTokenize:
+				preter.Lexer.Finished = false
+				preter.Lexer.Line = 1
+				preter.Lexer.Column = 1
+				preter.Tokens = nil
+
+				/* Tokenize all lines. */
+				for !preter.Lexer.Finished {
+					cacheTokens := preter.Lexer.Next()
+
+					// cacheTokens are empty?
+					if cacheTokens == nil {
+						continue
+					}
+
+					preter.Tokens = append(preter.Tokens, cacheTokens)
+
+					// Check parentheses.
+					if preter.Lexer.BraceCount > 0 ||
+						preter.Lexer.BracketCount > 0 ||
+						preter.Lexer.ParenthesCount > 0 ||
+						preter.Lexer.MultilineComment {
+						input = cli.Input(" | ")
+						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
+							interpreter.ReadyLines([]string{input})...)
+						goto reTokenize
+					}
+				}
+
+				// Change blocks.
+				count := 0
+				for index := range preter.Tokens {
+					tokens := preter.Tokens[index]
+					if first := tokens[0]; first.Type == fract.TypeBlockEnd {
+						count--
+						if count < 0 {
+							fract.Error(first, "The extra block end defined!")
+						}
+					} else if parser.IsBlockStatement(tokens) {
+						count++
+					}
+				}
+
+				if count > 0 { // Check blocks.
+					input = cli.Input(" | ")
+					preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
+						interpreter.ReadyLines([]string{input})...)
+					goto reTokenize
+				}
+
+				preter.Interpret()
+			}
+		},
+		Catch: func(e except.Exception) {
+			if e != "" {
+				fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
+				fmt.Println(e)
+			}
+		},
+	}.Do()
+	goto repeat
 }

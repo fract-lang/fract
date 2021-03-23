@@ -13,8 +13,6 @@ import (
 type Interpreter struct {
 	/* PRIVATE */
 
-	// Parser of this file.
-	lexer lexer.Lexer
 	// Variables.
 	vars []obj.Variable
 	// Functions.
@@ -25,8 +23,6 @@ type Interpreter struct {
 	loops int
 	// Function count.
 	functions int
-	// All tokens of code file.
-	tokens [][]obj.Token
 	// Interpreter index.
 	index int
 	// Last return index.
@@ -34,6 +30,10 @@ type Interpreter struct {
 
 	/* PUBLIC */
 
+	// Parser of this file.
+	Lexer lexer.Lexer
+	// All Tokens of code file.
+	Tokens [][]obj.Token
 	/* Type of file. */
 	Type int
 }
