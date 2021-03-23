@@ -14,15 +14,15 @@ type Interpreter struct {
 	/* PRIVATE */
 
 	// Variables.
-	vars []obj.Variable
+	variables []obj.Variable
 	// Functions.
-	funcs []obj.Function
+	functions []obj.Function
 	// Count of function temporary variables.
 	funcTempVariables int
 	// Loop count.
-	loops int
+	loopCount int
 	// Function count.
-	functions int
+	functionCount int
 	// Interpreter index.
 	index int
 	// Last return index.

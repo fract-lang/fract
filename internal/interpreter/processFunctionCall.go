@@ -25,7 +25,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		fract.Error(_name, "Function is not defined in this name!: "+_name.Value)
 	}
 
-	function := i.funcs[nameIndex]
+	function := i.functions[nameIndex]
 	vars, names := make([]obj.Variable, 0), []string{}
 	count := 0
 
@@ -154,23 +154,23 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	old := i.funcTempVariables
-	variables := append(make([]obj.Variable, 0), i.vars...)
-	i.vars = append(i.vars[:i.funcTempVariables], vars...)
+	variables := append(make([]obj.Variable, 0), i.variables...)
+	i.variables = append(i.variables[:i.funcTempVariables], vars...)
 	i.funcTempVariables = len(vars)
 
 	returnValue := obj.Value{}
-	functionLen := len(i.funcs)
+	functionLen := len(i.functions)
 	nameIndex = i.index
 	itokens := i.Tokens
 	i.Tokens = function.Tokens
 
 	// Process block.
-	i.functions++
+	i.functionCount++
 	i.index = -1
 	for {
 		i.index++
 		tokens := i.Tokens[i.index]
-		i.funcTempVariables = len(i.vars) - i.funcTempVariables
+		i.funcTempVariables = len(i.variables) - i.funcTempVariables
 
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			break
@@ -187,11 +187,11 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	// Remove temporary variables.
-	i.vars = variables
+	i.variables = variables
 	// Remove temporary functions.
-	i.funcs = i.funcs[:functionLen]
+	i.functions = i.functions[:functionLen]
 
-	i.functions--
+	i.functionCount--
 	i.funcTempVariables = old
 	i.index = nameIndex
 	i.Tokens = itokens

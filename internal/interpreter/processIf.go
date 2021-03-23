@@ -29,8 +29,8 @@ func (i *Interpreter) processIf(tokens []obj.Token) int {
 
 	state := i.processCondition(&conditionList)
 	actioned := state == grammar.KwTrue
-	variableLen := len(i.vars)
-	functionLen := len(i.funcs)
+	variableLen := len(i.variables)
+	functionLen := len(i.functions)
 	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
@@ -132,7 +132,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int {
 		}
 	}
 ret:
-	i.vars = i.vars[:variableLen]
-	i.funcs = i.funcs[:functionLen]
+	i.variables = i.variables[:variableLen]
+	i.functions = i.functions[:functionLen]
 	return kwstate
 }

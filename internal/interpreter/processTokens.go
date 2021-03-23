@@ -77,22 +77,22 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 	} else if first.Type == fract.TypeIf { // if-elif-else.
 		return i.processIf(tokens)
 	} else if first.Type == fract.TypeLoop { // Loop definition.
-		i.loops++
+		i.loopCount++
 		state := i.processLoop(tokens)
-		i.loops--
+		i.loopCount--
 		return state
 	} else if first.Type == fract.TypeBreak { // Break loop.
-		if i.loops == 0 {
+		if i.loopCount == 0 {
 			fract.Error(first, "Break keyword only used in loops!")
 		}
 		return fract.LOOPBreak
 	} else if first.Type == fract.TypeContinue { // Continue loop.
-		if i.loops == 0 {
+		if i.loopCount == 0 {
 			fract.Error(first, "Continue keyword only used in loops!")
 		}
 		return fract.LOOPContinue
 	} else if first.Type == fract.TypeReturn { // Return.
-		if i.functions == 0 {
+		if i.functionCount == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
 		}
 		i.returnIndex = i.index

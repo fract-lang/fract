@@ -29,7 +29,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 	}
 
 	setIndex := -1
-	variable := i.vars[index]
+	variable := i.variables[index]
 	setter := tokens[1]
 
 	// Check const state
@@ -102,5 +102,5 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		variable.Value = value
 	}
 
-	i.vars[index] = variable
+	i.variables[index] = variable
 }
