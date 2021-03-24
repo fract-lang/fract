@@ -21,8 +21,8 @@ type Lexer struct {
 	Line int
 	// Finished file.
 	Finished bool
-	// Multiline comment process state.
-	MultilineComment bool
+	// RangeComment comment process state.
+	RangeComment bool
 	// Brace count.
 	BraceCount int
 	// Bracket cout.
