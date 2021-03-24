@@ -80,7 +80,7 @@ tokenize:
 		} else {
 			goto tokenize
 		}
-	} else if l.MultilineComment {
+	} else if l.RangeComment {
 		if l.Finished {
 			if l.File.Path != fract.Stdin {
 				l.Line--

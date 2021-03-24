@@ -120,10 +120,10 @@ func (l *Lexer) Generate() obj.Token {
 
 	/* Tokenize. */
 
-	if l.MultilineComment { // Multiline comment.
-		if strings.HasPrefix(ln, grammar.MultilineCommentClose) { // Multiline comment close.
-			l.MultilineComment = false
-			l.Column += len(grammar.MultilineCommentClose)
+	if l.RangeComment { // Multiline comment.
+		if strings.HasPrefix(ln, grammar.RangeCommentClose) { // Multiline comment close.
+			l.RangeComment = false
+			l.Column += len(grammar.RangeCommentClose)
 			token.Type = fract.TypeIgnore
 			return token
 		}
@@ -294,9 +294,9 @@ func (l *Lexer) Generate() obj.Token {
 	} else if isKeywordToken(ln, grammar.KwFalse) { // False.
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
-	} else if strings.HasPrefix(ln, grammar.MultilineCommentOpen) { // Multiline comment open.
-		l.MultilineComment = true
-		token.Value = grammar.MultilineCommentOpen
+	} else if strings.HasPrefix(ln, grammar.RangeCommentOpen) { // Multiline comment open.
+		l.RangeComment = true
+		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore
 	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Singleline comment.
 		return token
@@ -320,7 +320,7 @@ func (l *Lexer) Generate() obj.Token {
 
 			// Name is finished with dot?
 			if strings.HasSuffix(check, grammar.TokenDot) {
-				if l.MultilineComment { // Ignore comment content.
+				if l.RangeComment { // Ignore comment content.
 					l.Column++
 					token.Type = fract.TypeIgnore
 					return token
@@ -331,7 +331,7 @@ func (l *Lexer) Generate() obj.Token {
 			token.Value = strings.TrimSpace(check)
 			token.Type = fract.TypeName
 		} else { // Error exactly
-			if l.MultilineComment { // Ignore comment content.
+			if l.RangeComment { // Ignore comment content.
 				l.Column++
 				token.Type = fract.TypeIgnore
 				return token

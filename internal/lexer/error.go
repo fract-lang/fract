@@ -18,7 +18,7 @@ import (
 func (l Lexer) Error(message string) {
 	fmt.Printf("File: %s\nPosition: %d:%d\n",
 		l.File.Path, l.Line, l.Column)
-	if !l.MultilineComment { // Ignore multiline comment error.
+	if !l.RangeComment { // Ignore multiline comment error.
 		fmt.Println("    " + l.File.Lines[l.Line-1].Text)
 		fmt.Println(str.GetWhitespace(4+l.Column-1) + "^")
 	}

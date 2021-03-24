@@ -94,7 +94,7 @@ repeat:
 					cacheTokens := preter.Lexer.Next()
 
 					// Check multiline comment.
-					if preter.Lexer.MultilineComment {
+					if preter.Lexer.RangeComment {
 						input := cli.Input(" | ")
 						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
 							interpreter.ReadyLines([]string{input})...)
