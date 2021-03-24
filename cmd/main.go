@@ -71,7 +71,7 @@ func init() {
 
 func main() {
 	fmt.Println(
-		"Fract " + fract.FractVersion + " (c) MIT License\n" +
+		"Fract " + fract.FractVersion + " (c) MIT License.\n" +
 			"Developed by Fract Developer Team.\n")
 
 	preter := interpreter.NewStdin()
@@ -93,6 +93,14 @@ repeat:
 				for !preter.Lexer.Finished {
 					cacheTokens := preter.Lexer.Next()
 
+					// Check multiline comment.
+					if preter.Lexer.MultilineComment {
+						input := cli.Input(" | ")
+						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
+							interpreter.ReadyLines([]string{input})...)
+						goto reTokenize
+					}
+
 					// cacheTokens are empty?
 					if cacheTokens == nil {
 						continue
@@ -103,9 +111,8 @@ repeat:
 					// Check parentheses.
 					if preter.Lexer.BraceCount > 0 ||
 						preter.Lexer.BracketCount > 0 ||
-						preter.Lexer.ParenthesCount > 0 ||
-						preter.Lexer.MultilineComment {
-						input = cli.Input(" | ")
+						preter.Lexer.ParenthesCount > 0 {
+						input := cli.Input(" | ")
 						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
 							interpreter.ReadyLines([]string{input})...)
 						goto reTokenize
@@ -127,7 +134,7 @@ repeat:
 				}
 
 				if count > 0 { // Check blocks.
-					input = cli.Input(" | ")
+					input := cli.Input(" | ")
 					preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
 						interpreter.ReadyLines([]string{input})...)
 					goto reTokenize

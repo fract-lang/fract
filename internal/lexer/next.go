@@ -36,8 +36,9 @@ tokenize:
 
 	// Tokenize line.
 	token := l.Generate()
-	for token.Type != fract.TypeNone && token.Type != fract.TypeStatementTerminator {
-		if !l.MultilineComment && token.Type != fract.TypeIgnore {
+	for token.Type != fract.TypeNone &&
+		token.Type != fract.TypeStatementTerminator {
+		if token.Type != fract.TypeIgnore {
 			tokens = append(tokens, token)
 			l.lastToken = token
 		}
