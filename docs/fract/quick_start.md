@@ -3,6 +3,7 @@
 + [Keywords](https://github.com/fract-lang/fract/blob/main/docs/Fract/keywords.md)
 + [Data Types](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
 + [Operators](https://github.com/fract-lang/fract/blob/main/docs/Fract/operators.md)
++ [Embed Functions](https://github.com/fract-lang/fract/tree/main/docs/fract/embed%20functions)
 
 ## Comments
 ``#`` Is used for singline comments.

@@ -47,10 +47,6 @@
     <td>Set with value.</td>
   </tr>
   <tr>
-    <td align="center"><b><<</b></td>
-    <td>Set from user input.</td>
-  </tr>
-  <tr>
     <td align="center"><b>==</b></td>
     <td>Equals to.</td>
   </tr>
