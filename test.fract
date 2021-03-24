@@ -94,10 +94,6 @@
 #array
 #del array, array2
 
-#>
-test
-<#
-
 # FUNCTION TEST
 func len(list)
   var counter = 0
