@@ -84,10 +84,11 @@ repeat:
 				input := cli.Input(">> ")
 				preter.Lexer.File.Lines = interpreter.ReadyLines([]string{input})
 			reTokenize:
+				preter.Tokens = nil
+			reTokenizeUnNil:
 				preter.Lexer.Finished = false
 				preter.Lexer.Line = 1
 				preter.Lexer.Column = 1
-				preter.Tokens = nil
 
 				/* Tokenize all lines. */
 				for !preter.Lexer.Finished {
@@ -98,15 +99,13 @@ repeat:
 						input := cli.Input(" | ")
 						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
 							interpreter.ReadyLines([]string{input})...)
-						goto reTokenize
+						goto reTokenizeUnNil
 					}
 
 					// cacheTokens are empty?
 					if cacheTokens == nil {
 						continue
 					}
-
-					preter.Tokens = append(preter.Tokens, cacheTokens)
 
 					// Check parentheses.
 					if preter.Lexer.BraceCount > 0 ||
@@ -117,6 +116,8 @@ repeat:
 							interpreter.ReadyLines([]string{input})...)
 						goto reTokenize
 					}
+
+					preter.Tokens = append(preter.Tokens, cacheTokens)
 				}
 
 				// Change blocks.
@@ -143,12 +144,12 @@ repeat:
 				preter.Interpret()
 			}
 		},
-		Catch: func(e except.Exception) {
+		/*Catch: func(e except.Exception) {
 			if e != "" {
 				fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
 				fmt.Println(e)
 			}
-		},
+		},*/
 	}.Do()
 	goto repeat
 }
