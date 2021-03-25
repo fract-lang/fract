@@ -882,7 +882,6 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 
 	if data_count > 0 {
 		fract.Error((*tokens)[len(*tokens)-1], "Invalid value!")
-
 	}
 
 	return value
