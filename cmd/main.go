@@ -33,6 +33,7 @@ import (
 	"github.com/fract-lang/fract/pkg/cli"
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
+	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 )
 
@@ -144,12 +145,12 @@ repeat:
 				preter.Interpret()
 			}
 		},
-		/*Catch: func(e except.Exception) {
-			if e != "" {
+		Catch: func(e obj.Exception) {
+			if e.Message != "" {
 				fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
-				fmt.Println(e)
+				fmt.Println(e.Message)
 			}
-		},*/
+		},
 	}.Do()
 	goto repeat
 }

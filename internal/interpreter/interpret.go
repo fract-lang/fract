@@ -56,8 +56,7 @@ func (i *Interpreter) Interpret() {
 	}
 
 	if count > 0 { // Check blocks.
-		fract.Error(i.Tokens[last][0],
-			"Block is expected ending...")
+		fract.Error(i.Tokens[last][0], "Block is expected ending...")
 	}
 
 	// Interpret all lines.

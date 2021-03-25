@@ -6,10 +6,7 @@ package lexer
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/fract-lang/fract/pkg/except"
-	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/str"
 )
 
@@ -23,8 +20,5 @@ func (l Lexer) Error(message string) {
 		fmt.Println(str.GetWhitespace(4+l.Column-1) + "^")
 	}
 	fmt.Println(message)
-	if l.File.Path == fract.Stdin {
-		except.Raise("")
-	}
-	os.Exit(1)
+	panic(nil)
 }

@@ -62,6 +62,10 @@ const (
 	TypeReturn = 1122
 	// TypeProtected Protected type.
 	TypeProtected = 1123
+	// TypeTry Try type.
+	TypeTry = 1124
+	// TypeCatch Catch type.
+	TypeCatch = 1125
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0
