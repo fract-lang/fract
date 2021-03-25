@@ -177,7 +177,14 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 				i.variables[i.varIndexByName(param.Name)].Value
 		}
 
-		returnValue = functions.Input(function)
+		// Add name token for exceptions.
+		function.Tokens = [][]obj.Token{{_name}}
+
+		if function.Name == "input" {
+			returnValue = functions.Input(function)
+		} else {
+			functions.Exit(function)
+		}
 		goto ret
 	}
 
