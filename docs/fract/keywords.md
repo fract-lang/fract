@@ -70,4 +70,12 @@
     <td align="center"><b>ret</b></td>
     <td>Return value.</td>
   </tr>
+  <tr>
+    <td align="center"><b>try</b></td>
+    <td>Try block.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>catch</b></td>
+    <td>Catch block.</td>
+  </tr>
 </table>
