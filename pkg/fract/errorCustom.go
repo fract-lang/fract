@@ -6,25 +6,28 @@ package fract
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/fract-lang/fract/pkg/except"
 	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/str"
 )
 
-// ErrorCustom Exit with error.
+// ErrorCustom Create new exception.
 // file Code file instance.
 // line Line of error.
 // column Column of error.
 // message Message of error.
-func ErrorCustom(file obj.CodeFile, line, column int, message string) {
-	fmt.Printf("File: %s\nPosition: %d:%d\n", file.Path, line, column)
-	fmt.Println("    " + file.Lines[line-1].Text)
-	fmt.Println(str.GetWhitespace(4+column-1) + "^")
-	fmt.Println(message)
-	if file.Path == Stdin {
-		except.Raise("")
+func ErrorCustom(file obj.CodeFile, line, column int,
+	message string) obj.Exception {
+	e := obj.Exception{
+		Message: fmt.Sprintf("File: %s\nPosition: %d:%d\n    %s\n%s^\n%s",
+			file.Path, line, column, file.Lines[line-1].Text, str.GetWhitespace(4+column-1),
+			message),
 	}
-	os.Exit(1)
+
+	if TryCount > 0 {
+		panic(fmt.Errorf(e.Message))
+	}
+
+	fmt.Println(e.Message)
+	panic(nil)
 }

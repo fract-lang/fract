@@ -6,12 +6,14 @@ package make
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/fract-lang/fract/internal/interpreter"
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/fs"
+	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
 // Process Process command in module.
@@ -36,9 +38,8 @@ func Process(command string) {
 		Try: func() {
 			preter.Interpret()
 		},
-		Catch: func(e except.Exception) {
-			fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
-			fmt.Println(e)
+		Catch: func(e obj.Exception) {
+			os.Exit(0)
 		},
 	}.Do()
 }

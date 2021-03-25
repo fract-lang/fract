@@ -89,6 +89,7 @@ func (l *Lexer) Generate() obj.Token {
 		Type: fract.TypeNone,
 		File: l.File,
 	}
+
 	fln := l.File.Lines[l.Line-1].Text // Full line.
 
 	/* Line is finished. */
@@ -120,8 +121,8 @@ func (l *Lexer) Generate() obj.Token {
 
 	/* Tokenize. */
 
-	if l.RangeComment { // Multiline comment.
-		if strings.HasPrefix(ln, grammar.RangeCommentClose) { // Multiline comment close.
+	if l.RangeComment { // Range comment.
+		if strings.HasPrefix(ln, grammar.RangeCommentClose) { // Range comment close.
 			l.RangeComment = false
 			l.Column += len(grammar.RangeCommentClose)
 			token.Type = fract.TypeIgnore
@@ -288,13 +289,19 @@ func (l *Lexer) Generate() obj.Token {
 	} else if isKeywordToken(ln, grammar.KwReturn) { // Return.
 		token.Value = grammar.KwReturn
 		token.Type = fract.TypeReturn
+	} else if isKeywordToken(ln, grammar.KwTry) { // Try.
+		token.Value = grammar.KwTry
+		token.Type = fract.TypeTry
+	} else if isKeywordToken(ln, grammar.KwCatch) { // Catch.
+		token.Value = grammar.KwCatch
+		token.Type = fract.TypeCatch
 	} else if isKeywordToken(ln, grammar.KwTrue) { // True.
 		token.Value = grammar.KwTrue
 		token.Type = fract.TypeBooleanTrue
 	} else if isKeywordToken(ln, grammar.KwFalse) { // False.
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
-	} else if strings.HasPrefix(ln, grammar.RangeCommentOpen) { // Multiline comment open.
+	} else if strings.HasPrefix(ln, grammar.RangeCommentOpen) { // Range comment open.
 		l.RangeComment = true
 		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore

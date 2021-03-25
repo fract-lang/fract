@@ -35,10 +35,14 @@ const (
 	KwElseIf = "elif"
 	// KwElse Else.
 	KwElse = "else"
-	// KwTrue Boolean true value.
+	// KwTrue Boolean true(1) value.
 	KwTrue = "true"
-	// KwFalse Boolean false value.
+	// KwFalse Boolean false(0) value.
 	KwFalse = "false"
 	// KwExit Exit.
 	KwExit = "exit"
+	// KwTry Try declare.
+	KwTry = "try"
+	// KwCatch Catch declare.
+	KwCatch = "catch"
 )
