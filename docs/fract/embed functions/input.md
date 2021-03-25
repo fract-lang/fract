@@ -5,7 +5,7 @@ Returns input from CLI as string.
 
 ## Define
 ```
-func input(input.message="")
+protected func input(input.message="")
 ```
 
 ## Examples
