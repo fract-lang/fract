@@ -54,18 +54,16 @@ const (
 	TypeBreak = 1118
 	// TypeContinue Continue loop type.
 	TypeContinue = 1119
-	// TypeExit Exit type.
-	TypeExit = 1120
 	// TypeFunction Function declare type.
-	TypeFunction = 1121
+	TypeFunction = 1120
 	// TypeReturn Return type.
-	TypeReturn = 1122
+	TypeReturn = 1121
 	// TypeProtected Protected type.
-	TypeProtected = 1123
+	TypeProtected = 1122
 	// TypeTry Try type.
-	TypeTry = 1124
+	TypeTry = 1123
 	// TypeCatch Catch type.
-	TypeCatch = 1125
+	TypeCatch = 1124
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0

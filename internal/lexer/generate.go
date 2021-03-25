@@ -138,8 +138,7 @@ func (l *Lexer) Generate() obj.Token {
 			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
-			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeExit ||
-			l.lastToken.Type == fract.TypeReturn) { // Numeric value.
+			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn) { // Numeric value.
 		// Remove punct.
 		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
 		if result {
@@ -259,9 +258,6 @@ func (l *Lexer) Generate() obj.Token {
 	} else if isKeywordToken(ln, grammar.KwDelete) { // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete
-	} else if isKeywordToken(ln, grammar.KwExit) { // Exit.
-		token.Value = grammar.KwExit
-		token.Type = fract.TypeExit
 	} else if isKeywordToken(ln, grammar.KwIf) { // If.
 		token.Value = grammar.KwIf
 		token.Type = fract.TypeIf

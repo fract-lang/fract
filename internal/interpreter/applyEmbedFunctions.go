@@ -27,5 +27,20 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
+		obj.Function{
+			Name:                  "exit",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 1,
+			Parameters: []obj.Parameter{
+				{
+					Name: "exit.code",
+					Default: obj.Value{
+						Content: []string{"0"},
+						Type:    fract.VALInteger,
+					},
+				},
+			},
+		},
 	)
 }

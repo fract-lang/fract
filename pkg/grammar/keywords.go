@@ -39,8 +39,6 @@ const (
 	KwTrue = "true"
 	// KwFalse Boolean false(0) value.
 	KwFalse = "false"
-	// KwExit Exit.
-	KwExit = "exit"
 	// KwTry Try declare.
 	KwTry = "try"
 	// KwCatch Catch declare.

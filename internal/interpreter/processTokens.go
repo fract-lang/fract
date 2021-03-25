@@ -83,8 +83,6 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 		return fract.FUNCReturn
 	} else if first.Type == fract.TypeFunction { // Function definiton.
 		i.processFunction(tokens, false)
-	} else if first.Type == fract.TypeExit { // Exit.
-		i.processExit(tokens)
 	} else if first.Type == fract.TypeTry { // Try-Catch.
 		return i.processTryCatch(tokens)
 	} else {
