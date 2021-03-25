@@ -382,3 +382,18 @@ end
 
 reverse(-500) # Returns: 500
 ```
+
+## Exception Handling
+### Syntax
+```
+try
+  # ...
+end
+```
+```
+try
+  # ...
+catch
+  # ...
+end
+```
