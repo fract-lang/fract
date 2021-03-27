@@ -10,8 +10,9 @@ import (
 
 // Exit from application with code..
 // f Function.
-func Exit(f obj.Function) {
-	code := f.Parameters[0].Default
+// parameters Parameters.
+func Exit(f obj.Function, parameters []obj.Value) {
+	code := parameters[0]
 
 	if code.Array {
 		fract.Error(f.Tokens[0][0], "Array is not a valid value!")

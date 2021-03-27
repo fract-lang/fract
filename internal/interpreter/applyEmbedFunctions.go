@@ -27,7 +27,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{
+		obj.Function{ // exit function.
 			Name:                  "exit",
 			Protected:             true,
 			Tokens:                nil,
@@ -39,6 +39,17 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 						Content: []string{"0"},
 						Type:    fract.VALInteger,
 					},
+				},
+			},
+		},
+		obj.Function{ // len function.
+			Name:                  "len",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 0,
+			Parameters: []obj.Parameter{
+				{
+					Name: "len.object",
 				},
 			},
 		},
