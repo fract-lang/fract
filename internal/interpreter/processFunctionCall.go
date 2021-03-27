@@ -171,20 +171,25 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 
 	// Is embed function?
 	if function.Tokens == nil {
+		parameters := make([]obj.Value, 0)
+
 		// Set parameter defaults to normal values.
-		for index, param := range function.Parameters {
-			function.Parameters[index].Default =
-				i.variables[i.varIndexByName(param.Name)].Value
+		for _, param := range function.Parameters {
+			parameters = append(parameters,
+				i.variables[i.varIndexByName(param.Name)].Value)
 		}
 
 		// Add name token for exceptions.
 		function.Tokens = [][]obj.Token{{_name}}
 
 		if function.Name == "input" {
-			returnValue = functions.Input(function)
+			returnValue = functions.Input(function, parameters)
+		} else if function.Name == "len" {
+			returnValue = functions.Len(function, parameters)
 		} else {
-			functions.Exit(function)
+			functions.Exit(function, parameters)
 		}
+
 		goto ret
 	}
 

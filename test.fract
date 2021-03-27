@@ -95,7 +95,7 @@
 #del array, array2
 
 # FUNCTION TEST
-func len(list)
+func calc.length(list)
   var counter = 0
   for _ in list
     counter = counter + 1

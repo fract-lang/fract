@@ -6,10 +6,11 @@ import (
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
-// Input get input from cli.
+// Input from cli.
 // f Function.
-func Input(f obj.Function) obj.Value {
-	fract.PrintValue(f.Parameters[0].Default)
+// parameters Parameters.
+func Input(f obj.Function, parameters []obj.Value) obj.Value {
+	fract.PrintValue(parameters[0])
 	return obj.Value{
 		Content: []string{cli.Input("")},
 		Type:    fract.VALString,
