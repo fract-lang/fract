@@ -15,9 +15,9 @@ import (
 
 // processEsacepeSequence Process char literal espace sequence.
 // l Lexer.
-// token Token.
+// sb String builder.
 // fln Full line text of current code line.
-func processEscapeSequence(l *Lexer, token *obj.Token, fln string) bool {
+func processEscapeSequence(l *Lexer, sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
 	if fln[l.Column-1] != '\\' {
 		return false
@@ -30,25 +30,25 @@ func processEscapeSequence(l *Lexer, token *obj.Token, fln string) bool {
 
 	switch fln[l.Column-1] {
 	case '\\':
-		token.Value += "\\"
+		sb.WriteByte('\\')
 	case '"':
-		token.Value += "\""
+		sb.WriteByte('"')
 	case '\'':
-		token.Value += "'"
+		sb.WriteByte('\'')
 	case 'n':
-		token.Value += "\n"
+		sb.WriteByte('\n')
 	case 'r':
-		token.Value += "\r"
+		sb.WriteByte('\r')
 	case 't':
-		token.Value += "\t"
+		sb.WriteByte('\t')
 	case 'b':
-		token.Value += "\b"
+		sb.WriteByte('\b')
 	case 'f':
-		token.Value += "\f"
+		sb.WriteByte('\f')
 	case 'a':
-		token.Value += "\a"
+		sb.WriteByte('\a')
 	case 'v':
-		token.Value += "\v"
+		sb.WriteByte('\v')
 	default:
 		l.Error("Invalid escape sequence!")
 	}
@@ -62,16 +62,17 @@ func processEscapeSequence(l *Lexer, token *obj.Token, fln string) bool {
 // quote Quote style.
 // fln Full line text of current code line.
 func lexString(l *Lexer, token *obj.Token, quote, fln string) {
-	var sb strings.Builder
+	sb := &strings.Builder{}
 	sb.WriteString(quote)
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
-		current := string(fln[l.Column-1])
-		if current == quote { // Finish?
-			sb.WriteString(current)
+		char := fln[l.Column-1]
+		str := string(char)
+		if str == quote { // Finish?
+			sb.WriteByte(char)
 			break
-		} else if !processEscapeSequence(l, token, fln) {
-			sb.WriteString(current)
+		} else if !processEscapeSequence(l, sb, fln) {
+			sb.WriteByte(char)
 		}
 	}
 	token.Value = sb.String()
