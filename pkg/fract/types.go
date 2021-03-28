@@ -22,48 +22,50 @@ const (
 	TypePrint = 1102
 	// TypeValue Value.
 	TypeValue = 1103
-	// TypeBrace Bracket type.
+	// TypeBrace Bracket.
 	TypeBrace = 1104
-	// TypeVariable Variable define type.
+	// TypeVariable Variable define.
 	TypeVariable = 1105
 	// TypeName Name type.
 	TypeName = 1106
-	// TypeDelete Delete from memory type.
+	// TypeDelete Delete from memory.
 	TypeDelete = 1107
-	// TypeComma Comma type.
+	// TypeComma Comma.
 	TypeComma = 1108
-	// TypeBooleanTrue Boolean true type.
+	// TypeBooleanTrue Boolean true.
 	TypeBooleanTrue = 119
-	// TypeBooleanFalse Boolean false type.
+	// TypeBooleanFalse Boolean false.
 	TypeBooleanFalse = 1110
-	// TypeBlockEnd End of block type.
+	// TypeBlockEnd End of block.
 	TypeBlockEnd = 1111
-	// TypeIf If declare.
+	// TypeIf If.
 	TypeIf = 1112
-	// TypeElseIf Else if declare.
+	// TypeElseIf Else if.
 	TypeElseIf = 1113
-	// TypeElse Else declare.
+	// TypeElse Else.
 	TypeElse = 1114
 	// TypeStatementTerminator Statement terminator.
 	TypeStatementTerminator = 1115
-	// TypeLoop Loop type.
+	// TypeLoop Loop.
 	TypeLoop = 1116
-	// TypeIn In type.
+	// TypeIn In.
 	TypeIn = 1117
-	// TypeBreak Break loop type.
+	// TypeBreak Break loop.
 	TypeBreak = 1118
-	// TypeContinue Continue loop type.
+	// TypeContinue Continue loop.
 	TypeContinue = 1119
-	// TypeFunction Function declare type.
+	// TypeFunction Function declare.
 	TypeFunction = 1120
-	// TypeReturn Return type.
+	// TypeReturn Return.
 	TypeReturn = 1121
-	// TypeProtected Protected type.
+	// TypeProtected Protected.
 	TypeProtected = 1122
-	// TypeTry Try type.
+	// TypeTry Try.
 	TypeTry = 1123
-	// TypeCatch Catch type.
+	// TypeCatch Catch.
 	TypeCatch = 1124
+	// TypeImport Import.
+	TypeImport = 1125
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0
