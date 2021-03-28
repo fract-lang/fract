@@ -6,7 +6,7 @@ package grammar
 
 const (
 	// KwImport Import packages.
-	KwImport = "use"
+	KwImport = "import"
 	// KwFunction Function define.
 	KwFunction = "func"
 	// KwDelete Delete variable.
