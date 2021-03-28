@@ -83,58 +83,58 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 	}
 }
 
+// solve process.
+// operator Operator of process.
+// first First value.
+// second Second value.
+func solve(operator obj.Token, first, second float64) float64 {
+	var result float64
+
+	if operator.Value == grammar.TokenBackslash ||
+		operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
+		if operator.Value == grammar.TokenBackslash {
+			operator.Value = grammar.TokenSlash
+		} else {
+			operator.Value = grammar.IntegerDivision
+		}
+
+		if first < second {
+			cache := first
+			first = second
+			second = cache
+		}
+	}
+
+	if operator.Value == grammar.TokenPlus { // Addition.
+		result = first + second
+	} else if operator.Value == grammar.TokenMinus { // Subtraction.
+		result = first - second
+	} else if operator.Value == grammar.TokenStar { // Multiply.
+		result = first * second
+	} else if operator.Value == grammar.TokenSlash ||
+		operator.Value == grammar.IntegerDivision { // Division.
+		if first == 0 || second == 0 {
+			fract.Error(operator, "Divide by zero!")
+		}
+		result = first / second
+
+		if operator.Value == grammar.IntegerDivision {
+			result = math.RoundToEven(result)
+		}
+	} else if operator.Value == grammar.TokenCaret { // Exponentiation.
+		result = math.Pow(first, second)
+	} else if operator.Value == grammar.TokenPercent { // Mod.
+		result = math.Mod(first, second)
+	} else {
+		fract.Error(operator, "Operator is invalid!")
+	}
+
+	return result
+}
+
 // solveProcess Solve arithmetic process.
 // process Process to solve.
 func solveProcess(process valueProcess) obj.Value {
-	// Solve process.
-	// operator Operator of process.
-	// first First value.
-	// second Second value.
-	solve := func(operator obj.Token, first, second float64) float64 {
-		var result float64
-
-		if operator.Value == grammar.TokenBackslash ||
-			operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
-			if operator.Value == grammar.TokenBackslash {
-				operator.Value = grammar.TokenSlash
-			} else {
-				operator.Value = grammar.IntegerDivision
-			}
-
-			if first < second {
-				cache := first
-				first = second
-				second = cache
-			}
-		}
-
-		if operator.Value == grammar.TokenPlus { // Addition.
-			result = first + second
-		} else if operator.Value == grammar.TokenMinus { // Subtraction.
-			result = first - second
-		} else if operator.Value == grammar.TokenStar { // Multiply.
-			result = first * second
-		} else if operator.Value == grammar.TokenSlash ||
-			operator.Value == grammar.IntegerDivision { // Division.
-			if first == 0 || second == 0 {
-				fract.Error(operator, "Divide by zero!")
-			}
-			result = first / second
-
-			if operator.Value == grammar.IntegerDivision {
-				result = math.RoundToEven(result)
-			}
-		} else if operator.Value == grammar.TokenCaret { // Exponentiation.
-			result = math.Pow(first, second)
-		} else if operator.Value == grammar.TokenPercent { // Mod.
-			result = math.Mod(first, second)
-		} else {
-			fract.Error(operator, "Operator is invalid!")
-		}
-
-		return result
-	}
-
 	value := obj.Value{}
 
 	// String?
