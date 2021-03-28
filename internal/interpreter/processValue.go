@@ -7,6 +7,7 @@ package interpreter
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/arithmetic"
@@ -354,7 +355,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						fract.Error((*tokens)[index],
 							"Only integer values can used in index access!")
 					}
-					position, err := arithmetic.ToInt(value.Content[0])
+					position, err := strconv.Atoi(value.Content[0])
 					if err != nil {
 						fract.Error((*tokens)[index], "Value out of range!")
 					}
@@ -497,7 +498,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					"Only integer values can used in index access!")
 			}
 
-			position, err := arithmetic.ToInt(value.Content[0])
+			position, err := strconv.Atoi(value.Content[0])
 			if err != nil {
 				fract.Error((*tokens)[oindex], "Value out of range!")
 			}
@@ -671,7 +672,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		token.Type != fract.TypeBooleanFalse &&
 		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
-		_, err := arithmetic.ToFloat64(token.Value)
+		_, err := strconv.ParseFloat(token.Value, 64)
 		if err != nil {
 			fract.Error(token, "Value out of range!")
 		}
@@ -740,7 +741,7 @@ func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 			fract.Error(first, "Only integer values can used in array constructors!")
 		}
 
-		val, _ := arithmetic.ToInt64(value.Content[0])
+		val, _ := strconv.ParseInt(value.Content[0], 10, 64)
 		if val < 0 {
 			fract.Error(first, "Value is not lower than zero!")
 		}

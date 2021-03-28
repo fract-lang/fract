@@ -1,6 +1,8 @@
 package arithmetic
 
 import (
+	"strconv"
+
 	"github.com/fract-lang/fract/pkg/grammar"
 )
 
@@ -12,6 +14,6 @@ func ToArithmetic(value string) float64 {
 	} else if value == grammar.KwFalse {
 		return 0
 	}
-	flt, _ := ToFloat64(value)
+	flt, _ := strconv.ParseFloat(value, 64)
 	return flt
 }
