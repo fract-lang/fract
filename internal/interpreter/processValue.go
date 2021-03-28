@@ -381,7 +381,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if variable.Value.Array {
 						val = variable.Value.Content[position]
 					} else {
-						val = arithmetic.IntToString(variable.Value.Content[0][position])
+						val = fmt.Sprintf("%d", variable.Value.Content[0][position])
 					}
 
 					if first {
@@ -524,7 +524,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if variable.Value.Array {
 				val = variable.Value.Content[position]
 			} else {
-				val = arithmetic.IntToString(variable.Value.Content[0][position])
+				val = fmt.Sprintf("%d", variable.Value.Content[0][position])
 			}
 
 			if first {
