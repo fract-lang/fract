@@ -5,7 +5,8 @@
 package interpreter
 
 import (
-	"github.com/fract-lang/fract/pkg/arithmetic"
+	"strconv"
+
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
@@ -56,7 +57,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 			if valueList == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			position, err := arithmetic.ToInt(i.processValue(valueList).Content[0])
+			position, err := strconv.Atoi(i.processValue(valueList).Content[0])
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}

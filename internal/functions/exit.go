@@ -2,8 +2,8 @@ package functions
 
 import (
 	"os"
+	"strconv"
 
-	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
@@ -20,6 +20,6 @@ func Exit(f obj.Function, parameters []obj.Value) {
 		fract.Error(f.Tokens[0][0], "Exit code is only be integer!")
 	}
 
-	exit_code, _ := arithmetic.ToInt64(code.Content[0])
+	exit_code, _ := strconv.ParseInt(code.Content[0], 10, 64)
 	os.Exit(int(exit_code))
 }
