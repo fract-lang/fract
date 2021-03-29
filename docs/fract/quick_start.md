@@ -169,11 +169,7 @@ del var # Error: Protected objects cannot be deleted manually from memory!
 They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
 Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
 ```
-var array = { 4, 5, 6, 7 }  # Elements: 4, 5, 6, 7
-```
-The syntax for creating an array of a certain size without value:
-```
-var array = [5] # Elements: 0, 0, 0, 0, 0
+var array = [ 4, 5, 6, 7 ]  # Elements: 4, 5, 6, 7
 ```
 The syntax for accessing an element of an array with index:
 ```
@@ -186,12 +182,12 @@ array[index] = value
 
 ### How can you quickly use the data in an array for arithmetic operations?
 ```
-var array = { 0, 4, 4, 2 }          # Elements: 0 4 4 2
+var array = [ 0, 4, 4, 2 ]          # Elements: 0 4 4 2
 array = array + 5                   # Elements: 5 9 9 7
 ```
 ```
-var array = { 0, 4, 4, 2 }          # Elements: 0 4 4 2
-var array2 = { 2, 2, 2, 2 }         # Elements: 2 2 2 2
+var array = [ 0, 4, 4, 2 ]          # Elements: 0 4 4 2
+var array2 = [ 2, 2, 2, 2 ]         # Elements: 2 2 2 2
 array = array + array2              # Elements: 2 6 6 4
 ```
 
@@ -263,13 +259,13 @@ end
 ```
 #### Examples
 ```
-var t1 = { 0, 3, 2, 1, 90 }
-for index in { 0, 1, 2, 3, 4 }
+var t1 = [ 0, 3, 2, 1, 90 ]
+for index in [ 0, 1, 2, 3, 4 ]
   t1[index]
 end
 ```
 ```
-var t1 = { 0, 3, 2, 1, 90 }
+var t1 = [ 0, 3, 2, 1, 90 ]
 for item in t1
   item
 end
@@ -294,7 +290,7 @@ end
 ### Continue Keyword
 It can be used to pass the cycle to the next cycle step. If there is no next loop step, the loop is terminated.
 ```
-for index in { 0, 1, 2, 3, 4.0 }
+for index in [ 0, 1, 2, 3, 4.0 ]
   if index == 1 | index == 3
     continue
   end
@@ -336,7 +332,7 @@ func range(start, to, step=1)
   var lst = [0]
   var index = 0
   for start < to
-    lst = { lst, start }
+    lst = [ lst, start ]
     start = start + step
     index = index + 1
   end
