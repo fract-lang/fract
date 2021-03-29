@@ -36,6 +36,9 @@ func DecomposeConditionalProcess(tokens []obj.Token, operator string) *[][]obj.T
 		fract.Error(tokens[0], "Operator spam!")
 	}
 	for index != -1 {
+		if index-last == 0 {
+			fract.Error(tokens[last], "Where is the condition?")
+		}
 		expressions = append(expressions, *vector.Sublist(tokens, last, index-last))
 		last = index + 1
 		index = findNextOperator(tokens, last, operator) // Find next.
