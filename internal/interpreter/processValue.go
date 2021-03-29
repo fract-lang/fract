@@ -672,10 +672,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		token.Type != fract.TypeBooleanFalse &&
 		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
-		_, err := strconv.ParseFloat(token.Value, 64)
+		val, err := strconv.ParseFloat(token.Value, 64)
 		if err != nil {
 			fract.Error(token, "Value out of range!")
 		}
+		token.Value = fmt.Sprintf("%g", val)
 	}
 
 	if first {
