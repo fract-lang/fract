@@ -785,16 +785,16 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 			// Find next operator.
 			priorityIndex = parser.IndexProcessPriority(*tokens)
 		}
+
+		if data_count > 0 {
+			fract.Error((*tokens)[len(*tokens)-1], "Invalid value!")
+		}
 	} else {
 		var operation valueProcess
 		operation.First = (*tokens)[0]
 		operation.FirstV.Array = true // Ignore nil control if function call.
 		i._processValue(true, &operation, tokens, 0)
 		value = operation.FirstV
-	}
-
-	if data_count > 0 {
-		fract.Error((*tokens)[len(*tokens)-1], "Invalid value!")
 	}
 
 	return value
