@@ -188,6 +188,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			returnValue = functions.Len(function, parameters)
 		} else if function.Name == "range" {
 			returnValue = functions.Range(function, parameters)
+		} else if function.Name == "make" {
+			returnValue = functions.Make(function, parameters)
 		} else {
 			functions.Exit(function, parameters)
 		}
