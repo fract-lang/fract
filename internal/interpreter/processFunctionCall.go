@@ -154,20 +154,9 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		}
 	}
 
-	i.functionCount++
-
-	old := i.funcTempVariables
+	returnValue := obj.Value{}
 	variables := append(make([]obj.Variable, 0), i.variables...)
 	i.variables = append(i.variables[:i.funcTempVariables], vars...)
-	i.funcTempVariables = len(vars)
-
-	returnValue := obj.Value{}
-	functionLen := len(i.functions)
-	nameIndex = i.index
-	itokens := i.Tokens
-	i.Tokens = function.Tokens
-
-	i.index = -1
 
 	// Is embed function?
 	if function.Tokens == nil {
@@ -193,41 +182,52 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		} else {
 			functions.Exit(function, parameters)
 		}
+	} else {
+		// Process block.
 
-		goto ret
-	}
+		i.functionCount++
 
-	// Process block.
-	for {
-		i.index++
-		tokens := i.Tokens[i.index]
-		i.funcTempVariables = len(i.variables) - i.funcTempVariables
+		old := i.funcTempVariables
+		i.funcTempVariables = len(vars)
 
-		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
-			break
-		} else if i.processTokens(tokens) == fract.FUNCReturn {
-			tokens := i.Tokens[i.returnIndex]
-			i.returnIndex = fract.TypeNone
-			valueList := tokens[1:]
-			if valueList == nil {
+		functionLen := len(i.functions)
+		nameIndex = i.index
+		itokens := i.Tokens
+		i.Tokens = function.Tokens
+
+		i.index = -1
+
+		for {
+			i.index++
+			tokens := i.Tokens[i.index]
+			i.funcTempVariables = len(i.variables) - i.funcTempVariables
+
+			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+				break
+			} else if i.processTokens(tokens) == fract.FUNCReturn {
+				tokens := i.Tokens[i.returnIndex]
+				i.returnIndex = fract.TypeNone
+				valueList := tokens[1:]
+				if valueList == nil {
+					break
+				}
+				returnValue = i.processValue(&valueList)
 				break
 			}
-			returnValue = i.processValue(&valueList)
-			break
 		}
-	}
 
-ret:
+		i.Tokens = itokens
+
+		// Remove temporary functions.
+		i.functions = i.functions[:functionLen]
+
+		i.functionCount--
+		i.funcTempVariables = old
+		i.index = nameIndex
+	}
 
 	// Remove temporary variables.
 	i.variables = variables
-	// Remove temporary functions.
-	i.functions = i.functions[:functionLen]
-
-	i.functionCount--
-	i.funcTempVariables = old
-	i.index = nameIndex
-	i.Tokens = itokens
 
 	return returnValue
 }
