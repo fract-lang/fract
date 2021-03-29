@@ -20,6 +20,9 @@ func Make(f obj.Function, parameters []obj.Value) obj.Value {
 	}
 
 	sizev, _ := strconv.ParseInt(size.Content[0], 10, 64)
+	if sizev < 0 {
+		fract.Error(f.Tokens[0][0], "Size should be minimum zero!")
+	}
 	return obj.Value{
 		Content: make([]string, sizev),
 		Array:   true,
