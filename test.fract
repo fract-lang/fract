@@ -95,6 +95,7 @@
 #del array, array2
 
 # FUNCTION TEST
+#>
 func calc.length(list)
   var counter = 0
   for _ in list
@@ -102,8 +103,10 @@ func calc.length(list)
   end
   ret counter
 end
+<#
 
-func range(start, to, step=1)
+#>
+func calc.range(start, to, step=1)
   var lst = [0]
   var index = 0
   for start < to
@@ -113,6 +116,7 @@ func range(start, to, step=1)
   end
   ret lst
 end
+<#
 
 func int.prime(x)
   if x < 2

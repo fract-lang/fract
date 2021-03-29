@@ -5,7 +5,7 @@ Calculate length of object.
 
 ## Define
 ```
-protected func len(len.object)
+protected func len(object)
 ```
 
 ## Examples

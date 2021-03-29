@@ -5,13 +5,12 @@ Exit process with exit code.
 
 ## Define
 ```
-protected func exit(exit.code="")
+protected func exit(code="")
 ```
 
 ## Examples
 
 ```
 exit()
-# OR
 exit(1)
 ```

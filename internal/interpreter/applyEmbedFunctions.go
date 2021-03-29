@@ -19,7 +19,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			DefaultParameterCount: 1,
 			Parameters: []obj.Parameter{
 				{
-					Name: "input.message",
+					Name: "message",
 					Default: obj.Value{
 						Content: []string{""},
 						Type:    fract.VALString,
@@ -34,7 +34,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			DefaultParameterCount: 1,
 			Parameters: []obj.Parameter{
 				{
-					Name: "exit.code",
+					Name: "code",
 					Default: obj.Value{
 						Content: []string{"0"},
 						Type:    fract.VALInteger,
@@ -49,7 +49,27 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			DefaultParameterCount: 0,
 			Parameters: []obj.Parameter{
 				{
-					Name: "len.object",
+					Name: "object",
+				},
+			},
+		},
+		obj.Function{ // range function.
+			Name:                  "range",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 1,
+			Parameters: []obj.Parameter{
+				{
+					Name: "start",
+				},
+				{
+					Name: "to",
+				},
+				{
+					Name: "step",
+					Default: obj.Value{
+						Content: []string{"1"},
+					},
 				},
 			},
 		},
