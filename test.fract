@@ -19,8 +19,7 @@
 #  end
 #end
 
-#var test = { 0, 1, 0, 0, 0 }
-#var test1 = [1]
+#var test = [ 0, 1, 0, 0, 0 ]
 #test[4] = 5
 #test1[0] = 2
 #test
@@ -34,17 +33,11 @@
 #  4
 #end
 
-#var t1 = { 0, 3, 2, 1, 90 }
-#var t2 = { }
+#var t1 = [ 0, 3, 2, 1, 90 ]
+#var t2 = [ ]
 #t1 == t2
 
-#var counter = 0
-#for count in [1000]
-#  counter = counter+1
-#  counter
-#end
-
-#for index in { 0, 1, 2, 3, 4.0 }
+#for index in [ 0, 1, 2, 3, 4.0 ]
 #  var test = index
 #  index
 #end
