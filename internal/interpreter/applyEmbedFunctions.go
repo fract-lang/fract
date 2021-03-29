@@ -73,5 +73,16 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
+		obj.Function{
+			Name:                  "make",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 0,
+			Parameters: []obj.Parameter{
+				{
+					Name: "size",
+				},
+			},
+		},
 	)
 }
