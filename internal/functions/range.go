@@ -28,7 +28,7 @@ func Range(f obj.Function, parameters []obj.Value) obj.Value {
 	toV, _ := strconv.ParseFloat(to.Content[0], 64)
 	stepV, _ := strconv.ParseFloat(step.Content[0], 64)
 
-	if startV > toV || stepV <= 0 {
+	if stepV <= 0 {
 		return obj.Value{
 			Content: nil,
 			Array:   true,
@@ -40,8 +40,14 @@ func Range(f obj.Function, parameters []obj.Value) obj.Value {
 		Array:   true,
 	}
 
-	for ; startV <= toV; startV += stepV {
-		returnValue.Content = append(returnValue.Content, fmt.Sprintf("%g", startV))
+	if startV <= toV {
+		for ; startV <= toV; startV += stepV {
+			returnValue.Content = append(returnValue.Content, fmt.Sprintf("%g", startV))
+		}
+	} else {
+		for ; startV >= toV; startV -= stepV {
+			returnValue.Content = append(returnValue.Content, fmt.Sprintf("%g", startV))
+		}
 	}
 
 	return returnValue
