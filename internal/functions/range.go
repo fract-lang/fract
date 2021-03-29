@@ -41,7 +41,7 @@ func Range(f obj.Function, parameters []obj.Value) obj.Value {
 	}
 
 	for ; startV <= toV; startV += stepV {
-		returnValue.Content = append(returnValue.Content, fmt.Sprintf("%f", startV))
+		returnValue.Content = append(returnValue.Content, fmt.Sprintf("%g", startV))
 	}
 
 	return returnValue
