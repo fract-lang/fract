@@ -541,35 +541,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 			return index - oindex + 1
 		} else if token.Value == grammar.TokenLBracket {
-			// Array constructor.
-			cindex := index + 1
-			bracketCount := 1
-			for ; cindex < len(*tokens); cindex++ {
-				current := (*tokens)[cindex]
-				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenLBracket {
-						bracketCount++
-					} else if current.Value == grammar.TokenRBracket {
-						bracketCount--
-						if bracketCount == 0 {
-							break
-						}
-					}
-				}
-			}
-
-			if first {
-				operation.FirstV.Array = true
-				operation.FirstV.Content = i.processArrayValue(
-					vector.Sublist(*tokens, index, cindex-index+1)).Content
-			} else {
-				operation.SecondV.Array = true
-				operation.SecondV.Content = i.processArrayValue(
-					vector.Sublist(*tokens, index, cindex-index+1)).Content
-			}
-			vector.RemoveRange(tokens, index+1, cindex-index-1)
-			return 0
-		} else if token.Value == grammar.TokenLBrace {
 			// Array initializer.
 
 			// Find close brace.
@@ -578,9 +549,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			for ; cindex < len(*tokens); cindex++ {
 				current := (*tokens)[cindex]
 				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenLBrace {
+					if current.Value == grammar.TokenLBracket {
 						fract.Error(current, "Arrays is cannot take array value as element!")
-					} else if current.Value == grammar.TokenRBrace {
+					} else if current.Value == grammar.TokenRBracket {
 						braceCount--
 						if braceCount == 0 {
 							break
@@ -597,39 +568,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			}
 			vector.RemoveRange(tokens, index+1, cindex-index-1)
 			return 0
-		} else if token.Value == grammar.TokenRBrace {
-			// Array initializer.
-
-			// Find open brace.
-			braceCount := 1
-			oindex := index - 1
-			nestedArray := false
-			for ; oindex >= 0; oindex-- {
-				current := (*tokens)[oindex]
-				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenRBrace {
-						braceCount++
-						nestedArray = true
-					} else if current.Value == grammar.TokenLBrace {
-						if nestedArray {
-							fract.Error(current, "Arrays is cannot take array value as element!")
-						}
-						braceCount--
-						if braceCount == 0 {
-							break
-						}
-					}
-				}
-			}
-
-			value := i.processArrayValue(vector.Sublist(*tokens, oindex, index-oindex+1))
-			if first {
-				operation.FirstV = value
-			} else {
-				operation.SecondV = value
-			}
-			vector.RemoveRange(tokens, oindex, index-oindex)
-			return index - oindex
 		} else if token.Value == grammar.TokenRParenthes {
 			// Function.
 
@@ -722,36 +660,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 // tokens Tokens.
 func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 	value := obj.Value{
-		Array: true,
+		Content: []string{},
+		Array:   true,
 	}
 
 	first := (*tokens)[0]
-
-	// Initializer?
-	if first.Value == grammar.TokenLBracket {
-		valueList := vector.Sublist(*tokens, 1, len(*tokens)-2)
-
-		if valueList == nil {
-			fract.Error(first, "Size is not defined!")
-		}
-
-		value := i.processValue(valueList)
-		if value.Array {
-			fract.Error(first, "Arrays is not used in array constructors!")
-		} else if value.Type != fract.VALInteger {
-			fract.Error(first, "Only integer values can used in array constructors!")
-		}
-
-		val, _ := strconv.ParseInt(value.Content[0], 10, 64)
-		if val < 0 {
-			fract.Error(first, "Value is not lower than zero!")
-		}
-		value.Content = make([]string, val)
-		for index := range value.Content {
-			value.Content[index] = "0"
-		}
-		return value
-	}
 
 	comma := 1
 	for index := 1; index < len(*tokens)-1; index++ {
