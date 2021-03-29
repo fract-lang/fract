@@ -5,9 +5,25 @@
 ## About of Fract
 Fract gets its name from Fraction. It is a programming language focused on mathematics. It is designed to efficiently perform data science, statistics and arithmetic operations. Open to community support, please feel free to show off your ideas and skills for Fract's improvement.
 
+## FizzBuzz
+FizzBuzz example for the range 1-100.
+```
+for number in range(1, 100)
+  if number % 3 == 0 & number % 5 == 0
+    "FizzBuzz"
+  elif number % 3 == 0
+    "Fizz"
+  elif number % 5 == 0
+    "Buzz"
+  else
+    number
+  end
+end
+```
+
 ## How to compile?
 Fract is written in Go. <br>
-Run one of the scripts ``scripts/brun.bat`` or ``scripts/brun.ps1`` to compile.
+Run one of the scripts ``scripts/brun.bat`` or ``scripts/brun.sh`` to compile.
 
 ## Contributing
 
