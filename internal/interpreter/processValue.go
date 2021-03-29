@@ -839,42 +839,40 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 	}
 	data_count -= 1
 
-	// Decompose arithmetic operations.
-	priorityIndex := parser.IndexProcessPriority(*tokens)
-	looped := priorityIndex != -1
-	for priorityIndex != -1 {
-		data_count--
-		var operation valueProcess
+	if data_count > 0 {
+		// Decompose arithmetic operations.
+		priorityIndex := parser.IndexProcessPriority(*tokens)
+		for priorityIndex != -1 {
+			data_count--
+			var operation valueProcess
 
-		operation.First = (*tokens)[priorityIndex-1]
-		priorityIndex -= i._processValue(true, &operation,
-			tokens, priorityIndex-1)
-		operation.Operator = (*tokens)[priorityIndex]
+			operation.First = (*tokens)[priorityIndex-1]
+			priorityIndex -= i._processValue(true, &operation,
+				tokens, priorityIndex-1)
+			operation.Operator = (*tokens)[priorityIndex]
 
-		operation.Second = (*tokens)[priorityIndex+1]
-		priorityIndex -= i._processValue(false, &operation,
-			tokens, priorityIndex+1)
+			operation.Second = (*tokens)[priorityIndex+1]
+			priorityIndex -= i._processValue(false, &operation,
+				tokens, priorityIndex+1)
 
-		resultValue := solveProcess(operation)
+			resultValue := solveProcess(operation)
 
-		operation.Operator.Value = grammar.TokenPlus
-		operation.Second = (*tokens)[priorityIndex+1]
-		operation.FirstV = value
-		operation.SecondV = resultValue
+			operation.Operator.Value = grammar.TokenPlus
+			operation.Second = (*tokens)[priorityIndex+1]
+			operation.FirstV = value
+			operation.SecondV = resultValue
 
-		resultValue = solveProcess(operation)
-		value = resultValue
+			resultValue = solveProcess(operation)
+			value = resultValue
 
-		// Remove processed processes.
-		vector.RemoveRange(tokens, priorityIndex-1, 3)
-		vector.Insert(tokens, priorityIndex-1, obj.Token{Value: "0"})
+			// Remove processed processes.
+			vector.RemoveRange(tokens, priorityIndex-1, 3)
+			vector.Insert(tokens, priorityIndex-1, obj.Token{Value: "0"})
 
-		// Find next operator.
-		priorityIndex = parser.IndexProcessPriority(*tokens)
-	}
-
-	// Not operatored?
-	if !looped {
+			// Find next operator.
+			priorityIndex = parser.IndexProcessPriority(*tokens)
+		}
+	} else {
 		var operation valueProcess
 		operation.First = (*tokens)[0]
 		operation.FirstV.Array = true // Ignore nil control if function call.

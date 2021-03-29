@@ -140,16 +140,21 @@ func (l *Lexer) Generate() obj.Token {
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
 			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn) { // Numeric value.
-		// Remove punct.
-		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
-		if result {
-			check = check[:len(check)-1]
+		if check[0] == '-' && l.lastToken.Type != fract.TypeOperator {
+			token.Value = "-"
+			token.Type = fract.TypeOperator
+		} else {
+			// Remove punct.
+			result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
+			if result {
+				check = check[:len(check)-1]
+			}
+			clen := len(check)
+			check = strings.ReplaceAll(check, " ", "")
+			l.Column += clen - len(check)
+			token.Value = check
+			token.Type = fract.TypeValue
 		}
-		clen := len(check)
-		check = strings.ReplaceAll(check, " ", "")
-		l.Column += clen - len(check)
-		token.Value = check
-		token.Type = fract.TypeValue
 	} else if strings.HasPrefix(ln, grammar.TokenSemicolon) { // Statement terminator.
 		token.Value = grammar.TokenSemicolon
 		token.Type = fract.TypeStatementTerminator
