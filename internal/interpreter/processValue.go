@@ -48,7 +48,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 		val := i.processValue(&_range)
 		if val.Array {
 			vector.Insert(tokens, found, obj.Token{
-				Value: grammar.TokenLBrace,
+				Value: grammar.TokenLBracket,
 				Type:  fract.TypeBrace,
 			})
 			for _, current := range val.Content {
@@ -65,7 +65,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 			}
 			found++
 			vector.Insert(tokens, found, obj.Token{
-				Value: grammar.TokenRBrace,
+				Value: grammar.TokenRBracket,
 				Type:  fract.TypeBrace,
 			})
 		} else {
