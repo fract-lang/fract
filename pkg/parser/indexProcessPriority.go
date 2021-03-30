@@ -19,10 +19,10 @@ func IndexProcessPriority(tokens []obj.Token) int {
 	for index, _token := range tokens {
 		if _token.Type == fract.TypeBrace {
 			if _token.Value == grammar.TokenLBracket ||
-				_token.Value == grammar.TokenLBrace {
+				_token.Value == grammar.TokenLBrace ||
+				_token.Value == grammar.TokenLParenthes {
 				bracket++
-			} else if _token.Value == grammar.TokenRBracket ||
-				_token.Value == grammar.TokenRBrace {
+			} else {
 				bracket--
 			}
 		}

@@ -676,9 +676,6 @@ func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 			}
 			val := i.processValue(lst)
 			value.Content = append(value.Content, val.Content...)
-			if value.Type != fract.VALString {
-				value.Type = val.Type
-			}
 			comma = index + 1
 		}
 	}
@@ -690,9 +687,6 @@ func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 		}
 		val := i.processValue(lst)
 		value.Content = append(value.Content, val.Content...)
-		if value.Type != fract.VALString {
-			value.Type = val.Type
-		}
 	}
 
 	return value
@@ -729,36 +723,10 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 		}
 	}
 
-	// Calculate data count.
-	data_count := 0
-	bracket := 0
-	for _, current := range *tokens {
-		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLBracket ||
-				current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLParenthes {
-				bracket++
-			} else {
-				bracket--
-			}
-		}
-		if bracket > 0 {
-			continue
-		}
-		if current.Type == fract.TypeValue ||
-			current.Type == fract.TypeName {
-			data_count++
-		}
-	}
-	data_count -= 1
-
-	if data_count > 0 {
+	if priorityIndex := parser.IndexProcessPriority(*tokens); priorityIndex != -1 {
 		// Decompose arithmetic operations.
-		priorityIndex := parser.IndexProcessPriority(*tokens)
 		for priorityIndex != -1 {
-			data_count--
 			var operation valueProcess
-
 			operation.First = (*tokens)[priorityIndex-1]
 			priorityIndex -= i._processValue(true, &operation,
 				tokens, priorityIndex-1)
@@ -784,10 +752,6 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 
 			// Find next operator.
 			priorityIndex = parser.IndexProcessPriority(*tokens)
-		}
-
-		if data_count > 0 {
-			fract.Error((*tokens)[len(*tokens)-1], "Invalid value!")
 		}
 	} else {
 		var operation valueProcess
