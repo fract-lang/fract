@@ -49,19 +49,6 @@ var x int32 = 5
 x # Print 5
 ```
 
-## Exit Keyword
-With the Exit keyword, you can end the execution with an exit code.
-
-### Syntax
-```
-exit [CODE]
-```
-
-### Examples
-```
-exit 0
-```
-
 ## Statement Terminator
 With the Statement terminator, you can perform multiple operations on the same line without moving to a new line.
 
@@ -119,6 +106,12 @@ var Fibonacci.First = 1
 ```
 var a = 45      # Value is 45
 a = 1           # Value is 1
+
+var (
+  c = 3,        # Value is 3
+  d = 5,        # Value is 5
+  e = 9         # Value is 9
+)
 ```
 
 ## Deletion Defines
@@ -142,8 +135,10 @@ del a            # Remove 'a' variable from memory
 var a = 5        # No error, a is 5
 ```
 ```
-var a = 0
-var b = 0
+var (
+  a = 0,
+  b = 0,
+)
 del a, b         # Remove 'a' and 'b' variables from memory
                  # No defined variables
 
@@ -161,7 +156,6 @@ Protected objects is cannot remove manually from memory.
 #### Examples
 ```
 protected var example = 4
-var # Print 4
 del var # Error: Protected objects cannot be deleted manually from memory!
 ```
 
