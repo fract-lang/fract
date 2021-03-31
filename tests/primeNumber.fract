@@ -2,8 +2,10 @@
 var num = 1
 for num <= 100
   num = num + 1
-  var prime = true
-  var i = 2
+  var (
+    prime = true,
+    i = 2
+  )
   for i < num
     i = i + 1
     if num % i == 0
