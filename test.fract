@@ -114,8 +114,8 @@ end
 <#
 
 func int.prime(x)
-  if x < 2
-    ret false
+  if x == 2
+    ret true
   end
 
   for y in range(2, x-1)
