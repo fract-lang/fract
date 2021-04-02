@@ -10,13 +10,13 @@ FizzBuzz example for the range 1-100.
 ```
 for number in range(1, 100)
   if number % 3 == 0 & number % 5 == 0
-    "FizzBuzz"
+    print("FizzBuzz")
   elif number % 3 == 0
-    "Fizz"
+    print("Fizz")
   elif number % 5 == 0
-    "Buzz"
+    print("Buzz")
   else
-    number
+    print(number)
   end
 end
 ```
