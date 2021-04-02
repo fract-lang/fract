@@ -21,4 +21,6 @@ const (
 	GreaterEquals = ">="
 	// LessEquals Less than or equals to.
 	LessEquals = "<="
+	// Params Params parameter.
+	Params = "..."
 )

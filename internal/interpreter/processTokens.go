@@ -26,7 +26,20 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
 		first.Type == fract.TypeBooleanFalse {
 		if first.Type == fract.TypeName {
+			brace := 0
 			for _, current := range tokens {
+				if current.Type == fract.TypeBrace {
+					if current.Value == grammar.TokenLBrace ||
+						current.Value == grammar.TokenLBracket ||
+						current.Value == grammar.TokenLParenthes {
+						brace++
+					} else {
+						brace--
+					}
+				}
+				if brace > 0 {
+					continue
+				}
 				if current.Type == fract.TypeOperator &&
 					current.Value == grammar.TokenEquals { // Variable setting.
 					i.processVariableSet(tokens)

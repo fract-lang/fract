@@ -60,11 +60,18 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 		for index := 0; index < len(paramList); index++ {
 			current := paramList[index]
 			if paramName {
+				if current.Type == fract.TypeParams {
+					continue
+				}
+
 				if current.Type != fract.TypeName {
 					fract.Error(current, "Parameter name is not found!")
 				}
 
-				lastParameter = obj.Parameter{Name: current.Value}
+				lastParameter = obj.Parameter{
+					Name:   current.Value,
+					Params: index > 0 && paramList[index-1].Type == fract.TypeParams,
+				}
 				function.Parameters = append(function.Parameters, lastParameter)
 				paramName = false
 				continue
@@ -95,6 +102,9 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					}
 					lastParameter.Default = i.processValue(
 						vector.Sublist(paramList, start, index-start))
+					if !lastParameter.Default.Array {
+						fract.Error(current, "Params parameter is can only take array values!")
+					}
 					function.Parameters[len(function.Parameters)-1] = lastParameter
 					function.DefaultParameterCount++
 					defaultDefined = true

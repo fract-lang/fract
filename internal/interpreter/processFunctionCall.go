@@ -33,7 +33,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	// Decompose arguments.
 	if tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
 		grammar.TokenRParenthes, false); tokens != nil {
-		braceCount, lastComma := 0, 0
+		braceCount, lastComma, tokenLen := 0, 0, len(tokens)
 		paramSet := false
 
 		// processArgument Process function argument.
@@ -41,6 +41,47 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		// count Count of appended arguments.
 		// index Index of tokens state.
 		processArgument := func(current obj.Token, index *int) obj.Variable {
+			getParamsArgumentValue := func() obj.Value {
+				returnValue := obj.Value{
+					Content: []string{},
+					Array:   true,
+				}
+
+				for ; *index < len(tokens); *index++ {
+					current := tokens[*index]
+					if current.Type == fract.TypeBrace {
+						if current.Value == grammar.TokenLParenthes ||
+							current.Value == grammar.TokenLBrace ||
+							current.Value == grammar.TokenLBracket {
+							braceCount++
+						} else {
+							braceCount--
+						}
+					} else if current.Type == fract.TypeComma && braceCount == 0 {
+						valueList := vector.Sublist(tokens, lastComma, *index-lastComma)
+						if parser.IsParamSet(*valueList) {
+							*index -= 4
+							return returnValue
+						}
+						returnValue.Content = append(returnValue.Content,
+							i.processValue(valueList).Content...)
+						lastComma = *index + 1
+					}
+				}
+
+				if lastComma < tokenLen {
+					valueSlice := tokens[lastComma:]
+					if parser.IsParamSet(valueSlice) {
+						*index -= 4
+						return returnValue
+					}
+					returnValue.Content = append(returnValue.Content,
+						i.processValue(&valueSlice).Content...)
+				}
+
+				return returnValue
+			}
+
 			length := *index - lastComma
 			if length < 1 {
 				fract.Error(current, "Value is not defined!")
@@ -50,43 +91,44 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 				fract.Error(current, "Argument overflow!")
 			}
 
-			variable := obj.Variable{Name: function.Parameters[count].Name}
+			parameter := function.Parameters[count]
+			variable := obj.Variable{Name: parameter.Name}
 			valueList := *vector.Sublist(tokens, lastComma, length)
 			current = valueList[0]
 
 			// Check param set.
-			if current.Type == fract.TypeName {
-				if length >= 2 {
-					second := valueList[1]
-					if second.Value == grammar.TokenEquals {
-						length -= 2
-						if length < 1 {
-							fract.Error(current, "Value is not defined!")
-						}
+			if length >= 2 && parser.IsParamSet(valueList) {
+				length -= 2
+				if length < 1 {
+					fract.Error(current, "Value is not defined!")
+				}
 
-						for _, parameter := range function.Parameters {
-							if parameter.Name == current.Value {
-								for _, name := range names {
-									if name == current.Value {
-										fract.Error(current, "Keyword argument repeated!")
-									}
-								}
-								if parameter.Default.Content == nil {
-									count++
-								}
-								valueList = valueList[2:]
-								paramSet = true
-								names = append(names, current.Value)
-								return obj.Variable{
-									Name:  current.Value,
-									Value: i.processValue(&valueList),
-								}
+				for _, parameter := range function.Parameters {
+					if parameter.Name == current.Value {
+						for _, name := range names {
+							if name == current.Value {
+								fract.Error(current, "Keyword argument repeated!")
 							}
 						}
-
-						fract.Error(current, "Parameter is not defined in this name!")
+						if parameter.Default.Content == nil {
+							count++
+						}
+						valueList = valueList[2:]
+						paramSet = true
+						names = append(names, current.Value)
+						returnValue := obj.Variable{Name: current.Value}
+						//Parameter is params typed?
+						if parameter.Params {
+							lastComma += 2
+							returnValue.Value = getParamsArgumentValue()
+						} else {
+							returnValue.Value = i.processValue(&valueList)
+						}
+						return returnValue
 					}
 				}
+
+				fract.Error(current, "Parameter is not defined in this name!: "+current.Value)
 			}
 
 			if paramSet {
@@ -98,7 +140,12 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 				count++
 			}
 			names = append(names, variable.Name)
-			variable.Value = i.processValue(&valueList)
+			// Parameter is params typed?
+			if parameter.Params {
+				variable.Value = getParamsArgumentValue()
+			} else {
+				variable.Value = i.processValue(&valueList)
+			}
 			return variable
 		}
 
@@ -118,7 +165,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			}
 		}
 
-		if tokenLen := len(tokens); lastComma < tokenLen {
+		if lastComma < tokenLen {
 			vars = append(vars, processArgument(tokens[lastComma], &tokenLen))
 		}
 	}
