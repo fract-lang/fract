@@ -8,7 +8,7 @@ import (
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
-// Exit from application with code..
+// Exit from application with code.
 // f Function.
 // parameters Parameters.
 func Exit(f obj.Function, parameters []obj.Value) {

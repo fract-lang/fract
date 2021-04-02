@@ -218,7 +218,9 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		// Add name token for exceptions.
 		function.Tokens = [][]obj.Token{{_name}}
 
-		if function.Name == "input" {
+		if function.Name == "print" {
+			functions.Print(function, parameters)
+		} else if function.Name == "input" {
 			returnValue = functions.Input(function, parameters)
 		} else if function.Name == "len" {
 			returnValue = functions.Len(function, parameters)

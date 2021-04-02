@@ -88,5 +88,4 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 	} else {
 		fract.Error(pre, "Invalid syntax!")
 	}
-
 }
