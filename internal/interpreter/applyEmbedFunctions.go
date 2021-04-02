@@ -12,6 +12,24 @@ import (
 // ApplyEmbedFunctions Add embed functions to interpreter source.
 func (i *Interpreter) ApplyEmbedFunctions() {
 	i.functions = append(i.functions,
+		obj.Function{ // print function.
+			Name:                  "print",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 1,
+			Parameters: []obj.Parameter{
+				{
+					Name: "value",
+				},
+				{
+					Name: "fin",
+					Default: obj.Value{
+						Content: []string{"\n"},
+						Type:    fract.VALString,
+					},
+				},
+			},
+		},
 		obj.Function{ // input function.
 			Name:                  "input",
 			Protected:             true,

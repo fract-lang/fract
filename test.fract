@@ -127,7 +127,6 @@ func int.prime(x)
 end
 
 for number in range(0, 10)
-  number
-  int.prime(number)
-  ""
+  print(number, fin=" ")
+  print(int.prime(number))
 end
