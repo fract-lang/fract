@@ -244,6 +244,9 @@ func (l *Lexer) Generate() obj.Token {
 	} else if strings.HasPrefix(ln, grammar.TokenEquals) { // Equals(=).
 		token.Value = grammar.TokenEquals
 		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.Params) { // Params.
+		token.Value = grammar.Params
+		token.Type = fract.TypeParams
 	} else if isKeywordToken(ln, grammar.KwBlockEnd) { // End of block.
 		token.Value = grammar.KwBlockEnd
 		token.Type = fract.TypeBlockEnd

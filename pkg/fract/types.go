@@ -66,6 +66,8 @@ const (
 	TypeCatch = 1124
 	// TypeImport Import.
 	TypeImport = 1125
+	// TypeParams Params.
+	TypeParams = 1126
 
 	// LOOPBreak Break loop.
 	LOOPBreak = 0

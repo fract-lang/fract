@@ -6,4 +6,6 @@ type Parameter struct {
 	Default Value
 	// Name of parameter.
 	Name string
+	// Parameter is params typed.
+	Params bool
 }
