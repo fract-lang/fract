@@ -311,6 +311,12 @@ func [NAME]([PARAM], [PARAM]=[VALUE],[PARAM]=[VALUE],...)
   ...
 end
 ```
+Multi valued parameters:
+```
+func [NAME](...[PARAM])
+  ...
+end
+```
 Call:
 ```
 [NAME]([PARAM], [PARAM],...)
@@ -322,23 +328,19 @@ Call with parameter setter:
 
 ### Examples
 ```
-func range(start, to, step=1)
-  var lst = [0]
-  var index = 0
-  for start < to
-    lst = [ lst, start ]
-    start = start + step
-    index = index + 1
-  end
-  ret lst
+func multi.valued.params(...values, s)
+  values + s
 end
 
+multi.valued.params(4,4,4,4,4,4, s=3)
+```
+```
 func int.prime(x)
-  if x < 2
-    ret false
+  if x == 2
+    ret true
   end
 
-  for y in range(to=x, start=2, step=1)
+  for y in range(2, x-1)
     if x % y == 0
       ret false
     end
@@ -346,7 +348,11 @@ func int.prime(x)
   ret true
 end
 
-int.prime(3)
+for number in range(0, 10)
+  number
+  int.prime(number)
+  ""
+end
 ```
 ```
 func print.hello()
