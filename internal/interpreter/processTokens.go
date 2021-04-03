@@ -5,6 +5,8 @@
 package interpreter
 
 import (
+	"fmt"
+
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
@@ -46,7 +48,12 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 			}
 		}
 
-		i.processValue(&tokens)
+		// Print value if live interpreting.
+		if value := i.processValue(&tokens); fract.LiveInterpret {
+			if fract.PrintValue(value) {
+				fmt.Println()
+			}
+		}
 	} else if first.Type == fract.TypeProtected { // Protected declaration.
 		if len(tokens) < 2 {
 			fract.Error(first, "Protected but what is it protected?")
