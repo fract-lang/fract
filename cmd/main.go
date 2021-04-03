@@ -75,6 +75,8 @@ func main() {
 		"Fract " + fract.FractVersion + " (c) MIT License.\n" +
 			"Developed by Fract Developer Team.\n")
 
+	fract.LiveInterpret = true
+
 	preter := interpreter.NewStdin()
 	preter.ApplyEmbedFunctions()
 
