@@ -30,23 +30,17 @@ Fract adheres to transaction priority!
 (5 + 2) * 2   # 14
 ```
 
-## Print
-Fract uses nothing to print. Just write the value and print it out.
+## Print "Hello World!"
 
-> If the statement starts with parentheses, it's "definitely" considered a print statement!
-
-### Syntax
-```
-[VALUE]
-```
+[print function](https://github.com/fract-lang/fract/blob/main/docs/fract/embed%20functions/print.md)
 
 ### Examples
 ```
-5555 + 1 # Print 5556
+print(5555 + 1) # Print 5556
 ```
 ```
 var x int32 = 5
-x # Print 5
+print(x) # Print 5
 ```
 
 ## Statement Terminator
@@ -59,7 +53,7 @@ With the Statement terminator, you can perform multiple operations on the same l
 
 ### Examples
 ```
-5; 2   # Print 5 and 2
+print(5); print(2)   # Print 5 and 2
 ```
 
 ## Range Decomposition
@@ -69,8 +63,8 @@ Until the brackets are closed, they are tokenized.
 
 ### Examples
 ```
-(4 +
-4)        # Tokenizer Result: (4 + 4)
+print(4 +
+      4)        # Tokenizer Result: print(4+4)
 ```
 
 ## Variables
@@ -237,7 +231,7 @@ end
 ```
 var counter = 0
 for counter <= 10
-  counter
+  print(counter)
   counter = counter + 1
 end
 ```
@@ -255,13 +249,13 @@ end
 ```
 var t1 = [ 0, 3, 2, 1, 90 ]
 for index in [ 0, 1, 2, 3, 4 ]
-  t1[index]
+  print(t1[index])
 end
 ```
 ```
 var t1 = [ 0, 3, 2, 1, 90 ]
 for item in t1
-  item
+  print(item)
 end
 ```
 
@@ -275,7 +269,7 @@ for counter <= 10
   if counter > 5
     break
   end
-  counter
+  print(counter, fin=" ")
 end
 
 # Output: 0 1 2 3 4 5
@@ -289,7 +283,7 @@ for index in [ 0, 1, 2, 3, 4.0 ]
     continue
   end
   var test = index
-  index
+  print(index, fin=" ")
 end
 
 # Output: 0, 2, 4.000000
@@ -329,7 +323,7 @@ Call with parameter setter:
 ### Examples
 ```
 func multi.valued.params(...values, s)
-  values + s
+  print(values + s)
 end
 
 multi.valued.params(4,4,4,4,4,4, s=3)
@@ -349,14 +343,13 @@ func int.prime(x)
 end
 
 for number in range(0, 10)
-  number
-  int.prime(number)
-  ""
+  print(number, fin=" ")
+  print(int.prime(number))
 end
 ```
 ```
 func print.hello()
-  "Hello"
+  print("Hello")
 end
 
 print.hello()
