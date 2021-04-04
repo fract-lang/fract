@@ -129,6 +129,10 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		},
 	}
 
+	if variable.Name == grammar.TokenUnderscore {
+		variable.Name = ""
+	}
+
 	i.variables = append(i.variables, variable)
 
 	variableLen := len(i.variables)
