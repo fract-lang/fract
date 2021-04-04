@@ -16,10 +16,10 @@ func Exit(f obj.Function, parameters []obj.Value) {
 
 	if code.Array {
 		fract.Error(f.Tokens[0][0], "Array is not a valid value!")
-	} else if code.Type != fract.VALInteger {
+	} else if code.Content[0].Type != fract.VALInteger {
 		fract.Error(f.Tokens[0][0], "Exit code is only be integer!")
 	}
 
-	exit_code, _ := strconv.ParseInt(code.Content[0], 10, 64)
+	exit_code, _ := strconv.ParseInt(code.Content[0].Data, 10, 64)
 	os.Exit(int(exit_code))
 }

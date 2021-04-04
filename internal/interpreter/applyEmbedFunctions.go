@@ -24,8 +24,12 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "fin",
 					Default: obj.Value{
-						Content: []string{"\n"},
-						Type:    fract.VALString,
+						Content: []obj.DataFrame{
+							{
+								Data: "\n",
+								Type: fract.VALString,
+							},
+						},
 					},
 				},
 			},
@@ -39,8 +43,12 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "message",
 					Default: obj.Value{
-						Content: []string{""},
-						Type:    fract.VALString,
+						Content: []obj.DataFrame{
+							{
+								Data: "",
+								Type: fract.VALString,
+							},
+						},
 					},
 				},
 			},
@@ -54,8 +62,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "code",
 					Default: obj.Value{
-						Content: []string{"0"},
-						Type:    fract.VALInteger,
+						Content: []obj.DataFrame{{Data: "0"}},
 					},
 				},
 			},
@@ -86,7 +93,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "step",
 					Default: obj.Value{
-						Content: []string{"1"},
+						Content: []obj.DataFrame{{Data: "1"}},
 					},
 				},
 			},

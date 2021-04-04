@@ -54,7 +54,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 			for _, current := range val.Content {
 				found++
 				vector.Insert(tokens, found, obj.Token{
-					Value: current,
+					Value: current.Data,
 					Type:  fract.TypeValue,
 				})
 				found++
@@ -69,15 +69,15 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 				Type:  fract.TypeBrace,
 			})
 		} else {
-			if val.Type == fract.VALString {
+			if val.Content[0].Type == fract.VALString {
 				vector.Insert(tokens, found, obj.Token{
-					Value: grammar.TokenDoubleQuote + val.Content[0] + grammar.TokenDoubleQuote,
+					Value: grammar.TokenDoubleQuote + val.Content[0].Data + grammar.TokenDoubleQuote,
 					Type:  fract.TypeValue,
 				})
 				continue
 			}
 			vector.Insert(tokens, found, obj.Token{
-				Value: val.Content[0],
+				Value: val.Content[0].Data,
 				Type:  fract.TypeValue,
 			})
 		}
@@ -136,13 +136,11 @@ func solve(operator obj.Token, first, second float64) float64 {
 // solveProcess Solve arithmetic process.
 // process Process to solve.
 func solveProcess(process valueProcess) obj.Value {
-	value := obj.Value{}
+	value := obj.Value{Content: []obj.DataFrame{{}}}
 
 	// String?
-	if process.FirstV.Type == fract.VALString ||
-		process.SecondV.Type == fract.VALString {
-		value.Type = fract.VALString
-
+	if (len(process.FirstV.Content) != 0 && process.FirstV.Content[0].Type == fract.VALString) ||
+		(len(process.SecondV.Content) != 0 && process.SecondV.Content[0].Type == fract.VALString) {
 		if len(process.FirstV.Content) == 0 {
 			value.Content = process.SecondV.Content
 			return value
@@ -151,41 +149,55 @@ func solveProcess(process valueProcess) obj.Value {
 			return value
 		}
 
-		if process.FirstV.Type == process.SecondV.Type { // Both string?
-			value.Content = []string{process.FirstV.Content[0] +
-				process.SecondV.Content[0]}
+		if process.FirstV.Content[0].Type == process.SecondV.Content[0].Type { // Both string?
+			value.Content = []obj.DataFrame{{
+				Data: process.FirstV.Content[0].Data + process.SecondV.Content[0].Data,
+				Type: fract.VALString,
+			}}
 			return value
 		}
 
-		if process.FirstV.Type == fract.VALString {
+		value.Content[0].Type = fract.VALString
+
+		if process.FirstV.Content[0].Type == fract.VALString {
 			if process.SecondV.Array {
 				if len(process.SecondV.Content) == 0 {
 					value.Content = process.FirstV.Content
 					return value
 				}
-				if len(process.FirstV.Content[0]) != len(process.SecondV.Content) &&
-					(len(process.FirstV.Content[0]) != 1 && len(process.SecondV.Content) != 1) {
+				if len(process.FirstV.Content[0].Data) != len(process.SecondV.Content) &&
+					(len(process.FirstV.Content[0].Data) != 1 && len(process.SecondV.Content) != 1) {
 					fract.Error(process.Second,
 						"Array element count is not one or equals to first array!")
 				}
 				var sb strings.Builder
-				for _, char := range process.FirstV.Content[0] {
-					if strings.Contains(process.SecondV.Content[0], grammar.TokenDot) {
+				for _, char := range process.FirstV.Content[0].Data {
+					if strings.Contains(process.SecondV.Content[0].Data, grammar.TokenDot) {
 						fract.Error(process.Second, "Float values cannot concatenate string values!")
 					}
-					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0])))
+					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))
 				}
-				value.Content = []string{sb.String()}
+				value.Content = []obj.DataFrame{
+					{
+						Data: sb.String(),
+						Type: fract.VALString,
+					},
+				}
 			} else {
-				if process.SecondV.Type == fract.VALFloat {
+				if process.SecondV.Content[0].Type == fract.VALFloat {
 					fract.Error(process.Second, "Float values cannot concatenate string values!")
 				}
 				var sb strings.Builder
-				val := rune(arithmetic.ToArithmetic(process.SecondV.Content[0]))
-				for _, char := range process.FirstV.Content[0] {
+				val := rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))
+				for _, char := range process.FirstV.Content[0].Data {
 					sb.WriteRune(char + val)
 				}
-				value.Content = []string{sb.String()}
+				value.Content = []obj.DataFrame{
+					{
+						Data: sb.String(),
+						Type: fract.VALString,
+					},
+				}
 			}
 		} else {
 			if process.FirstV.Array {
@@ -193,36 +205,49 @@ func solveProcess(process valueProcess) obj.Value {
 					value.Content = process.SecondV.Content
 					return value
 				}
-				if len(process.FirstV.Content[0]) != len(process.SecondV.Content) &&
-					(len(process.FirstV.Content[0]) != 1 && len(process.SecondV.Content) != 1) {
+				if len(process.FirstV.Content[0].Data) != len(process.SecondV.Content) &&
+					(len(process.FirstV.Content[0].Data) != 1 && len(process.SecondV.Content) != 1) {
 					fract.Error(process.Second,
 						"Array element count is not one or equals to first array!")
 				}
 				var sb strings.Builder
-				for _, char := range process.SecondV.Content[0] {
-					if strings.Contains(process.FirstV.Content[0], grammar.TokenDot) {
+				for _, char := range process.SecondV.Content[0].Data {
+					if strings.Contains(process.FirstV.Content[0].Data, grammar.TokenDot) {
 						fract.Error(process.Second, "Float values cannot concatenate string values!")
 					}
-					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0])))
+					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data)))
 				}
-				value.Content = []string{sb.String()}
+				value.Content = []obj.DataFrame{
+					{
+						Data: sb.String(),
+						Type: fract.VALString,
+					},
+				}
 			} else {
-				if process.FirstV.Type == fract.VALFloat {
+				if process.FirstV.Content[0].Type == fract.VALFloat {
 					fract.Error(process.First, "Float values cannot concatenate string values!")
 				}
 				var sb strings.Builder
-				val := rune(arithmetic.ToArithmetic(process.FirstV.Content[0]))
-				for _, char := range process.SecondV.Content[0] {
+				val := rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))
+				for _, char := range process.SecondV.Content[0].Data {
 					sb.WriteRune(char + val)
 				}
-				value.Content = []string{sb.String()}
+				value.Content = []obj.DataFrame{
+					{
+						Data: sb.String(),
+						Type: fract.VALString,
+					},
+				}
 			}
 		}
 		return value
 	}
 
+	// ****************************
+
 	if process.FirstV.Array && process.SecondV.Array {
 		value.Array = true
+
 		if len(process.FirstV.Content) == 0 {
 			value.Content = process.SecondV.Content
 			return value
@@ -230,6 +255,7 @@ func solveProcess(process valueProcess) obj.Value {
 			value.Content = process.FirstV.Content
 			return value
 		}
+
 		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
 			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
 			fract.Error(process.Second,
@@ -237,29 +263,33 @@ func solveProcess(process valueProcess) obj.Value {
 		}
 
 		if len(process.FirstV.Content) == 1 {
-			first := arithmetic.ToArithmetic(process.FirstV.Content[0])
+			first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 			for index, current := range process.SecondV.Content {
-				process.SecondV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, first, arithmetic.ToArithmetic(current)))
+				process.SecondV.Content[index] = obj.DataFrame{
+					Data: fmt.Sprintf("%g",
+						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data)))}
 			}
 			value.Content = process.SecondV.Content
 		} else if len(process.SecondV.Content) == 1 {
-			second := arithmetic.ToArithmetic(process.SecondV.Content[0])
+			second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, arithmetic.ToArithmetic(current), second))
+				process.FirstV.Content[index] = obj.DataFrame{
+					Data: fmt.Sprintf("%g",
+						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))}
 			}
 			value.Content = process.FirstV.Content
 		} else {
 			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = fmt.Sprintf("%g",
-					solve(process.Operator, arithmetic.ToArithmetic(current),
-						arithmetic.ToArithmetic(process.SecondV.Content[index])))
+				process.FirstV.Content[index] = obj.DataFrame{
+					Data: fmt.Sprintf("%g",
+						solve(process.Operator, arithmetic.ToArithmetic(current.Data),
+							arithmetic.ToArithmetic(process.SecondV.Content[index].Data)))}
 			}
 			value.Content = process.FirstV.Content
 		}
 	} else if process.FirstV.Array {
 		value.Array = true
+
 		if len(process.FirstV.Content) == 0 {
 			value.Content = process.SecondV.Content
 			return value
@@ -268,14 +298,16 @@ func solveProcess(process valueProcess) obj.Value {
 			return value
 		}
 
-		second := arithmetic.ToArithmetic(process.SecondV.Content[0])
+		second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 		for index, current := range process.FirstV.Content {
-			process.FirstV.Content[index] = fmt.Sprintf("%g",
-				solve(process.Operator, arithmetic.ToArithmetic(current), second))
+			process.FirstV.Content[index] = obj.DataFrame{
+				Data: fmt.Sprintf("%g",
+					solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))}
 		}
 		value.Content = process.FirstV.Content
 	} else if process.SecondV.Array {
 		value.Array = true
+
 		if len(process.FirstV.Content) == 0 {
 			value.Content = process.SecondV.Content
 			return value
@@ -284,19 +316,22 @@ func solveProcess(process valueProcess) obj.Value {
 			return value
 		}
 
-		first := arithmetic.ToArithmetic(process.FirstV.Content[0])
+		first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 		for index, current := range process.SecondV.Content {
-			process.SecondV.Content[index] = fmt.Sprintf("%g",
-				solve(process.Operator, arithmetic.ToArithmetic(current), first))
+			process.SecondV.Content[index] = obj.DataFrame{
+				Data: fmt.Sprintf("%g",
+					solve(process.Operator, arithmetic.ToArithmetic(current.Data), first))}
 		}
 		value.Content = process.SecondV.Content
 	} else {
 		if len(process.FirstV.Content) == 0 {
-			process.FirstV.Content = []string{"0"}
+			process.FirstV.Content = []obj.DataFrame{{Data: "0"}}
 		}
-		value.Content = []string{fmt.Sprintf("%g",
-			solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0]),
-				arithmetic.ToArithmetic(process.SecondV.Content[0])))}
+
+		value.Content = []obj.DataFrame{{
+			Data: fmt.Sprintf("%g",
+				solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
+					arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))}}
 	}
 
 	return value
@@ -351,18 +386,18 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					value := i.processValue(valueList)
 					if value.Array {
 						fract.Error((*tokens)[index], "Arrays is not used in index access!")
-					} else if value.Type != fract.VALInteger {
+					} else if value.Content[0].Type != fract.VALInteger {
 						fract.Error((*tokens)[index],
 							"Only integer values can used in index access!")
 					}
-					position, err := strconv.Atoi(value.Content[0])
+					position, err := strconv.Atoi(value.Content[0].Data)
 					if err != nil {
 						fract.Error((*tokens)[index], "Value out of range!")
 					}
 
 					variable := i.variables[vindex]
 
-					if !variable.Value.Array && variable.Value.Type != fract.VALString {
+					if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
 						fract.Error((*tokens)[index],
 							"Index accessor is cannot used with non-array variables!")
 					}
@@ -370,7 +405,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if variable.Value.Array {
 						position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
 					} else {
-						position = parser.ProcessArrayIndex(len(variable.Value.Content[0]), position)
+						position = parser.ProcessArrayIndex(len(variable.Value.Content[0].Data), position)
 					}
 
 					if position == -1 {
@@ -378,25 +413,22 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					}
 					vector.RemoveRange(tokens, index+1, cindex-index-1)
 
-					var val string
+					var data obj.DataFrame
 					if variable.Value.Array {
-						val = variable.Value.Content[position]
+						data = variable.Value.Content[position]
 					} else {
-						val = fmt.Sprintf("%d", variable.Value.Content[0][position])
+						data = obj.DataFrame{
+							Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position]),
+							Type: fract.VALInteger,
+						}
 					}
 
 					if first {
-						operation.FirstV.Content = []string{val}
+						operation.FirstV.Content = []obj.DataFrame{data}
 						operation.FirstV.Array = false
-						if variable.Value.Type == fract.VALString {
-							operation.FirstV.Type = fract.VALString
-						}
 					} else {
-						operation.SecondV.Content = []string{val}
+						operation.SecondV.Content = []obj.DataFrame{data}
 						operation.SecondV.Array = false
-						if variable.Value.Type == fract.VALString {
-							operation.SecondV.Type = fract.VALString
-						}
 					}
 					return 0
 				} else if next.Value == grammar.TokenLParenthes { // Function?
@@ -493,19 +525,19 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if value.Array {
 				fract.Error((*tokens)[index],
 					"Arrays is not used in index access!")
-			} else if value.Type != fract.VALInteger {
+			} else if value.Content[0].Type != fract.VALInteger {
 				fract.Error((*tokens)[index],
 					"Only integer values can used in index access!")
 			}
 
-			position, err := strconv.Atoi(value.Content[0])
+			position, err := strconv.Atoi(value.Content[0].Data)
 			if err != nil {
 				fract.Error((*tokens)[oindex], "Value out of range!")
 			}
 
 			variable := i.variables[vindex]
 
-			if !variable.Value.Array && variable.Value.Type != fract.VALString {
+			if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
 				fract.Error((*tokens)[oindex],
 					"Index accessor is cannot used with non-array variables!")
 			}
@@ -513,7 +545,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if variable.Value.Array {
 				position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
 			} else {
-				position = parser.ProcessArrayIndex(len(variable.Value.Content[0]), position)
+				position = parser.ProcessArrayIndex(len(variable.Value.Content[0].Data), position)
 			}
 
 			if position == -1 {
@@ -521,21 +553,24 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			}
 			vector.RemoveRange(tokens, oindex-1, index-oindex+1)
 
-			var val string
+			var data obj.DataFrame
 			if variable.Value.Array {
-				val = variable.Value.Content[position]
+				data = variable.Value.Content[position]
 			} else {
-				val = fmt.Sprintf("%d", variable.Value.Content[0][position])
+				data = obj.DataFrame{
+					Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position]),
+					Type: fract.VALInteger,
+				}
 			}
 
 			if first {
-				operation.FirstV.Content = []string{val}
+				operation.FirstV.Content = []obj.DataFrame{data}
 				operation.FirstV.Array = false
-				if variable.Value.Type == fract.VALString {
-					operation.FirstV.Type = fract.VALString
+				if variable.Value.Content[0].Type == fract.VALString {
+					operation.FirstV.Content[0].Type = fract.VALString
 				}
 			} else {
-				operation.SecondV.Content = []string{val}
+				operation.SecondV.Content = []obj.DataFrame{data}
 				operation.FirstV.Array = false
 			}
 
@@ -621,19 +656,23 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		operation.FirstV.Array = false
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
-			operation.FirstV.Type = fract.VALString
-			operation.FirstV.Content = []string{token.Value[1 : len(token.Value)-1]}
+			operation.FirstV.Content = []obj.DataFrame{{
+				Data: token.Value[1 : len(token.Value)-1],
+				Type: fract.VALString,
+			}}
 		} else {
-			operation.FirstV.Content = []string{token.Value}
+			operation.FirstV.Content = []obj.DataFrame{{Data: token.Value}}
 		}
 	} else {
 		operation.SecondV.Array = false
 		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
 			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
-			operation.SecondV.Type = fract.VALString
-			operation.SecondV.Content = []string{token.Value[1 : len(token.Value)-1]}
+			operation.SecondV.Content = []obj.DataFrame{{
+				Data: token.Value[1 : len(token.Value)-1],
+				Type: fract.VALString,
+			}}
 		} else {
-			operation.SecondV.Content = []string{token.Value}
+			operation.SecondV.Content = []obj.DataFrame{{Data: token.Value}}
 		}
 	}
 
@@ -641,15 +680,15 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	if token.Type == fract.TypeBooleanTrue ||
 		token.Type == fract.TypeBooleanFalse {
 		if first {
-			operation.FirstV.Type = fract.VALBoolean
+			operation.FirstV.Content[0].Type = fract.VALBoolean
 		} else {
-			operation.SecondV.Type = fract.VALBoolean
+			operation.SecondV.Content[0].Type = fract.VALBoolean
 		}
 	} else if strings.Contains(token.Value, grammar.TokenDot) { // Float?
 		if first {
-			operation.FirstV.Type = fract.VALFloat
+			operation.FirstV.Content[0].Type = fract.VALFloat
 		} else {
-			operation.SecondV.Type = fract.VALFloat
+			operation.SecondV.Content[0].Type = fract.VALFloat
 		}
 	}
 
@@ -660,7 +699,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 // tokens Tokens.
 func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 	value := obj.Value{
-		Content: []string{},
+		Content: []obj.DataFrame{},
 		Array:   true,
 	}
 
@@ -696,7 +735,7 @@ func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 // tokens Tokens to process.
 func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 	value := obj.Value{
-		Content: []string{},
+		Content: []obj.DataFrame{{}},
 		Array:   false,
 	}
 
@@ -718,7 +757,10 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
 				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
 				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
-			value.Content = []string{i.processCondition(tokens)}
+			value.Content = []obj.DataFrame{{
+				Data: i.processCondition(tokens),
+				Type: fract.VALBoolean,
+			}}
 			return value
 		}
 	}

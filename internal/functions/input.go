@@ -12,7 +12,11 @@ import (
 func Input(f obj.Function, parameters []obj.Value) obj.Value {
 	fract.PrintValue(parameters[0])
 	return obj.Value{
-		Content: []string{cli.Input("")},
-		Type:    fract.VALString,
+		Content: []obj.DataFrame{
+			{
+				Data: cli.Input(""),
+				Type: fract.VALString,
+			},
+		},
 	}
 }

@@ -6,6 +6,7 @@ package fract
 
 import (
 	"fmt"
+	"strings"
 
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
@@ -18,9 +19,14 @@ func PrintValue(value obj.Value) bool {
 	}
 
 	if value.Array {
-		fmt.Print(value.Content)
+		sb := strings.Builder{}
+		sb.WriteRune('[')
+		for _, data := range value.Content {
+			sb.WriteString(data.Data + " ")
+		}
+		fmt.Print(sb.String()[:sb.Len()-1] + "]")
 	} else {
-		fmt.Print(value.Content[0])
+		fmt.Print(value.Content[0].Data)
 	}
 	return true
 }
