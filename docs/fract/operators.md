@@ -78,4 +78,12 @@
     <td align="center"><b>&</b></td>
     <td>Logical and.</td>
   </tr>
+  <tr>
+    <td align="center"><b><<</b></td>
+    <td>Left shift.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>>></b></td>
+    <td>Right shift.</td>
+  </tr>
 </table>
