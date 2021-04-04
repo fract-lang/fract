@@ -125,7 +125,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		Const: false,
 		Value: obj.Value{
 			Array:   false,
-			Content: []string{""},
+			Content: []obj.DataFrame{{}},
 		},
 	}
 

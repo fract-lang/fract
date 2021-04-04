@@ -43,7 +43,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		processArgument := func(current obj.Token, index *int) obj.Variable {
 			getParamsArgumentValue := func() obj.Value {
 				returnValue := obj.Value{
-					Content: []string{},
+					Content: []obj.DataFrame{},
 					Array:   true,
 				}
 

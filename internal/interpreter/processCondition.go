@@ -17,7 +17,7 @@ var (
 	// TrueValueIns True condition value instance.
 	TrueValueIns obj.Value = obj.Value{
 		Array:   false,
-		Content: []string{grammar.KwTrue},
+		Content: []obj.DataFrame{{Data: grammar.KwTrue}},
 	}
 )
 
@@ -30,8 +30,8 @@ func compare(value0, value1 obj.Value, operator string) bool {
 		return false
 	}
 	for index := range value0.Content {
-		item0 := arithmetic.ToArithmetic(value0.Content[index])
-		item1 := arithmetic.ToArithmetic(value1.Content[index])
+		item0 := arithmetic.ToArithmetic(value0.Content[index].Data)
+		item1 := arithmetic.ToArithmetic(value1.Content[index].Data)
 		switch operator {
 		case grammar.Equals: // Equals.
 			if item0 != item1 {

@@ -24,9 +24,9 @@ func Range(f obj.Function, parameters []obj.Value) obj.Value {
 		fract.Error(f.Tokens[0][0], "'step' argument should be numeric!")
 	}
 
-	startV, _ := strconv.ParseFloat(start.Content[0], 64)
-	toV, _ := strconv.ParseFloat(to.Content[0], 64)
-	stepV, _ := strconv.ParseFloat(step.Content[0], 64)
+	startV, _ := strconv.ParseFloat(start.Content[0].Data, 64)
+	toV, _ := strconv.ParseFloat(to.Content[0].Data, 64)
+	stepV, _ := strconv.ParseFloat(step.Content[0].Data, 64)
 
 	if stepV <= 0 {
 		return obj.Value{
@@ -36,17 +36,23 @@ func Range(f obj.Function, parameters []obj.Value) obj.Value {
 	}
 
 	returnValue := obj.Value{
-		Content: []string{},
+		Content: []obj.DataFrame{},
 		Array:   true,
 	}
 
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			returnValue.Content = append(returnValue.Content, fmt.Sprintf("%g", startV))
+			returnValue.Content = append(returnValue.Content, obj.DataFrame{
+				Data: fmt.Sprintf("%g", startV),
+				Type: fract.VALFloat,
+			})
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			returnValue.Content = append(returnValue.Content, fmt.Sprintf("%g", startV))
+			returnValue.Content = append(returnValue.Content, obj.DataFrame{
+				Data: fmt.Sprintf("%g", startV),
+				Type: fract.VALFloat,
+			})
 		}
 	}
 

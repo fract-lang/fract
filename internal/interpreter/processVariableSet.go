@@ -57,7 +57,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 			if valueList == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			position, err := strconv.Atoi(i.processValue(valueList).Content[0])
+			position, err := strconv.Atoi(i.processValue(valueList).Content[0].Data)
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}

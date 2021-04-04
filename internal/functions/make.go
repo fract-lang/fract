@@ -15,16 +15,16 @@ func Make(f obj.Function, parameters []obj.Value) obj.Value {
 
 	if size.Array {
 		fract.Error(f.Tokens[0][0], "Array is not a valid value!")
-	} else if size.Type != fract.VALInteger {
+	} else if size.Content[0].Type != fract.VALInteger {
 		fract.Error(f.Tokens[0][0], "Exit code is only be integer!")
 	}
 
-	sizev, _ := strconv.ParseInt(size.Content[0], 10, 64)
+	sizev, _ := strconv.ParseInt(size.Content[0].Data, 10, 64)
 	if sizev < 0 {
 		fract.Error(f.Tokens[0][0], "Size should be minimum zero!")
 	}
 	return obj.Value{
-		Content: make([]string, sizev),
+		Content: make([]obj.DataFrame, sizev),
 		Array:   true,
 	}
 }
