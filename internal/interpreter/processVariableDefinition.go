@@ -29,6 +29,10 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 	appendVariable := func(avtokens []obj.Token) {
 		_name := avtokens[0]
 
+		if _name.Value == grammar.TokenUnderscore {
+			fract.Error(_name, "Ignore operator is cannot be variable name!")
+		}
+
 		// Name is already defined?
 		if index := i.varIndexByName(_name.Value); index != -1 {
 			fract.Error(_name, "Variable already defined in this name at line: "+

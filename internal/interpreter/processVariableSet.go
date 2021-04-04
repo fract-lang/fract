@@ -22,6 +22,8 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
+	} else if _name.Value == grammar.TokenUnderscore {
+		fract.Error(_name, "Ignore operator is cannot set!")
 	}
 
 	index := i.varIndexByName(_name.Value)
