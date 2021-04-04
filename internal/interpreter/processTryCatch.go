@@ -37,10 +37,15 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int {
 					i.skipBlock(false)
 				}
 			}
+
 			fract.TryCount--
+			i.variables = i.variables[:variableLen]
+			i.functions = i.functions[:functionLen]
 		},
 		Catch: func(e obj.Exception) {
 			fract.TryCount--
+			i.variables = i.variables[:variableLen]
+			i.functions = i.functions[:functionLen]
 
 			i.index--
 			for {
@@ -73,7 +78,5 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int {
 		},
 	}.Do()
 
-	i.variables = i.variables[:variableLen]
-	i.functions = i.functions[:functionLen]
 	return kwstate
 }

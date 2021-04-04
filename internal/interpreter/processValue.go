@@ -128,12 +128,12 @@ func solve(operator obj.Token, first, second float64) float64 {
 		result = math.Mod(first, second)
 	} else if operator.Value == grammar.LeftShift { // Left shift.
 		if second < 0 {
-			fract.Error(operator, "Shifter is can not should be negative!")
+			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
 		result = float64(int64(first) << int64(second))
 	} else if operator.Value == grammar.RightShift { // Right shift.
 		if second < 0 {
-			fract.Error(operator, "Shifter is can not should be negative!")
+			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
 		result = float64(int64(first) >> int64(second))
 	} else {
