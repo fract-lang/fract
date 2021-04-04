@@ -214,6 +214,12 @@ func (l *Lexer) Generate() obj.Token {
 		}
 		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace
+	} else if strings.HasPrefix(ln, grammar.LeftShift) { // Left shift.
+		token.Value = grammar.LeftShift
+		token.Type = fract.TypeOperator
+	} else if strings.HasPrefix(ln, grammar.RightShift) { // Right shift.
+		token.Value = grammar.RightShift
+		token.Type = fract.TypeOperator
 	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
 		token.Value = grammar.TokenComma
 		token.Type = fract.TypeComma
