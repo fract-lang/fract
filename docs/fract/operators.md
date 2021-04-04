@@ -86,4 +86,8 @@
     <td align="center"><b>>></b></td>
     <td>Right shift.</td>
   </tr>
+  <tr>
+    <td align="center"><b>_</b></td>
+    <td>Ignore.</td>
+  </tr>
 </table>
