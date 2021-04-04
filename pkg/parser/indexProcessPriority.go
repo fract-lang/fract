@@ -12,9 +12,6 @@ import (
 // tokens Tokens to search.
 func IndexProcessPriority(tokens []obj.Token) int {
 	bracket := 0
-	modulus := fract.TypeNone
-	multiplyOrDivive := fract.TypeNone
-	additionOrSubtraction := fract.TypeNone
 
 	for index, _token := range tokens {
 		if _token.Type == fract.TypeBrace {
@@ -31,10 +28,17 @@ func IndexProcessPriority(tokens []obj.Token) int {
 			continue
 		}
 
-		// Exponentiation.
-		if _token.Value == grammar.TokenCaret {
+		// Exponentiation or shifts.
+		if _token.Value == grammar.LeftShift || _token.Value == grammar.RightShift ||
+			_token.Value == grammar.TokenCaret {
 			return index
-		} else if _token.Value == grammar.TokenPercent { // Modulus.
+		}
+
+		modulus := fract.TypeNone
+		multiplyOrDivive := fract.TypeNone
+		additionOrSubtraction := fract.TypeNone
+
+		if _token.Value == grammar.TokenPercent { // Modulus.
 			if modulus == fract.TypeNone {
 				modulus = index
 			}
@@ -52,23 +56,23 @@ func IndexProcessPriority(tokens []obj.Token) int {
 				additionOrSubtraction = index
 			}
 		}
-	}
 
-	if modulus != fract.TypeNone {
-		if modulus == len(tokens)-1 {
-			fract.Error(tokens[modulus], "Operator defined, but for what?")
+		if modulus != fract.TypeNone {
+			if modulus == len(tokens)-1 {
+				fract.Error(tokens[modulus], "Operator defined, but for what?")
+			}
+			return modulus
+		} else if multiplyOrDivive != fract.TypeNone {
+			if multiplyOrDivive == len(tokens)-1 {
+				fract.Error(tokens[multiplyOrDivive], "Operator defined, but for what?")
+			}
+			return multiplyOrDivive
+		} else if additionOrSubtraction != fract.TypeNone {
+			if additionOrSubtraction == len(tokens)-1 {
+				fract.Error(tokens[additionOrSubtraction], "Operator defined, but for what?")
+			}
+			return additionOrSubtraction
 		}
-		return modulus
-	} else if multiplyOrDivive != fract.TypeNone {
-		if multiplyOrDivive == len(tokens)-1 {
-			fract.Error(tokens[multiplyOrDivive], "Operator defined, but for what?")
-		}
-		return multiplyOrDivive
-	} else if additionOrSubtraction != fract.TypeNone {
-		if additionOrSubtraction == len(tokens)-1 {
-			fract.Error(tokens[additionOrSubtraction], "Operator defined, but for what?")
-		}
-		return additionOrSubtraction
 	}
 
 	return fract.TypeNone

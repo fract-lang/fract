@@ -23,4 +23,8 @@ const (
 	LessEquals = "<="
 	// Params Params parameter.
 	Params = "..."
+	// LeftShift Left shift.
+	LeftShift = "<<"
+	// RightShift Right shift.
+	RightShift = ">>"
 )
