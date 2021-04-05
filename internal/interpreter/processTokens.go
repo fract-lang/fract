@@ -20,11 +20,13 @@ import (
 func (i *Interpreter) processTokens(tokens []obj.Token) int {
 	tokens = append(make([]obj.Token, 0), tokens...)
 
-	first := tokens[0]
-
-	if first.Type == fract.TypeValue || first.Type == fract.TypeBrace ||
-		first.Type == fract.TypeName || first.Type == fract.TypeBooleanTrue ||
-		first.Type == fract.TypeBooleanFalse {
+	switch first := tokens[0]; first.Type {
+	case
+		fract.TypeValue,
+		fract.TypeBrace,
+		fract.TypeName,
+		fract.TypeBooleanTrue,
+		fract.TypeBooleanFalse:
 		if first.Type == fract.TypeName {
 			brace := 0
 			for _, current := range tokens {
@@ -54,7 +56,7 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 				fmt.Println()
 			}
 		}
-	} else if first.Type == fract.TypeProtected { // Protected declaration.
+	case fract.TypeProtected: // Protected declaration.
 		if len(tokens) < 2 {
 			fract.Error(first, "Protected but what is it protected?")
 		}
@@ -67,39 +69,40 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 		} else {
 			fract.Error(second, "Syntax error, you can protect only deletable objects!")
 		}
-	} else if first.Type == fract.TypeVariable { // Variable definition.
+	case fract.TypeVariable: // Variable definition.
 		i.processVariableDefinition(tokens, false)
-	} else if first.Type == fract.TypeDelete { // Delete from memory.
+	case fract.TypeDelete: // Delete from memory.
 		i.processDelete(tokens)
-	} else if first.Type == fract.TypeIf { // if-elif-else.
+	case fract.TypeIf: // if-elif-else.
 		return i.processIf(tokens)
-	} else if first.Type == fract.TypeLoop { // Loop definition.
+	case fract.TypeLoop: // Loop definition.
 		i.loopCount++
 		state := i.processLoop(tokens)
 		i.loopCount--
 		return state
-	} else if first.Type == fract.TypeBreak { // Break loop.
+	case fract.TypeBreak: // Break loop.
 		if i.loopCount == 0 {
 			fract.Error(first, "Break keyword only used in loops!")
 		}
 		return fract.LOOPBreak
-	} else if first.Type == fract.TypeContinue { // Continue loop.
+	case fract.TypeContinue: // Continue loop.
 		if i.loopCount == 0 {
 			fract.Error(first, "Continue keyword only used in loops!")
 		}
 		return fract.LOOPContinue
-	} else if first.Type == fract.TypeReturn { // Return.
+	case fract.TypeReturn: // Return.
 		if i.functionCount == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
 		}
 		i.returnIndex = i.index
 		return fract.FUNCReturn
-	} else if first.Type == fract.TypeFunction { // Function definiton.
+	case fract.TypeFunction: // Function definiton.
 		i.processFunction(tokens, false)
-	} else if first.Type == fract.TypeTry { // Try-Catch.
+	case fract.TypeTry: // Try-Catch.
 		return i.processTryCatch(tokens)
-	} else {
+	default:
 		fract.Error(first, "Invalid syntax!")
 	}
+
 	return fract.TypeNone
 }

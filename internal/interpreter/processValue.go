@@ -106,14 +106,16 @@ func solve(operator obj.Token, first, second float64) float64 {
 		}
 	}
 
-	if operator.Value == grammar.TokenPlus { // Addition.
+	switch operator.Value {
+	case grammar.TokenPlus: // Addition.
 		result = first + second
-	} else if operator.Value == grammar.TokenMinus { // Subtraction.
+	case grammar.TokenMinus: // Subtraction.
 		result = first - second
-	} else if operator.Value == grammar.TokenStar { // Multiply.
+	case grammar.TokenStar: // Multiply.
 		result = first * second
-	} else if operator.Value == grammar.TokenSlash ||
-		operator.Value == grammar.IntegerDivision { // Division.
+	case
+		grammar.TokenSlash,
+		grammar.IntegerDivision: // Division.
 		if first == 0 || second == 0 {
 			fract.Error(operator, "Divide by zero!")
 		}
@@ -122,21 +124,21 @@ func solve(operator obj.Token, first, second float64) float64 {
 		if operator.Value == grammar.IntegerDivision {
 			result = math.RoundToEven(result)
 		}
-	} else if operator.Value == grammar.TokenCaret { // Exponentiation.
+	case grammar.TokenCaret: // Exponentiation.
 		result = math.Pow(first, second)
-	} else if operator.Value == grammar.TokenPercent { // Mod.
+	case grammar.TokenPercent: // Mod.
 		result = math.Mod(first, second)
-	} else if operator.Value == grammar.LeftShift { // Left shift.
+	case grammar.LeftShift: // Left shift.
 		if second < 0 {
 			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
 		result = float64(int64(first) << int64(second))
-	} else if operator.Value == grammar.RightShift { // Right shift.
+	case grammar.RightShift:
 		if second < 0 {
 			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
 		result = float64(int64(first) >> int64(second))
-	} else {
+	default:
 		fract.Error(operator, "Operator is invalid!")
 	}
 
