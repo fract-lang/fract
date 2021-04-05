@@ -131,15 +131,15 @@ func (l *Lexer) Generate() obj.Token {
 		}
 	}
 
-	/* Check arithmetic value? */
-	if check := strings.TrimSpace(regexp.MustCompile(
-		`^(-|)\s*[0-9]+(\.[0-9]+)?(\s|[[:punct:]]|$)`).FindString(ln)); check != "" &&
+	switch check := strings.TrimSpace(regexp.MustCompile(
+		`^(-|)\s*[0-9]+(\.[0-9]+)?(\s|[[:punct:]]|$)`).FindString(ln)); {
+	case check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
 			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
-			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn) { // Numeric value.
+			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn): // Numeric value.
 		// Remove punct.
 		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
 		if result {
@@ -150,174 +150,174 @@ func (l *Lexer) Generate() obj.Token {
 		l.Column += clen - len(check)
 		token.Value = check
 		token.Type = fract.TypeValue
-	} else if strings.HasPrefix(ln, grammar.TokenSemicolon) { // Statement terminator.
+	case strings.HasPrefix(ln, grammar.TokenSemicolon): // Statement terminator.
 		token.Value = grammar.TokenSemicolon
 		token.Type = fract.TypeStatementTerminator
 		l.Line--
-	} else if strings.HasPrefix(ln, grammar.IntegerDivision) { // Integer division.
+	case strings.HasPrefix(ln, grammar.IntegerDivision): // Integer division.
 		token.Value = grammar.IntegerDivision
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.IntegerDivideWithBigger) { // Integer divide with bigger.
+	case strings.HasPrefix(ln, grammar.IntegerDivideWithBigger): // Integer divide with bigger.
 		token.Value = grammar.IntegerDivideWithBigger
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenPlus) { // Addition.
+	case strings.HasPrefix(ln, grammar.TokenPlus): // Addition.
 		token.Value = grammar.TokenPlus
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenMinus) { // Subtraction.
+	case strings.HasPrefix(ln, grammar.TokenMinus): // Subtraction.
 		token.Value = grammar.TokenMinus
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenStar) { // Multiplication.
+	case strings.HasPrefix(ln, grammar.TokenStar): // Multiplication.
 		token.Value = grammar.TokenStar
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenSlash) { // Division.
+	case strings.HasPrefix(ln, grammar.TokenSlash): // Division.
 		token.Value = grammar.TokenSlash
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenCaret) { // Exponentiation.
+	case strings.HasPrefix(ln, grammar.TokenCaret): // Exponentiation.
 		token.Value = grammar.TokenCaret
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenPercent) { // Mod.
+	case strings.HasPrefix(ln, grammar.TokenPercent): // Mod.
 		token.Value = grammar.TokenPercent
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenBackslash) { // Divisin with bigger.
+	case strings.HasPrefix(ln, grammar.TokenBackslash): // Divisin with bigger.
 		token.Value = grammar.TokenBackslash
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenLParenthes) { // Open parentheses.
+	case strings.HasPrefix(ln, grammar.TokenLParenthes): // Open parentheses.
 		l.ParenthesCount++
 		token.Value = grammar.TokenLParenthes
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.TokenRParenthes) { // Close parentheses.
+	case strings.HasPrefix(ln, grammar.TokenRParenthes): // Close parentheses.
 		l.ParenthesCount--
 		if l.ParenthesCount < 0 {
 			l.Error("The extra parentheses are closed!")
 		}
 		token.Value = grammar.TokenRParenthes
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.TokenLBrace) { // Open brace.
+	case strings.HasPrefix(ln, grammar.TokenLBrace): // Open brace.
 		l.BraceCount++
 		token.Value = grammar.TokenLBrace
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.TokenRBrace) { // Close brace.
+	case strings.HasPrefix(ln, grammar.TokenRBrace): // Close brace.
 		l.BraceCount--
 		if l.BraceCount < 0 {
 			l.Error("The extra brace are closed!")
 		}
 		token.Value = grammar.TokenRBrace
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.TokenLBracket) { // Open bracket.
+	case strings.HasPrefix(ln, grammar.TokenLBracket): // Open bracket.
 		l.BracketCount++
 		token.Value = grammar.TokenLBracket
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.TokenRBracket) { // Close bracket.
+	case strings.HasPrefix(ln, grammar.TokenRBracket): // Close bracket.
 		l.BracketCount--
 		if l.BracketCount < 0 {
 			l.Error("The extra bracket are closed!")
 		}
 		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace
-	} else if strings.HasPrefix(ln, grammar.LeftShift) { // Left shift.
+	case strings.HasPrefix(ln, grammar.LeftShift): // Left shift.
 		token.Value = grammar.LeftShift
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.RightShift) { // Right shift.
+	case strings.HasPrefix(ln, grammar.RightShift): // Right shift.
 		token.Value = grammar.RightShift
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenComma) { // Comma.
+	case strings.HasPrefix(ln, grammar.TokenComma): // Comma.
 		token.Value = grammar.TokenComma
 		token.Type = fract.TypeComma
-	} else if strings.HasPrefix(ln, grammar.TokenAmper) { // Amper (&).
+	case strings.HasPrefix(ln, grammar.TokenAmper): // Amper (&).
 		token.Value = grammar.TokenAmper
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenVerticalBar) { // Vertical bar (|).
+	case strings.HasPrefix(ln, grammar.TokenVerticalBar): // Vertical bar (|).
 		token.Value = grammar.TokenVerticalBar
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.GreaterEquals) { // Greater than or equals to (>=).
+	case strings.HasPrefix(ln, grammar.GreaterEquals): // Greater than or equals to (>=).
 		token.Value = grammar.GreaterEquals
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.LessEquals) { // Less than or equals to (<=).
+	case strings.HasPrefix(ln, grammar.LessEquals): // Less than or equals to (<=).
 		token.Value = grammar.LessEquals
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.Equals) { // Equals to (==).
+	case strings.HasPrefix(ln, grammar.Equals): // Equals to (==).
 		token.Value = grammar.Equals
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.NotEquals) { // Not equals to (<>).
+	case strings.HasPrefix(ln, grammar.NotEquals): // Not equals to (<>).
 		token.Value = grammar.NotEquals
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenGreat) { // Greater than (>).
+	case strings.HasPrefix(ln, grammar.TokenGreat): // Greater than (>).
 		token.Value = grammar.TokenGreat
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenLess) { // Less than (<).
+	case strings.HasPrefix(ln, grammar.TokenLess): // Less than (<).
 		token.Value = grammar.TokenLess
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.TokenEquals) { // Equals(=).
+	case strings.HasPrefix(ln, grammar.TokenEquals): // Equals(=).
 		token.Value = grammar.TokenEquals
 		token.Type = fract.TypeOperator
-	} else if strings.HasPrefix(ln, grammar.Params) { // Params.
+	case strings.HasPrefix(ln, grammar.Params): // Params.
 		token.Value = grammar.Params
 		token.Type = fract.TypeParams
-	} else if isKeywordToken(ln, grammar.KwBlockEnd) { // End of block.
+	case isKeywordToken(ln, grammar.KwBlockEnd): // End of block.
 		token.Value = grammar.KwBlockEnd
 		token.Type = fract.TypeBlockEnd
-	} else if isKeywordToken(ln, grammar.KwVariable) { // Variable.
+	case isKeywordToken(ln, grammar.KwVariable): // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
-	} else if isKeywordToken(ln, grammar.KwConstVariable) { // Const variable.
+	case isKeywordToken(ln, grammar.KwConstVariable): // Const variable.
 		token.Value = grammar.KwConstVariable
 		token.Type = fract.TypeVariable
-	} else if isKeywordToken(ln, grammar.KwProtected) { // Protected.
+	case isKeywordToken(ln, grammar.KwProtected): // Protected.
 		token.Value = grammar.KwProtected
 		token.Type = fract.TypeProtected
-	} else if isKeywordToken(ln, grammar.KwDelete) { // Delete.
+	case isKeywordToken(ln, grammar.KwDelete): // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete
-	} else if isKeywordToken(ln, grammar.KwIf) { // If.
+	case isKeywordToken(ln, grammar.KwIf): // If.
 		token.Value = grammar.KwIf
 		token.Type = fract.TypeIf
-	} else if isKeywordToken(ln, grammar.KwElseIf) { // Else if.
+	case isKeywordToken(ln, grammar.KwElseIf): // Else if.
 		token.Value = grammar.KwElseIf
 		token.Type = fract.TypeElseIf
-	} else if isKeywordToken(ln, grammar.KwElse) { // Else.
+	case isKeywordToken(ln, grammar.KwElse): // Else.
 		token.Value = grammar.KwElse
 		token.Type = fract.TypeElse
-	} else if isKeywordToken(ln, grammar.KwForWhileLoop) { // For and while loop.
+	case isKeywordToken(ln, grammar.KwForWhileLoop): // For and while loop.
 		token.Value = grammar.KwForWhileLoop
 		token.Type = fract.TypeLoop
-	} else if isKeywordToken(ln, grammar.KwIn) { // In.
+	case isKeywordToken(ln, grammar.KwIn): // In.
 		token.Value = grammar.KwIn
 		token.Type = fract.TypeIn
-	} else if isKeywordToken(ln, grammar.KwBreak) { // Break.
+	case isKeywordToken(ln, grammar.KwBreak): // Break.
 		token.Value = grammar.KwBreak
 		token.Type = fract.TypeBreak
-	} else if isKeywordToken(ln, grammar.KwContinue) { // Continue.
+	case isKeywordToken(ln, grammar.KwContinue): // Continue.
 		token.Value = grammar.KwContinue
 		token.Type = fract.TypeContinue
-	} else if isKeywordToken(ln, grammar.KwFunction) { // Function.
+	case isKeywordToken(ln, grammar.KwFunction): // Function.
 		token.Value = grammar.KwFunction
 		token.Type = fract.TypeFunction
-	} else if isKeywordToken(ln, grammar.KwReturn) { // Return.
+	case isKeywordToken(ln, grammar.KwReturn): // Return.
 		token.Value = grammar.KwReturn
 		token.Type = fract.TypeReturn
-	} else if isKeywordToken(ln, grammar.KwTry) { // Try.
+	case isKeywordToken(ln, grammar.KwTry): // Try.
 		token.Value = grammar.KwTry
 		token.Type = fract.TypeTry
-	} else if isKeywordToken(ln, grammar.KwCatch) { // Catch.
+	case isKeywordToken(ln, grammar.KwCatch): // Catch.
 		token.Value = grammar.KwCatch
 		token.Type = fract.TypeCatch
-	} else if isKeywordToken(ln, grammar.KwTrue) { // True.
+	case isKeywordToken(ln, grammar.KwTrue): // True.
 		token.Value = grammar.KwTrue
 		token.Type = fract.TypeBooleanTrue
-	} else if isKeywordToken(ln, grammar.KwFalse) { // False.
+	case isKeywordToken(ln, grammar.KwFalse): // False.
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
-	} else if strings.HasPrefix(ln, grammar.RangeCommentOpen) { // Range comment open.
+	case strings.HasPrefix(ln, grammar.RangeCommentOpen): // Range comment open.
 		l.RangeComment = true
 		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore
-	} else if strings.HasPrefix(ln, grammar.TokenSharp) { // Singleline comment.
+	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment.
 		return token
-	} else if strings.HasPrefix(ln, grammar.TokenQuote) { // String.
+	case strings.HasPrefix(ln, grammar.TokenQuote): // String.
 		lexString(l, &token, grammar.TokenQuote, fln)
-	} else if strings.HasPrefix(ln, grammar.TokenDoubleQuote) { // String.
+	case strings.HasPrefix(ln, grammar.TokenDoubleQuote): // String.
 		lexString(l, &token, grammar.TokenDoubleQuote, fln)
-	} else { // Alternates
+	default: // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
 			`^([A-z])([a-zA-Z0-9` + grammar.TokenUnderscore + grammar.TokenDot +

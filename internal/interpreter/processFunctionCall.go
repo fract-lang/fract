@@ -218,17 +218,18 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		// Add name token for exceptions.
 		function.Tokens = [][]obj.Token{{_name}}
 
-		if function.Name == "print" {
+		switch function.Name {
+		case "print":
 			functions.Print(function, parameters)
-		} else if function.Name == "input" {
+		case "input":
 			returnValue = functions.Input(function, parameters)
-		} else if function.Name == "len" {
+		case "len":
 			returnValue = functions.Len(function, parameters)
-		} else if function.Name == "range" {
+		case "range":
 			returnValue = functions.Range(function, parameters)
-		} else if function.Name == "make" {
+		case "make":
 			returnValue = functions.Make(function, parameters)
-		} else {
+		default:
 			functions.Exit(function, parameters)
 		}
 	} else {
