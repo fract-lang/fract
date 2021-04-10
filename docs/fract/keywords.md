@@ -78,4 +78,8 @@
     <td align="center"><b>catch</b></td>
     <td>Catch block.</td>
   </tr>
+  <tr>
+    <td align="center"><b>open</b></td>
+    <td>Import directory.</td>
+  </tr>
 </table>
