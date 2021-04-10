@@ -34,6 +34,6 @@ type Interpreter struct {
 	Lexer lexer.Lexer
 	// All Tokens of code file.
 	Tokens [][]obj.Token
-	/* Type of file. */
-	Type int
+	// Directory.
+	Dir string
 }

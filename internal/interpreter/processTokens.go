@@ -100,6 +100,8 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 		i.processFunction(tokens, false)
 	case fract.TypeTry: // Try-Catch.
 		return i.processTryCatch(tokens)
+	case fract.TypeImport: // Import.
+		i.processImport(tokens)
 	default:
 		fract.Error(first, "Invalid syntax!")
 	}

@@ -6,6 +6,7 @@ package interpreter
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
@@ -28,6 +29,9 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 
 	appendVariable := func(avtokens []obj.Token) {
 		_name := avtokens[0]
+		if strings.Contains(_name.Value, grammar.TokenDot) {
+			fract.Error(_name, "Names is cannot include dot!")
+		}
 
 		if _name.Value == grammar.TokenUnderscore {
 			fract.Error(_name, "Ignore operator is cannot be variable name!")

@@ -9,14 +9,14 @@ import (
 )
 
 // New Create new instance of Parser.
-// path Path of destination file.
-// type Type of file.
-func New(path string, _type int) Interpreter {
-	return Interpreter{
+// path Path of directory.
+// fpath Path of destination file.
+func New(path, fpath string) *Interpreter {
+	return &Interpreter{
 		Lexer: lexer.Lexer{
-			File: ReadyFile(path),
+			File: ReadyFile(fpath),
 			Line: 1,
 		},
-		Type: _type,
+		Dir: path,
 	}
 }
