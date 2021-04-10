@@ -98,7 +98,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{
+		obj.Function{ // make function.
 			Name:                  "make",
 			Protected:             true,
 			Tokens:                nil,

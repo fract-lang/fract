@@ -6,6 +6,7 @@ package interpreter
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
@@ -23,6 +24,8 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
+	} else if strings.Contains(_name.Value, grammar.TokenDot) {
+		fract.Error(_name, "Names is cannot include dot!")
 	}
 
 	// Name is already defined?

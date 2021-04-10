@@ -78,7 +78,7 @@ func main() {
 
 	fract.LiveInterpret = true
 
-	preter := interpreter.NewStdin()
+	preter := interpreter.NewStdin(".")
 	preter.ApplyEmbedFunctions()
 
 repeat:

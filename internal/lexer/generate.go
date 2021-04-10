@@ -301,6 +301,9 @@ func (l *Lexer) Generate() obj.Token {
 	case isKeywordToken(ln, grammar.KwCatch): // Catch.
 		token.Value = grammar.KwCatch
 		token.Type = fract.TypeCatch
+	case isKeywordToken(ln, grammar.KwImport): // Open.
+		token.Value = grammar.KwImport
+		token.Type = fract.TypeImport
 	case isKeywordToken(ln, grammar.KwTrue): // True.
 		token.Value = grammar.KwTrue
 		token.Type = fract.TypeBooleanTrue
@@ -320,8 +323,8 @@ func (l *Lexer) Generate() obj.Token {
 	default: // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
-			`^([A-z])([a-zA-Z0-9` + grammar.TokenUnderscore + grammar.TokenDot +
-				`]+)?([[:punct:]]|\s|$)`).FindString(ln)); check != "" { // Name.
+			`^([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
+			FindString(ln)); check != "" { // Name.
 			// Remove punct.
 			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
 				!strings.HasSuffix(check, grammar.TokenDot) {
@@ -338,10 +341,10 @@ func (l *Lexer) Generate() obj.Token {
 					token.Type = fract.TypeIgnore
 					return token
 				}
-				l.Error("What is this?")
+				l.Error("What you mean?")
 			}
 
-			token.Value = strings.TrimSpace(check)
+			token.Value = check
 			token.Type = fract.TypeName
 		} else { // Error exactly
 			if l.RangeComment { // Ignore comment content.
@@ -349,7 +352,7 @@ func (l *Lexer) Generate() obj.Token {
 				token.Type = fract.TypeIgnore
 				return token
 			}
-			l.Error("What is this?")
+			l.Error("What you mean?")
 		}
 	}
 
