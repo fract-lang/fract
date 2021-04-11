@@ -5,6 +5,7 @@
 package interpreter
 
 import (
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -37,14 +38,14 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		fract.Error(tokens[1], "Directory not found/access!")
 	}
 
-	content, err := os.ReadDir(path)
+	content, err := ioutil.ReadDir(path)
 	if err != nil {
 		fract.Error(tokens[1], "There is a problem on import: "+err.Error())
 	}
 
 	for _, current := range content {
 		// Skip directories.
-		if current.IsDir() {
+		if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) {
 			continue
 		}
 
