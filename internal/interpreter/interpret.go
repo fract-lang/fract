@@ -14,6 +14,19 @@ import (
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {
+	if i.Lexer.File.Path == fract.Stdin {
+		// Interpret all lines.
+		for i.index = 0; i.index < len(i.Tokens); i.index++ {
+			i.processTokens(i.Tokens[i.index])
+		}
+		return
+	}
+
+	// Lexer is finished.
+	if i.Lexer.Finished {
+		return
+	}
+
 	{
 		// Import same directory.
 
@@ -31,19 +44,6 @@ func (i *Interpreter) Interpret() {
 				New(path, path+current.Name()).Import(i, "")
 			}
 		}
-	}
-
-	if i.Lexer.File.Path == fract.Stdin {
-		// Interpret all lines.
-		for i.index = 0; i.index < len(i.Tokens); i.index++ {
-			i.processTokens(i.Tokens[i.index])
-		}
-		return
-	}
-
-	// Lexer is finished.
-	if i.Lexer.Finished {
-		return
 	}
 
 	i.ready()
