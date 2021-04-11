@@ -21,15 +21,21 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		fract.Error(tokens[0], "Imported but what?")
 	}
 
-	if tokens[1].Type != fract.TypeValue ||
+	if tokens[1].Type != fract.TypeName && (tokens[1].Type != fract.TypeValue ||
 		(!strings.HasPrefix(tokens[1].Value, grammar.TokenDoubleQuote) &&
-			!strings.HasPrefix(tokens[1].Value, grammar.TokenQuote)) {
-		fract.Error(tokens[1], "Import path should be string!")
+			!strings.HasPrefix(tokens[1].Value, grammar.TokenQuote))) {
+		fract.Error(tokens[1], "Import path should be string or standard path!")
 	}
 
 	valueList := tokens[1:]
-	path := tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
-		i.processValue(&valueList).Content[0].Data
+
+	var path string
+	if tokens[1].Type == fract.TypeName {
+		path = strings.ReplaceAll(tokens[1].Value, grammar.TokenDot, string(os.PathSeparator))
+	} else {
+		path = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
+			i.processValue(&valueList).Content[0].Data
+	}
 
 	info, err := os.Stat(path)
 
