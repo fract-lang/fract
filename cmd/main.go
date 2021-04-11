@@ -76,6 +76,11 @@ func main() {
 		"Fract " + fract.FractVersion + " (c) MIT License.\n" +
 			"Developed by Fract Developer Team.\n")
 
+	if info, err := os.Stat("std"); err != nil || !info.IsDir() {
+		fmt.Println("Standard library not found!")
+		return
+	}
+
 	fract.LiveInterpret = true
 
 	preter := interpreter.NewStdin(".")

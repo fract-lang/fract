@@ -31,6 +31,11 @@ func Process(command string) {
 		return
 	}
 
+	if info, err := os.Stat("std"); err != nil || !info.IsDir() {
+		fmt.Println("Standard library not found!")
+		return
+	}
+
 	preter := interpreter.New(".", command)
 	preter.ApplyEmbedFunctions()
 
