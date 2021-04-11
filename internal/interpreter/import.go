@@ -42,13 +42,17 @@ func (i *Interpreter) Import(dest *Interpreter, name string) {
 		}
 	}
 
+	if name != "" {
+		name += grammar.TokenDot
+	}
+
 	// Variables.
 	for _, variable := range i.variables {
 		if !unicode.IsUpper(rune(variable.Name[0])) {
 			continue
 		}
 
-		variable.Name = name + grammar.TokenDot + variable.Name
+		variable.Name = name + variable.Name
 		dest.variables = append(dest.variables, variable)
 	}
 
@@ -58,7 +62,7 @@ func (i *Interpreter) Import(dest *Interpreter, name string) {
 			continue
 		}
 
-		function.Name = name + grammar.TokenDot + function.Name
+		function.Name = name + function.Name
 		dest.functions = append(dest.functions, function)
 	}
 }
