@@ -27,7 +27,8 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 	}
 
 	valueList := tokens[1:]
-	path := i.Dir + string(os.PathSeparator) + i.processValue(&valueList).Content[0].Data
+	path := tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
+		i.processValue(&valueList).Content[0].Data
 
 	info, err := os.Stat(path)
 

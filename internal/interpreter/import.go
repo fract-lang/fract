@@ -38,10 +38,7 @@ func (i *Interpreter) Import(dest *Interpreter, name string) {
 		case fract.TypeFunction: // Function definiton.
 			i.processFunction(tokens, false)
 		case fract.TypeImport: // Import.
-			real := dest.Dir
-			dest.Dir = i.Dir
 			dest.processImport(tokens)
-			dest.Dir = real
 		}
 	}
 

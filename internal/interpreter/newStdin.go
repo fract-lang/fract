@@ -22,6 +22,5 @@ func NewStdin(path string) Interpreter {
 			},
 			Line: 1,
 		},
-		Dir: path,
 	}
 }
