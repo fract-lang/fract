@@ -17,6 +17,5 @@ func New(path, fpath string) *Interpreter {
 			File: ReadyFile(fpath),
 			Line: 1,
 		},
-		Dir: path,
 	}
 }
