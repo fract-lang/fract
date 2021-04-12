@@ -59,4 +59,5 @@ print(b.HelloMessage)
 ```
 
 ## Information
-Files in the same directory as your startup file are assumed to have been imported.
++ Files in the same directory as your startup file are assumed to have been imported.
++ All fract files imports from directory if import a directory.
