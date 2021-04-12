@@ -7,5 +7,5 @@
 #
 
 func Switch(number)
- ret number * -1
+	ret number * -1
 end

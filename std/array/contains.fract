@@ -1,0 +1,17 @@
+# Copyright 2021, MIT License.
+# Author: Mertcan Davulcu
+#
+# Description
+# ----------------
+# Returns true if element is contained in array, returns false if not.
+#
+
+func Contains(array, element)
+	for x in array
+		if x == element
+			ret true
+		end
+	end
+
+	ret false
+end
