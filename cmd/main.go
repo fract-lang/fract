@@ -38,17 +38,19 @@ import (
 )
 
 func processCommand(ns, cmd string) {
-	switch {
-	case ns == "help":
+	switch ns {
+	case "help":
 		ModuleHelp.Process(cmd)
-	case ns == "version":
+	case "version":
 		ModuleVersion.Process(cmd)
-	case ns == "make":
+	case "make":
 		ModuleMake.Process(cmd)
-	case ModuleMake.Check(ns):
-		ModuleMake.Process(ns + cmd)
 	default:
-		fmt.Println("There is no such command!")
+		if ModuleMake.Check(ns) {
+			ModuleMake.Process(ns + cmd)
+		} else {
+			fmt.Println("There is no such command!")
+		}
 	}
 }
 
