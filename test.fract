@@ -92,47 +92,50 @@ del array, array2
 # FUNCTION TEST
 #>
 func calc.length(list)
-  var counter = 0
-  for _ in list
-    counter = counter + 1
-  end
-  ret counter
+	var counter = 0
+	for _ in list
+		counter = counter + 1
+	end
+	ret counter
 end
 <#
 
 #>
 func calc.range(start, to, step=1)
-  var lst = [0]
-  var index = 0
-  for start < to
-    lst = [ lst, start ]
-    start = start + step
-    index = index + 1
-  end
-  ret lst
+	var lst = [0]
+	var index = 0
+	for start < to
+		lst = [ lst, start ]
+		start = start + step
+		index = index + 1
+	end
+	ret lst
 end
 <#
 
-open s std.arithmetics
 
-print(s.Switch(-4))
+open a std.array
+
+var arr = [1, 2, 3, 4, 5, 6]
+
+print(a.Contains(arr, 53))
 
 exit()
 
 func int_prime(x)
-  if x == 2
-    ret true
-  end
+	if x == 2
+		ret true
+	end
 
-  for y in range(2, x-1)
-    if x % y == 0
-      ret false
-    end
-  end
-  ret true
+	for y in range(2, x-1)
+		if x % y == 0
+			ret false
+		end
+	end
+	ret true
 end
 
 for number in range(0, 10)
-  print(number, fin=" ")
-  print(int_prime(number))
+	print(number, fin=" ")
+	print(int_prime(number))
 end
