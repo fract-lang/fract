@@ -115,8 +115,7 @@ end
 
 open s std.arithmetics
 
-print(s.ToPositive(5))
-print(s.ToPositive(-3))
+print(s.Switch(-4))
 
 exit()
 

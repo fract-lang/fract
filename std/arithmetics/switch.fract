@@ -1,0 +1,11 @@
+# Copyright 2021, MIT License.
+# Author: Mertcan Davulcu
+#
+# Description
+# ----------------
+# Reverse number to positive if negative, reverse to negative if positive.
+#
+
+func Switch(number)
+ ret number * -1
+end
