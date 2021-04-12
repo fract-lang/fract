@@ -27,26 +27,46 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		fract.Error(tokens[1], "Import path should be string or standard path!")
 	}
 
-	valueList := tokens[1:]
+	index := 1
+	if len(tokens) > 2 {
+		if tokens[1].Type == fract.TypeName {
+			index = 2
+		} else {
+			fract.Error(tokens[1], "Alias is should be name!")
+		}
+	}
+
+	if index == 1 && len(tokens) != 2 {
+		fract.Error(tokens[2], "Invalid syntax!")
+	} else if index == 2 && len(tokens) != 3 {
+		fract.Error(tokens[3], "Invalid syntax!")
+	}
 
 	var path string
-	if tokens[1].Type == fract.TypeName {
-		path = strings.ReplaceAll(tokens[1].Value, grammar.TokenDot, string(os.PathSeparator))
+	if tokens[index].Type == fract.TypeName {
+		path = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
 	} else {
 		path = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
-			i.processValue(&valueList).Content[0].Data
+			i.processValue(&[]objects.Token{tokens[index]}).Content[0].Data
 	}
 
 	info, err := os.Stat(path)
 
 	// Exists directory?
 	if err != nil || !info.IsDir() {
-		fract.Error(tokens[1], "Directory not found/access!")
+		fract.Error(tokens[index], "Directory not found/access!")
 	}
 
 	content, err := ioutil.ReadDir(path)
 	if err != nil {
 		fract.Error(tokens[1], "There is a problem on import: "+err.Error())
+	}
+
+	var name string
+	if index == 1 {
+		name = info.Name()
+	} else {
+		name = tokens[1].Value
 	}
 
 	for _, current := range content {
@@ -55,6 +75,6 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 			continue
 		}
 
-		New(path, path+string(os.PathSeparator)+current.Name()).Import(i, info.Name())
+		New(path, path+string(os.PathSeparator)+current.Name()).Import(i, name)
 	}
 }
