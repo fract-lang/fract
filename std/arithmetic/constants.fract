@@ -7,6 +7,9 @@
 #
 # Constants
 # ----------------
+# PI
+#  The PI number.
+#
 # TRUE
 #  True integer.
 # 
@@ -64,6 +67,7 @@
 
 
 protected const (
+	PI            = 3.141592653589793
 	TRUE          = 1,
 	FALSE         = 0,
 	INT8_MAX      = 127,
