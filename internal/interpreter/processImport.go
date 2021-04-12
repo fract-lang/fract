@@ -44,6 +44,9 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 
 	var path string
 	if tokens[index].Type == fract.TypeName {
+		if !strings.HasPrefix(tokens[index].Value, "std") {
+			fract.Error(tokens[index], "Standard import should be starts with 'std' directory.")
+		}
 		path = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
 	} else {
 		path = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
