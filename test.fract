@@ -113,13 +113,6 @@ func calc.range(start, to, step=1)
 end
 <#
 
-
-open a std.arithmetic
-
-print(a.PI)
-
-exit()
-
 func int_prime(x)
 	if x == 2
 		ret true

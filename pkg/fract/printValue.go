@@ -19,12 +19,16 @@ func PrintValue(value obj.Value) bool {
 	}
 
 	if value.Array {
-		sb := strings.Builder{}
-		sb.WriteRune('[')
-		for _, data := range value.Content {
-			sb.WriteString(data.Data + " ")
+		if len(value.Content) == 0 {
+			fmt.Print("[]")
+		} else {
+			sb := strings.Builder{}
+			sb.WriteRune('[')
+			for _, data := range value.Content {
+				sb.WriteString(data.Data + " ")
+			}
+			fmt.Print(sb.String()[:sb.Len()-1] + "]")
 		}
-		fmt.Print(sb.String()[:sb.Len()-1] + "]")
 	} else {
 		fmt.Print(value.Content[0].Data)
 	}
