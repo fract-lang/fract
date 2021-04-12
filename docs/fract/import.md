@@ -61,3 +61,4 @@ print(b.HelloMessage)
 ## Information
 + Files in the same directory as your startup file are assumed to have been imported.
 + All fract files imports from directory if import a directory.
++ If you want it to be imported, you must start the define name with a capital letter, definitions that do not start with a capital letter are not imported!
