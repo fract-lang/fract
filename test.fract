@@ -113,6 +113,13 @@ func calc.range(start, to, step=1)
 end
 <#
 
+open s std.arithmetics
+
+print(s.ToNegative(5))
+print(s.ToNegative(-3))
+
+exit()
+
 func int_prime(x)
   if x == 2
     ret true
