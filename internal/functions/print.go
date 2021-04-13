@@ -8,7 +8,7 @@ import (
 // Print values to CLI.
 // f Function.
 // parameters Parameters.
-func Print(f obj.Function, parameters []obj.Value) {
-	fract.PrintValue(parameters[0])
-	fract.PrintValue(parameters[1])
+func Print(f obj.Function, parameters []obj.Variable) {
+	fract.PrintValue(parameters[0].Value)
+	fract.PrintValue(parameters[1].Value)
 }
