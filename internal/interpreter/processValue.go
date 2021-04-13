@@ -597,7 +597,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				current := (*tokens)[cindex]
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenLBracket {
-						fract.Error(current, "Arrays is cannot take array value as element!")
+						braceCount++
 					} else if current.Value == grammar.TokenRBracket {
 						braceCount--
 						if braceCount == 0 {
@@ -718,9 +718,17 @@ func (i *Interpreter) processArrayValue(tokens *[]obj.Token) obj.Value {
 	first := (*tokens)[0]
 
 	comma := 1
+	brace := 0
 	for index := 1; index < len(*tokens)-1; index++ {
-		current := (*tokens)[index]
-		if current.Type == fract.TypeComma {
+		if current := (*tokens)[index]; current.Type == fract.TypeBrace {
+			if current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLBracket ||
+				current.Value == grammar.TokenLParenthes {
+				brace++
+			} else {
+				brace--
+			}
+		} else if current.Type == fract.TypeComma && brace == 0 {
 			lst := vector.Sublist(*tokens, comma, index-comma)
 			if lst == nil {
 				fract.Error(first, "Value is not defined!")
