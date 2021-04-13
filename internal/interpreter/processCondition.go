@@ -29,6 +29,48 @@ func compare(value0, value1 obj.Value, operator string) bool {
 	if value0.Array != value1.Array || len(value0.Content) != len(value1.Content) {
 		return false
 	}
+
+	// String comparison.
+	if !value0.Array || !value1.Array {
+		data0 := value0.Content[0]
+		data1 := value1.Content[0]
+		if data0.Type != fract.VALString || data1.Type != fract.VALString {
+			return false
+		}
+
+		if len(data0.Data) != len(data1.Data) {
+			return false
+		}
+
+		switch operator {
+		case grammar.Equals: // Equals.
+			if data0.Data != data1.Data {
+				return false
+			}
+		case grammar.NotEquals: // Not equals.
+			if data0.Data == data1.Data {
+				return false
+			}
+		case grammar.TokenGreat: // Greater.
+			if data0.Data <= data1.Data {
+				return false
+			}
+		case grammar.TokenLess: // Less.
+			if data0.Data >= data1.Data {
+				return false
+			}
+		case grammar.GreaterEquals: // Greater or equals.
+			if data0.Data < data1.Data {
+				return false
+			}
+		case grammar.LessEquals: // Less or equals.
+			if data0.Data > data1.Data {
+				return false
+			}
+		}
+		return true
+	}
+
 	for index := range value0.Content {
 		item0 := arithmetic.ToArithmetic(value0.Content[index].Data)
 		item1 := arithmetic.ToArithmetic(value1.Content[index].Data)
