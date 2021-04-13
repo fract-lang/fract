@@ -108,8 +108,8 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	value := i.processValue(&contentList)
 
 	// Type is not array?
-	if !value.Array {
-		fract.Error(contentList[2], "Foreach loop must defined array value!")
+	if !value.Array && value.Content[0].Type != fract.VALString {
+		fract.Error(contentList[0], "Foreach loop must defined array value!")
 	}
 
 	// Empty array?
@@ -137,11 +137,25 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 	variableLen := len(i.variables)
 
-	for vindex := 0; vindex < len(value.Content); {
+	var length int
+	if value.Array {
+		length = len(value.Content)
+	} else {
+		length = len(value.Content[0].Data)
+	}
+
+	for vindex := 0; vindex < length; {
 		i.index++
 		tokens := i.Tokens[i.index]
 
-		variable.Value.Content[0] = value.Content[vindex]
+		if value.Array {
+			variable.Value.Content[0] = value.Content[vindex]
+		} else {
+			variable.Value.Content[0] = obj.DataFrame{
+				Data: string(value.Content[0].Data[vindex]),
+				Type: fract.VALString,
+			}
+		}
 
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
@@ -150,7 +164,9 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 			i.functions = i.functions[:functionLen]
 
 			vindex++
-			if _break || vindex == len(value.Content) {
+			if _break ||
+				(value.Array && vindex == len(value.Content) ||
+					!value.Array && vindex == len(value.Content[0].Data)) {
 				break
 			}
 			i.index = iindex
