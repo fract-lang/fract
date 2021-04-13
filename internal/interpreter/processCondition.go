@@ -34,7 +34,8 @@ func compare(value0, value1 obj.Value, operator string) bool {
 	if !value0.Array || !value1.Array {
 		data0 := value0.Content[0]
 		data1 := value1.Content[0]
-		if data0.Type != fract.VALString || data1.Type != fract.VALString {
+		if (data0.Type == fract.VALString && data1.Type != fract.VALString) ||
+			(data0.Type != fract.VALString && data1.Type == fract.VALString) {
 			return false
 		}
 
