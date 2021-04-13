@@ -207,30 +207,22 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 
 	// Is embed function?
 	if function.Tokens == nil {
-		parameters := make([]obj.Value, 0)
-
-		// Set parameter defaults to normal values.
-		for _, param := range function.Parameters {
-			parameters = append(parameters,
-				i.variables[i.varIndexByName(param.Name)].Value)
-		}
-
 		// Add name token for exceptions.
 		function.Tokens = [][]obj.Token{{_name}}
 
 		switch function.Name {
 		case "print":
-			functions.Print(function, parameters)
+			functions.Print(function, vars)
 		case "input":
-			returnValue = functions.Input(function, parameters)
+			returnValue = functions.Input(function, vars)
 		case "len":
-			returnValue = functions.Len(function, parameters)
+			returnValue = functions.Len(function, vars)
 		case "range":
-			returnValue = functions.Range(function, parameters)
+			returnValue = functions.Range(function, vars)
 		case "make":
-			returnValue = functions.Make(function, parameters)
+			returnValue = functions.Make(function, vars)
 		default:
-			functions.Exit(function, parameters)
+			functions.Exit(function, vars)
 		}
 	} else {
 		// Process block.

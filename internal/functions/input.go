@@ -9,8 +9,8 @@ import (
 // Input from cli.
 // f Function.
 // parameters Parameters.
-func Input(f obj.Function, parameters []obj.Value) obj.Value {
-	fract.PrintValue(parameters[0])
+func Input(f obj.Function, parameters []obj.Variable) obj.Value {
+	fract.PrintValue(parameters[0].Value)
 	return obj.Value{
 		Content: []obj.DataFrame{
 			{

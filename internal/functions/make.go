@@ -10,8 +10,8 @@ import (
 // Make array by size.
 // f Function.
 // parameters Parameters.
-func Make(f obj.Function, parameters []obj.Value) obj.Value {
-	size := parameters[0]
+func Make(f obj.Function, parameters []obj.Variable) obj.Value {
+	size := parameters[0].Value
 
 	if size.Array {
 		fract.Error(f.Tokens[0][0], "Array is not a valid value!")

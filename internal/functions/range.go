@@ -11,10 +11,10 @@ import (
 // Range of object.
 // f Function.
 // parameters Parameters.
-func Range(f obj.Function, parameters []obj.Value) obj.Value {
-	start := parameters[0]
-	to := parameters[1]
-	step := parameters[2]
+func Range(f obj.Function, parameters []obj.Variable) obj.Value {
+	start := parameters[0].Value
+	to := parameters[1].Value
+	step := parameters[2].Value
 
 	if start.Array {
 		fract.Error(f.Tokens[0][0], "'start' argument should be numeric!")
