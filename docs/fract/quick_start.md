@@ -242,22 +242,35 @@ You can rotate the elements of arrays one by one with the foreach loop.
 
 #### Syntax
 ```
-for [VARIABLE_NAME] in [VALUE]
+for [VARIABLE_NAME_INDEX] in [VALUE]
+  # ...
+end
+```
+```
+for [VARIABLE_NAME_INDEX], [VARIABLE_NAME_ELEMENT] in [VALUE]
   # ...
 end
 ```
 #### Examples
 ```
 var t1 = [ 0, 3, 2, 1, 90 ]
-for index in [ 0, 1, 2, 3, 4 ]
+for index in t1
   print(t1[index])
 end
 ```
 ```
 var t1 = [ 0, 3, 2, 1, 90 ]
-for item in t1
+for index, item in t1
+  print(index, fin=" | ")
   print(item)
 end
+
+# OUTPUT
+0 | 0
+1 | 3
+2 | 2
+3 | 1
+4 | 90
 ```
 
 ### Break Keyword
@@ -279,15 +292,14 @@ end
 ### Continue Keyword
 It can be used to pass the cycle to the next cycle step. If there is no next loop step, the loop is terminated.
 ```
-for index in [ 0, 1, 2, 3, 4.0 ]
-  if index == 1 | index == 3
+for _, item in [ 0, 1, 2, 3, 4.0 ]
+  if item == 1 | item == 3
     continue
   end
-  var test = index
-  print(index, fin=" ")
+  print(item, fin=" ")
 end
 
-# Output: 0, 2, 4.000000
+# Output: 0, 2, 4
 ```
 
 ## Functions
@@ -335,7 +347,7 @@ func int.prime(x)
     ret true
   end
 
-  for y in range(2, x-1)
+  for _, y in range(2, x-1)
     if x % y == 0
       ret false
     end
@@ -343,7 +355,7 @@ func int.prime(x)
   ret true
 end
 
-for number in range(0, 10)
+for _, number in range(0, 10)
   print(number, fin=" ")
   print(int.prime(number))
 end
