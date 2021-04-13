@@ -6,6 +6,7 @@ package fract
 
 import (
 	"fmt"
+	"strings"
 
 	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/str"
@@ -20,8 +21,8 @@ func ErrorCustom(file obj.CodeFile, line, column int,
 	message string) obj.Exception {
 	e := obj.Exception{
 		Message: fmt.Sprintf("File: %s\nPosition: %d:%d\n    %s\n%s^\n%s",
-			file.Path, line, column, file.Lines[line-1].Text, str.GetWhitespace(4+column-1),
-			message),
+			file.Path, line, column, strings.ReplaceAll(strings.TrimSpace(file.Lines[line-1].Text), "\t", " "),
+			str.GetWhitespace(4+column-3), message),
 	}
 
 	if TryCount > 0 {
