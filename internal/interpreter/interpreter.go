@@ -25,8 +25,8 @@ type Interpreter struct {
 	functionCount int
 	// Interpreter index.
 	index int
-	// Last return index.
-	returnIndex int
+	// Pointer of last return value.
+	returnValue *obj.Value
 
 	/* PUBLIC */
 
