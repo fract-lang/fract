@@ -1,0 +1,21 @@
+# Copyright 2021, MIT License.
+# Author: Mertcan Davulcu
+#
+# Description
+# ----------------
+# Returns index if element is found in array, returns -1 if not.
+#
+
+func IndexOf(array, element, start=0)
+	if start < 0 | start >= len(array)
+		ret -1
+	end
+	
+	for index in range(start, len(array))
+		if array[index] == element
+			ret index
+		end
+	end
+	
+	ret -1
+end
