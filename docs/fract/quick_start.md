@@ -156,7 +156,7 @@ del var # Error: Protected objects cannot be deleted manually from memory!
 
 ## Arrays
 They are structures that can hold more than one value in arrays. An array has a limited size and this size is determined at creation time. <br>
-Syntax for creating an array that characterizes the int32 data type with 4, 5, 6, 7 elements:
+Syntax for creating an array that characterizes with 4, 5, 6, 7 elements:
 ```
 var array = [ 4, 5, 6, 7 ]  # Elements: 4, 5, 6, 7
 ```
