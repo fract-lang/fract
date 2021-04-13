@@ -11,7 +11,7 @@ func IndexOf(array, element, start=0)
 		ret -1
 	end
 	
-	for index in range(start, len(array))
+	for _, index in range(start, len(array) - start + 1)
 		if array[index] == element
 			ret index
 		end
