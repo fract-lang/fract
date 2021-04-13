@@ -126,7 +126,7 @@ func int_prime(x)
 	ret true
 end
 
-for number in range(0, 10)
+for _, number in range(0, 10)
 	print(number, fin=" ")
 	print(int_prime(number))
 end

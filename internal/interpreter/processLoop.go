@@ -16,10 +16,10 @@ import (
 // processLoop Process loop block.
 // tokens Tokens to process.
 func (i *Interpreter) processLoop(tokens []obj.Token) int {
-	contentList := *vector.Sublist(tokens, 1, len(tokens)-1)
+	tokens = *vector.Sublist(tokens, 1, len(tokens)-1)
 
 	// Content is empty?
-	if contentList == nil {
+	if tokens == nil {
 		fract.Error(tokens[0], "Content is empty!")
 	}
 
@@ -39,15 +39,15 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//*************
 	//    WHILE
 	//*************
-	if len(contentList) == 1 ||
-		contentList[1].Type != fract.TypeIn {
+	if len(tokens) == 1 ||
+		tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
 		variableLen := len(i.variables)
 
 		/* Interpret/skip block. */
 		for {
 			i.index++
 			tokens := i.Tokens[i.index]
-			condition := i.processCondition(&contentList)
+			condition := i.processCondition(&tokens)
 
 			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
@@ -85,7 +85,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//*************
 	//   FOREACH
 	//*************
-	nameToken := contentList[0]
+	nameToken := tokens[0]
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {
 		fract.Error(nameToken, "This is not a valid name!")
@@ -97,19 +97,36 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 			fmt.Sprint(i.variables[index].Line))
 	}
 
-	inToken := contentList[1]
-	contentList = *vector.Sublist(contentList, 2, len(contentList)-2)
+	// Element name?
+	elementName := ""
+	if tokens[1].Type == fract.TypeComma {
+		if len(tokens) < 3 {
+			fract.Error(tokens[1], "Element name is not defined!")
+		}
+		if tokens[2].Value != grammar.TokenUnderscore {
+			elementName = tokens[2].Value
+			// Name is already defined?
+			if index := i.varIndexByName(elementName); index != -1 {
+				fract.Error(tokens[2], "Already defined variable in this name at line: "+
+					fmt.Sprint(i.variables[index].Line))
+			}
+		}
+		tokens = tokens[2:]
+	}
+
+	inToken := tokens[1]
+	tokens = *vector.Sublist(tokens, 2, len(tokens)-2)
 
 	// Value is not defined?
-	if contentList == nil {
+	if tokens == nil {
 		fract.Error(inToken, "Value is not defined!")
 	}
 
-	value := i.processValue(&contentList)
+	value := i.processValue(&tokens)
 
 	// Type is not array?
 	if !value.Array && value.Content[0].Type != fract.VALString {
-		fract.Error(contentList[0], "Foreach loop must defined array value!")
+		fract.Error(tokens[0], "Foreach loop must defined array value!")
 	}
 
 	// Empty array?
@@ -119,21 +136,26 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		return kwstate
 	}
 
-	// Create loop variable.
-	variable := obj.Variable{
-		Name:  nameToken.Value,
-		Const: false,
+	// Create index variable.
+	index := obj.Variable{
+		Name: nameToken.Value,
 		Value: obj.Value{
-			Array:   false,
+			Content: []obj.DataFrame{{}},
+		},
+	}
+	// Create element variable.
+	element := obj.Variable{
+		Name: elementName,
+		Value: obj.Value{
 			Content: []obj.DataFrame{{}},
 		},
 	}
 
-	if variable.Name == grammar.TokenUnderscore {
-		variable.Name = ""
+	if index.Name == grammar.TokenUnderscore {
+		index.Name = ""
 	}
 
-	i.variables = append(i.variables, variable)
+	i.variables = append(i.variables, index, element)
 
 	variableLen := len(i.variables)
 
@@ -148,10 +170,11 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		i.index++
 		tokens := i.Tokens[i.index]
 
+		index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprintf("%d", vindex)}
 		if value.Array {
-			variable.Value.Content[0] = value.Content[vindex]
+			element.Value.Content[0] = value.Content[vindex]
 		} else {
-			variable.Value.Content[0] = obj.DataFrame{
+			element.Value.Content[0] = obj.DataFrame{
 				Data: string(value.Content[0].Data[vindex]),
 				Type: fract.VALString,
 			}
@@ -187,7 +210,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		}
 	}
 
-	// Remove loop variable.
-	i.variables = i.variables[:variableLen-1]
+	// Remove loop variables.
+	i.variables = i.variables[:variableLen-2]
 	return processKwState()
 }
