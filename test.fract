@@ -117,7 +117,11 @@ open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]
 
-print(t.Contains(arr, 90, start=4))
+var array = t.Clone(arr)
+array[0] = 0
+
+print(array)
+print(arr)
 
 exit()
 
