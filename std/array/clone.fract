@@ -1,0 +1,11 @@
+# Copyright 2021, MIT License.
+# Author: Mertcan Davulcu
+#
+# Description
+# ----------------
+# Returns clone as array.
+#
+
+func Clone(object)
+	ret [ object ]
+end
