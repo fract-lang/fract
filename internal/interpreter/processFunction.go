@@ -105,7 +105,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					}
 					lastParameter.Default = i.processValue(
 						vector.Sublist(paramList, start, index-start))
-					if !lastParameter.Default.Array {
+					if lastParameter.Params && !lastParameter.Default.Array {
 						fract.Error(current, "Params parameter is can only take array values!")
 					}
 					function.Parameters[len(function.Parameters)-1] = lastParameter
