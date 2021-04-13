@@ -7,7 +7,7 @@
 #
 
 func Contains(array, element)
-	for x in array
+	for _, x in array
 		if x == element
 			ret true
 		end

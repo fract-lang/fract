@@ -113,12 +113,20 @@ func calc.range(start, to, step=1)
 end
 <#
 
+open t std.array
+
+var arr = [1, 2, 3, 90, 4, 2]
+
+print(t.Contains(arr, 90))
+
+exit()
+
 func int_prime(x)
 	if x == 2
 		ret true
 	end
 
-	for y in range(2, x-1)
+	for _, y in range(2, x-1)
 		if x % y == 0
 			ret false
 		end
