@@ -255,13 +255,11 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 				break
 			} else if i.processTokens(tokens) == fract.FUNCReturn {
-				tokens := i.Tokens[i.returnIndex]
-				i.returnIndex = fract.TypeNone
-				valueList := tokens[1:]
-				if valueList == nil {
+				if i.returnValue == nil {
 					break
 				}
-				returnValue = i.processValue(&valueList)
+				returnValue = *i.returnValue
+				i.returnValue = nil
 				break
 			}
 		}
