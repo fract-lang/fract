@@ -3,8 +3,10 @@ package functions
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
+	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -42,17 +44,19 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			returnValue.Content = append(returnValue.Content, obj.DataFrame{
-				Data: fmt.Sprintf("%g", startV),
-				Type: fract.VALFloat,
-			})
+			dataFrame := obj.DataFrame{Data: fmt.Sprintf("%g", startV)}
+			if strings.Contains(dataFrame.Data, grammar.TokenDot) {
+				dataFrame.Type = fract.VALFloat
+			}
+			returnValue.Content = append(returnValue.Content, dataFrame)
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			returnValue.Content = append(returnValue.Content, obj.DataFrame{
-				Data: fmt.Sprintf("%g", startV),
-				Type: fract.VALFloat,
-			})
+			dataFrame := obj.DataFrame{Data: fmt.Sprintf("%g", startV)}
+			if strings.Contains(dataFrame.Data, grammar.TokenDot) {
+				dataFrame.Type = fract.VALFloat
+			}
+			returnValue.Content = append(returnValue.Content, dataFrame)
 		}
 	}
 

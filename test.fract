@@ -113,26 +113,11 @@ func calc.range(start, to, step=1)
 end
 <#
 
-#open t std.array
+open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]
 
-func Contains(array, element, start=0)
-	if start < 0 | start >= len(array)
-		ret false
-	end
-
-	for index in range(start, len(array))
-		print(index)
-		if array[index] == element
-			ret true
-		end
-	end
-	
-	ret false
-end
-
-print(Contains(arr, 1, start=4))
+print(t.Contains(arr, 90, start=4))
 
 exit()
 
