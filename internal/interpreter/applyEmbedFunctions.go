@@ -109,7 +109,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{
+		obj.Function{ // string function.
 			Name:                  "string",
 			Protected:             true,
 			Tokens:                nil,
@@ -128,6 +128,17 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 							},
 						},
 					},
+				},
+			},
+		},
+		obj.Function{ // int function.
+			Name:                  "int",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 0,
+			Parameters: []obj.Parameter{
+				{
+					Name: "object",
 				},
 			},
 		},
