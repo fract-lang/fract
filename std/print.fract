@@ -10,6 +10,6 @@
 # Returns clone as array.
 #
 
-protected func Clone(object)
-	ret [ object ]
+func Print(message)
+ print(message, fin="")
 end

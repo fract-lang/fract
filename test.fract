@@ -113,6 +113,13 @@ func calc.range(start, to, step=1)
 end
 <#
 
+open std
+
+std.Print("Hello")
+std.Print(" World\n")
+
+exit()
+
 open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]
