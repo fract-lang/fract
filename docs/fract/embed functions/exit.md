@@ -5,7 +5,7 @@ Exit process with exit code.
 
 ## Define
 ```
-protected func exit(code="")
+protected func exit(code=0)
 ```
 
 ## Examples
