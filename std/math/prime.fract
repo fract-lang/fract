@@ -1,0 +1,25 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns true if number is prime, returns false if not.
+#
+
+func Prime(number)
+	if number == 2
+		ret true
+	end
+
+	for _, y in range(2, number - 1)
+		if number % y == 0
+			ret false
+		end
+	end
+ 
+	ret true
+end

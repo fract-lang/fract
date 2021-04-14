@@ -113,13 +113,6 @@ func calc.range(start, to, step=1)
 end
 <#
 
-open std
-
-std.Print("Hello")
-std.Println(" World")
-
-exit()
-
 open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]
@@ -132,20 +125,9 @@ print(arr)
 
 exit()
 
-func int_prime(x)
-	if x == 2
-		ret true
-	end
-
-	for _, y in range(2, x-1)
-		if x % y == 0
-			ret false
-		end
-	end
-	ret true
-end
+open std.math
 
 for _, number in range(0, 10)
 	print(number, fin=" ")
-	print(int_prime(number))
+	print(math.Prime(number))
 end
