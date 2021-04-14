@@ -221,6 +221,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			returnValue = functions.Range(function, vars)
 		case "make":
 			returnValue = functions.Make(function, vars)
+		case "string":
+			returnValue = functions.String(function, vars)
 		default:
 			functions.Exit(function, vars)
 		}
