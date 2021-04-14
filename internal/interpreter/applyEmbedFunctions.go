@@ -142,5 +142,16 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
+		obj.Function{ // float function.
+			Name:                  "float",
+			Protected:             true,
+			Tokens:                nil,
+			DefaultParameterCount: 0,
+			Parameters: []obj.Parameter{
+				{
+					Name: "object",
+				},
+			},
+		},
 	)
 }

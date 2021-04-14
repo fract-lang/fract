@@ -225,6 +225,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			returnValue = functions.String(function, vars)
 		case "int":
 			returnValue = functions.Int(function, vars)
+		case "float":
+			returnValue = functions.Float(function, vars)
 		default:
 			functions.Exit(function, vars)
 		}
