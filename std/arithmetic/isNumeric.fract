@@ -1,0 +1,12 @@
+# Copyright 2021, MIT License.
+# Author: Mertcan Davulcu
+#
+# Description
+# ----------------
+# Returns true if object is numeric, returns false if not.
+#
+
+func IsNumeric(object)
+	var result = float(object)
+	ret result <> 0 | result == 0 & (object == 0 | object == "0")
+end
