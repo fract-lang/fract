@@ -6,6 +6,7 @@ package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
+	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
@@ -15,8 +16,23 @@ import (
 // pos Position of start to find.
 // operator Operator to find.
 func findNextOperator(tokens []obj.Token, pos int, operator string) int {
+	brace := 0
 	for ; pos < len(tokens); pos++ {
 		current := tokens[pos]
+		if current.Type == fract.TypeBrace {
+			if current.Value == grammar.TokenLBrace ||
+				current.Value == grammar.TokenLBracket ||
+				current.Value == grammar.TokenLParenthes {
+				brace++
+			} else {
+				brace--
+			}
+		}
+
+		if brace > 0 {
+			continue
+		}
+
 		if current.Type == fract.TypeOperator && current.Value == operator {
 			return pos
 		}

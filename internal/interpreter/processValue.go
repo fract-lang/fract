@@ -653,8 +653,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	// Single value.
 	//
 
-	if token.Type != fract.TypeBooleanTrue &&
-		token.Type != fract.TypeBooleanFalse &&
+	if (token.Type == fract.TypeValue &&
+		token.Value != grammar.KwTrue &&
+		token.Value != grammar.KwFalse) &&
 		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
 		val, err := strconv.ParseFloat(token.Value, 64)
