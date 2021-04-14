@@ -6,7 +6,7 @@
 # Returns true if element is contained in array, returns false if not.
 #
 
-func Contains(array, element, start=0)
+protected func Contains(array, element, start=0)
 	if start < 0 | start >= len(array)
 		ret false
 	end
