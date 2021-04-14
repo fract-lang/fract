@@ -22,7 +22,7 @@ func ErrorCustom(file obj.CodeFile, line, column int,
 	e := obj.Exception{
 		Message: fmt.Sprintf("File: %s\nPosition: %d:%d\n    %s\n%s^\n%s",
 			file.Path, line, column, strings.ReplaceAll(strings.TrimSpace(file.Lines[line-1].Text), "\t", " "),
-			str.GetWhitespace(4+column-3), message),
+			str.GetWhitespace(4+column-1), message),
 	}
 
 	if TryCount > 0 {
