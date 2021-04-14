@@ -11,5 +11,5 @@
 #
 
 protected func Pow(number, power=2)
- ret number ^ power
+	ret number ^ power
 end
