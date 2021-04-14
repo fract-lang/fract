@@ -115,7 +115,7 @@ end
 
 open std.math
 
-print(math.Mod(3, 4))
+print(3.14159265358979323846)
 
 exit()
 

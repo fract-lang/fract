@@ -658,11 +658,19 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		token.Value != grammar.KwFalse) &&
 		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
-		val, err := strconv.ParseFloat(token.Value, 64)
-		if err != nil {
-			fract.Error(token, "Value out of range!")
+		if strings.Contains(token.Value, grammar.TokenDot) {
+			val, err := strconv.ParseFloat(token.Value, 64)
+			if err != nil {
+				fract.Error(token, "Value out of range!")
+			}
+			token.Value = fmt.Sprintf("%g", val)
+		} else {
+			val, err := strconv.ParseInt(token.Value, 10, 64)
+			if err != nil {
+				fract.Error(token, "Value out of range!")
+			}
+			token.Value = fmt.Sprintf("%d", val)
 		}
-		token.Value = fmt.Sprintf("%g", val)
 	}
 
 	if first {
