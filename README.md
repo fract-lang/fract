@@ -8,7 +8,7 @@ Fract gets its name from Fraction. It is a programming language focused on mathe
 ## FizzBuzz
 FizzBuzz example for the range 1-100.
 ```
-for number in range(1, 100)
+for _, number in range(1, 100)
   if number % 3 == 0 & number % 5 == 0
     print("FizzBuzz")
   elif number % 3 == 0
