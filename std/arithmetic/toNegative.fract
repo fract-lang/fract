@@ -6,7 +6,7 @@
 # Reverse positive number to negative number.
 #
 
-func ToNegative(number)
+protected func ToNegative(number)
 	if number < 0
 		ret number
 	end

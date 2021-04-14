@@ -6,6 +6,6 @@
 # Reverse number to positive if negative, reverse to negative if positive.
 #
 
-func Switch(number)
+protected func Switch(number)
 	ret number * -1
 end

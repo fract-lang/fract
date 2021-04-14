@@ -6,6 +6,6 @@
 # Returns clone as array.
 #
 
-func Clone(object)
+protected func Clone(object)
 	ret [ object ]
 end
