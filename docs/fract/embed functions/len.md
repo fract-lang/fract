@@ -11,6 +11,6 @@ protected func len(object)
 ## Examples
 
 ```
-len({"This", "is", "array"}) # Length of 3
+len(["This", "is", "array"]) # Length of 3
 len("String")                # Length of 6
 ```
