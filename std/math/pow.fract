@@ -1,0 +1,15 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns power of number.
+#
+
+func Pow(number, power=2)
+ ret number ^ power
+end
