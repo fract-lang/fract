@@ -7,9 +7,9 @@
 #
 # Description
 # ----------------
-# Returns power of number.
+# Returns modulo of number.
 #
 
-protected func Pow(number, power=2)
- ret number ^ power
+protected func Mod(number, y=2)
+ ret number % y
 end

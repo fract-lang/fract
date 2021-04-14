@@ -10,6 +10,6 @@
 # Prints message and new line to cli.
 #
 
-func Println(message)
+protected func Println(message)
  print(message, fin="\n")
 end

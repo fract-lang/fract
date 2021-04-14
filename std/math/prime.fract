@@ -10,7 +10,7 @@
 # Returns true if number is prime, returns false if not.
 #
 
-func Prime(number)
+protected func Prime(number)
 	if number == 2
 		ret true
 	end
