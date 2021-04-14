@@ -7,9 +7,14 @@
 #
 # Description
 # ----------------
-# Prints message to cli.
+# N/A
+#
+# Constants
+# ----------------
+# PI
+#  The PI number.
 #
 
-protected func Print(message)
-	print(message, fin="")
-end
+protected const (
+	PI            = 3.141592653589793
+)

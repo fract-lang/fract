@@ -11,5 +11,5 @@
 #
 
 protected func Println(message)
- print(message, fin="\n")
+	print(message, fin="\n")
 end

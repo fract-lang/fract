@@ -11,5 +11,5 @@
 #
 
 protected func Mod(number, y=2)
- ret number % y
+	ret number % y
 end
