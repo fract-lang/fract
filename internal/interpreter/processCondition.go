@@ -30,7 +30,8 @@ func compare(value0, value1 obj.Value, operator string) bool {
 	// data0 First data to compare.
 	// data1 Secondary data to compare.
 	compare_values := func(data0 obj.DataFrame, data1 obj.DataFrame) bool {
-		if data0.Type != data1.Type {
+		if data0.Type != data1.Type &&
+			(data0.Type == fract.VALString || data1.Type == fract.VALString) {
 			return false
 		}
 
