@@ -39,8 +39,6 @@ func String(f obj.Function, parameters []obj.Variable) obj.Value {
 				},
 			},
 		}
-	case "object":
-		fallthrough
 	default: // Objects.
 		return obj.Value{
 			Content: []obj.DataFrame{

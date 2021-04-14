@@ -170,13 +170,18 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		i.index++
 		tokens := i.Tokens[i.index]
 
-		index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprintf("%d", vindex)}
-		if value.Array {
-			element.Value.Content[0] = value.Content[vindex]
-		} else {
-			element.Value.Content[0] = obj.DataFrame{
-				Data: string(value.Content[0].Data[vindex]),
-				Type: fract.VALString,
+		if index.Name != "" {
+			index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprintf("%d", vindex)}
+		}
+
+		if element.Name != "" {
+			if value.Array {
+				element.Value.Content[0] = value.Content[vindex]
+			} else {
+				element.Value.Content[0] = obj.DataFrame{
+					Data: string(value.Content[0].Data[vindex]),
+					Type: fract.VALString,
+				}
 			}
 		}
 
