@@ -116,7 +116,7 @@ end
 open std
 
 std.Print("Hello")
-std.Print(" World\n")
+std.Println(" World")
 
 exit()
 
