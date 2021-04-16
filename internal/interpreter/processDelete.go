@@ -48,7 +48,7 @@ func (i *Interpreter) processDelete(tokens []obj.Token) {
 				}
 				index += 2
 
-				position := i.functionIndexByName(current.Value)
+				position, source := i.functionIndexByName(current)
 
 				// Name is not defined?
 				if position == -1 {
@@ -56,18 +56,18 @@ func (i *Interpreter) processDelete(tokens []obj.Token) {
 				}
 
 				// Protected?
-				if i.functions[position].Protected {
+				if source.functions[position].Protected {
 					fract.Error(current,
 						"Protected objects cannot be deleted manually from memory!")
 				}
 
-				i.functions = append(i.functions[:position], i.functions[position+1:]...)
+				source.functions = append(source.functions[:position], source.functions[position+1:]...)
 				comma = true
 				continue
 			}
 		}
 
-		position := i.varIndexByName(current.Value)
+		position, source := i.varIndexByName(current)
 
 		// Name is not defined?
 		if position == -1 {
@@ -75,12 +75,12 @@ func (i *Interpreter) processDelete(tokens []obj.Token) {
 		}
 
 		// Protected?
-		if i.variables[position].Protected {
+		if source.variables[position].Protected {
 			fract.Error(current,
 				"Protected objects cannot be deleted manually from memory!")
 		}
 
-		i.variables = append(i.variables[:position], i.variables[position+1:]...)
+		source.variables = append(source.variables[:position], source.variables[position+1:]...)
 		comma = true
 	}
 }

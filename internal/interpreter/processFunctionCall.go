@@ -21,12 +21,12 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	_name := tokens[0]
 
 	// Name is not defined?
-	nameIndex := i.functionIndexByName(_name.Value)
+	nameIndex, source := i.functionIndexByName(_name)
 	if nameIndex == -1 {
 		fract.Error(_name, "Function is not defined in this name!: "+_name.Value)
 	}
 
-	function := i.functions[nameIndex]
+	function := source.functions[nameIndex]
 	vars, names := make([]obj.Variable, 0), []string{}
 	count := 0
 
@@ -202,8 +202,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	returnValue := obj.Value{}
-	variables := append(make([]obj.Variable, 0), i.variables...)
-	i.variables = append(i.variables[:i.funcTempVariables], vars...)
+	variables := append(make([]obj.Variable, 0), source.variables...)
+	source.variables = append(source.variables[:source.funcTempVariables], vars...)
 
 	// Is embed function?
 	if function.Tokens == nil {
@@ -233,47 +233,47 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	} else {
 		// Process block.
 
-		i.functionCount++
+		source.functionCount++
 
-		old := i.funcTempVariables
-		i.funcTempVariables = len(vars)
+		old := source.funcTempVariables
+		source.funcTempVariables = len(vars)
 
-		functionLen := len(i.functions)
-		nameIndex = i.index
-		itokens := i.Tokens
-		i.Tokens = function.Tokens
+		functionLen := len(source.functions)
+		nameIndex = source.index
+		itokens := source.Tokens
+		source.Tokens = function.Tokens
 
-		i.index = -1
+		source.index = -1
 
 		for {
-			i.index++
-			tokens := i.Tokens[i.index]
-			i.funcTempVariables = len(i.variables) - i.funcTempVariables
+			source.index++
+			tokens := source.Tokens[source.index]
+			source.funcTempVariables = len(source.variables) - source.funcTempVariables
 
 			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 				break
-			} else if i.processTokens(tokens) == fract.FUNCReturn {
-				if i.returnValue == nil {
+			} else if source.processTokens(tokens) == fract.FUNCReturn {
+				if source.returnValue == nil {
 					break
 				}
-				returnValue = *i.returnValue
-				i.returnValue = nil
+				returnValue = *source.returnValue
+				source.returnValue = nil
 				break
 			}
 		}
 
-		i.Tokens = itokens
+		source.Tokens = itokens
 
 		// Remove temporary functions.
-		i.functions = i.functions[:functionLen]
+		source.functions = source.functions[:functionLen]
 
-		i.functionCount--
-		i.funcTempVariables = old
-		i.index = nameIndex
+		source.functionCount--
+		source.funcTempVariables = old
+		source.index = nameIndex
 	}
 
 	// Remove temporary variables.
-	i.variables = variables
+	source.variables = variables
 
 	return returnValue
 }

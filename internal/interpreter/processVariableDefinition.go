@@ -38,7 +38,7 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 		}
 
 		// Name is already defined?
-		if index := i.varIndexByName(_name.Value); index != -1 {
+		if index, _ := i.varIndexByName(_name); index != -1 {
 			fract.Error(_name, "Variable already defined in this name at line: "+
 				fmt.Sprint(i.variables[index].Line))
 		}

@@ -113,12 +113,6 @@ func calc.range(start, to, step=1)
 end
 <#
 
-open std.math
-
-print(3.14159265358979323846)
-
-exit()
-
 open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]

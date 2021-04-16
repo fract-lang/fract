@@ -26,7 +26,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		fract.Error(_name, "Ignore operator is cannot set!")
 	}
 
-	index := i.varIndexByName(_name.Value)
+	index, _ := i.varIndexByName(_name)
 	if index == -1 {
 		fract.Error(_name, "Variable is not defined in this name!: "+_name.Value)
 	}

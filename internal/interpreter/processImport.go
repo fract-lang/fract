@@ -72,12 +72,30 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		name = tokens[1].Value
 	}
 
+	// Check name.
+	for _, _import := range i.Imports {
+		if _import.Name == name {
+			fract.Error(tokens[1], "'"+name+"' is already defined!")
+		}
+	}
+
+	source := &Interpreter{}
+	source.ApplyEmbedFunctions()
 	for _, current := range content {
 		// Skip directories.
 		if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) {
 			continue
 		}
 
-		New(path, path+string(os.PathSeparator)+current.Name()).Import(i, name)
+		isource := New(path, path+string(os.PathSeparator)+current.Name())
+		isource.Import()
+
+		source.functions = append(source.functions, isource.functions...)
+		source.variables = append(source.variables, isource.variables...)
 	}
+
+	i.Imports = append(i.Imports, ImportInfo{
+		Name:   name,
+		Source: source,
+	})
 }

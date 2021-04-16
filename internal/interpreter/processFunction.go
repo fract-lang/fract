@@ -29,7 +29,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	}
 
 	// Name is already defined?
-	if index := i.functionIndexByName(_name.Value); index != -1 {
+	if index, _ := i.functionIndexByName(_name); index != -1 {
 		fract.Error(_name, "Already defined function in this name at line: "+
 			fmt.Sprint(i.functions[index].Line))
 	}

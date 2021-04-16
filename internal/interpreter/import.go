@@ -8,13 +8,30 @@ import (
 	"unicode"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 )
 
 // Import content into destination interpeter.
-// dest Destination interpreter.
-func (i *Interpreter) Import(dest *Interpreter, name string) {
+func (i *Interpreter) Import() {
 	i.ready()
+
+	varLen := len(i.variables)
+	funcLen := len(i.functions)
+
+	checkFunction := func() {
+		funcLen++
+		if !unicode.IsUpper(rune(i.functions[funcLen-1].Name[0])) {
+			funcLen--
+			i.functions = i.functions[:funcLen]
+		}
+	}
+
+	checkVariable := func() {
+		varLen++
+		if !unicode.IsUpper(rune(i.variables[varLen-1].Name[0])) {
+			varLen--
+			i.variables = i.variables[:varLen]
+		}
+	}
 
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {
@@ -28,41 +45,26 @@ func (i *Interpreter) Import(dest *Interpreter, name string) {
 			tokens = tokens[1:]
 			if second.Type == fract.TypeVariable { // Variable definition.
 				i.processVariableDefinition(tokens, true)
+				checkVariable()
 			} else if second.Type == fract.TypeFunction { // Function definition.
 				i.processFunction(tokens, true)
+				checkFunction()
 			} else {
 				fract.Error(second, "Syntax error, you can protect only deletable objects!")
 			}
 		case fract.TypeVariable: // Variable definition.
 			i.processVariableDefinition(tokens, false)
+			checkVariable()
 		case fract.TypeFunction: // Function definiton.
 			i.processFunction(tokens, false)
+			checkFunction()
 		case fract.TypeImport: // Import.
-			dest.processImport(tokens)
+			source := Interpreter{}
+			source.processImport(tokens)
+
+			i.variables = append(i.variables, source.variables...)
+			i.functions = append(i.functions, source.functions...)
+			i.Imports = append(i.Imports, source.Imports...)
 		}
-	}
-
-	if name != "" {
-		name += grammar.TokenDot
-	}
-
-	// Variables.
-	for _, variable := range i.variables {
-		if !unicode.IsUpper(rune(variable.Name[0])) {
-			continue
-		}
-
-		variable.Name = name + variable.Name
-		dest.variables = append(dest.variables, variable)
-	}
-
-	// Functions.
-	for _, function := range i.functions {
-		if !unicode.IsUpper(rune(function.Name[0])) {
-			continue
-		}
-
-		function.Name = name + function.Name
-		dest.functions = append(dest.functions, function)
 	}
 }
