@@ -92,7 +92,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	}
 
 	// Name is already defined?
-	if index := i.varIndexByName(nameToken.Value); index != -1 {
+	if index, _ := i.varIndexByName(nameToken); index != -1 {
 		fract.Error(nameToken, "Already defined variable in this name at line: "+
 			fmt.Sprint(i.variables[index].Line))
 	}
@@ -104,9 +104,8 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 			fract.Error(tokens[1], "Element name is not defined!")
 		}
 		if tokens[2].Value != grammar.TokenUnderscore {
-			elementName = tokens[2].Value
 			// Name is already defined?
-			if index := i.varIndexByName(elementName); index != -1 {
+			if index, _ := i.varIndexByName(tokens[2]); index != -1 {
 				fract.Error(tokens[2], "Already defined variable in this name at line: "+
 					fmt.Sprint(i.variables[index].Line))
 			}

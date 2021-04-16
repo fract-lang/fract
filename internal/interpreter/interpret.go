@@ -41,7 +41,11 @@ func (i *Interpreter) Interpret() {
 					continue
 				}
 
-				New(path, path+current.Name()).Import(i, "")
+				source := New(path, path+current.Name())
+				source.Import()
+
+				i.functions = append(i.functions, source.functions...)
+				i.variables = append(i.variables, source.variables...)
 			}
 		}
 	}

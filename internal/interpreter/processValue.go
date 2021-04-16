@@ -367,7 +367,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			// Array?
 			if next.Type == fract.TypeBrace {
 				if next.Value == grammar.TokenLBracket {
-					vindex := i.varIndexByName(token.Value)
+					vindex, source := i.varIndexByName(token)
 					if vindex == -1 {
 						fract.Error(token, "Variable is not defined in this name!: "+token.Value)
 					}
@@ -407,7 +407,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						fract.Error((*tokens)[index], "Value out of range!")
 					}
 
-					variable := i.variables[vindex]
+					variable := source.variables[vindex]
 
 					if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
 						fract.Error((*tokens)[index],
@@ -475,12 +475,12 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			}
 		}
 
-		vindex := i.varIndexByName(token.Value)
+		vindex, source := i.varIndexByName(token)
 		if vindex == -1 {
 			fract.Error(token, "Variable is not defined in this name!: "+token.Value)
 		}
 
-		variable := i.variables[vindex]
+		variable := source.variables[vindex]
 
 		if first {
 			operation.FirstV = variable.Value
@@ -523,7 +523,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			}
 
 			endToken := (*tokens)[oindex-1]
-			vindex := i.varIndexByName(endToken.Value)
+			vindex, source := i.varIndexByName(endToken)
 			if vindex == -1 {
 				fract.Error(endToken, "Variable is not defined in this name!: "+endToken.Value)
 			}
@@ -547,7 +547,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				fract.Error((*tokens)[oindex], "Value out of range!")
 			}
 
-			variable := i.variables[vindex]
+			variable := source.variables[vindex]
 
 			if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
 				fract.Error((*tokens)[oindex],
