@@ -119,10 +119,10 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 	i.processRange(tokens)
 
 	// Process condition.
-	ors := parser.DecomposeConditionalProcess(*tokens, grammar.TokenVerticalBar)
+	ors := parser.DecomposeConditionalProcess(*tokens, grammar.LogicalOr)
 	for _, current := range *ors {
 		// Decompose and conditions.
-		ands := parser.DecomposeConditionalProcess(current, grammar.TokenAmper)
+		ands := parser.DecomposeConditionalProcess(current, grammar.LogicalAnd)
 		// Is and long statement?
 		if len(*ands) > 1 {
 			for aindex := range *ands {

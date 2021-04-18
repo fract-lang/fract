@@ -9,7 +9,7 @@
 #test
 #test[3] = [4]
 
-#if ((b + b <> 8) & false) | (b + b == 8 & 2 == 2)
+#if ((b + b <> 8) && false) || (b + b == 8 && 2 == 2)
 #  3
 #  if true == false
 #    5
@@ -112,14 +112,6 @@ func calc.range(start, to, step=1)
 	ret lst
 end
 <#
-
-var test = 10
-print(test)
-test ^= 2
-
-print(test)
-
-exit()
 
 open t std.array
 

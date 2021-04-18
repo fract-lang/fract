@@ -241,11 +241,11 @@ func (l *Lexer) Generate() obj.Token {
 	case strings.HasPrefix(ln, grammar.TokenComma): // Comma.
 		token.Value = grammar.TokenComma
 		token.Type = fract.TypeComma
-	case strings.HasPrefix(ln, grammar.TokenAmper): // Amper (&).
-		token.Value = grammar.TokenAmper
+	case strings.HasPrefix(ln, grammar.LogicalAnd): // Logical and (&&).
+		token.Value = grammar.LogicalAnd
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenVerticalBar): // Vertical bar (|).
-		token.Value = grammar.TokenVerticalBar
+	case strings.HasPrefix(ln, grammar.LogicalOr): // Logical or (||).
+		token.Value = grammar.LogicalOr
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.GreaterEquals): // Greater than or equals to (>=).
 		token.Value = grammar.GreaterEquals
