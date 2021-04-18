@@ -90,4 +90,8 @@
     <td align="center"><b>_</b></td>
     <td>Ignore.</td>
   </tr>
+  <tr>
+    <td align="center"><b>+=</b></td>
+    <td>Addition assigment.</td>
+  </tr>
 </table>

@@ -74,10 +74,11 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		}
 	}
 
-	// Setter is not a setter operator?
-	if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals {
-		fract.Error(setter, "This is not a setter operator!"+setter.Value)
-	}
+	/*
+		// Setter is not a setter operator?
+		if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals {
+			fract.Error(setter, "This is not a setter operator!"+setter.Value)
+		}*/
 
 	// Value are not defined?
 	if len(tokens) < 3 {
@@ -94,9 +95,35 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		if value.Array {
 			fract.Error(setter, "Array is cannot set as indexed value!")
 		}
-		variable.Value.Content[setIndex] = value.Content[0]
+		switch setter.Value {
+		case grammar.TokenEquals: // =
+			variable.Value.Content[setIndex] = value.Content[0]
+		case grammar.AdditionAssigment: // +=
+			variable.Value.Content[setIndex] = solveProcess(
+				valueProcess{
+					Operator: obj.Token{Value: grammar.TokenPlus},
+					First:    tokens[0],
+					FirstV: obj.Value{
+						Content: []obj.DataFrame{variable.Value.Content[setIndex]},
+					},
+					Second:  setter,
+					SecondV: value,
+				}).Content[0]
+		}
 	} else {
-		variable.Value = value
+		switch setter.Value {
+		case grammar.TokenEquals: // =
+			variable.Value = value
+		case grammar.AdditionAssigment: // +=
+			variable.Value = solveProcess(
+				valueProcess{
+					Operator: obj.Token{Value: grammar.TokenPlus},
+					First:    tokens[0],
+					FirstV:   variable.Value,
+					Second:   setter,
+					SecondV:  value,
+				})
+		}
 	}
 
 	i.variables[index] = variable
