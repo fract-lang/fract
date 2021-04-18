@@ -18,22 +18,6 @@ func PrintValue(value obj.Value) bool {
 		return false
 	}
 
-	formatData := func(data obj.DataFrame) string {
-		if data.Type == VALFloat {
-			for index := len(data.Data) - 1; index >= 0; index-- {
-				if ch := data.Data[index]; ch != '0' {
-					data.Data = data.Data[:index+1]
-					if ch == '.' {
-						data.Data += "0"
-					}
-					return data.Data
-				}
-			}
-			return data.Data
-		}
-		return data.Data
-	}
-
 	if value.Array {
 		if len(value.Content) == 0 {
 			fmt.Print("[]")
@@ -41,12 +25,12 @@ func PrintValue(value obj.Value) bool {
 			sb := strings.Builder{}
 			sb.WriteRune('[')
 			for _, data := range value.Content {
-				sb.WriteString(formatData(data) + " ")
+				sb.WriteString(FormatData(data) + " ")
 			}
 			fmt.Print(sb.String()[:sb.Len()-1] + "]")
 		}
 	} else {
-		fmt.Print(formatData(value.Content[0]))
+		fmt.Print(FormatData(value.Content[0]))
 	}
 	return true
 }
