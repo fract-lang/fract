@@ -23,8 +23,10 @@ const (
 	LessEquals = "<="
 	// Params Params parameter.
 	Params = "..."
-	// LeftShift Left shift.
-	LeftShift = "<<"
-	// RightShift Right shift.
-	RightShift = ">>"
+	// LeftBinaryShift Left binary shift.
+	LeftBinaryShift = "<<"
+	// RightBinaryShift Right binary shift.
+	RightBinaryShift = ">>"
+	// AdditionAssigment Addition assigment.
+	AdditionAssigment = "+="
 )

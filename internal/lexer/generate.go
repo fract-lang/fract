@@ -154,6 +154,9 @@ func (l *Lexer) Generate() obj.Token {
 		token.Value = grammar.TokenSemicolon
 		token.Type = fract.TypeStatementTerminator
 		l.Line--
+	case strings.HasPrefix(ln, grammar.AdditionAssigment): // Addition assigment.
+		token.Value = grammar.AdditionAssigment
+		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.IntegerDivision): // Integer division.
 		token.Value = grammar.IntegerDivision
 		token.Type = fract.TypeOperator
@@ -214,11 +217,11 @@ func (l *Lexer) Generate() obj.Token {
 		}
 		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.LeftShift): // Left shift.
-		token.Value = grammar.LeftShift
+	case strings.HasPrefix(ln, grammar.LeftBinaryShift): // Left shift.
+		token.Value = grammar.LeftBinaryShift
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.RightShift): // Right shift.
-		token.Value = grammar.RightShift
+	case strings.HasPrefix(ln, grammar.RightBinaryShift): // Right shift.
+		token.Value = grammar.RightBinaryShift
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenComma): // Comma.
 		token.Value = grammar.TokenComma
