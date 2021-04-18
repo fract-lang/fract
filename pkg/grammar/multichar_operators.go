@@ -31,4 +31,6 @@ const (
 	AdditionAssigment = "+="
 	//SubtractionAssigment Subtraction assigment.
 	SubtractionAssigment = "-="
+	//MultiplicationAssigment Multiplication assigment.
+	MultiplicationAssigment = "*="
 )
