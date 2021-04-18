@@ -102,4 +102,8 @@
     <td align="center"><b>*=</b></td>
     <td>Multiplication assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b>/=</b></td>
+    <td>Division assigment.</td>
+  </tr>
 </table>

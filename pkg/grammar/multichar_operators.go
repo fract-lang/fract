@@ -29,8 +29,10 @@ const (
 	RightBinaryShift = ">>"
 	// AdditionAssigment Addition assigment.
 	AdditionAssigment = "+="
-	//SubtractionAssigment Subtraction assigment.
+	// SubtractionAssigment Subtraction assigment.
 	SubtractionAssigment = "-="
-	//MultiplicationAssigment Multiplication assigment.
+	// MultiplicationAssigment Multiplication assigment.
 	MultiplicationAssigment = "*="
+	// DivisionAssigment Division assigment.
+	DivisionAssigment = "/="
 )
