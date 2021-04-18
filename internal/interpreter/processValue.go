@@ -153,14 +153,6 @@ func solveProcess(process valueProcess) obj.Value {
 	// String?
 	if (len(process.FirstV.Content) != 0 && process.FirstV.Content[0].Type == fract.VALString) ||
 		(len(process.SecondV.Content) != 0 && process.SecondV.Content[0].Type == fract.VALString) {
-		if len(process.FirstV.Content) == 0 {
-			value.Content = process.SecondV.Content
-			return value
-		} else if len(process.SecondV.Content) == 0 {
-			value.Content = process.FirstV.Content
-			return value
-		}
-
 		if process.FirstV.Content[0].Type == process.SecondV.Content[0].Type { // Both string?
 			value.Content = []obj.DataFrame{{
 				Data: process.FirstV.Content[0].Data + process.SecondV.Content[0].Data,
@@ -257,6 +249,20 @@ func solveProcess(process valueProcess) obj.Value {
 
 	// ****************************
 
+	// readyDataFrame DataFrame ready to data.
+	// dataFrame Destination dataframe.
+	readyDataFrame := func(dataFrame obj.DataFrame) obj.DataFrame {
+		if process.FirstV.Content[0].Type == fract.VALString ||
+			process.SecondV.Content[0].Type == fract.VALString {
+			dataFrame.Type = fract.VALString
+		} else if process.FirstV.Content[0].Type == fract.VALFloat ||
+			process.SecondV.Content[0].Type == fract.VALFloat {
+			dataFrame.Type = fract.VALFloat
+		}
+		dataFrame.Data = fract.FormatData(dataFrame)
+		return dataFrame
+	}
+
 	if process.FirstV.Array && process.SecondV.Array {
 		value.Array = true
 
@@ -277,25 +283,25 @@ func solveProcess(process valueProcess) obj.Value {
 		if len(process.FirstV.Content) == 1 {
 			first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 			for index, current := range process.SecondV.Content {
-				process.SecondV.Content[index] = obj.DataFrame{
+				process.SecondV.Content[index] = readyDataFrame(obj.DataFrame{
 					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data)))}
+						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data)))})
 			}
 			value.Content = process.SecondV.Content
 		} else if len(process.SecondV.Content) == 1 {
 			second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = obj.DataFrame{
+				process.FirstV.Content[index] = readyDataFrame(obj.DataFrame{
 					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))}
+						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))})
 			}
 			value.Content = process.FirstV.Content
 		} else {
 			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = obj.DataFrame{
+				process.FirstV.Content[index] = readyDataFrame(obj.DataFrame{
 					Data: fmt.Sprintf(fract.FloatFormat,
 						solve(process.Operator, arithmetic.ToArithmetic(current.Data),
-							arithmetic.ToArithmetic(process.SecondV.Content[index].Data)))}
+							arithmetic.ToArithmetic(process.SecondV.Content[index].Data)))})
 			}
 			value.Content = process.FirstV.Content
 		}
@@ -312,9 +318,9 @@ func solveProcess(process valueProcess) obj.Value {
 
 		second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 		for index, current := range process.FirstV.Content {
-			process.FirstV.Content[index] = obj.DataFrame{
+			process.FirstV.Content[index] = readyDataFrame(obj.DataFrame{
 				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))}
+					solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))})
 		}
 		value.Content = process.FirstV.Content
 	} else if process.SecondV.Array {
@@ -330,9 +336,9 @@ func solveProcess(process valueProcess) obj.Value {
 
 		first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 		for index, current := range process.SecondV.Content {
-			process.SecondV.Content[index] = obj.DataFrame{
+			process.SecondV.Content[index] = readyDataFrame(obj.DataFrame{
 				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator, arithmetic.ToArithmetic(current.Data), first))}
+					solve(process.Operator, arithmetic.ToArithmetic(current.Data), first))})
 		}
 		value.Content = process.SecondV.Content
 	} else {
@@ -340,10 +346,12 @@ func solveProcess(process valueProcess) obj.Value {
 			process.FirstV.Content = []obj.DataFrame{{Data: "0"}}
 		}
 
-		value.Content = []obj.DataFrame{{
-			Data: fmt.Sprintf(fract.FloatFormat,
-				solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
-					arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))}}
+		value.Content = []obj.DataFrame{
+			readyDataFrame(obj.DataFrame{
+				Data: fmt.Sprintf(fract.FloatFormat,
+					solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
+						arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))}),
+		}
 	}
 
 	return value
@@ -404,7 +412,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					}
 					position, err := strconv.Atoi(value.Content[0].Data)
 					if err != nil {
-						fract.Error((*tokens)[index], "Value out of range!")
+						fract.Error((*tokens)[index], "Invalid value!")
 					}
 
 					variable := source.variables[vindex]
@@ -544,7 +552,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 			position, err := strconv.Atoi(value.Content[0].Data)
 			if err != nil {
-				fract.Error((*tokens)[oindex], "Value out of range!")
+				fract.Error((*tokens)[oindex], "Invalid value!")
 			}
 
 			variable := source.variables[vindex]
@@ -661,13 +669,13 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if strings.Contains(token.Value, grammar.TokenDot) {
 			val, err := strconv.ParseFloat(token.Value, 64)
 			if err != nil {
-				fract.Error(token, "Value out of range!")
+				fract.Error(token, "Invalid value!")
 			}
 			token.Value = fmt.Sprintf(fract.FloatFormat, val)
 		} else {
 			val, err := strconv.ParseInt(token.Value, 10, 64)
 			if err != nil {
-				fract.Error(token, "Value out of range!")
+				fract.Error(token, "Invalid value!")
 			}
 			token.Value = fmt.Sprintf("%d", val)
 		}
