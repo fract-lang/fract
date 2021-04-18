@@ -110,4 +110,8 @@
     <td align="center"><b>%=</b></td>
     <td>Modulus assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b>^=</b></td>
+    <td>Power assigment.</td>
+  </tr>
 </table>
