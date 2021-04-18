@@ -37,4 +37,6 @@ const (
 	DivisionAssigment = "/="
 	// ModulusAssigment Modulus assigment.
 	ModulusAssigment = "%="
+	// PowerAssigment Power assigment.
+	PowerAssigment = "^="
 )
