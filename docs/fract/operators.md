@@ -94,4 +94,8 @@
     <td align="center"><b>+=</b></td>
     <td>Addition assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b>-=</b></td>
+    <td>Subtraction assigment.</td>
+  </tr>
 </table>

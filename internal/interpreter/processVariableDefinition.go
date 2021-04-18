@@ -52,10 +52,10 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 		}
 
 		setter := avtokens[1]
-		/*// Setter is not a setter operator?
+		// Setter is not a setter operator?
 		if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals {
 			fract.Error(setter, "This is not a setter operator!: "+setter.Value)
-		}*/
+		}
 
 		// Value is not defined?
 		if tokensLen < 3 {

@@ -98,10 +98,10 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		switch setter.Value {
 		case grammar.TokenEquals: // =
 			variable.Value.Content[setIndex] = value.Content[0]
-		case grammar.AdditionAssigment: // +=
+		default: // Assigments.
 			variable.Value.Content[setIndex] = solveProcess(
 				valueProcess{
-					Operator: obj.Token{Value: grammar.TokenPlus},
+					Operator: obj.Token{Value: string(setter.Value[0])},
 					First:    tokens[0],
 					FirstV: obj.Value{
 						Content: []obj.DataFrame{variable.Value.Content[setIndex]},
@@ -114,10 +114,10 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		switch setter.Value {
 		case grammar.TokenEquals: // =
 			variable.Value = value
-		case grammar.AdditionAssigment: // +=
+		default: // Assigments.
 			variable.Value = solveProcess(
 				valueProcess{
-					Operator: obj.Token{Value: grammar.TokenPlus},
+					Operator: obj.Token{Value: string(setter.Value[0])},
 					First:    tokens[0],
 					FirstV:   variable.Value,
 					Second:   setter,
