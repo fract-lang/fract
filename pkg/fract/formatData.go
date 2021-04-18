@@ -14,14 +14,16 @@ func FormatData(data obj.DataFrame) string {
 	if data.Type != VALString {
 		for index := len(data.Data) - 1; index >= 0; index-- {
 			if ch := data.Data[index]; ch != '0' {
-				if ch == '.' && data.Type == VALFloat {
-					data.Data = data.Data[:index+1]
-					data.Data += "0"
-				} else {
-					if index == 0 {
-						index++
+				if ch == '.' {
+					if data.Type == VALFloat {
+						data.Data = data.Data[:index+1]
+						data.Data += "0"
+					} else {
+						if index == 0 {
+							index++
+						}
+						data.Data = data.Data[:index]
 					}
-					data.Data = data.Data[:index]
 				}
 				return data.Data
 			}
