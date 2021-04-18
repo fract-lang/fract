@@ -76,10 +76,11 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		}
 
 		/* Interpret/skip block. */
+		conditionList := &tokens
 		for {
 			i.index++
 			tokens := i.Tokens[i.index]
-			condition := i.processCondition(&tokens)
+			condition := i.processCondition(conditionList)
 
 			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 				// Remove temporary variables.
