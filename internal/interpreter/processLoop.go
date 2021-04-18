@@ -16,11 +16,11 @@ import (
 // processLoop Process loop block.
 // tokens Tokens to process.
 func (i *Interpreter) processLoop(tokens []obj.Token) int {
-	tokens = *vector.Sublist(tokens, 1, len(tokens)-1)
-
 	// Content is empty?
-	if tokens == nil {
+	if vtokens := vector.Sublist(tokens, 1, len(tokens)-1); vtokens == nil {
 		fract.Error(tokens[0], "Content is empty!")
+	} else {
+		tokens = *vtokens
 	}
 
 	functionLen := len(i.functions)

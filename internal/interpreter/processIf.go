@@ -18,7 +18,7 @@ import (
 func (i *Interpreter) processIf(tokens []obj.Token) int {
 	/* IF */
 	tokenLen := len(tokens)
-	conditionList := *vector.Sublist(tokens, 1, tokenLen-1)
+	conditionList := vector.Sublist(tokens, 1, tokenLen-1)
 
 	// Condition is empty?
 	if conditionList == nil {
@@ -27,7 +27,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int {
 			"Condition is empty!")
 	}
 
-	state := i.processCondition(&conditionList)
+	state := i.processCondition(conditionList)
 	actioned := state == grammar.KwTrue
 	variableLen := len(i.variables)
 	functionLen := len(i.functions)
