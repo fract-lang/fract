@@ -273,6 +273,15 @@ end
 4 | 90
 ```
 
+### Tip
+The best way give an empty condition for infinite loop.
+#### Examples
+```
+for
+  # ...
+end
+```
+
 ### Break Keyword
 With the keyword break, it is possible to override and terminate the entire loop even when the loop could still return.
 #### Examples
