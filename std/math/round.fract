@@ -1,0 +1,19 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns balue rounded to the nearest integer.
+#
+
+protected func Round(x)
+	if x < 0
+		ret int(x - 0.5)
+	end
+
+	ret int(x + 0.5)
+end
