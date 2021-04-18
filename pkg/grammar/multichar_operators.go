@@ -35,4 +35,6 @@ const (
 	MultiplicationAssigment = "*="
 	// DivisionAssigment Division assigment.
 	DivisionAssigment = "/="
+	// ModulusAssigment Modulus assigment.
+	ModulusAssigment = "%="
 )

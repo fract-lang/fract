@@ -106,4 +106,8 @@
     <td align="center"><b>/=</b></td>
     <td>Division assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b>%=</b></td>
+    <td>Modulus assigment.</td>
+  </tr>
 </table>
