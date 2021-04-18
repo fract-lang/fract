@@ -37,11 +37,17 @@ func compare(value0, value1 obj.Value, operator string) bool {
 
 		switch operator {
 		case grammar.Equals: // Equals.
-			if data0.Data != data1.Data {
+			if (data0.Type == fract.VALString && data0.Data != data1.Data) ||
+				(data0.Type != fract.VALString &&
+					arithmetic.ToArithmetic(data0.Data) !=
+						arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.NotEquals: // Not equals.
-			if data0.Data == data1.Data {
+			if (data0.Type == fract.VALString && data0.Data == data1.Data) ||
+				(data0.Type != fract.VALString &&
+					arithmetic.ToArithmetic(data0.Data) ==
+						arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.TokenGreat: // Greater.
