@@ -1,0 +1,19 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns absolute of value.
+#
+
+protected func Abs(x)
+	if x < 0
+		ret x * -1
+	end
+
+	ret x
+end
