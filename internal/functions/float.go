@@ -15,7 +15,7 @@ func Float(f obj.Function, parameters []obj.Variable) obj.Value {
 	return obj.Value{
 		Content: []obj.DataFrame{
 			{
-				Data: fmt.Sprintf("%g", arithmetic.ToArithmetic(parameters[0].Value.Content[0].Data)),
+				Data: fmt.Sprintf(fract.FloatFormat, arithmetic.ToArithmetic(parameters[0].Value.Content[0].Data)),
 				Type: fract.VALFloat,
 			},
 		},

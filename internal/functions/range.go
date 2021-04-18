@@ -44,7 +44,7 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			dataFrame := obj.DataFrame{Data: fmt.Sprintf("%g", startV)}
+			dataFrame := obj.DataFrame{Data: fmt.Sprintf(fract.FloatFormat, startV)}
 			if strings.Contains(dataFrame.Data, grammar.TokenDot) {
 				dataFrame.Type = fract.VALFloat
 			}
@@ -52,7 +52,7 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			dataFrame := obj.DataFrame{Data: fmt.Sprintf("%g", startV)}
+			dataFrame := obj.DataFrame{Data: fmt.Sprintf(fract.FloatFormat, startV)}
 			if strings.Contains(dataFrame.Data, grammar.TokenDot) {
 				dataFrame.Type = fract.VALFloat
 			}

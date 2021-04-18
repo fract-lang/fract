@@ -278,7 +278,7 @@ func solveProcess(process valueProcess) obj.Value {
 			first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 			for index, current := range process.SecondV.Content {
 				process.SecondV.Content[index] = obj.DataFrame{
-					Data: fmt.Sprintf("%g",
+					Data: fmt.Sprintf(fract.FloatFormat,
 						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data)))}
 			}
 			value.Content = process.SecondV.Content
@@ -286,14 +286,14 @@ func solveProcess(process valueProcess) obj.Value {
 			second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 			for index, current := range process.FirstV.Content {
 				process.FirstV.Content[index] = obj.DataFrame{
-					Data: fmt.Sprintf("%g",
+					Data: fmt.Sprintf(fract.FloatFormat,
 						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))}
 			}
 			value.Content = process.FirstV.Content
 		} else {
 			for index, current := range process.FirstV.Content {
 				process.FirstV.Content[index] = obj.DataFrame{
-					Data: fmt.Sprintf("%g",
+					Data: fmt.Sprintf(fract.FloatFormat,
 						solve(process.Operator, arithmetic.ToArithmetic(current.Data),
 							arithmetic.ToArithmetic(process.SecondV.Content[index].Data)))}
 			}
@@ -313,7 +313,7 @@ func solveProcess(process valueProcess) obj.Value {
 		second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 		for index, current := range process.FirstV.Content {
 			process.FirstV.Content[index] = obj.DataFrame{
-				Data: fmt.Sprintf("%g",
+				Data: fmt.Sprintf(fract.FloatFormat,
 					solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))}
 		}
 		value.Content = process.FirstV.Content
@@ -331,7 +331,7 @@ func solveProcess(process valueProcess) obj.Value {
 		first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 		for index, current := range process.SecondV.Content {
 			process.SecondV.Content[index] = obj.DataFrame{
-				Data: fmt.Sprintf("%g",
+				Data: fmt.Sprintf(fract.FloatFormat,
 					solve(process.Operator, arithmetic.ToArithmetic(current.Data), first))}
 		}
 		value.Content = process.SecondV.Content
@@ -341,7 +341,7 @@ func solveProcess(process valueProcess) obj.Value {
 		}
 
 		value.Content = []obj.DataFrame{{
-			Data: fmt.Sprintf("%g",
+			Data: fmt.Sprintf(fract.FloatFormat,
 				solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
 					arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))}}
 	}
@@ -663,7 +663,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if err != nil {
 				fract.Error(token, "Value out of range!")
 			}
-			token.Value = fmt.Sprintf("%g", val)
+			token.Value = fmt.Sprintf(fract.FloatFormat, val)
 		} else {
 			val, err := strconv.ParseInt(token.Value, 10, 64)
 			if err != nil {

@@ -13,4 +13,7 @@ const (
 
 	// Stdin Standard input type.
 	Stdin = "<stdin>"
+
+	// Float format.
+	FloatFormat = "%0.15f"
 )
