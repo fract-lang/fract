@@ -18,7 +18,7 @@ import (
 func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	// Content is empty?
 	if vtokens := vector.Sublist(tokens, 1, len(tokens)-1); vtokens == nil {
-		fract.Error(tokens[0], "Content is empty!")
+		tokens = nil
 	} else {
 		tokens = *vtokens
 	}
@@ -39,9 +39,41 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//*************
 	//    WHILE
 	//*************
-	if len(tokens) == 1 ||
+	if tokens == nil || len(tokens) == 1 ||
 		tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
 		variableLen := len(i.variables)
+
+		/* Infinity loop. */
+		if tokens == nil {
+			for {
+				i.index++
+				tokens := i.Tokens[i.index]
+
+				if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+					// Remove temporary variables.
+					i.variables = i.variables[:variableLen]
+					// Remove temporary functions.
+					i.functions = i.functions[:functionLen]
+
+					if _break {
+						return processKwState()
+					}
+
+					i.index = iindex
+					continue
+				}
+
+				kwstate = i.processTokens(tokens)
+				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+					_break = true
+					i.skipBlock(false)
+					i.index--
+				} else if kwstate == fract.LOOPContinue { // Continue loop?
+					i.skipBlock(false)
+					i.index--
+				}
+			}
+		}
 
 		/* Interpret/skip block. */
 		for {
