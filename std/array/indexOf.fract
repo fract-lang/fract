@@ -11,7 +11,7 @@
 #
 
 protected func IndexOf(array, element, start=0)
-	if start < 0 | start >= len(array)
+	if start < 0 || start >= len(array)
 		ret -1
 	end
 	

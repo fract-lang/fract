@@ -790,7 +790,7 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 				brace--
 			}
 		} else if brace == 0 && current.Type == fract.TypeOperator &&
-			(current.Value == grammar.TokenAmper || current.Value == grammar.TokenVerticalBar ||
+			(current.Value == grammar.LogicalAnd || current.Value == grammar.LogicalOr ||
 				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
 				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
 				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {

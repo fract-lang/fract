@@ -172,7 +172,7 @@ array[index] = value
 ### How can you quickly use the data in an array for arithmetic operations?
 ```
 var array = [ 0, 4, 4, 2 ]          # Elements: 0 4 4 2
-array = array + 5                   # Elements: 5 9 9 7
+array += 5                          # Elements: 5 9 9 7
 ```
 ```
 var array = [ 0, 4, 4, 2 ]          # Elements: 0 4 4 2
@@ -302,7 +302,7 @@ end
 It can be used to pass the cycle to the next cycle step. If there is no next loop step, the loop is terminated.
 ```
 for _, item in [ 0, 1, 2, 3, 4.0 ]
-  if item == 1 | item == 3
+  if item == 1 || item == 3
     continue
   end
   print(item, fin=" ")

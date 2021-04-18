@@ -71,11 +71,11 @@
     <td>Less than or equals to.</td>
   </tr>
   <tr>
-    <td align="center"><b>|</b></td>
+    <td align="center"><b>||</b></td>
     <td>Logical or.</td>
   </tr>
   <tr>
-    <td align="center"><b>&</b></td>
+    <td align="center"><b>&&</b></td>
     <td>Logical and.</td>
   </tr>
   <tr>

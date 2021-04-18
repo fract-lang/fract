@@ -12,5 +12,5 @@
 
 protected func IsNumeric(object)
 	var result = float(object)
-	ret result <> 0 | result == 0 & (object == 0 | object == "0")
+	ret result <> 0 || result == 0 && (object == 0 || object == "0")
 end

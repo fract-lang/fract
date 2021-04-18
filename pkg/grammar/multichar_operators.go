@@ -5,6 +5,10 @@
 package grammar
 
 const (
+	// LogicalAnd Logical and.
+	LogicalAnd = "&&"
+	// LogicalOr Logical or.
+	LogicalOr = "||"
 	// RangeCommentOpen Multiline comment open.
 	RangeCommentOpen = "#>"
 	// RangeCommentClose Multiline comment close.
