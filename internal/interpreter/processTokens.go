@@ -45,7 +45,8 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 				if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.TokenEquals ||
 						current.Value == grammar.AdditionAssigment ||
-						current.Value == grammar.SubtractionAssigment) { // Variable setting.
+						current.Value == grammar.SubtractionAssigment ||
+						current.Value == grammar.MultiplicationAssigment) { // Variable setting.
 					i.processVariableSet(tokens)
 					return fract.TypeNone
 				}

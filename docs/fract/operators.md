@@ -98,4 +98,8 @@
     <td align="center"><b>-=</b></td>
     <td>Subtraction assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b>*=</b></td>
+    <td>Multiplication assigment.</td>
+  </tr>
 </table>

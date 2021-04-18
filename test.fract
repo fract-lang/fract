@@ -113,6 +113,14 @@ func calc.range(start, to, step=1)
 end
 <#
 
+var test = 10
+print(test)
+test *= 50
+
+print(test)
+
+exit()
+
 open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]
