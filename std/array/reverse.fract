@@ -1,0 +1,23 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns reversed array.
+#
+
+protected func Reverse(array)
+	const arlen = len(array)
+	
+	for index in range(0, int(arlen / 2) - 1)
+		const cache = array[index]
+		array[index] = array[arlen - index - 1]
+		array[arlen - index - 1] = cache
+	end
+
+	ret array
+end
