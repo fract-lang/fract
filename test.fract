@@ -129,9 +129,11 @@ exit()
 
 open t std.array
 
-var arr = range(1, 35)
+var arr = range(1, 10)
 
 print(arr)
+
+print(t.Reverse(arr))
 
 exit()
 
