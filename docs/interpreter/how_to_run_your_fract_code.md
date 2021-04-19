@@ -4,7 +4,7 @@ Our sample code prints 'Hello World' on the screen and file name is 'main.fract'
 
 How to interpret?
 
-> Using [make](https://github.com/fract-lang/fract/blob/main/docs/interpreter/modules/make.md) module.
+> Using [make](https://github.com/fract-lang/fract/blob/master/docs/interpreter/modules/make.md) module.
 
 ```
 dir$ fract make main.fract
