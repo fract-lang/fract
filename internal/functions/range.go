@@ -3,10 +3,8 @@ package functions
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -26,6 +24,15 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 		fract.Error(f.Tokens[0][0], "'step' argument should be numeric!")
 	}
 
+	if start.Content[0].Type != fract.VALInteger &&
+		start.Content[0].Type != fract.VALFloat ||
+		to.Content[0].Type != fract.VALInteger &&
+			to.Content[0].Type != fract.VALFloat ||
+		step.Content[0].Type != fract.VALInteger &&
+			step.Content[0].Type != fract.VALFloat {
+		fract.Error(f.Tokens[0][0], "Values should be integer or float!")
+	}
+
 	startV, _ := strconv.ParseFloat(start.Content[0].Data, 64)
 	toV, _ := strconv.ParseFloat(to.Content[0].Data, 64)
 	stepV, _ := strconv.ParseFloat(step.Content[0].Data, 64)
@@ -37,6 +44,13 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 		}
 	}
 
+	var dtype int
+	if start.Content[0].Type == fract.VALFloat ||
+		to.Content[0].Type == fract.VALFloat ||
+		step.Content[0].Type == fract.VALFloat {
+		dtype = fract.VALFloat
+	}
+
 	returnValue := obj.Value{
 		Content: []obj.DataFrame{},
 		Array:   true,
@@ -44,19 +58,19 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			dataFrame := obj.DataFrame{Data: fmt.Sprintf(fract.FloatFormat, startV)}
-			if strings.Contains(dataFrame.Data, grammar.TokenDot) {
-				dataFrame.Type = fract.VALFloat
-			}
-			returnValue.Content = append(returnValue.Content, dataFrame)
+			returnValue.Content = append(returnValue.Content,
+				obj.DataFrame{
+					Data: fmt.Sprintf(fract.FloatFormat, startV),
+					Type: dtype,
+				})
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			dataFrame := obj.DataFrame{Data: fmt.Sprintf(fract.FloatFormat, startV)}
-			if strings.Contains(dataFrame.Data, grammar.TokenDot) {
-				dataFrame.Type = fract.VALFloat
-			}
-			returnValue.Content = append(returnValue.Content, dataFrame)
+			returnValue.Content = append(returnValue.Content,
+				obj.DataFrame{
+					Data: fmt.Sprintf(fract.FloatFormat, startV),
+					Type: dtype,
+				})
 		}
 	}
 
