@@ -1,9 +1,9 @@
 # Quick Start to Fract
 
-+ [Keywords](https://github.com/fract-lang/fract/blob/main/docs/Fract/keywords.md)
-+ [Data Types](https://github.com/fract-lang/fract/blob/main/docs/Fract/data_types.md)
-+ [Operators](https://github.com/fract-lang/fract/blob/main/docs/Fract/operators.md)
-+ [Embed Functions](https://github.com/fract-lang/fract/tree/main/docs/fract/embed%20functions)
++ [Keywords](https://github.com/fract-lang/fract/blob/master/docs/Fract/keywords.md)
++ [Data Types](https://github.com/fract-lang/fract/blob/master/docs/Fract/data_types.md)
++ [Operators](https://github.com/fract-lang/fract/blob/master/docs/Fract/operators.md)
++ [Embed Functions](https://github.com/fract-lang/fract/tree/master/docs/fract/embed%20functions)
 + [Imports](https://github.com/fract-lang/fract/blob/master/docs/fract/import.md)
 
 ## Comments
@@ -33,7 +33,7 @@ Fract adheres to transaction priority!
 
 ## Print "Hello World!"
 
-[print function](https://github.com/fract-lang/fract/blob/main/docs/fract/embed%20functions/print.md)
+[print function](https://github.com/fract-lang/fract/blob/master/docs/fract/embed%20functions/print.md)
 
 ### Examples
 ```
@@ -73,7 +73,7 @@ print(4 +
 
 > A value must be given when defining a variable!
 
-> Variable names are must comply to [naming conventions](https://github.com/fract-lang/fract/blob/main/docs/Fract/naming_conventions.md).
+> Variable names are must comply to [naming conventions](https://github.com/fract-lang/fract/blob/master/docs/Fract/naming_conventions.md).
 
 > cannot change values of const variables!
 
