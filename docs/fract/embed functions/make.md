@@ -1,7 +1,7 @@
 # make function
 
 ## Description
-Return array by size. Minimum value is: ``0``.
+Return array has integer elements by size. Minimum value is: ``0``.
 
 ## Define
 ```
@@ -12,6 +12,6 @@ protected func make(size)
 
 ```
 make(0)         # []
-make(2)         # [ ]
-make(10)        # [         ]
+make(2)         # [0 0]
+make(10)        # [0 0 0 0 0 0 0 0 0 0]
 ```

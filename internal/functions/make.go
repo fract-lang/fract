@@ -23,8 +23,15 @@ func Make(f obj.Function, parameters []obj.Variable) obj.Value {
 	if sizev < 0 {
 		fract.Error(f.Tokens[0][0], "Size should be minimum zero!")
 	}
-	return obj.Value{
+
+	value := obj.Value{
 		Content: make([]obj.DataFrame, sizev),
 		Array:   true,
 	}
+
+	for index := range value.Content {
+		value.Content[index].Data = "0"
+	}
+
+	return value
 }
