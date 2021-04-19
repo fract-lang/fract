@@ -16,6 +16,10 @@ import (
 // functionIndexByName Find index of function by name.
 // name Name to find.
 func (i *Interpreter) functionIndexByName(name obj.Token) (int, *Interpreter) {
+	if name.Value[0] == '-' { // Ignore.
+		name.Value = name.Value[1:]
+	}
+
 	index := strings.Index(name.Value, grammar.TokenDot)
 
 	if index != -1 {

@@ -13,11 +13,11 @@ import (
 func IndexProcessPriority(tokens []obj.Token) int {
 	bracket := 0
 
-	for index, _token := range tokens {
-		if _token.Type == fract.TypeBrace {
-			if _token.Value == grammar.TokenLBracket ||
-				_token.Value == grammar.TokenLBrace ||
-				_token.Value == grammar.TokenLParenthes {
+	for index, token := range tokens {
+		if token.Type == fract.TypeBrace {
+			if token.Value == grammar.TokenLBracket ||
+				token.Value == grammar.TokenLBrace ||
+				token.Value == grammar.TokenLParenthes {
 				bracket++
 			} else {
 				bracket--
@@ -29,8 +29,8 @@ func IndexProcessPriority(tokens []obj.Token) int {
 		}
 
 		// Exponentiation or shifts.
-		if _token.Value == grammar.LeftBinaryShift || _token.Value == grammar.RightBinaryShift ||
-			_token.Value == grammar.TokenCaret {
+		if token.Value == grammar.LeftBinaryShift || token.Value == grammar.RightBinaryShift ||
+			token.Value == grammar.TokenCaret {
 			return index
 		}
 
@@ -38,20 +38,20 @@ func IndexProcessPriority(tokens []obj.Token) int {
 		multiplyOrDivive := fract.TypeNone
 		additionOrSubtraction := fract.TypeNone
 
-		if _token.Value == grammar.TokenPercent { // Modulus.
+		if token.Value == grammar.TokenPercent { // Modulus.
 			if modulus == fract.TypeNone {
 				modulus = index
 			}
-		} else if _token.Value == grammar.TokenStar ||
-			_token.Value == grammar.TokenSlash ||
-			_token.Value == grammar.TokenBackslash ||
-			_token.Value == grammar.IntegerDivision ||
-			_token.Value == grammar.IntegerDivideWithBigger { // Multiply or division.
+		} else if token.Value == grammar.TokenStar ||
+			token.Value == grammar.TokenSlash ||
+			token.Value == grammar.TokenBackslash ||
+			token.Value == grammar.IntegerDivision ||
+			token.Value == grammar.IntegerDivideWithBigger { // Multiply or division.
 			if multiplyOrDivive == fract.TypeNone {
 				multiplyOrDivive = index
 			}
-		} else if _token.Value == grammar.TokenPlus ||
-			_token.Value == grammar.TokenMinus { // Addition or subtraction.
+		} else if token.Value == grammar.TokenPlus ||
+			token.Value == grammar.TokenMinus { // Addition or subtraction.
 			if additionOrSubtraction == fract.TypeNone {
 				additionOrSubtraction = index
 			}

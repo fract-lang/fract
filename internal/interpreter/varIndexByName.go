@@ -16,7 +16,12 @@ import (
 // varIndexByName Find index of variable by name.
 // name Name to find.
 func (i *Interpreter) varIndexByName(name obj.Token) (int, *Interpreter) {
+	if name.Value[0] == '-' { // Ignore.
+		name.Value = name.Value[1:]
+	}
+
 	index := strings.Index(name.Value, grammar.TokenDot)
+
 	if index != -1 {
 		iindex := i.importIndexByName(name.Value[:index])
 		if iindex == -1 {
