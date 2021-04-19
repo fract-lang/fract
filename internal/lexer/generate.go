@@ -140,6 +140,12 @@ func (l *Lexer) Generate() obj.Token {
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
 			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn): // Numeric value.
+		// Check negative.
+		if l.lastToken.Type != fract.TypeOperator && check[0] == '-' {
+			token.Value = grammar.TokenMinus
+			token.Type = fract.TypeOperator
+			break
+		}
 		// Remove punct.
 		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
 		if result {
