@@ -7,6 +7,7 @@ package interpreter
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -364,10 +365,50 @@ func solveProcess(process valueProcess) obj.Value {
 // index Index of token.
 func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	tokens *[]obj.Token, index int) int {
-	token := operation.First
+	var (
+		token    = operation.First
+		minussed = false
+	)
+
+	// applyMinus Apply minus assigment.
+	// value Value to apply.
+	applyMinus := func(value obj.Value) obj.Value {
+		if !minussed {
+			return value
+		}
+
+		val := obj.Value{
+			Array:   value.Array,
+			Content: append([]obj.DataFrame{}, value.Content...),
+		}
+
+		if val.Array {
+			for index, data := range val.Content {
+				if data.Type == fract.VALBoolean ||
+					data.Type == fract.VALFloat ||
+					data.Type == fract.VALInteger {
+					data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+					val.Content[index].Data = fract.FormatData(data)
+				}
+			}
+			return val
+		}
+
+		if data := val.Content[0]; data.Type == fract.VALBoolean ||
+			data.Type == fract.VALFloat ||
+			data.Type == fract.VALInteger {
+			data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+			val.Content[0].Data = fract.FormatData(data)
+		}
+
+		return val
+	}
+
 	if !first {
 		token = operation.Second
 	}
+
+	minussed = token.Type == fract.TypeName && token.Value[0] == '-'
 
 	if token.Type == fract.TypeName {
 		if index < len(*tokens)-1 {
@@ -446,9 +487,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if first {
 						operation.FirstV.Content = []obj.DataFrame{data}
 						operation.FirstV.Array = false
+						operation.FirstV = applyMinus(operation.FirstV)
 					} else {
 						operation.SecondV.Content = []obj.DataFrame{data}
 						operation.SecondV.Array = false
+						operation.SecondV = applyMinus(operation.SecondV)
 					}
 					return 0
 				} else if next.Value == grammar.TokenLParenthes { // Function?
@@ -473,6 +516,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						fract.Error(token, "Function is not return any value!")
 					}
 					vector.RemoveRange(tokens, index+1, cindex-index-1)
+					value = applyMinus(value)
 					if first {
 						operation.FirstV = value
 					} else {
@@ -491,9 +535,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		variable := source.variables[vindex]
 
 		if first {
-			operation.FirstV = variable.Value
+			operation.FirstV = applyMinus(variable.Value)
 		} else {
-			operation.SecondV = variable.Value
+			operation.SecondV = applyMinus(variable.Value)
 		}
 		return 0
 	} else if token.Type == fract.TypeBrace {
@@ -521,10 +565,12 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					operation.FirstV.Array = true
 					operation.FirstV.Content = i.processArrayValue(
 						vector.Sublist(*tokens, oindex, index-oindex+1)).Content
+					operation.FirstV = applyMinus(operation.FirstV)
 				} else {
 					operation.SecondV.Array = true
 					operation.SecondV.Content = i.processArrayValue(
 						vector.Sublist(*tokens, oindex, index-oindex+1)).Content
+					operation.SecondV = applyMinus(operation.SecondV)
 				}
 				vector.RemoveRange(tokens, oindex, index-oindex)
 				return index - oindex
@@ -586,12 +632,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if first {
 				operation.FirstV.Content = []obj.DataFrame{data}
 				operation.FirstV.Array = false
-				if variable.Value.Content[0].Type == fract.VALString {
-					operation.FirstV.Content[0].Type = fract.VALString
-				}
+				operation.FirstV = applyMinus(operation.FirstV)
 			} else {
 				operation.SecondV.Content = []obj.DataFrame{data}
 				operation.FirstV.Array = false
+				operation.SecondV = applyMinus(operation.SecondV)
 			}
 
 			return index - oindex + 1
@@ -616,6 +661,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			}
 
 			value := i.processArrayValue(vector.Sublist(*tokens, index, cindex-index+1))
+			value = applyMinus(value)
 			if first {
 				operation.FirstV = value
 			} else {
@@ -647,6 +693,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if value.Content == nil {
 				fract.Error((*tokens)[oindex], "Function is not return any value!")
 			}
+			value = applyMinus(value)
 			if first {
 				operation.FirstV = value
 			} else {
@@ -713,14 +760,18 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			token.Type == fract.TypeBooleanFalse {
 			if first {
 				operation.FirstV.Content[0].Type = fract.VALBoolean
+				operation.FirstV = applyMinus(operation.FirstV)
 			} else {
 				operation.SecondV.Content[0].Type = fract.VALBoolean
+				operation.SecondV = applyMinus(operation.SecondV)
 			}
 		} else if strings.Contains(token.Value, grammar.TokenDot) { // Float?
 			if first {
 				operation.FirstV.Content[0].Type = fract.VALFloat
+				operation.FirstV = applyMinus(operation.FirstV)
 			} else {
 				operation.SecondV.Content[0].Type = fract.VALFloat
+				operation.SecondV = applyMinus(operation.SecondV)
 			}
 		}
 	}
@@ -806,23 +857,56 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 		}
 	}
 
-	if priorityIndex := parser.IndexProcessPriority(*tokens); priorityIndex != -1 {
+	var (
+		parts          = &[]obj.Token{}
+		numericPattern = regexp.MustCompile(`^[0-9]+(\.[0-9]+)?$`)
+		last           obj.Token
+	)
+
+	for index, token := range *tokens {
+		if last.Value == grammar.TokenMinus {
+			if index > 2 {
+				if prev := (*parts)[index-2]; prev.Type == fract.TypeOperator {
+					if token.Type != fract.TypeName && !numericPattern.MatchString(token.Value) {
+						fract.Error(token, "Minus operator is used with only numerics!")
+					}
+					token.Value = grammar.TokenMinus + token.Value
+					(*parts)[index-1] = token
+					last = token
+					continue
+				}
+			} else if index == 1 {
+				if token.Type != fract.TypeName && !numericPattern.MatchString(token.Value) {
+					fract.Error(token, "Minus operator is used with only numerics!")
+				}
+				token.Value = grammar.TokenMinus + token.Value
+				(*parts)[index-1] = token
+				last = token
+				continue
+			}
+		}
+
+		last = token
+		*parts = append(*parts, token)
+	}
+
+	if priorityIndex := parser.IndexProcessPriority(*parts); priorityIndex != -1 {
 		// Decompose arithmetic operations.
 		for priorityIndex != -1 {
 			var operation valueProcess
-			operation.First = (*tokens)[priorityIndex-1]
+			operation.First = (*parts)[priorityIndex-1]
 			priorityIndex -= i._processValue(true, &operation,
-				tokens, priorityIndex-1)
-			operation.Operator = (*tokens)[priorityIndex]
+				parts, priorityIndex-1)
+			operation.Operator = (*parts)[priorityIndex]
 
-			operation.Second = (*tokens)[priorityIndex+1]
+			operation.Second = (*parts)[priorityIndex+1]
 			priorityIndex -= i._processValue(false, &operation,
-				tokens, priorityIndex+1)
+				parts, priorityIndex+1)
 
 			resultValue := solveProcess(operation)
 
 			operation.Operator.Value = grammar.TokenPlus
-			operation.Second = (*tokens)[priorityIndex+1]
+			operation.Second = (*parts)[priorityIndex+1]
 			operation.FirstV = value
 			operation.SecondV = resultValue
 
@@ -830,17 +914,17 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 			value = resultValue
 
 			// Remove processed processes.
-			vector.RemoveRange(tokens, priorityIndex-1, 3)
-			vector.Insert(tokens, priorityIndex-1, obj.Token{Value: "0"})
+			vector.RemoveRange(parts, priorityIndex-1, 3)
+			vector.Insert(parts, priorityIndex-1, obj.Token{Value: "0"})
 
 			// Find next operator.
-			priorityIndex = parser.IndexProcessPriority(*tokens)
+			priorityIndex = parser.IndexProcessPriority(*parts)
 		}
 	} else {
 		var operation valueProcess
-		operation.First = (*tokens)[0]
+		operation.First = (*parts)[0]
 		operation.FirstV.Array = true // Ignore nil control if function call.
-		i._processValue(true, &operation, tokens, 0)
+		i._processValue(true, &operation, parts, 0)
 		value = operation.FirstV
 	}
 
