@@ -113,6 +113,7 @@ func calc.range(start, to, step=1)
 end
 <#
 
+#>
 open t std.array
 
 var arr = [1, 2, 3, 90, 4, 2, 3]
@@ -121,6 +122,15 @@ var array = t.Clone(arr)
 array[0] = 0
 
 print(array)
+print(arr)
+
+exit()
+<#
+
+open t std.array
+
+var arr = range(1, 35)
+
 print(arr)
 
 exit()

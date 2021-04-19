@@ -689,6 +689,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				Data: token.Value[1 : len(token.Value)-1],
 				Type: fract.VALString,
 			}}
+			token.Type = fract.TypeNone // Skip type check.
 		} else {
 			operation.FirstV.Content = []obj.DataFrame{{Data: token.Value}}
 		}
@@ -700,24 +701,27 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				Data: token.Value[1 : len(token.Value)-1],
 				Type: fract.VALString,
 			}}
+			token.Type = fract.TypeNone // Skip type check.
 		} else {
 			operation.SecondV.Content = []obj.DataFrame{{Data: token.Value}}
 		}
 	}
 
 	// Type check.
-	if token.Type == fract.TypeBooleanTrue ||
-		token.Type == fract.TypeBooleanFalse {
-		if first {
-			operation.FirstV.Content[0].Type = fract.VALBoolean
-		} else {
-			operation.SecondV.Content[0].Type = fract.VALBoolean
-		}
-	} else if strings.Contains(token.Value, grammar.TokenDot) { // Float?
-		if first {
-			operation.FirstV.Content[0].Type = fract.VALFloat
-		} else {
-			operation.SecondV.Content[0].Type = fract.VALFloat
+	if token.Type != fract.TypeNone {
+		if token.Type == fract.TypeBooleanTrue ||
+			token.Type == fract.TypeBooleanFalse {
+			if first {
+				operation.FirstV.Content[0].Type = fract.VALBoolean
+			} else {
+				operation.SecondV.Content[0].Type = fract.VALBoolean
+			}
+		} else if strings.Contains(token.Value, grammar.TokenDot) { // Float?
+			if first {
+				operation.FirstV.Content[0].Type = fract.VALFloat
+			} else {
+				operation.SecondV.Content[0].Type = fract.VALFloat
+			}
 		}
 	}
 
