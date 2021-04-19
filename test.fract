@@ -127,6 +127,10 @@ print(arr)
 exit()
 <#
 
+print((5) - -1)
+
+exit()
+
 open t std.array
 
 var arr = range(1, 10)
