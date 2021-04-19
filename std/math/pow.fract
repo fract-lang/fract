@@ -10,6 +10,14 @@
 # Returns power of number.
 #
 
-protected func Pow(number, power=2)
-	ret number ^ power
+protected func Pow(x, y, z=false)
+	var n = 1
+	for _, a in range(1, y)
+		n *= x
+	end
+
+	if z <> false
+		ret n % z
+	end
+	ret n
 end
