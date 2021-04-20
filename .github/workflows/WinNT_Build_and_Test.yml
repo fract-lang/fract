@@ -1,4 +1,4 @@
-name: WinNT CI
+name: WinNT | Build & Test
 
 on:
   push:
