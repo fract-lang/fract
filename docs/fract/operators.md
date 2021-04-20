@@ -114,4 +114,8 @@
     <td align="center"><b>^=</b></td>
     <td>Power assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b><<=</b></td>
+    <td>Left binary shift assigment.</td>
+  </tr>
 </table>

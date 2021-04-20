@@ -101,7 +101,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		default: // Assigments.
 			variable.Value.Content[setIndex] = solveProcess(
 				valueProcess{
-					Operator: obj.Token{Value: string(setter.Value[0])},
+					Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 					First:    tokens[0],
 					FirstV: obj.Value{
 						Content: []obj.DataFrame{variable.Value.Content[setIndex]},
@@ -117,7 +117,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		default: // Assigments.
 			variable.Value = solveProcess(
 				valueProcess{
-					Operator: obj.Token{Value: string(setter.Value[0])},
+					Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 					First:    tokens[0],
 					FirstV:   variable.Value,
 					Second:   setter,
