@@ -122,4 +122,8 @@
     <td align="center"><b>>>=</b></td>
     <td>Right binary shift assigment.</td>
   </tr>
+  <tr>
+    <td align="center"><b>|=</b></td>
+    <td>Bitwise inclusive or assigment.</td>
+  </tr>
 </table>

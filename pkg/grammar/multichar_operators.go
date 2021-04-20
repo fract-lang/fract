@@ -47,4 +47,6 @@ const (
 	LeftBinaryShiftAssigment = "<<="
 	// RightBinaryShiftAssigment Right binary shift assigment.
 	RightBinaryShiftAssigment = ">>="
+	// InclusiveOrAssigment Bitwise inclusive or assigment.
+	InclusiveOrAssigment = "|="
 )
