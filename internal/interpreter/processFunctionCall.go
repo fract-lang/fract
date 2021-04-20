@@ -203,7 +203,10 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 
 	returnValue := obj.Value{}
 	variables := append(make([]obj.Variable, 0), source.variables...)
-	source.variables = append(source.variables[:source.funcTempVariables], vars...)
+	if source.funcTempVariables == 0 {
+		source.funcTempVariables = len(source.variables)
+	}
+	source.variables = append(vars, source.variables[:source.funcTempVariables]...)
 
 	// Is embed function?
 	if function.Tokens == nil {
@@ -245,6 +248,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 
 		source.index = -1
 
+		// Interpret block.
 		for {
 			source.index++
 			tokens := source.Tokens[source.index]
