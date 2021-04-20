@@ -100,6 +100,36 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		switch setter.Value {
 		case grammar.TokenEquals: // =
 			variable.Value.Content[setIndex] = value.Content[0]
+		case grammar.InclusiveOrAssigment: // |=
+			if value.Array {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			vdata := value.Content[0]
+			data := variable.Value.Content[setIndex]
+			if data.Type != fract.VALBoolean && data.Type != fract.VALInteger &&
+				vdata.Type != fract.VALBoolean && vdata.Type != fract.VALInteger {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			dval := int64(arithmetic.ToArithmetic(data.Data))
+			dval |= int64(arithmetic.ToArithmetic(value.Content[0].Data))
+			variable.Value.Content[setIndex].Data = fmt.Sprintf("%d", dval)
+		case grammar.AndAssigment: // &=
+			if value.Array {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			vdata := value.Content[0]
+			data := variable.Value.Content[setIndex]
+			if data.Type != fract.VALBoolean && data.Type != fract.VALInteger &&
+				vdata.Type != fract.VALBoolean && vdata.Type != fract.VALInteger {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			dval := int64(arithmetic.ToArithmetic(data.Data))
+			dval &= int64(arithmetic.ToArithmetic(value.Content[0].Data))
+			variable.Value.Content[setIndex].Data = fmt.Sprintf("%d", dval)
 		default: // Other assigments.
 			variable.Value.Content[setIndex] = solveProcess(
 				valueProcess{
@@ -130,6 +160,21 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 
 			dval := int64(arithmetic.ToArithmetic(data.Data))
 			dval |= int64(arithmetic.ToArithmetic(value.Content[0].Data))
+			variable.Value.Content[0].Data = fmt.Sprintf("%d", dval)
+		case grammar.AndAssigment: // &=
+			if variable.Value.Array || value.Array {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			vdata := value.Content[0]
+			data := variable.Value.Content[0]
+			if data.Type != fract.VALBoolean && data.Type != fract.VALInteger &&
+				vdata.Type != fract.VALBoolean && vdata.Type != fract.VALInteger {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			dval := int64(arithmetic.ToArithmetic(data.Data))
+			dval &= int64(arithmetic.ToArithmetic(value.Content[0].Data))
 			variable.Value.Content[0].Data = fmt.Sprintf("%d", dval)
 		default: // Other assigments.
 			variable.Value = solveProcess(

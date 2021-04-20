@@ -127,16 +127,6 @@ print(arr)
 exit()
 <#
 
-var (
-	a = 10
-)
-
-a |= 13
-
-print(a)
-
-exit()
-
 open t std.array
 
 var arr = range(1, 11)
