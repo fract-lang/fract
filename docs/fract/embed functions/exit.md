@@ -8,8 +8,11 @@ Exit process with exit code.
 protected func exit(code=0)
 ```
 
-## Examples
+## Parameters
++ ``code = 0`` <br>
+Exit code.
 
+## Examples
 ```
 exit()
 exit(1)

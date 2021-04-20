@@ -8,8 +8,13 @@ Print values to CLI.
 protected func print(value, fin="\n")
 ```
 
-## Examples
+## Parameters
++ ``value`` <br>
+Value to print.
++ ``fin="\n"`` <br>
+Value to print after "value" parameter.
 
+## Examples
 ```
 print("Hello World")
 
