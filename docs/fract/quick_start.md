@@ -344,14 +344,14 @@ Call with parameter setter:
 
 ### Examples
 ```
-func multi.valued.params(...values, s)
+func multiValuedParams(...values, s)
   print(values + s)
 end
 
-multi.valued.params(4,4,4,4,4,4, s=3)
+multiValuedParams(4,4,4,4,4,4, s=3)
 ```
 ```
-func int.prime(x)
+func prime(x)
   if x == 2
     ret true
   end
@@ -366,15 +366,15 @@ end
 
 for _, number in range(0, 10)
   print(number, fin=" ")
-  print(int.prime(number))
+  print(prime(number))
 end
 ```
 ```
-func print.hello()
+func printHello()
   print("Hello")
 end
 
-print.hello()
+printHello()
 ```
 
 ### Ret Keyword
