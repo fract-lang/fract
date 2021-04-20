@@ -5,6 +5,7 @@
 package lexer
 
 import (
+	"math/big"
 	"regexp"
 	"strings"
 
@@ -132,7 +133,7 @@ func (l *Lexer) Generate() obj.Token {
 	}
 
 	switch check := strings.TrimSpace(regexp.MustCompile(
-		`^[0-9]+(\.[0-9]+)?(\s|[[:punct:]]|$)`).FindString(ln)); {
+		`^(([0-9]+(\.[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
 	case check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
@@ -148,6 +149,14 @@ func (l *Lexer) Generate() obj.Token {
 		clen := len(check)
 		check = strings.ReplaceAll(check, " ", "")
 		l.Column += clen - len(check)
+
+		if strings.HasPrefix(check, "0x") {
+			// Parse hexadecimal to decimal.
+			bigInt := new(big.Int)
+			bigInt.SetString(check[2:], 16)
+			check = bigInt.String()
+		}
+
 		token.Value = check
 		token.Type = fract.TypeValue
 	case strings.HasPrefix(ln, grammar.TokenSemicolon): // Statement terminator.
