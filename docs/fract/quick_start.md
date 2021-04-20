@@ -89,7 +89,11 @@ const [NAME] = [VALUE]
 const Pi = 3.14
 ```
 ```
-var Fibonacci.First = 1
+var (
+  FibonacciFirst = 1,
+  Ln2Hi          = 6.93147180369123816490e-01,
+  Hex            = 0x07EDD5E59A4E28C2
+)
 ```
 
 ## Set Defined
