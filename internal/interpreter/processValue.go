@@ -866,12 +866,15 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 	for index, token := range *tokens {
 		if last.Value == grammar.TokenMinus {
 			if index > 2 {
-				if prev := (*parts)[index-2]; prev.Type == fract.TypeOperator {
+				if prev := (*parts)[index-2]; prev.Type == fract.TypeOperator || prev.Type == fract.TypeBrace {
 					if token.Type != fract.TypeName && !numericPattern.MatchString(token.Value) {
 						fract.Error(token, "Minus operator is used with only numerics!")
 					}
 					token.Value = grammar.TokenMinus + token.Value
-					(*parts)[index-1] = token
+					nparts := make([]obj.Token, len(*parts))
+					copy(nparts, (*parts)[:len(nparts)-1])
+					nparts[len(nparts)-1] = token
+					*parts = nparts
 					last = token
 					continue
 				}
