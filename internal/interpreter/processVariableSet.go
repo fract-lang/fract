@@ -5,8 +5,10 @@
 package interpreter
 
 import (
+	"fmt"
 	"strconv"
 
+	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
@@ -98,7 +100,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		switch setter.Value {
 		case grammar.TokenEquals: // =
 			variable.Value.Content[setIndex] = value.Content[0]
-		default: // Assigments.
+		default: // Other assigments.
 			variable.Value.Content[setIndex] = solveProcess(
 				valueProcess{
 					Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
@@ -114,7 +116,22 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		switch setter.Value {
 		case grammar.TokenEquals: // =
 			variable.Value = value
-		default: // Assigments.
+		case grammar.InclusiveOrAssigment: // |=
+			if variable.Value.Array || value.Array {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			vdata := value.Content[0]
+			data := variable.Value.Content[0]
+			if data.Type != fract.VALBoolean && data.Type != fract.VALInteger &&
+				vdata.Type != fract.VALBoolean && vdata.Type != fract.VALInteger {
+				fract.Error(setter, "Values are should be integer!")
+			}
+
+			dval := int64(arithmetic.ToArithmetic(data.Data))
+			dval |= int64(arithmetic.ToArithmetic(value.Content[0].Data))
+			variable.Value.Content[0].Data = fmt.Sprintf("%d", dval)
+		default: // Other assigments.
 			variable.Value = solveProcess(
 				valueProcess{
 					Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
