@@ -190,6 +190,9 @@ func (l *Lexer) Generate() obj.Token {
 	case strings.HasPrefix(ln, grammar.InclusiveOrAssigment): // Inclusive or assigment.
 		token.Value = grammar.InclusiveOrAssigment
 		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.AndAssigment): // And assigment.
+		token.Value = grammar.AndAssigment
+		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.IntegerDivision): // Integer division.
 		token.Value = grammar.IntegerDivision
 		token.Type = fract.TypeOperator
