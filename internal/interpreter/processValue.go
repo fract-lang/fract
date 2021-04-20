@@ -55,7 +55,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 			for _, current := range val.Content {
 				found++
 				vector.Insert(tokens, found, obj.Token{
-					Value: current.Data,
+					Value: fract.FormatData(current),
 					Type:  fract.TypeValue,
 				})
 				found++
@@ -78,7 +78,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 				continue
 			}
 			vector.Insert(tokens, found, obj.Token{
-				Value: val.Content[0].Data,
+				Value: fract.FormatData(val.Content[0]),
 				Type:  fract.TypeValue,
 			})
 		}
