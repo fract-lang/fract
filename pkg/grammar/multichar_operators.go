@@ -43,4 +43,6 @@ const (
 	ModulusAssigment = "%="
 	// PowerAssigment Power assigment.
 	PowerAssigment = "^="
+	// LeftBinaryShiftAssigment Left binary shift assigment.
+	LeftBinaryShiftAssigment = "<<="
 )
