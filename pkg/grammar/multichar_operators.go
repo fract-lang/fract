@@ -45,4 +45,6 @@ const (
 	PowerAssigment = "^="
 	// LeftBinaryShiftAssigment Left binary shift assigment.
 	LeftBinaryShiftAssigment = "<<="
+	// RightBinaryShiftAssigment Right binary shift assigment.
+	RightBinaryShiftAssigment = ">>="
 )
