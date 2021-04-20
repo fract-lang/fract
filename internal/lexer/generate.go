@@ -133,7 +133,7 @@ func (l *Lexer) Generate() obj.Token {
 	}
 
 	switch check := strings.TrimSpace(regexp.MustCompile(
-		`^(([0-9]+(\.[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
+		`^(([0-9]+((\.[0-9]+)|(\.[0-9]+)e\-[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
 	case check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
@@ -155,6 +155,13 @@ func (l *Lexer) Generate() obj.Token {
 			bigInt := new(big.Int)
 			bigInt.SetString(check[2:], 16)
 			check = bigInt.String()
+		} else {
+			// Parse floating-point.
+			bigFloat := new(big.Float)
+			_, fail := bigFloat.SetString(check)
+			if !fail {
+				check = bigFloat.String()
+			}
 		}
 
 		token.Value = check
