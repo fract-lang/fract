@@ -8,8 +8,11 @@ Convert to integer an object.
 protected func int(object)
 ```
 
-## Examples
+## Parameters
++ ``object`` <br>
+Object to parse int.
 
+## Examples
 ```
 int("3435")   # 3435
 int(34.35)    # 34

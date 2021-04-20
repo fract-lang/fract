@@ -8,6 +8,10 @@ Returns input from CLI as string.
 protected func input(message="")
 ```
 
+## Parameters
++ ``message=""`` <br>
+Input message.
+
 ## Examples
 
 ```

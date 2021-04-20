@@ -8,8 +8,11 @@ Return array has integer elements by size. Minimum value is: ``0``.
 protected func make(size)
 ```
 
-## Examples
+## Parameters
++ ``size`` <br>
+Size of array.
 
+## Examples
 ```
 make(0)         # []
 make(2)         # [0 0]

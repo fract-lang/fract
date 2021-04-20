@@ -8,8 +8,11 @@ Convert to float an object.
 protected func float(object)
 ```
 
-## Examples
+## Parameters
++ ``object`` <br>
+Object to parse float.
 
+## Examples
 ```
 float("3435")     # 3435
 float("34.35")    # 34.35
