@@ -24,8 +24,6 @@ func FormatData(data obj.DataFrame) string {
 						}
 						data.Data = data.Data[:index]
 					}
-				} else {
-					data.Data = data.Data[:index+1]
 				}
 				return data.Data
 			}

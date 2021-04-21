@@ -133,7 +133,7 @@ func (l *Lexer) Generate() obj.Token {
 	}
 
 	switch check := strings.TrimSpace(regexp.MustCompile(
-		`^(([0-9]+((\.[0-9]+)|(\.[0-9]+)e\-[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
+		`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)e\-[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
 	case check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
@@ -210,6 +210,33 @@ func (l *Lexer) Generate() obj.Token {
 		token.Value = grammar.TokenPlus
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenMinus): // Subtraction.
+		/* Check variable name. */
+		if check = strings.TrimSpace(regexp.MustCompile(
+			`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
+			FindString(ln)); check != "" { // Name.
+			// Remove punct.
+			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
+				!strings.HasSuffix(check, grammar.TokenDot) {
+				result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
+				if result {
+					check = check[:len(check)-1]
+				}
+			}
+
+			// Name is finished with dot?
+			if strings.HasSuffix(check, grammar.TokenDot) {
+				if l.RangeComment { // Ignore comment content.
+					l.Column++
+					token.Type = fract.TypeIgnore
+					return token
+				}
+				l.Error("What you mean?")
+			}
+
+			token.Value = check
+			token.Type = fract.TypeName
+			break
+		}
 		token.Value = grammar.TokenMinus
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenStar): // Multiplication.
@@ -369,7 +396,7 @@ func (l *Lexer) Generate() obj.Token {
 	default: // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
-			`^([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
+			`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
 			FindString(ln)); check != "" { // Name.
 			// Remove punct.
 			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&

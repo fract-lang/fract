@@ -7,7 +7,6 @@ package interpreter
 import (
 	"fmt"
 	"math"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -857,59 +856,23 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 		}
 	}
 
-	var (
-		parts          = &[]obj.Token{}
-		numericPattern = regexp.MustCompile(`^[0-9]+(\.[0-9]+)?$`)
-		last           obj.Token
-	)
-
-	for index, token := range *tokens {
-		if last.Value == grammar.TokenMinus {
-			if index > 2 {
-				if prev := (*parts)[index-2]; prev.Type == fract.TypeOperator || prev.Type == fract.TypeBrace {
-					if token.Type != fract.TypeName && !numericPattern.MatchString(token.Value) {
-						fract.Error(token, "Minus operator is used with only numerics!")
-					}
-					token.Value = grammar.TokenMinus + token.Value
-					nparts := make([]obj.Token, len(*parts))
-					copy(nparts, (*parts)[:len(nparts)-1])
-					nparts[len(nparts)-1] = token
-					*parts = nparts
-					last = token
-					continue
-				}
-			} else if index == 1 {
-				if token.Type != fract.TypeName && !numericPattern.MatchString(token.Value) {
-					fract.Error(token, "Minus operator is used with only numerics!")
-				}
-				token.Value = grammar.TokenMinus + token.Value
-				(*parts)[index-1] = token
-				last = token
-				continue
-			}
-		}
-
-		last = token
-		*parts = append(*parts, token)
-	}
-
-	if priorityIndex := parser.IndexProcessPriority(*parts); priorityIndex != -1 {
+	if priorityIndex := parser.IndexProcessPriority(*tokens); priorityIndex != -1 {
 		// Decompose arithmetic operations.
 		for priorityIndex != -1 {
 			var operation valueProcess
-			operation.First = (*parts)[priorityIndex-1]
+			operation.First = (*tokens)[priorityIndex-1]
 			priorityIndex -= i._processValue(true, &operation,
-				parts, priorityIndex-1)
-			operation.Operator = (*parts)[priorityIndex]
+				tokens, priorityIndex-1)
+			operation.Operator = (*tokens)[priorityIndex]
 
-			operation.Second = (*parts)[priorityIndex+1]
+			operation.Second = (*tokens)[priorityIndex+1]
 			priorityIndex -= i._processValue(false, &operation,
-				parts, priorityIndex+1)
+				tokens, priorityIndex+1)
 
 			resultValue := solveProcess(operation)
 
 			operation.Operator.Value = grammar.TokenPlus
-			operation.Second = (*parts)[priorityIndex+1]
+			operation.Second = (*tokens)[priorityIndex+1]
 			operation.FirstV = value
 			operation.SecondV = resultValue
 
@@ -917,17 +880,17 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 			value = resultValue
 
 			// Remove processed processes.
-			vector.RemoveRange(parts, priorityIndex-1, 3)
-			vector.Insert(parts, priorityIndex-1, obj.Token{Value: "0"})
+			vector.RemoveRange(tokens, priorityIndex-1, 3)
+			vector.Insert(tokens, priorityIndex-1, obj.Token{Value: "0"})
 
 			// Find next operator.
-			priorityIndex = parser.IndexProcessPriority(*parts)
+			priorityIndex = parser.IndexProcessPriority(*tokens)
 		}
 	} else {
 		var operation valueProcess
-		operation.First = (*parts)[0]
+		operation.First = (*tokens)[0]
 		operation.FirstV.Array = true // Ignore nil control if function call.
-		i._processValue(true, &operation, parts, 0)
+		i._processValue(true, &operation, tokens, 0)
 		value = operation.FirstV
 	}
 
