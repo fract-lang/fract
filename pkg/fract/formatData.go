@@ -24,6 +24,8 @@ func FormatData(data obj.DataFrame) string {
 						}
 						data.Data = data.Data[:index]
 					}
+				} else if data.Type == VALFloat {
+					data.Data = data.Data[:index+1]
 				}
 				return data.Data
 			}
