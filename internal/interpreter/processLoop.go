@@ -39,15 +39,48 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//*************
 	//    WHILE
 	//*************
-	if tokens == nil || len(tokens) == 1 ||
-		tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
-		variableLen := len(i.variables)
+	if tokens == nil || len(tokens) == 1 {
+		if tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
+			variableLen := len(i.variables)
 
-		/* Infinity loop. */
-		if tokens == nil {
+			/* Infinity loop. */
+			if tokens == nil {
+				for {
+					i.index++
+					tokens := i.Tokens[i.index]
+
+					if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+						// Remove temporary variables.
+						i.variables = i.variables[:variableLen]
+						// Remove temporary functions.
+						i.functions = i.functions[:functionLen]
+
+						if _break {
+							return processKwState()
+						}
+
+						i.index = iindex
+						continue
+					}
+
+					kwstate = i.processTokens(tokens)
+					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+						_break = true
+						i.skipBlock(false)
+						i.index--
+					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						i.skipBlock(false)
+						i.index--
+					}
+				}
+			}
+
+			/* Interpret/skip block. */
+			conditionList := &tokens
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
+				condition := i.processCondition(conditionList)
 
 				if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 					// Remove temporary variables.
@@ -55,7 +88,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 					// Remove temporary functions.
 					i.functions = i.functions[:functionLen]
 
-					if _break {
+					if _break || condition != grammar.KwTrue {
 						return processKwState()
 					}
 
@@ -63,54 +96,22 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 					continue
 				}
 
-				kwstate = i.processTokens(tokens)
-				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+				// Condition is true?
+				if condition == grammar.KwTrue {
+					kwstate = i.processTokens(tokens)
+					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+						_break = true
+						i.skipBlock(false)
+						i.index--
+					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						i.skipBlock(false)
+						i.index--
+					}
+				} else {
 					_break = true
 					i.skipBlock(false)
 					i.index--
-				} else if kwstate == fract.LOOPContinue { // Continue loop?
-					i.skipBlock(false)
-					i.index--
 				}
-			}
-		}
-
-		/* Interpret/skip block. */
-		conditionList := &tokens
-		for {
-			i.index++
-			tokens := i.Tokens[i.index]
-			condition := i.processCondition(conditionList)
-
-			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
-				// Remove temporary variables.
-				i.variables = i.variables[:variableLen]
-				// Remove temporary functions.
-				i.functions = i.functions[:functionLen]
-
-				if _break || condition != grammar.KwTrue {
-					return processKwState()
-				}
-
-				i.index = iindex
-				continue
-			}
-
-			// Condition is true?
-			if condition == grammar.KwTrue {
-				kwstate = i.processTokens(tokens)
-				if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
-					_break = true
-					i.skipBlock(false)
-					i.index--
-				} else if kwstate == fract.LOOPContinue { // Continue loop?
-					i.skipBlock(false)
-					i.index--
-				}
-			} else {
-				_break = true
-				i.skipBlock(false)
-				i.index--
 			}
 		}
 	}
@@ -119,38 +120,34 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//   FOREACH
 	//*************
 	nameToken := tokens[0]
+
 	// Name is not name?
 	if nameToken.Type != fract.TypeName {
 		fract.Error(nameToken, "This is not a valid name!")
 	}
 
-	// Name is already defined?
-	if index, _ := i.varIndexByName(nameToken); index != -1 {
-		fract.Error(nameToken, "Already defined variable in this name at line: "+
-			fmt.Sprint(i.variables[index].Line))
-	}
-
 	// Element name?
 	elementName := ""
+
 	if tokens[1].Type == fract.TypeComma {
-		if len(tokens) < 3 {
+		if len(tokens) < 3 || tokens[2].Type != fract.TypeName {
 			fract.Error(tokens[1], "Element name is not defined!")
 		}
+
 		if tokens[2].Value != grammar.TokenUnderscore {
-			// Name is already defined?
-			if index, _ := i.varIndexByName(tokens[2]); index != -1 {
-				fract.Error(tokens[2], "Already defined variable in this name at line: "+
-					fmt.Sprint(i.variables[index].Line))
-			}
+			elementName = tokens[2].Value
+		}
+
+		if len(tokens)-3 == 0 {
+			tokens[2].Column += len(tokens[2].Value)
+			fract.Error(tokens[2], "Value is not defined!")
 		}
 		tokens = tokens[2:]
 	}
 
-	inToken := tokens[1]
-	tokens = *vector.Sublist(tokens, 2, len(tokens)-2)
-
-	// Value is not defined?
-	if tokens == nil {
+	if vtokens, inToken := vector.Sublist(tokens, 2, len(tokens)-2), tokens[1]; vtokens != nil {
+		tokens = *vtokens
+	} else {
 		fract.Error(inToken, "Value is not defined!")
 	}
 
@@ -187,7 +184,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		index.Name = ""
 	}
 
-	i.variables = append(i.variables, index, element)
+	i.variables = append([]obj.Variable{index, element}, i.variables...)
 
 	variableLen := len(i.variables)
 
@@ -248,6 +245,6 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	}
 
 	// Remove loop variables.
-	i.variables = i.variables[:variableLen-2]
+	i.variables = i.variables[2:variableLen]
 	return processKwState()
 }
