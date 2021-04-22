@@ -1,0 +1,15 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns radians to degrees.
+#
+
+protected func Degrees(radians)
+	ret radians * 57.295780
+end
