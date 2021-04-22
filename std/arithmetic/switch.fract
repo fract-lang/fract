@@ -11,5 +11,5 @@
 #
 
 protected func Switch(number)
-	ret number * -1
+	ret -number
 end
