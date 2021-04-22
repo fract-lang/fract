@@ -130,8 +130,6 @@ func solve(operator obj.Token, first, second float64) float64 {
 		result = float64(int64(first) & int64(second))
 	case grammar.TokenCaret: // Bitwise exclusive or.
 		result = float64(int64(first) ^ int64(second))
-	case grammar.Exponentiation: // Exponentiation.
-		result = math.Pow(first, second)
 	case grammar.TokenPercent: // Mod.
 		result = math.Mod(first, second)
 	case grammar.LeftBinaryShift: // Left shift.

@@ -30,7 +30,7 @@ func IndexProcessPriority(tokens []obj.Token) int {
 
 		// Exponentiation or shifts.
 		if token.Value == grammar.LeftBinaryShift || token.Value == grammar.RightBinaryShift ||
-			token.Value == grammar.Exponentiation {
+			token.Value == grammar.TokenCaret {
 			return index
 		}
 
