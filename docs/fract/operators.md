@@ -39,10 +39,6 @@
     <td>Integer division with bigger.</td>
   </tr>
   <tr>
-    <td align="center"><b>**</b></td>
-    <td>Exponentiation.</td>
-  </tr>
-  <tr>
     <td align="center"><b>=</b></td>
     <td>Set with value.</td>
   </tr>
@@ -117,10 +113,6 @@
   <tr>
     <td align="center"><b>/=</b></td>
     <td>Division assignment.</td>
-  </tr>
-  <tr>
-    <td align="center"><b>**=</b></td>
-    <td>Exponentiation assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>%=</b></td>
