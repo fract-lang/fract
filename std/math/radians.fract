@@ -7,9 +7,9 @@
 #
 # Description
 # ----------------
-# Returns radians to degrees.
+# Returns degrees to radians.
 #
 
-protected func Degrees(radians)
-	ret radians * 57.295780
+protected func Radians(degrees)
+	ret degrees / 57.295780
 end
