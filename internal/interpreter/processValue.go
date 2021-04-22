@@ -259,8 +259,7 @@ func solveProcess(process valueProcess) obj.Value {
 		if process.FirstV.Content[0].Type == fract.VALString ||
 			process.SecondV.Content[0].Type == fract.VALString {
 			dataFrame.Type = fract.VALString
-		} else if strings.Contains(dataFrame.Data, grammar.TokenDot) ||
-			process.FirstV.Content[0].Type == fract.VALFloat ||
+		} else if process.FirstV.Content[0].Type == fract.VALFloat ||
 			process.SecondV.Content[0].Type == fract.VALFloat {
 			dataFrame.Type = fract.VALFloat
 		}
