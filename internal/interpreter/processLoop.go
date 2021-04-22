@@ -39,8 +39,8 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	//*************
 	//    WHILE
 	//*************
-	if tokens == nil || len(tokens) == 1 {
-		if tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
+	if tokens == nil || len(tokens) >= 1 {
+		if len(tokens) == 1 || len(tokens) >= 1 && tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
 			variableLen := len(i.variables)
 
 			/* Infinity loop. */
@@ -77,16 +77,18 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 			/* Interpret/skip block. */
 			conditionList := &tokens
+			condition := i.processCondition(conditionList)
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
-				condition := i.processCondition(conditionList)
 
 				if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 					// Remove temporary variables.
 					i.variables = i.variables[:variableLen]
 					// Remove temporary functions.
 					i.functions = i.functions[:functionLen]
+
+					condition = i.processCondition(conditionList)
 
 					if _break || condition != grammar.KwTrue {
 						return processKwState()
@@ -199,21 +201,6 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		i.index++
 		tokens := i.Tokens[i.index]
 
-		if index.Name != "" {
-			index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprintf("%d", vindex)}
-		}
-
-		if element.Name != "" {
-			if value.Array {
-				element.Value.Content[0] = value.Content[vindex]
-			} else {
-				element.Value.Content[0] = obj.DataFrame{
-					Data: string(value.Content[0].Data[vindex]),
-					Type: fract.VALString,
-				}
-			}
-		}
-
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
 			i.variables = i.variables[:variableLen]
@@ -227,6 +214,21 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 				break
 			}
 			i.index = iindex
+
+			if index.Name != "" {
+				index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprintf("%d", vindex)}
+			}
+
+			if element.Name != "" {
+				if value.Array {
+					element.Value.Content[0] = value.Content[vindex]
+				} else {
+					element.Value.Content[0] = obj.DataFrame{
+						Data: string(value.Content[0].Data[vindex]),
+						Type: fract.VALString,
+					}
+				}
+			}
 
 			continue
 		}
