@@ -18,7 +18,7 @@ import (
 // l Lexer.
 // sb String builder.
 // fln Full line text of current code line.
-func processEscapeSequence(l *Lexer, sb *strings.Builder, fln string) bool {
+func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
 	if fln[l.Column-1] != '\\' {
 		return false
@@ -62,7 +62,7 @@ func processEscapeSequence(l *Lexer, sb *strings.Builder, fln string) bool {
 // token Token.
 // quote Quote style.
 // fln Full line text of current code line.
-func lexString(l *Lexer, token *obj.Token, quote, fln string) {
+func (l *Lexer) lexString(token *obj.Token, quote, fln string) {
 	sb := &strings.Builder{}
 	sb.WriteString(quote)
 	l.Column++
@@ -72,7 +72,7 @@ func lexString(l *Lexer, token *obj.Token, quote, fln string) {
 		if str == quote { // Finish?
 			sb.WriteByte(char)
 			break
-		} else if !processEscapeSequence(l, sb, fln) {
+		} else if !l.processEscapeSequence(sb, fln) {
 			sb.WriteByte(char)
 		}
 	}
@@ -83,6 +83,34 @@ func lexString(l *Lexer, token *obj.Token, quote, fln string) {
 	token.Type = fract.TypeValue
 
 	l.Column -= sb.Len() - 1
+}
+
+// processName Process name.
+// token Token.
+// check Check result.
+func (l *Lexer) processName(token *obj.Token, check string) bool {
+	// Remove punct.
+	if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
+		!strings.HasSuffix(check, grammar.TokenDot) {
+		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
+		if result {
+			check = check[:len(check)-1]
+		}
+	}
+
+	// Name is finished with dot?
+	if strings.HasSuffix(check, grammar.TokenDot) {
+		if l.RangeComment { // Ignore comment content.
+			l.Column++
+			token.Type = fract.TypeIgnore
+			return false
+		}
+		l.Error("What you mean?")
+	}
+
+	token.Value = check
+	token.Type = fract.TypeName
+	return true
 }
 
 // Generate Generate next token.
@@ -214,27 +242,9 @@ func (l *Lexer) Generate() obj.Token {
 		if check = strings.TrimSpace(regexp.MustCompile(
 			`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
 			FindString(ln)); check != "" { // Name.
-			// Remove punct.
-			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
-				!strings.HasSuffix(check, grammar.TokenDot) {
-				result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
-				if result {
-					check = check[:len(check)-1]
-				}
+			if !l.processName(&token, check) {
+				return token
 			}
-
-			// Name is finished with dot?
-			if strings.HasSuffix(check, grammar.TokenDot) {
-				if l.RangeComment { // Ignore comment content.
-					l.Column++
-					token.Type = fract.TypeIgnore
-					return token
-				}
-				l.Error("What you mean?")
-			}
-
-			token.Value = check
-			token.Type = fract.TypeName
 			break
 		}
 		token.Value = grammar.TokenMinus
@@ -396,35 +406,17 @@ func (l *Lexer) Generate() obj.Token {
 	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment.
 		return token
 	case strings.HasPrefix(ln, grammar.TokenQuote): // String.
-		lexString(l, &token, grammar.TokenQuote, fln)
+		l.lexString(&token, grammar.TokenQuote, fln)
 	case strings.HasPrefix(ln, grammar.TokenDoubleQuote): // String.
-		lexString(l, &token, grammar.TokenDoubleQuote, fln)
+		l.lexString(&token, grammar.TokenDoubleQuote, fln)
 	default: // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(
 			`^([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
 			FindString(ln)); check != "" { // Name.
-			// Remove punct.
-			if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
-				!strings.HasSuffix(check, grammar.TokenDot) {
-				result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
-				if result {
-					check = check[:len(check)-1]
-				}
+			if !l.processName(&token, check) {
+				return token
 			}
-
-			// Name is finished with dot?
-			if strings.HasSuffix(check, grammar.TokenDot) {
-				if l.RangeComment { // Ignore comment content.
-					l.Column++
-					token.Type = fract.TypeIgnore
-					return token
-				}
-				l.Error("What you mean?")
-			}
-
-			token.Value = check
-			token.Type = fract.TypeName
 		} else { // Error exactly
 			if l.RangeComment { // Ignore comment content.
 				l.Column++
