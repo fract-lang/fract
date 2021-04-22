@@ -13,6 +13,7 @@ import (
 func FormatData(data obj.DataFrame) string {
 	if data.Type != VALString {
 		for index := len(data.Data) - 1; index >= 0; index-- {
+		repeat:
 			if ch := data.Data[index]; ch != '0' {
 				if ch == '.' {
 					if data.Type == VALFloat {
@@ -26,6 +27,14 @@ func FormatData(data obj.DataFrame) string {
 					}
 				} else if data.Type == VALFloat {
 					data.Data = data.Data[:index+1]
+				}
+
+				if data.Type != VALFloat {
+					length := len(data.Data)
+					if length > 2 && data.Data[length-2:] != ".0" {
+						data.Type = VALFloat
+						goto repeat
+					}
 				}
 				return data.Data
 			}

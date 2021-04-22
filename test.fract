@@ -127,6 +127,12 @@ print(arr)
 exit()
 <#
 
+var a = [1,2,3,4,5,3]
+
+print(range(0, 11 / 2))
+
+exit()
+
 open t std.array
 
 var arr = range(1, 11)
