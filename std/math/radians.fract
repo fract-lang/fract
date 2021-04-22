@@ -11,5 +11,5 @@
 #
 
 protected func Radians(degrees)
-	ret degrees / 57.295780
+	ret degrees * 0.0174532925199444
 end

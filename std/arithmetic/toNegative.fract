@@ -15,5 +15,5 @@ protected func ToNegative(number)
 		ret number
 	end
 	
-	ret number * -1
+	ret -number
 end
