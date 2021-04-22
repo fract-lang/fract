@@ -36,6 +36,7 @@ func IndexProcessPriority(tokens []obj.Token) int {
 
 		modulus := fract.TypeNone
 		multiplyOrDivive := fract.TypeNone
+		binaryOrAnd := fract.TypeNone
 		additionOrSubtraction := fract.TypeNone
 
 		if token.Value == grammar.TokenPercent { // Modulus.
@@ -55,6 +56,11 @@ func IndexProcessPriority(tokens []obj.Token) int {
 			if additionOrSubtraction == fract.TypeNone {
 				additionOrSubtraction = index
 			}
+		} else if token.Value == grammar.TokenAmper ||
+			token.Value == grammar.TokenVerticalBar {
+			if binaryOrAnd == fract.TypeNone {
+				binaryOrAnd = index
+			}
 		}
 
 		if modulus != fract.TypeNone {
@@ -67,6 +73,11 @@ func IndexProcessPriority(tokens []obj.Token) int {
 				fract.Error(tokens[multiplyOrDivive], "Operator defined, but for what?")
 			}
 			return multiplyOrDivive
+		} else if binaryOrAnd != fract.TypeNone {
+			if binaryOrAnd == len(tokens)-1 {
+				fract.Error(tokens[binaryOrAnd], "Operator defined, but for what?")
+			}
+			return binaryOrAnd
 		} else if additionOrSubtraction != fract.TypeNone {
 			if additionOrSubtraction == len(tokens)-1 {
 				fract.Error(tokens[additionOrSubtraction], "Operator defined, but for what?")
