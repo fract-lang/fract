@@ -124,8 +124,12 @@ func solve(operator obj.Token, first, second float64) float64 {
 		if operator.Value == grammar.IntegerDivision {
 			result = math.RoundToEven(result)
 		}
-	case grammar.TokenCaret: // Exponentiation.
-		result = math.Pow(first, second)
+	case grammar.TokenVerticalBar: // Binary or.
+		result = float64(int64(first) | int64(second))
+	case grammar.TokenAmper: // Binary and.
+		result = float64(int64(first) & int64(second))
+	case grammar.TokenCaret: // Bitwise exclusive or.
+		result = float64(int64(first) ^ int64(second))
 	case grammar.TokenPercent: // Mod.
 		result = math.Mod(first, second)
 	case grammar.LeftBinaryShift: // Left shift.
@@ -369,7 +373,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		minussed = false
 	)
 
-	// applyMinus Apply minus assigment.
+	// applyMinus Apply minus assignment.
 	// value Value to apply.
 	applyMinus := func(value obj.Value) obj.Value {
 		if !minussed {

@@ -31,24 +31,24 @@ const (
 	LeftBinaryShift = "<<"
 	// RightBinaryShift Right binary shift.
 	RightBinaryShift = ">>"
-	// AdditionAssigment Addition assigment.
-	AdditionAssigment = "+="
-	// SubtractionAssigment Subtraction assigment.
-	SubtractionAssigment = "-="
-	// MultiplicationAssigment Multiplication assigment.
-	MultiplicationAssigment = "*="
-	// DivisionAssigment Division assigment.
-	DivisionAssigment = "/="
-	// ModulusAssigment Modulus assigment.
-	ModulusAssigment = "%="
-	// PowerAssigment Power assigment.
-	PowerAssigment = "^="
-	// LeftBinaryShiftAssigment Left binary shift assigment.
-	LeftBinaryShiftAssigment = "<<="
-	// RightBinaryShiftAssigment Right binary shift assigment.
-	RightBinaryShiftAssigment = ">>="
-	// InclusiveOrAssigment Bitwise inclusive or assigment.
-	InclusiveOrAssigment = "|="
-	// AndAssigment Bitwise and assigment.
-	AndAssigment = "&="
+	// AdditionAssignment Addition assignment.
+	AdditionAssignment = "+="
+	// SubtractionAssignment Subtraction assignment.
+	SubtractionAssignment = "-="
+	// MultiplicationAssignment Multiplication assignment.
+	MultiplicationAssignment = "*="
+	// DivisionAssignment Division assignment.
+	DivisionAssignment = "/="
+	// ModulusAssignment Modulus assignment.
+	ModulusAssignment = "%="
+	// LeftBinaryShiftAssignment Left binary shift assignment.
+	LeftBinaryShiftAssignment = "<<="
+	// RightBinaryShiftAssignment Right binary shift assignment.
+	RightBinaryShiftAssignment = ">>="
+	// InclusiveOrAssignment Bitwise inclusive or assignment.
+	InclusiveOrAssignment = "|="
+	// XOrAssignment Bitwise exclusive or assignment.
+	XOrAssignment = "^="
+	// AndAssignment Bitwise and assignment.
+	AndAssignment = "&="
 )

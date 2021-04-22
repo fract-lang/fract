@@ -27,10 +27,6 @@
     <td>Modulus.</td>
   </tr>
   <tr>
-    <td align="center"><b>^</b></td>
-    <td>Exponentiation.</td>
-  </tr>
-  <tr>
     <td align="center"><b>\</b></td>
     <td>Divide with bigger.</td>
   </tr>
@@ -70,9 +66,21 @@
     <td align="center"><b><=</b></td>
     <td>Less than or equals to.</td>
   </tr>
+    <tr>
+    <td align="center"><b>|</b></td>
+    <td>Binary or.</td>
+  </tr>
   <tr>
     <td align="center"><b>||</b></td>
     <td>Logical or.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>^</b></td>
+    <td>Bitwise exclusive or.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>&</b></td>
+    <td>Binary and.</td>
   </tr>
   <tr>
     <td align="center"><b>&&</b></td>
@@ -92,42 +100,42 @@
   </tr>
   <tr>
     <td align="center"><b>+=</b></td>
-    <td>Addition assigment.</td>
+    <td>Addition assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>-=</b></td>
-    <td>Subtraction assigment.</td>
+    <td>Subtraction assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>*=</b></td>
-    <td>Multiplication assigment.</td>
+    <td>Multiplication assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>/=</b></td>
-    <td>Division assigment.</td>
+    <td>Division assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>%=</b></td>
-    <td>Modulus assigment.</td>
-  </tr>
-  <tr>
-    <td align="center"><b>^=</b></td>
-    <td>Power assigment.</td>
+    <td>Modulus assignment.</td>
   </tr>
   <tr>
     <td align="center"><b><<=</b></td>
-    <td>Left binary shift assigment.</td>
+    <td>Left binary shift assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>>>=</b></td>
-    <td>Right binary shift assigment.</td>
+    <td>Right binary shift assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>|=</b></td>
-    <td>Bitwise inclusive or assigment.</td>
+    <td>Bitwise inclusive or assignment.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>^=</b></td>
+    <td>Bitwise exclusive or assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>&=</b></td>
-    <td>Bitwise and assigment.</td>
+    <td>Bitwise and assignment.</td>
   </tr>
 </table>

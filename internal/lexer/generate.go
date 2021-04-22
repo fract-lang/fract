@@ -170,35 +170,35 @@ func (l *Lexer) Generate() obj.Token {
 		token.Value = grammar.TokenSemicolon
 		token.Type = fract.TypeStatementTerminator
 		l.Line--
-	case strings.HasPrefix(ln, grammar.AdditionAssigment): // Addition assigment.
-		token.Value = grammar.AdditionAssigment
+	case strings.HasPrefix(ln, grammar.AdditionAssignment): // Addition assignment.
+		token.Value = grammar.AdditionAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.MultiplicationAssigment): // Multiplication assigment.
-		token.Value = grammar.MultiplicationAssigment
+	case strings.HasPrefix(ln, grammar.MultiplicationAssignment): // Multiplication assignment.
+		token.Value = grammar.MultiplicationAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.DivisionAssigment): // Division assigment.
-		token.Value = grammar.DivisionAssigment
+	case strings.HasPrefix(ln, grammar.DivisionAssignment): // Division assignment.
+		token.Value = grammar.DivisionAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.PowerAssigment): // Power assigment.
-		token.Value = grammar.PowerAssigment
+	case strings.HasPrefix(ln, grammar.ModulusAssignment): // Modulus assignment.
+		token.Value = grammar.ModulusAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.ModulusAssigment): // Modulus assigment.
-		token.Value = grammar.ModulusAssigment
+	case strings.HasPrefix(ln, grammar.SubtractionAssignment): // Subtraction assignment.
+		token.Value = grammar.SubtractionAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.SubtractionAssigment): // Subtraction assigment.
-		token.Value = grammar.SubtractionAssigment
+	case strings.HasPrefix(ln, grammar.LeftBinaryShiftAssignment): // Left binary shift assignment.
+		token.Value = grammar.LeftBinaryShiftAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.LeftBinaryShiftAssigment): // Left binary shift assigment.
-		token.Value = grammar.LeftBinaryShiftAssigment
+	case strings.HasPrefix(ln, grammar.RightBinaryShiftAssignment): // Right binary shift assignment.
+		token.Value = grammar.RightBinaryShiftAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.RightBinaryShiftAssigment): // Right binary shift assigment.
-		token.Value = grammar.RightBinaryShiftAssigment
+	case strings.HasPrefix(ln, grammar.InclusiveOrAssignment): // Bitwise Inclusive or assignment.
+		token.Value = grammar.InclusiveOrAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.InclusiveOrAssigment): // Inclusive or assigment.
-		token.Value = grammar.InclusiveOrAssigment
+	case strings.HasPrefix(ln, grammar.XOrAssignment): // Bitwise exclusive or assignment.
+		token.Value = grammar.XOrAssignment
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.AndAssigment): // And assigment.
-		token.Value = grammar.AndAssigment
+	case strings.HasPrefix(ln, grammar.AndAssignment): // And assignment.
+		token.Value = grammar.AndAssignment
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.IntegerDivision): // Integer division.
 		token.Value = grammar.IntegerDivision
@@ -245,9 +245,6 @@ func (l *Lexer) Generate() obj.Token {
 	case strings.HasPrefix(ln, grammar.TokenSlash): // Division.
 		token.Value = grammar.TokenSlash
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenCaret): // Exponentiation.
-		token.Value = grammar.TokenCaret
-		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenPercent): // Mod.
 		token.Value = grammar.TokenPercent
 		token.Type = fract.TypeOperator
@@ -287,6 +284,12 @@ func (l *Lexer) Generate() obj.Token {
 		}
 		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace
+	case strings.HasPrefix(ln, grammar.TokenVerticalBar): // Vertical bar.
+		token.Value = grammar.TokenVerticalBar
+		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.TokenAmper): // Amper.
+		token.Value = grammar.TokenAmper
+		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.LeftBinaryShift): // Left shift.
 		token.Value = grammar.LeftBinaryShift
 		token.Type = fract.TypeOperator
@@ -301,6 +304,9 @@ func (l *Lexer) Generate() obj.Token {
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.LogicalOr): // Logical or (||).
 		token.Value = grammar.LogicalOr
+		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.TokenCaret): // Bitwise exclusive or(^).
+		token.Value = grammar.TokenCaret
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.GreaterEquals): // Greater than or equals to (>=).
 		token.Value = grammar.GreaterEquals

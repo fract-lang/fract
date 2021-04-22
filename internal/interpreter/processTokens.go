@@ -44,16 +44,16 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 				}
 				if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.TokenEquals ||
-						current.Value == grammar.AdditionAssigment ||
-						current.Value == grammar.SubtractionAssigment ||
-						current.Value == grammar.MultiplicationAssigment ||
-						current.Value == grammar.DivisionAssigment ||
-						current.Value == grammar.ModulusAssigment ||
-						current.Value == grammar.PowerAssigment ||
-						current.Value == grammar.LeftBinaryShiftAssigment ||
-						current.Value == grammar.RightBinaryShiftAssigment ||
-						current.Value == grammar.InclusiveOrAssigment ||
-						current.Value == grammar.AndAssigment) { // Variable setting.
+						current.Value == grammar.AdditionAssignment ||
+						current.Value == grammar.SubtractionAssignment ||
+						current.Value == grammar.MultiplicationAssignment ||
+						current.Value == grammar.DivisionAssignment ||
+						current.Value == grammar.ModulusAssignment ||
+						current.Value == grammar.XOrAssignment ||
+						current.Value == grammar.LeftBinaryShiftAssignment ||
+						current.Value == grammar.RightBinaryShiftAssignment ||
+						current.Value == grammar.InclusiveOrAssignment ||
+						current.Value == grammar.AndAssignment) { // Variable setting.
 					i.processVariableSet(tokens)
 					return fract.TypeNone
 				}
