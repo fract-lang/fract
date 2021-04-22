@@ -53,7 +53,8 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 						current.Value == grammar.LeftBinaryShiftAssignment ||
 						current.Value == grammar.RightBinaryShiftAssignment ||
 						current.Value == grammar.InclusiveOrAssignment ||
-						current.Value == grammar.AndAssignment) { // Variable setting.
+						current.Value == grammar.AndAssignment ||
+						current.Value == grammar.ExponentiationAssignment) { // Variable setting.
 					i.processVariableSet(tokens)
 					return fract.TypeNone
 				}

@@ -51,4 +51,8 @@ const (
 	XOrAssignment = "^="
 	// AndAssignment Bitwise and assignment.
 	AndAssignment = "&="
+	// Exponentiation Exponentiation.
+	Exponentiation = "**"
+	// ExponentiationAssignment Exponentiation assignment.
+	ExponentiationAssignment = "**="
 )
