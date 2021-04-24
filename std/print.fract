@@ -7,9 +7,9 @@
 #
 # Description
 # ----------------
-# Prints message to cli.
+# Prints message as object string to cli.
 #
 
 protected func Print(message)
-	print(message, fin="")
+	print(string(message, type="object"), fin="")
 end
