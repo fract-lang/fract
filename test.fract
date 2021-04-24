@@ -127,6 +127,14 @@ print(arr)
 exit()
 <#
 
+open std.array
+
+const array = [14,29,4535,02,-10]
+
+print(array.Max(array))
+
+exit()
+
 open t std.array
 
 var arr = range(1, 11)
