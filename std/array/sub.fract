@@ -1,0 +1,32 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns subbed array.
+#
+
+protected func Sub(array, start, length)
+	if start < 0 || length < 0
+		ret []
+	end
+
+	const arrlen = len(array)
+
+	if start > arrlen
+		ret []
+	elif start + length > arrlen
+		length = arrlen - start
+	end
+
+	var newArray = []
+	for _, index in range(start, length + start - 1)
+		newArray = [newArray, array[index]]
+	end
+
+	ret newArray
+end
