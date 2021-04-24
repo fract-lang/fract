@@ -167,28 +167,28 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		return kwstate
 	}
 
-	// Create index variable.
-	index := obj.Variable{
-		Name: nameToken.Value,
-		Value: obj.Value{
-			Content: []obj.DataFrame{{}},
-		},
-	}
-	// Create element variable.
-	element := obj.Variable{
-		Name: elementName,
-		Value: obj.Value{
-			Content: []obj.DataFrame{{}},
-		},
-	}
+	i.variables = append(
+		[]obj.Variable{
+			{ // Index.
+				Name: nameToken.Value,
+				Value: obj.Value{
+					Content: []obj.DataFrame{{Data: "0"}},
+				},
+			},
+			{ // Element.
+				Name: elementName,
+				Value: obj.Value{
+					Content: []obj.DataFrame{{}},
+				},
+			}}, i.variables...)
+
+	variableLen := len(i.variables)
+	index := &i.variables[0]
+	element := &i.variables[1]
 
 	if index.Name == grammar.TokenUnderscore {
 		index.Name = ""
 	}
-
-	i.variables = append([]obj.Variable{index, element}, i.variables...)
-
-	variableLen := len(i.variables)
 
 	var length int
 	if value.Array {
@@ -197,6 +197,18 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		length = len(value.Content[0].Data)
 	}
 
+	if element.Name != "" {
+		if value.Array {
+			element.Value.Content = []obj.DataFrame{value.Content[0]}
+		} else {
+			element.Value.Content[0] = obj.DataFrame{
+				Data: string(value.Content[0].Data[0]),
+				Type: fract.VALString,
+			}
+		}
+	}
+
+	//? Interpret block.
 	for vindex := 0; vindex < length; {
 		i.index++
 		tokens := i.Tokens[i.index]
@@ -221,7 +233,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 			if element.Name != "" {
 				if value.Array {
-					element.Value.Content[0] = value.Content[vindex]
+					element.Value.Content = []obj.DataFrame{value.Content[vindex]}
 				} else {
 					element.Value.Content[0] = obj.DataFrame{
 						Data: string(value.Content[0].Data[vindex]),
@@ -229,17 +241,14 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 					}
 				}
 			}
-
 			continue
 		}
 
-		// Condition is true?
 		kwstate = i.processTokens(tokens)
 		if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 			_break = true
 			i.skipBlock(false)
 			i.index--
-			continue
 		} else if kwstate == fract.LOOPContinue { // Continue next?
 			i.skipBlock(false)
 			i.index--

@@ -202,11 +202,6 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	returnValue := obj.Value{}
-	variables := append(make([]obj.Variable, 0), source.variables...)
-	if source.funcTempVariables == 0 {
-		source.funcTempVariables = len(source.variables)
-	}
-	source.variables = append(vars, source.variables[:source.funcTempVariables]...)
 
 	// Is embed function?
 	if function.Tokens == nil {
@@ -235,6 +230,12 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		}
 	} else {
 		// Process block.
+
+		variables := source.variables
+		if source.funcTempVariables == 0 {
+			source.funcTempVariables = len(source.variables)
+		}
+		source.variables = append(vars, source.variables[:source.funcTempVariables]...)
 
 		source.functionCount++
 
@@ -271,13 +272,13 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		// Remove temporary functions.
 		source.functions = source.functions[:functionLen]
 
+		// Remove temporary variables.
+		source.variables = variables
+
 		source.functionCount--
 		source.funcTempVariables = old
 		source.index = nameIndex
 	}
-
-	// Remove temporary variables.
-	source.variables = variables
 
 	return returnValue
 }
