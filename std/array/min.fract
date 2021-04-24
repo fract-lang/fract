@@ -1,0 +1,27 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns minimum of array.
+#
+
+protected func Min(array)
+	var length = len(array)
+	if length == 0
+		ret 0
+	end
+
+	var min = array[0]
+	for _, element in array
+		if min > element
+			min = element
+		end
+	end
+	
+	ret min
+end
