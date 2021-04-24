@@ -127,12 +127,9 @@ print(arr)
 exit()
 <#
 
-open s std.strings
 open std.array
 
-var a = "    hello"
-print(s.Substring(a, 4, 90))
-print(array.Sub(a, 4, 90))
+print(array.Sort([90,3,5,6,3,1]))
 
 exit()
 
