@@ -294,12 +294,6 @@ func (l *Lexer) Generate() obj.Token {
 		}
 		token.Value = grammar.TokenRBracket
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.TokenVerticalBar): // Vertical bar.
-		token.Value = grammar.TokenVerticalBar
-		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenAmper): // Amper.
-		token.Value = grammar.TokenAmper
-		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.LeftBinaryShift): // Left shift.
 		token.Value = grammar.LeftBinaryShift
 		token.Type = fract.TypeOperator
@@ -314,6 +308,12 @@ func (l *Lexer) Generate() obj.Token {
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.LogicalOr): // Logical or (||).
 		token.Value = grammar.LogicalOr
+		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.TokenVerticalBar): // Vertical bar.
+		token.Value = grammar.TokenVerticalBar
+		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.TokenAmper): // Amper.
+		token.Value = grammar.TokenAmper
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenCaret): // Bitwise exclusive or(^).
 		token.Value = grammar.TokenCaret

@@ -13,14 +13,6 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-var (
-	// TrueValueIns True condition value instance.
-	TrueValueIns obj.Value = obj.Value{
-		Array:   false,
-		Content: []obj.DataFrame{{Data: grammar.KwTrue}},
-	}
-)
-
 // compare Compare values by operator.
 // value0 First value of comparison.
 // value1 Second value of comparison.
@@ -39,43 +31,37 @@ func compare(value0, value1 obj.Value, operator string) bool {
 		case grammar.Equals: // Equals.
 			if (data0.Type == fract.VALString && data0.Data != data1.Data) ||
 				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) !=
-						arithmetic.ToArithmetic(data1.Data)) {
+					arithmetic.ToArithmetic(data0.Data) != arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.NotEquals: // Not equals.
 			if (data0.Type == fract.VALString && data0.Data == data1.Data) ||
 				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) ==
-						arithmetic.ToArithmetic(data1.Data)) {
+					arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.TokenGreat: // Greater.
 			if (data0.Type == fract.VALString && data0.Data <= data1.Data) ||
 				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) <=
-						arithmetic.ToArithmetic(data1.Data)) {
+					arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.TokenLess: // Less.
 			if (data0.Type == fract.VALString && data0.Data >= data1.Data) ||
 				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) >=
-						arithmetic.ToArithmetic(data1.Data)) {
+					arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.GreaterEquals: // Greater or equals.
 			if (data0.Type == fract.VALString && data0.Data < data1.Data) ||
 				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) <
-						arithmetic.ToArithmetic(data1.Data)) {
+					arithmetic.ToArithmetic(data0.Data) < arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		case grammar.LessEquals: // Less or equals.
 			if (data0.Type == fract.VALString && data0.Data > data1.Data) ||
 				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) >
-						arithmetic.ToArithmetic(data1.Data)) {
+					arithmetic.ToArithmetic(data0.Data) > arithmetic.ToArithmetic(data1.Data)) {
 				return false
 			}
 		}
@@ -124,6 +110,8 @@ func compare(value0, value1 obj.Value, operator string) bool {
 func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 	i.processRange(tokens)
 
+	TRUE := obj.Value{Content: []obj.DataFrame{{Data: grammar.KwTrue}}}
+
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(*tokens, grammar.LogicalOr)
 	for _, current := range *ors {
@@ -133,7 +121,7 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 		if len(*ands) > 1 {
 			for aindex := range *ands {
 				if !compare(i.processValue(
-					&(*ands)[aindex]), TrueValueIns, grammar.Equals) {
+					&(*ands)[aindex]), TRUE, grammar.Equals) {
 					return grammar.KwFalse
 				}
 			}
@@ -144,7 +132,7 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			if compare(i.processValue(&current), TrueValueIns, grammar.Equals) {
+			if compare(i.processValue(&current), TRUE, grammar.Equals) {
 				return grammar.KwTrue
 			}
 			continue
@@ -157,10 +145,10 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 			fract.Error(current[len(current)-1], "Comparison values are missing!")
 		}
 
-		if compare(i.processValue(
-			vector.Sublist(current, 0, operatorIndex)), i.processValue(
-			vector.Sublist(current, operatorIndex+1,
-				len(current)-operatorIndex-1)), operator) {
+		if compare(
+			i.processValue(vector.Sublist(current, 0, operatorIndex)),
+			i.processValue(vector.Sublist(current, operatorIndex+1, len(current)-operatorIndex-1)),
+			operator) {
 			return grammar.KwTrue
 		}
 	}
