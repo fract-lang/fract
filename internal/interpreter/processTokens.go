@@ -104,12 +104,15 @@ func (i *Interpreter) processTokens(tokens []obj.Token) int {
 		if i.functionCount == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
 		}
-		valueList := tokens[1:]
-		if valueList == nil {
-			break
+
+		if len(tokens) > 1 {
+			valueList := tokens[1:]
+			value := i.processValue(&valueList)
+			i.returnValue = &value
+		} else {
+			i.returnValue = nil
 		}
-		value := i.processValue(&valueList)
-		i.returnValue = &value
+
 		return fract.FUNCReturn
 	case fract.TypeFunction: // Function definiton.
 		i.processFunction(tokens, false)
