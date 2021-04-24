@@ -87,7 +87,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 				fract.Error(current, "Value is not defined!")
 			}
 
-			if count > len(function.Parameters)-function.DefaultParameterCount {
+			if count >= len(function.Parameters) {
 				fract.Error(current, "Argument overflow!")
 			}
 
@@ -110,9 +110,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 								fract.Error(current, "Keyword argument repeated!")
 							}
 						}
-						if parameter.Default.Content == nil {
-							count++
-						}
+						count++
 						valueList = valueList[2:]
 						paramSet = true
 						names = append(names, current.Value)
@@ -136,9 +134,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 					"After the parameter has been given a special value, all parameters must be shown privately!")
 			}
 
-			if function.Parameters[count].Default.Content == nil {
-				count++
-			}
+			count++
 			names = append(names, variable.Name)
 			// Parameter is params typed?
 			if parameter.Params {
@@ -171,7 +167,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	// All parameters is not defined?
-	if count != len(function.Parameters)-function.DefaultParameterCount {
+	if count < len(function.Parameters)-function.DefaultParameterCount {
 		var sb strings.Builder
 		sb.WriteString("All required positional parameters is not defined:")
 		for _, parameter := range function.Parameters {
