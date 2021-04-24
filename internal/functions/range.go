@@ -58,19 +58,21 @@ func Range(f obj.Function, parameters []obj.Variable) obj.Value {
 
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			returnValue.Content = append(returnValue.Content,
-				obj.DataFrame{
-					Data: fmt.Sprintf(fract.FloatFormat, startV),
-					Type: dtype,
-				})
+			data := obj.DataFrame{
+				Data: fmt.Sprintf(fract.FloatFormat, startV),
+				Type: dtype,
+			}
+			data.Data = fract.FormatData(data)
+			returnValue.Content = append(returnValue.Content, data)
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			returnValue.Content = append(returnValue.Content,
-				obj.DataFrame{
-					Data: fmt.Sprintf(fract.FloatFormat, startV),
-					Type: dtype,
-				})
+			data := obj.DataFrame{
+				Data: fmt.Sprintf(fract.FloatFormat, startV),
+				Type: dtype,
+			}
+			data.Data = fract.FormatData(data)
+			returnValue.Content = append(returnValue.Content, data)
 		}
 	}
 
