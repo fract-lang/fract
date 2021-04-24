@@ -7,9 +7,10 @@
 #
 # Description
 # ----------------
-# Prints message and new line to cli.
+# Prints message as object string and new line to cli.
 #
 
 protected func Println(message)
-	print(message, fin="\n")
+	Print(message)
+	print()
 end
