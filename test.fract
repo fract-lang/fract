@@ -127,6 +127,15 @@ print(arr)
 exit()
 <#
 
+open s std.strings
+open std.array
+
+var a = "    hello"
+print(s.Substring(a, 4, 90))
+print(array.Sub(a, 4, 90))
+
+exit()
+
 open t std.array
 
 var arr = range(1, 11)
