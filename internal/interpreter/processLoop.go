@@ -176,13 +176,11 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 				},
 			},
 			{ // Element.
-				Name: elementName,
-				Value: obj.Value{
-					Content: []obj.DataFrame{{}},
-				},
+				Name:  elementName,
+				Value: obj.Value{},
 			}}, i.variables...)
 
-	variableLen := len(i.variables)
+	variables := i.variables
 	index := &i.variables[0]
 	element := &i.variables[1]
 
@@ -201,10 +199,10 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 		if value.Array {
 			element.Value.Content = []obj.DataFrame{value.Content[0]}
 		} else {
-			element.Value.Content[0] = obj.DataFrame{
+			element.Value.Content = []obj.DataFrame{{
 				Data: string(value.Content[0].Data[0]),
 				Type: fract.VALString,
-			}
+			}}
 		}
 	}
 
@@ -215,7 +213,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
-			i.variables = i.variables[:variableLen]
+			i.variables = variables
 			// Remove temporary functions.
 			i.functions = i.functions[:functionLen]
 
@@ -256,6 +254,6 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	}
 
 	// Remove loop variables.
-	i.variables = i.variables[2:variableLen]
+	i.variables = variables[2:]
 	return processKwState()
 }
