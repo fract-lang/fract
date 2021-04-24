@@ -131,7 +131,7 @@ open std.array
 
 const array = [14,29,4535,02,-10]
 
-print(array.Max(array))
+print(array.Min(array))
 
 exit()
 
