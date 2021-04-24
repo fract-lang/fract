@@ -483,9 +483,14 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if variable.Value.Array {
 						data = variable.Value.Content[position]
 					} else {
-						data = obj.DataFrame{
-							Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position]),
-							Type: fract.VALInteger,
+						if variable.Value.Content[0].Type == fract.VALString {
+							data = obj.DataFrame{
+								Data: string(variable.Value.Content[0].Data[position]),
+								Type: fract.VALString,
+							}
+						} else {
+							data = obj.DataFrame{
+								Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position])}
 						}
 					}
 
@@ -628,9 +633,14 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if variable.Value.Array {
 				data = variable.Value.Content[position]
 			} else {
-				data = obj.DataFrame{
-					Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position]),
-					Type: fract.VALInteger,
+				if variable.Value.Content[0].Type == fract.VALString {
+					data = obj.DataFrame{
+						Data: string(variable.Value.Content[0].Data[position]),
+						Type: fract.VALString,
+					}
+				} else {
+					data = obj.DataFrame{
+						Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position])}
 				}
 			}
 

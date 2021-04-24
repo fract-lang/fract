@@ -127,12 +127,6 @@ print(arr)
 exit()
 <#
 
-open s std.strings
-
-print(s.IsNumeric("4546", float=false))
-
-exit()
-
 open t std.array
 
 var arr = range(1, 11)
