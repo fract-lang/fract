@@ -127,11 +127,9 @@ print(arr)
 exit()
 <#
 
-open std.array
+open s std.strings
 
-const array = [14,29,4535,02,-10]
-
-print(array.Min(array))
+print(s.IsNumericChar("a"))
 
 exit()
 

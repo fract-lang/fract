@@ -1,0 +1,26 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns true if char is numeric(0-9), false if not.
+#
+
+protected func IsNumericChar(char)
+ ret (
+  char == "0" ||
+  char == "1" ||
+  char == "2" ||
+  char == "3" ||
+  char == "4" ||
+  char == "5" ||
+  char == "6" ||
+  char == "7" ||
+  char == "8" ||
+  char == "9"
+ )
+end
