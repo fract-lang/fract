@@ -129,7 +129,7 @@ exit()
 
 open s std.strings
 
-print(s.IsNumericChar("a"))
+print(s.IsNumeric("4546", float=false))
 
 exit()
 
