@@ -16,10 +16,17 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Name:                  "print",
 			Protected:             true,
 			Tokens:                nil,
-			DefaultParameterCount: 1,
+			DefaultParameterCount: 2,
 			Parameters: []obj.Parameter{
 				{
 					Name: "value",
+					Default: obj.Value{
+						Content: []obj.DataFrame{
+							{
+								Type: fract.VALString,
+							},
+						},
+					},
 				},
 				{
 					Name: "fin",

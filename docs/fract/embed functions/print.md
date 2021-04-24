@@ -5,11 +5,11 @@ Print values to CLI.
 
 ## Define
 ```
-protected func print(value, fin="\n")
+protected func print(value="", fin="\n")
 ```
 
 ## Parameters
-+ ``value`` <br>
++ ``value=""`` <br>
 Value to print.
 + ``fin="\n"`` <br>
 Value to print after "value" parameter.
