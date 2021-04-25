@@ -11,10 +11,14 @@
 #
 # Constants
 # ----------------
-# PI
-#  The PI number.
+# BasicPi
+#  The elementary Pi number.
+#
+# Pi
+#  The Pi number.
 #
 
 protected const (
-	PI            = 3.14159265358979
+	BasicPi   = 3.14,
+	Pi        = 3.14159265358979323846,
 )
