@@ -19,5 +19,6 @@ protected func Pow(x, y, z=false)
 	if z <> false
 		ret n % z
 	end
+
 	ret n
 end
