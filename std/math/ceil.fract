@@ -1,0 +1,21 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns Returns the smallest (closest to negative infinity).
+#
+
+protected func Ceil(x)
+	if	x - int(x) == 0
+		ret x
+	elif x - int(x) > 0
+		ret int(x + 1)
+	end
+
+	ret int(x)
+end
