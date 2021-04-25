@@ -22,9 +22,9 @@ protected func BinaryPow(x, y, z=false)
 		y >>= 1
 	end
 
- if z <> false
-  ret n % z
- end
+	if z <> false
+		ret n % z
+	end
 
 	ret n
 end

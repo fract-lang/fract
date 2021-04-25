@@ -129,8 +129,7 @@ exit()
 
 open std.math
 
-print(math.BinaryPow(3,2))
-print(math.Pow(3,2))
+print(math.Ceil(300.72))
 
 exit()
 
