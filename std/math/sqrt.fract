@@ -10,6 +10,8 @@
 # Returns the square root.
 #
 
+#! NOT OPTIMIZE
+
 protected func Sqrt(x)
 	if x <= 0
 		ret 0

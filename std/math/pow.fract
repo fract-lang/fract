@@ -21,4 +21,18 @@ protected func Pow(x, y, z=false)
 	end
 
 	ret n
+
+
+	# Recursive
+	#>
+	if y == 0
+		ret 1
+	end
+
+	if z <> false
+		ret (x * Pow(x, y - 1)) % z
+	end
+
+	ret x * Pow(x, y - 1)
+	<#
 end
