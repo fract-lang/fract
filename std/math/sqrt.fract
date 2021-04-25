@@ -1,0 +1,66 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns the square root.
+#
+
+protected func Sqrt(x)
+	if x <= 0
+		ret 0
+	end
+
+	var (
+		start = 0,
+		final = x,
+		mid   = 0,
+		ans   = 0, # To store the answer.
+	)
+
+	# To find integral part of square root of number.
+	for start <= final
+		# Find mid.
+		mid = (start + final) / 2
+
+		#>
+			Increment start if integral part lies on
+			right side of the mid.
+		<#
+		if mid * mid < x
+			# First start value should be added to answer.
+			ans = start
+
+			# Then start should be changed.
+			start = mid + 1
+		else
+			#>
+				Decrement end if integral part lies on
+				the left side of the mid.
+			<#
+			final = mid - 1
+		end
+	end
+
+	#>
+		To find the fractional part of
+		square root upto 5 decimal.
+	<#
+	var increment = 0.1
+	for _, i in range(0, 4)
+		for ans * ans <= x
+			ans += increment
+		end
+
+		# Loop terminates,
+		# when ans * ans > x
+		ans -= increment
+		increment /= 10
+	end
+
+	ret ans
+end
