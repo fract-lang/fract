@@ -5,6 +5,8 @@
 package fract
 
 import (
+	"math/big"
+
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -30,8 +32,14 @@ func FormatData(data obj.DataFrame) string {
 			} else if data.Type == VALFloat {
 				data.Data = data.Data[:index+1]
 			}
-			return data.Data
+			break
 		}
+	}
+
+	if data.Type == VALFloat {
+		b := new(big.Float)
+		b.SetString(data.Data)
+		data.Data = b.String()
 	}
 
 	return data.Data
