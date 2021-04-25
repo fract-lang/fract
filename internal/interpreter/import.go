@@ -40,6 +40,12 @@ func (i *Interpreter) Import() {
 			i.variables = append(i.variables, source.variables...)
 			i.functions = append(i.functions, source.functions...)
 			i.Imports = append(i.Imports, source.Imports...)
+		case fract.TypeIf: // if-elif-else.
+			i.skipBlock(true)
+		case fract.TypeLoop: // Loop definition.
+			i.skipBlock(true)
+		case fract.TypeTry: // Try-Catch.
+			i.skipBlock(true)
 		}
 	}
 }

@@ -17,6 +17,7 @@ import (
 //
 // tokens Tokens to process.
 // nested Is nested?
+//! A change added here(especially added a code block) must also be added to "import.go"!
 func (i *Interpreter) processTokens(tokens []obj.Token) int {
 	tokens = append(make([]obj.Token, 0), tokens...)
 
