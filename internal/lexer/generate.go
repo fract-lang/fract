@@ -161,7 +161,7 @@ func (l *Lexer) Generate() obj.Token {
 	}
 
 	switch check := strings.TrimSpace(regexp.MustCompile(
-		`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)e\-[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
+		`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?e\-[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
 	case check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
