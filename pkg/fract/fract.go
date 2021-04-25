@@ -15,5 +15,5 @@ const (
 	Stdin = "<stdin>"
 
 	// Float format.
-	FloatFormat = "%0.14f"
+	FloatFormat = "%g"
 )
