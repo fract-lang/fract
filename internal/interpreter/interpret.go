@@ -34,10 +34,11 @@ func (i *Interpreter) Interpret() {
 		content, err := ioutil.ReadDir(path)
 
 		if err == nil {
+			mainName := i.Lexer.File.Path[strings.LastIndex(i.Lexer.File.Path, string(os.PathSeparator))+1:]
 			for _, current := range content {
 				// Skip directories.
 				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) ||
-					current.Name() == i.Lexer.File.File.Name() {
+					current.Name() == mainName {
 					continue
 				}
 
