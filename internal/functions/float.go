@@ -11,7 +11,7 @@ import (
 // Float Convert object to float.
 // f Function.
 // parameters Parameters.
-func Float(f obj.Function, parameters []obj.Variable) obj.Value {
+func Float(f obj.Function, parameters []*obj.Variable) obj.Value {
 	return obj.Value{
 		Content: []obj.DataFrame{
 			{

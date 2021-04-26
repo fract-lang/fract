@@ -10,7 +10,7 @@ import (
 // Len of object.
 // f Function.
 // parameters Parameters.
-func Len(f obj.Function, parameters []obj.Variable) obj.Value {
+func Len(f obj.Function, parameters []*obj.Variable) obj.Value {
 	parameter := parameters[0].Value
 
 	if parameter.Array {

@@ -29,9 +29,9 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	function := source.functions[nameIndex]
 
 	var (
-		vars  = []obj.Variable{}
-		names = []string{}
-		count = 0
+		vars  []*obj.Variable
+		names []string
+		count int
 	)
 
 	// Decompose arguments.
@@ -44,7 +44,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		// current Current token.
 		// count Count of appended arguments.
 		// index Index of tokens state.
-		processArgument := func(current obj.Token, index *int) obj.Variable {
+		processArgument := func(current obj.Token, index *int) *obj.Variable {
 			getParamsArgumentValue := func() obj.Value {
 				returnValue := obj.Value{
 					Content: []obj.DataFrame{},
@@ -96,7 +96,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			}
 
 			parameter := function.Parameters[count]
-			variable := obj.Variable{Name: parameter.Name}
+			variable := &obj.Variable{Name: parameter.Name}
 			valueList := *vector.Sublist(tokens, lastComma, length)
 			current = valueList[0]
 
@@ -118,7 +118,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 						valueList = valueList[2:]
 						paramSet = true
 						names = append(names, current.Value)
-						returnValue := obj.Variable{Name: current.Value}
+						returnValue := &obj.Variable{Name: current.Value}
 						//Parameter is params typed?
 						if parameter.Params {
 							lastComma += 2
@@ -194,7 +194,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	for ; count < len(function.Parameters); count++ {
 		current := function.Parameters[count]
 		if current.Default.Content != nil {
-			vars = append(vars, obj.Variable{
+			vars = append(vars, &obj.Variable{
 				Name:  current.Name,
 				Value: current.Default,
 			})

@@ -11,7 +11,7 @@ import (
 // Range of object.
 // f Function.
 // parameters Parameters.
-func Range(f obj.Function, parameters []obj.Variable) obj.Value {
+func Range(f obj.Function, parameters []*obj.Variable) obj.Value {
 	start := parameters[0].Value
 	to := parameters[1].Value
 	step := parameters[2].Value
