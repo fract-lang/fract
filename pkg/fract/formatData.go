@@ -19,10 +19,11 @@ func FormatData(data obj.DataFrame) string {
 	}
 
 	b := new(big.Float)
-	b.SetString(data.Data)
-	data.Data = b.String()
-	if data.Type == VALFloat && !strings.Contains(data.Data, ".") {
-		data.Data += ".0"
+	if _, fail := b.SetString(data.Data); !fail {
+		data.Data = b.String()
+		if data.Type == VALFloat && !strings.Contains(data.Data, ".") {
+			data.Data += ".0"
+		}
 	}
 
 	return data.Data

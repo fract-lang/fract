@@ -11,6 +11,7 @@ import (
 
 // ApplyEmbedFunctions Add embed functions to interpreter source.
 func (i *Interpreter) ApplyEmbedFunctions() {
+	//! Embed functions should have a lowercase names.
 	i.functions = append(i.functions,
 		obj.Function{ // print function.
 			Name:                  "print",
