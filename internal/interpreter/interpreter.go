@@ -31,7 +31,7 @@ type Interpreter struct {
 	/* PUBLIC */
 
 	// Parser of this file.
-	Lexer lexer.Lexer
+	Lexer *lexer.Lexer
 	// All Tokens of code file.
 	Tokens [][]obj.Token
 	// All imported script files.
