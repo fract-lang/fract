@@ -129,7 +129,7 @@ exit()
 
 open std.math
 
-print(math.Ceil(300.72))
+print(math.Max(7, 5))
 
 exit()
 
