@@ -9,7 +9,7 @@ type Function struct {
 	// Block content of function.
 	Tokens [][]Token
 	// Parameters of function.
-	Parameters []Parameter
+	Parameters *[]Parameter
 	// Count of parameters with default value.
 	DefaultParameterCount int
 	// Protection state?
