@@ -23,6 +23,10 @@
     <td>Division.</td>
   </tr>
   <tr>
+    <td align="center"><b>**</b></td>
+    <td>Exponentiation.</td>
+  </tr>
+  <tr>
     <td align="center"><b>%</b></td>
     <td>Modulus.</td>
   </tr>
@@ -109,6 +113,10 @@
   <tr>
     <td align="center"><b>*=</b></td>
     <td>Multiplication assignment.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>**=</b></td>
+    <td>Exponentiation assignment.</td>
   </tr>
   <tr>
     <td align="center"><b>/=</b></td>

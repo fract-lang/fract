@@ -201,6 +201,9 @@ func (l *Lexer) Generate() obj.Token {
 	case strings.HasPrefix(ln, grammar.AdditionAssignment): // Addition assignment.
 		token.Value = grammar.AdditionAssignment
 		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.ExponentiationAssignment): // Exponentiation assignment.
+		token.Value = grammar.ExponentiationAssignment
+		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.MultiplicationAssignment): // Multiplication assignment.
 		token.Value = grammar.MultiplicationAssignment
 		token.Type = fract.TypeOperator
@@ -248,6 +251,9 @@ func (l *Lexer) Generate() obj.Token {
 			break
 		}
 		token.Value = grammar.TokenMinus
+		token.Type = fract.TypeOperator
+	case strings.HasPrefix(ln, grammar.Exponentiation): // Exponentiation.
+		token.Value = grammar.Exponentiation
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenStar): // Multiplication.
 		token.Value = grammar.TokenStar
