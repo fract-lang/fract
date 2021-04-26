@@ -35,5 +35,5 @@ type Interpreter struct {
 	// All Tokens of code file.
 	Tokens [][]obj.Token
 	// All imported script files.
-	Imports []ImportInfo
+	Imports []*ImportInfo
 }
