@@ -14,7 +14,7 @@ import (
 // path Path of directory.
 func NewStdin(path string) Interpreter {
 	return Interpreter{
-		Lexer: lexer.Lexer{
+		Lexer: &lexer.Lexer{
 			File: obj.CodeFile{
 				Path:  fract.Stdin,
 				File:  nil,
