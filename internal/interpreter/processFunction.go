@@ -42,8 +42,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	i.index++
 	function := obj.Function{
 		Name:       _name.Value,
-		Start:      i.index,
-		Line:       _name.Line,
+		Line:       i.index,
 		Parameters: []obj.Parameter{},
 		Protected:  protected,
 	}
@@ -132,6 +131,6 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	}
 
 	i.skipBlock(false)
-	function.Tokens = i.Tokens[function.Start : function.Start+i.index-function.Start+1]
+	function.Tokens = i.Tokens[function.Line : function.Line+i.index-function.Line+1]
 	i.functions = append(i.functions, function)
 }

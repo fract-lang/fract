@@ -4,8 +4,6 @@ package objects
 type Function struct {
 	// Name of function.
 	Name string
-	// Block start of function.
-	Start int
 	// Line of define.
 	Line int
 	// Block content of function.
