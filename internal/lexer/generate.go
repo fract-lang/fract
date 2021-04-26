@@ -120,7 +120,7 @@ func (l *Lexer) Generate() obj.Token {
 		File: l.File,
 	}
 
-	fln := l.File.Lines[l.Line-1].Text // Full line.
+	fln := l.File.Lines[l.Line-1] // Full line.
 
 	/* Line is finished. */
 	if l.Column > len(fln) {

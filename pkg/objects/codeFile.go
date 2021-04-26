@@ -11,5 +11,5 @@ type CodeFile struct {
 	// File instance of file.
 	File *os.File
 	// Lines of file.
-	Lines []CodeLine
+	Lines []string
 }
