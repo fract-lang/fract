@@ -130,6 +130,8 @@ func solve(operator obj.Token, first, second float64) float64 {
 		result = float64(int64(first) & int64(second))
 	case grammar.TokenCaret: // Bitwise exclusive or.
 		result = float64(int64(first) ^ int64(second))
+	case grammar.Exponentiation: // Exponentiation.
+		result = math.Pow(first, second)
 	case grammar.TokenPercent: // Mod.
 		result = math.Mod(first, second)
 	case grammar.LeftBinaryShift: // Left shift.
@@ -873,23 +875,23 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 		}
 	}
 
-	if priorityIndex := parser.IndexProcessPriority(*tokens); priorityIndex != -1 {
+	parts := parser.DecomposeArithmeticProcesses(*tokens)
+
+	if priorityIndex := parser.IndexProcessPriority(*parts); priorityIndex != -1 {
 		// Decompose arithmetic operations.
 		for priorityIndex != -1 {
 			var operation valueProcess
-			operation.First = (*tokens)[priorityIndex-1]
-			priorityIndex -= i._processValue(true, &operation,
-				tokens, priorityIndex-1)
-			operation.Operator = (*tokens)[priorityIndex]
+			operation.First = (*parts)[priorityIndex-1]
+			priorityIndex -= i._processValue(true, &operation, parts, priorityIndex-1)
+			operation.Operator = (*parts)[priorityIndex]
 
-			operation.Second = (*tokens)[priorityIndex+1]
-			priorityIndex -= i._processValue(false, &operation,
-				tokens, priorityIndex+1)
+			operation.Second = (*parts)[priorityIndex+1]
+			priorityIndex -= i._processValue(false, &operation, parts, priorityIndex+1)
 
 			resultValue := solveProcess(operation)
 
 			operation.Operator.Value = grammar.TokenPlus
-			operation.Second = (*tokens)[priorityIndex+1]
+			operation.Second = (*parts)[priorityIndex+1]
 			operation.FirstV = value
 			operation.SecondV = resultValue
 
@@ -897,17 +899,17 @@ func (i *Interpreter) processValue(tokens *[]obj.Token) obj.Value {
 			value = resultValue
 
 			// Remove processed processes.
-			vector.RemoveRange(tokens, priorityIndex-1, 3)
-			vector.Insert(tokens, priorityIndex-1, obj.Token{Value: "0"})
+			vector.RemoveRange(parts, priorityIndex-1, 3)
+			vector.Insert(parts, priorityIndex-1, obj.Token{Value: "0"})
 
 			// Find next operator.
-			priorityIndex = parser.IndexProcessPriority(*tokens)
+			priorityIndex = parser.IndexProcessPriority(*parts)
 		}
 	} else {
 		var operation valueProcess
-		operation.First = (*tokens)[0]
-		operation.FirstV.Array = true // Ignore nil control if function call.
-		i._processValue(true, &operation, tokens, 0)
+		operation.First = (*parts)[0]
+		operation.FirstV.Array = true //* Ignore nil control if function call.
+		i._processValue(true, &operation, parts, 0)
 		value = operation.FirstV
 	}
 

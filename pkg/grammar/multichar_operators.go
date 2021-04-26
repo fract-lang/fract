@@ -17,6 +17,8 @@ const (
 	IntegerDivision = "//"
 	// IntegerDivideWithBigger Integer division with bigger.
 	IntegerDivideWithBigger = "\\\\"
+	// Exponentiation Exponentiation.
+	Exponentiation = "**"
 	// Equals Equals to.
 	Equals = "=="
 	// NotEquals Not equals to.
@@ -37,6 +39,8 @@ const (
 	SubtractionAssignment = "-="
 	// MultiplicationAssignment Multiplication assignment.
 	MultiplicationAssignment = "*="
+	// ExponentiationAssignment Exponentiation assignment.
+	ExponentiationAssignment = "**="
 	// DivisionAssignment Division assignment.
 	DivisionAssignment = "/="
 	// ModulusAssignment Modulus assignment.
