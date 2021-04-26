@@ -44,7 +44,7 @@ func findNextOperator(tokens []obj.Token, pos int, operator string) int {
 // tokens Tokens to process.
 // operator Operator to decompose.
 func DecomposeConditionalProcess(tokens []obj.Token, operator string) *[][]obj.Token {
-	expressions := make([][]obj.Token, 0)
+	var expressions [][]obj.Token
 
 	last := 0
 	index := findNextOperator(tokens, last, operator)

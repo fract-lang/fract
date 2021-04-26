@@ -16,6 +16,6 @@ func Sublist(slice []obj.Token, pos, length int) *[]obj.Token {
 	if length == 0 {
 		return nil
 	}
-	slice = append(make([]obj.Token, 0), slice[pos:pos+length]...)
+	slice = append([]obj.Token{}, slice[pos:pos+length]...)
 	return &slice
 }
