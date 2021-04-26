@@ -10,7 +10,7 @@ import (
 // Make array by size.
 // f Function.
 // parameters Parameters.
-func Make(f obj.Function, parameters []obj.Variable) obj.Value {
+func Make(f obj.Function, parameters []*obj.Variable) obj.Value {
 	size := parameters[0].Value
 
 	if size.Array {

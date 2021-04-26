@@ -68,7 +68,7 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 			fract.Error(avtokens[2], "Invalid value!")
 		}
 
-		i.variables = append(i.variables, obj.Variable{
+		i.variables = append(i.variables, &obj.Variable{
 			Name:      _name.Value,
 			Value:     value,
 			Line:      _name.Line,

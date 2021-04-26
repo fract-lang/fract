@@ -11,7 +11,7 @@ import (
 // String Convert object to string.
 // f Function.
 // parameters Parameters.
-func String(f obj.Function, parameters []obj.Variable) obj.Value {
+func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 	switch parameters[1].Value.Content[0].Data {
 	case "parse":
 		str := ""

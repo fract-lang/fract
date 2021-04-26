@@ -14,7 +14,7 @@ type Interpreter struct {
 	/* PRIVATE */
 
 	// Variables.
-	variables []obj.Variable
+	variables []*obj.Variable
 	// Functions.
 	functions []obj.Function
 	// Count of function temporary variables.

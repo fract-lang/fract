@@ -8,7 +8,7 @@ import (
 // Print values to CLI.
 // f Function.
 // parameters Parameters.
-func Print(f obj.Function, parameters []obj.Variable) {
+func Print(f obj.Function, parameters []*obj.Variable) {
 	if parameters[0].Value.Content == nil {
 		fract.Error(f.Tokens[0][0], "Invalid value!")
 	}

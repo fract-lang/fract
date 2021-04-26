@@ -168,7 +168,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 	}
 
 	i.variables = append(
-		[]obj.Variable{
+		[]*obj.Variable{
 			{ // Index.
 				Name: nameToken.Value,
 				Value: obj.Value{
@@ -181,8 +181,8 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 			}}, i.variables...)
 
 	variables := i.variables
-	index := &i.variables[0]
-	element := &i.variables[1]
+	index := i.variables[0]
+	element := i.variables[1]
 
 	if index.Name == grammar.TokenUnderscore {
 		index.Name = ""

@@ -11,7 +11,7 @@ import (
 // Int Convert object to integer.
 // f Function.
 // parameters Parameters.
-func Int(f obj.Function, parameters []obj.Variable) obj.Value {
+func Int(f obj.Function, parameters []*obj.Variable) obj.Value {
 	return obj.Value{
 		Content: []obj.DataFrame{
 			{
