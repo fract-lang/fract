@@ -15,7 +15,7 @@ func DecomposeArithmeticProcesses(tokens []obj.Token) *[]obj.Token {
 	var (
 		operator  bool
 		last      obj.Token
-		processes = make([]obj.Token, 0)
+		processes []obj.Token
 	)
 
 	for index, token := range tokens {

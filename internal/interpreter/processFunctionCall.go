@@ -27,8 +27,12 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	function := source.functions[nameIndex]
-	vars, names := make([]obj.Variable, 0), []string{}
-	count := 0
+
+	var (
+		vars  = []obj.Variable{}
+		names = []string{}
+		count = 0
+	)
 
 	// Decompose arguments.
 	if tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,

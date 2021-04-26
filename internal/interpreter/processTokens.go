@@ -19,7 +19,7 @@ import (
 // nested Is nested?
 //! A change added here(especially added a code block) must also be added to "import.go"!
 func (i *Interpreter) processTokens(tokens []obj.Token) int16 {
-	tokens = append(make([]obj.Token, 0), tokens...)
+	tokens = append([]obj.Token{}, tokens...)
 
 	switch first := tokens[0]; first.Type {
 	case
