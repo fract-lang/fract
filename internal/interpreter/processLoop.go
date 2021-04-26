@@ -15,7 +15,7 @@ import (
 
 // processLoop Process loop block.
 // tokens Tokens to process.
-func (i *Interpreter) processLoop(tokens []obj.Token) int {
+func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 	// Content is empty?
 	if vtokens := vector.Sublist(tokens, 1, len(tokens)-1); vtokens == nil {
 		tokens = nil
@@ -29,7 +29,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int {
 	iindex := i.index
 
 	// processKwState Process and return return value of kwstate.
-	processKwState := func() int {
+	processKwState := func() int16 {
 		if kwstate != fract.FUNCReturn {
 			return fract.TypeNone
 		}

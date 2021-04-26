@@ -34,13 +34,13 @@ func IndexProcessPriority(tokens []obj.Token) int {
 			return index
 		}
 
-		modulus := fract.TypeNone
-		multiplyOrDivive := fract.TypeNone
-		binaryOrAnd := fract.TypeNone
-		additionOrSubtraction := fract.TypeNone
+		modulus := -1
+		multiplyOrDivive := -1
+		binaryOrAnd := -1
+		additionOrSubtraction := -1
 
 		if token.Value == grammar.TokenPercent { // Modulus.
-			if modulus == fract.TypeNone {
+			if modulus == -1 {
 				modulus = index
 			}
 		} else if token.Value == grammar.TokenStar ||
@@ -48,37 +48,37 @@ func IndexProcessPriority(tokens []obj.Token) int {
 			token.Value == grammar.TokenBackslash ||
 			token.Value == grammar.IntegerDivision ||
 			token.Value == grammar.IntegerDivideWithBigger { // Multiply or division.
-			if multiplyOrDivive == fract.TypeNone {
+			if multiplyOrDivive == -1 {
 				multiplyOrDivive = index
 			}
 		} else if token.Value == grammar.TokenPlus ||
 			token.Value == grammar.TokenMinus { // Addition or subtraction.
-			if additionOrSubtraction == fract.TypeNone {
+			if additionOrSubtraction == -1 {
 				additionOrSubtraction = index
 			}
 		} else if token.Value == grammar.TokenAmper ||
 			token.Value == grammar.TokenVerticalBar {
-			if binaryOrAnd == fract.TypeNone {
+			if binaryOrAnd == -1 {
 				binaryOrAnd = index
 			}
 		}
 
-		if modulus != fract.TypeNone {
+		if modulus != -1 {
 			if modulus == len(tokens)-1 {
 				fract.Error(tokens[modulus], "Operator defined, but for what?")
 			}
 			return modulus
-		} else if multiplyOrDivive != fract.TypeNone {
+		} else if multiplyOrDivive != -1 {
 			if multiplyOrDivive == len(tokens)-1 {
 				fract.Error(tokens[multiplyOrDivive], "Operator defined, but for what?")
 			}
 			return multiplyOrDivive
-		} else if binaryOrAnd != fract.TypeNone {
+		} else if binaryOrAnd != -1 {
 			if binaryOrAnd == len(tokens)-1 {
 				fract.Error(tokens[binaryOrAnd], "Operator defined, but for what?")
 			}
 			return binaryOrAnd
-		} else if additionOrSubtraction != fract.TypeNone {
+		} else if additionOrSubtraction != -1 {
 			if additionOrSubtraction == len(tokens)-1 {
 				fract.Error(tokens[additionOrSubtraction], "Operator defined, but for what?")
 			}
@@ -86,5 +86,5 @@ func IndexProcessPriority(tokens []obj.Token) int {
 		}
 	}
 
-	return fract.TypeNone
+	return -1
 }

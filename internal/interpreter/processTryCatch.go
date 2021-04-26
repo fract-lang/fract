@@ -12,7 +12,7 @@ import (
 
 // processTryCatch Process Try-Catch block.
 // tokens Tokens to process.
-func (i *Interpreter) processTryCatch(tokens []obj.Token) int {
+func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 	if len(tokens) > 1 {
 		fract.Error(tokens[1], "Invalid syntax!")
 	}
