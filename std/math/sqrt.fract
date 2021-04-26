@@ -17,16 +17,18 @@ protected func Sqrt(x)
 
 	var z = 1.0
 	
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
-	z -= (z * z - x) / (2 * z)
+	try
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+	end
 
 	ret z
 end

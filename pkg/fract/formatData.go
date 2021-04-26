@@ -14,16 +14,15 @@ import (
 // FormatData Format data value.
 // data Data to format.
 func FormatData(data obj.DataFrame) string {
-	if data.Type == VALString {
+	if data.Type == VALString || data.Type == VALBoolean {
 		return data.Data
 	}
 
 	b := new(big.Float)
-	if _, fail := b.SetString(data.Data); !fail {
-		data.Data = b.String()
-		if data.Type == VALFloat && !strings.Contains(data.Data, ".") {
-			data.Data += ".0"
-		}
+	b.SetString(data.Data)
+	data.Data = b.String()
+	if data.Type == VALFloat && !strings.Contains(data.Data, ".") {
+		data.Data += ".0"
 	}
 
 	return data.Data
