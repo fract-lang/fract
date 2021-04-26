@@ -34,15 +34,12 @@ func IndexProcessPriority(tokens []obj.Token) int {
 			return index
 		}
 
-		modulus := -1
 		multiplyOrDivive := -1
 		binaryOrAnd := -1
 		additionOrSubtraction := -1
 
 		if token.Value == grammar.TokenPercent { // Modulus.
-			if modulus == -1 {
-				modulus = index
-			}
+			return index
 		} else if token.Value == grammar.TokenStar ||
 			token.Value == grammar.TokenSlash ||
 			token.Value == grammar.TokenBackslash ||
@@ -63,25 +60,11 @@ func IndexProcessPriority(tokens []obj.Token) int {
 			}
 		}
 
-		if modulus != -1 {
-			if modulus == len(tokens)-1 {
-				fract.Error(tokens[modulus], "Operator defined, but for what?")
-			}
-			return modulus
-		} else if multiplyOrDivive != -1 {
-			if multiplyOrDivive == len(tokens)-1 {
-				fract.Error(tokens[multiplyOrDivive], "Operator defined, but for what?")
-			}
+		if multiplyOrDivive != -1 {
 			return multiplyOrDivive
 		} else if binaryOrAnd != -1 {
-			if binaryOrAnd == len(tokens)-1 {
-				fract.Error(tokens[binaryOrAnd], "Operator defined, but for what?")
-			}
 			return binaryOrAnd
 		} else if additionOrSubtraction != -1 {
-			if additionOrSubtraction == len(tokens)-1 {
-				fract.Error(tokens[additionOrSubtraction], "Operator defined, but for what?")
-			}
 			return additionOrSubtraction
 		}
 	}
