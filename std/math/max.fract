@@ -1,0 +1,19 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns maximum number.
+#
+
+protected func Max(x, y)
+ if x > y
+  ret x
+ end
+
+ ret y
+end
