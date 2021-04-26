@@ -117,7 +117,7 @@ func (l *Lexer) processName(token *obj.Token, check string) bool {
 func (l *Lexer) Generate() obj.Token {
 	token := obj.Token{
 		Type: fract.TypeNone,
-		File: l.File,
+		File: &l.File,
 	}
 
 	fln := l.File.Lines[l.Line-1] // Full line.

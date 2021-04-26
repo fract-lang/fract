@@ -18,8 +18,7 @@ func (i *Interpreter) processDelete(tokens []obj.Token) {
 	// Value is not defined?
 	if tokenLen < 2 {
 		first := tokens[0]
-		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
-			"Value is not defined!")
+		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value), "Value is not defined!")
 	}
 
 	comma := false
