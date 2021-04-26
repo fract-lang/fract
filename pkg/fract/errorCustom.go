@@ -17,11 +17,10 @@ import (
 // line Line of error.
 // column Column of error.
 // message Message of error.
-func ErrorCustom(file obj.CodeFile, line, column int,
-	message string) obj.Exception {
+func ErrorCustom(file obj.CodeFile, line, column int, message string) obj.Exception {
 	e := obj.Exception{
 		Message: fmt.Sprintf("File: %s\nPosition: %d:%d\n    %s\n%s^\n%s",
-			file.Path, line, column, strings.ReplaceAll(strings.TrimSpace(file.Lines[line-1].Text), "\t", " "),
+			file.Path, line, column, strings.ReplaceAll(strings.TrimSpace(file.Lines[line-1]), "\t", " "),
 			str.GetWhitespace(4+column-1), message),
 	}
 
