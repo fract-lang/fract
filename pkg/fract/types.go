@@ -6,79 +6,79 @@ package fract
 
 const (
 	// TypeNone NA
-	TypeNone = -1
+	TypeNone int16 = -1
 	// TypeIgnore Ignore.
-	TypeIgnore = 1
+	TypeIgnore int16 = 1
 
 	// TypeComment Comment.
-	TypeComment = 1100
+	TypeComment int16 = 1100
 	// TypeOperator Operator.
-	TypeOperator = 1101
+	TypeOperator int16 = 1101
 	// TypePrint Print.
-	TypePrint = 1102
+	TypePrint int16 = 1102
 	// TypeValue Value.
-	TypeValue = 1103
+	TypeValue int16 = 1103
 	// TypeBrace Bracket.
-	TypeBrace = 1104
+	TypeBrace int16 = 1104
 	// TypeVariable Variable define.
-	TypeVariable = 1105
+	TypeVariable int16 = 1105
 	// TypeName Name type.
-	TypeName = 1106
+	TypeName int16 = 1106
 	// TypeDelete Delete from memory.
-	TypeDelete = 1107
+	TypeDelete int16 = 1107
 	// TypeComma Comma.
-	TypeComma = 1108
+	TypeComma int16 = 1108
 	// TypeBooleanTrue Boolean true.
-	TypeBooleanTrue = 119
+	TypeBooleanTrue int16 = 119
 	// TypeBooleanFalse Boolean false.
-	TypeBooleanFalse = 1110
+	TypeBooleanFalse int16 = 1110
 	// TypeBlockEnd End of block.
-	TypeBlockEnd = 1111
+	TypeBlockEnd int16 = 1111
 	// TypeIf If.
-	TypeIf = 1112
+	TypeIf int16 = 1112
 	// TypeElseIf Else if.
-	TypeElseIf = 1113
+	TypeElseIf int16 = 1113
 	// TypeElse Else.
-	TypeElse = 1114
+	TypeElse int16 = 1114
 	// TypeStatementTerminator Statement terminator.
-	TypeStatementTerminator = 1115
+	TypeStatementTerminator int16 = 1115
 	// TypeLoop Loop.
-	TypeLoop = 1116
+	TypeLoop int16 = 1116
 	// TypeIn In.
-	TypeIn = 1117
+	TypeIn int16 = 1117
 	// TypeBreak Break loop.
-	TypeBreak = 1118
+	TypeBreak int16 = 1118
 	// TypeContinue Continue loop.
-	TypeContinue = 1119
+	TypeContinue int16 = 1119
 	// TypeFunction Function declare.
-	TypeFunction = 1120
+	TypeFunction int16 = 1120
 	// TypeReturn Return.
-	TypeReturn = 1121
+	TypeReturn int16 = 1121
 	// TypeProtected Protected.
-	TypeProtected = 1122
+	TypeProtected int16 = 1122
 	// TypeTry Try.
-	TypeTry = 1123
+	TypeTry int16 = 1123
 	// TypeCatch Catch.
-	TypeCatch = 1124
+	TypeCatch int16 = 1124
 	// TypeImport Import.
-	TypeImport = 1125
+	TypeImport int16 = 1125
 	// TypeParams Params.
-	TypeParams = 1126
+	TypeParams int16 = 1126
 
 	// LOOPBreak Break loop.
-	LOOPBreak = 0
+	LOOPBreak int16 = 0
 	// LOOPContinue Continue loop.
-	LOOPContinue = 1
+	LOOPContinue int16 = 1
 
 	// FUNCReturn Return value.
-	FUNCReturn = 2
+	FUNCReturn int16 = 2
 
 	// VALInteger Integer value.
-	VALInteger = 0
+	VALInteger int16 = 0
 	// VALFloat Float value.
-	VALFloat = 1
+	VALFloat int16 = 1
 	// VALString String value.
-	VALString = 2
+	VALString int16 = 2
 	// Boolean Boolean value.
-	VALBoolean = 3
+	VALBoolean int16 = 3
 )
