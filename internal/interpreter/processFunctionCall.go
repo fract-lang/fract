@@ -91,11 +91,11 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 				fract.Error(current, "Value is not defined!")
 			}
 
-			if count >= len(function.Parameters) {
+			if count >= len(*function.Parameters) {
 				fract.Error(current, "Argument overflow!")
 			}
 
-			parameter := function.Parameters[count]
+			parameter := (*function.Parameters)[count]
 			variable := &obj.Variable{Name: parameter.Name}
 			valueList := *vector.Sublist(tokens, lastComma, length)
 			current = valueList[0]
@@ -107,7 +107,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 					fract.Error(current, "Value is not defined!")
 				}
 
-				for _, parameter := range function.Parameters {
+				for _, parameter := range *function.Parameters {
 					if parameter.Name == current.Value {
 						for _, name := range names {
 							if name == current.Value {
@@ -171,10 +171,10 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	// All parameters is not defined?
-	if count < len(function.Parameters)-function.DefaultParameterCount {
+	if count < len(*function.Parameters)-function.DefaultParameterCount {
 		var sb strings.Builder
 		sb.WriteString("All required positional parameters is not defined:")
-		for _, parameter := range function.Parameters {
+		for _, parameter := range *function.Parameters {
 			if parameter.Default.Content != nil {
 				break
 			}
@@ -191,8 +191,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	}
 
 	// Check default values.
-	for ; count < len(function.Parameters); count++ {
-		current := function.Parameters[count]
+	for ; count < len(*function.Parameters); count++ {
+		current := (*function.Parameters)[count]
 		if current.Default.Content != nil {
 			vars = append(vars, &obj.Variable{
 				Name:  current.Name,

@@ -43,7 +43,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	function := obj.Function{
 		Name:       _name.Value,
 		Line:       i.index,
-		Parameters: []obj.Parameter{},
+		Parameters: &[]obj.Parameter{},
 		Protected:  protected,
 	}
 
@@ -74,7 +74,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					Name:   current.Value,
 					Params: index > 0 && paramList[index-1].Type == fract.TypeParams,
 				}
-				function.Parameters = append(function.Parameters, lastParameter)
+				*function.Parameters = append(*function.Parameters, lastParameter)
 				paramName = false
 				continue
 			} else {
@@ -107,7 +107,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					if lastParameter.Params && !lastParameter.Default.Array {
 						fract.Error(current, "Params parameter is can only take array values!")
 					}
-					function.Parameters[len(function.Parameters)-1] = lastParameter
+					(*function.Parameters)[len(*function.Parameters)-1] = lastParameter
 					function.DefaultParameterCount++
 					defaultDefined = true
 					continue

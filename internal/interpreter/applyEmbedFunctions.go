@@ -18,7 +18,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 2,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "value",
 					Default: obj.Value{
@@ -47,7 +47,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "message",
 					Default: obj.Value{
@@ -66,7 +66,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "code",
 					Default: obj.Value{
@@ -80,7 +80,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "object",
 				},
@@ -91,7 +91,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "start",
 				},
@@ -111,7 +111,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "size",
 				},
@@ -122,7 +122,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "object",
 				},
@@ -144,7 +144,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "object",
 				},
@@ -155,7 +155,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: []obj.Parameter{
+			Parameters: &[]obj.Parameter{
 				{
 					Name: "object",
 				},
