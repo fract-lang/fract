@@ -84,7 +84,20 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 	} else if pre.Type == fract.TypeBrace && pre.Value == grammar.TokenLParenthes {
 		tokens = tokens[2 : len(tokens)-1]
 		last := 0
+		bracket := 0
 		for index, token := range tokens {
+			if token.Type == fract.TypeBrace {
+				if token.Value == grammar.TokenLBrace ||
+					token.Value == grammar.TokenLBracket ||
+					token.Value == grammar.TokenLParenthes {
+					bracket++
+				} else {
+					bracket--
+				}
+			}
+			if bracket > 0 {
+				continue
+			}
 			if token.Type == fract.TypeComma {
 				appendVariable(tokens[last:index])
 				last = index + 1
