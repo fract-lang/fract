@@ -226,7 +226,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 			i.index = iindex
 
 			if index.Name != "" {
-				index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprintf("%d", vindex)}
+				index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprint(vindex)}
 			}
 
 			if element.Name != "" {
