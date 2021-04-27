@@ -23,6 +23,9 @@
 <#
 ```
 
+### Important
+It is always advantageous to use a single line comment because the lexer adds free space to the memory by deleting these comments from the lines that are read.
+
 ## Process Priority
 Fract adheres to transaction priority!
 ### Examples
