@@ -5,9 +5,11 @@
 package interpreter
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/fract-lang/fract/internal/functions"
+	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
 	obj "github.com/fract-lang/fract/pkg/objects"
@@ -248,22 +250,43 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		source.index = -1
 
 		// Interpret block.
-		for {
-			source.index++
-			tokens := source.Tokens[source.index]
-			source.funcTempVariables = len(source.variables) - source.funcTempVariables
+		except.Block{
+			Try: func() {
+				for {
+					source.index++
+					tokens := source.Tokens[source.index]
+					source.funcTempVariables = len(source.variables) - source.funcTempVariables
 
-			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
-				break
-			} else if source.processTokens(tokens) == fract.FUNCReturn {
-				if source.returnValue == nil {
-					break
+					if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+						break
+					} else if source.processTokens(tokens) == fract.FUNCReturn {
+						if source.returnValue == nil {
+							break
+						}
+						returnValue = *source.returnValue
+						source.returnValue = nil
+						break
+					}
 				}
-				returnValue = *source.returnValue
-				source.returnValue = nil
-				break
-			}
-		}
+			},
+			Catch: func(e obj.Exception) {
+				source.Tokens = itokens
+
+				// Remove temporary functions.
+				source.functions = source.functions[:functionLen]
+
+				// Remove temporary variables.
+				source.variables = variables
+
+				source.functionCount--
+				source.funcTempVariables = old
+				source.index = nameIndex
+
+				if fract.TryCount > 0 {
+					panic(fmt.Errorf(e.Message))
+				}
+			},
+		}.Do()
 
 		source.Tokens = itokens
 
