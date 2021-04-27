@@ -14,6 +14,7 @@ import (
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {
+	// TODO: Add a garbage collector.
 	if i.Lexer.File.Path == fract.Stdin {
 		// Interpret all lines.
 		for i.index = 0; i.index < len(i.Tokens); i.index++ {
@@ -28,7 +29,7 @@ func (i *Interpreter) Interpret() {
 	}
 
 	{
-		// Import same directory.
+		//* Import local directory.
 
 		path := "." + string(os.PathSeparator)
 		content, err := ioutil.ReadDir(path)

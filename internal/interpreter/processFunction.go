@@ -48,8 +48,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	}
 
 	dtToken := tokens[tokenLen-1]
-	if dtToken.Type != fract.TypeBrace ||
-		dtToken.Value != grammar.TokenRParenthes {
+	if dtToken.Type != fract.TypeBrace || dtToken.Value != grammar.TokenRParenthes {
 		fract.Error(dtToken, "Invalid syntax!")
 	}
 
@@ -64,9 +63,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 			if paramName {
 				if current.Type == fract.TypeParams {
 					continue
-				}
-
-				if current.Type != fract.TypeName {
+				} else if current.Type != fract.TypeName {
 					fract.Error(current, "Parameter name is not found!")
 				}
 
@@ -74,6 +71,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					Name:   current.Value,
 					Params: index > 0 && paramList[index-1].Type == fract.TypeParams,
 				}
+
 				*function.Parameters = append(*function.Parameters, lastParameter)
 				paramName = false
 				continue
@@ -88,8 +86,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					for ; index < len(paramList); index++ {
 						current = paramList[index]
 						if current.Type == fract.TypeBrace {
-							if current.Value == grammar.TokenLBrace ||
-								current.Value == grammar.TokenLParenthes ||
+							if current.Value == grammar.TokenLBrace || current.Value == grammar.TokenLParenthes ||
 								current.Value == grammar.TokenLBracket {
 								brace++
 							} else {
@@ -99,14 +96,16 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 							break
 						}
 					}
+
 					if index-start < 1 {
 						fract.Error(paramList[start-1], "Value is not defined!")
 					}
-					lastParameter.Default = i.processValue(
-						vector.Sublist(paramList, start, index-start))
+
+					lastParameter.Default = i.processValue(vector.Sublist(paramList, start, index-start))
 					if lastParameter.Params && !lastParameter.Default.Array {
 						fract.Error(current, "Params parameter is can only take array values!")
 					}
+
 					(*function.Parameters)[len(*function.Parameters)-1] = lastParameter
 					function.DefaultParameterCount++
 					defaultDefined = true
@@ -114,19 +113,15 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 				}
 
 				if lastParameter.Default.Content == nil && defaultDefined {
-					fract.Error(current,
-						"All parameters after a given parameter with a default value must take a default value!")
-				}
-
-				if current.Type != fract.TypeComma {
+					fract.Error(current, "All parameters after a given parameter with a default value must take a default value!")
+				} else if current.Type != fract.TypeComma {
 					fract.Error(current, "Comma is not found!")
 				}
 			}
 		}
 
 		if lastParameter.Default.Content == nil && defaultDefined {
-			fract.Error(tokens[len(tokens)-1],
-				"All parameters after a given parameter with a default value must take a default value!")
+			fract.Error(tokens[len(tokens)-1], "All parameters after a given parameter with a default value must take a default value!")
 		}
 	}
 

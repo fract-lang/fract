@@ -22,9 +22,7 @@ func (i *Interpreter) ready() {
 	// Change blocks.
 	count := 0
 	last := -1
-	for i.index = range i.Tokens {
-		tokens := i.Tokens[i.index]
-
+	for index, tokens := range i.Tokens {
 		if first := tokens[0]; first.Type == fract.TypeBlockEnd {
 			count--
 			if count < 0 {
@@ -33,7 +31,7 @@ func (i *Interpreter) ready() {
 		} else if parser.IsBlockStatement(tokens) {
 			count++
 			if count == 1 {
-				last = i.index
+				last = index
 			}
 		}
 	}

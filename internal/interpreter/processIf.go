@@ -16,7 +16,6 @@ import (
 //
 // tokens Tokens to process.
 func (i *Interpreter) processIf(tokens []obj.Token) int16 {
-	/* IF */
 	tokenLen := len(tokens)
 	conditionList := vector.Sublist(tokens, 1, tokenLen-1)
 
@@ -54,7 +53,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int16 {
 
 			state = i.processCondition(conditionList)
 
-			/* Interpret/skip block. */
+			// Interpret/skip block.
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
@@ -69,8 +68,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) int16 {
 						i.skipBlock(true)
 					}
 					continue
-				} else if first.Type == fract.TypeElseIf ||
-					first.Type == fract.TypeElse { // Else if or else block.
+				} else if first.Type == fract.TypeElseIf || first.Type == fract.TypeElse { // Else if or else block.
 					break
 				}
 
