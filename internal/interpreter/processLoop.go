@@ -40,7 +40,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 	//    WHILE
 	//*************
 	if tokens == nil || len(tokens) >= 1 {
-		if len(tokens) == 1 || len(tokens) >= 1 && tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
+		if tokens == nil || len(tokens) == 1 || len(tokens) >= 1 && tokens[1].Type != fract.TypeIn && tokens[1].Type != fract.TypeComma {
 			variableLen := len(i.variables)
 
 			/* Infinity loop. */
@@ -61,6 +61,14 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 
 						i.index = iindex
 						continue
+					} else if tokens[0].Type == fract.TypeElse { // Else block.
+						if len(tokens) > 1 {
+							fract.Error(tokens[0], "Else block is not take any arguments!")
+						}
+
+						i.skipBlock(false)
+						i.index--
+						continue
 					}
 
 					kwstate = i.processTokens(tokens)
@@ -78,6 +86,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 			/* Interpret/skip block. */
 			conditionList := &tokens
 			condition := i.processCondition(conditionList)
+			_else := condition == grammar.KwFalse
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
@@ -96,6 +105,50 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 
 					i.index = iindex
 					continue
+				} else if tokens[0].Type == fract.TypeElse { // Else block.
+					if len(tokens) > 1 {
+						fract.Error(tokens[0], "Else block is not take any arguments!")
+					}
+
+					if condition == grammar.KwTrue {
+						i.skipBlock(false)
+						i.index--
+						continue
+					}
+
+					// Remove temporary variables.
+					i.variables = i.variables[:variableLen]
+					// Remove temporary functions.
+					i.functions = i.functions[:functionLen]
+
+					if !_else {
+						i.skipBlock(false)
+						return processKwState()
+					}
+
+					for {
+						i.index++
+						tokens = i.Tokens[i.index]
+
+						if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+							// Remove temporary variables.
+							i.variables = i.variables[:variableLen]
+							// Remove temporary functions.
+							i.functions = i.functions[:functionLen]
+
+							return processKwState()
+						}
+
+						kwstate = i.processTokens(tokens)
+						if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+							_break = true
+							i.skipBlock(false)
+							i.index--
+						} else if kwstate == fract.LOOPContinue { // Continue loop?
+							i.skipBlock(false)
+							i.index--
+						}
+					}
 				}
 
 				// Condition is true?
@@ -110,6 +163,9 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 						i.index--
 					}
 				} else {
+					if _else {
+						continue
+					}
 					_break = true
 					i.skipBlock(false)
 					i.index--
@@ -160,11 +216,47 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 		fract.Error(tokens[0], "Foreach loop must defined array value!")
 	}
 
+	variables := i.variables
+
 	// Empty array?
 	if len(value.Content) == 0 {
-		i.index++
-		i.skipBlock(false)
-		return kwstate
+		for {
+			i.index++
+			tokens := i.Tokens[i.index]
+			if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+				return kwstate
+			} else if tokens[0].Type == fract.TypeElse { // Else block.
+				if len(tokens) > 1 {
+					fract.Error(tokens[0], "Else block is not take any arguments!")
+				}
+
+				for {
+					i.index++
+					tokens = i.Tokens[i.index]
+
+					if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
+						// Remove temporary variables.
+						i.variables = variables
+						// Remove temporary functions.
+						i.functions = i.functions[:functionLen]
+
+						return processKwState()
+					}
+
+					kwstate = i.processTokens(tokens)
+					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
+						_break = true
+						i.skipBlock(false)
+						i.index--
+					} else if kwstate == fract.LOOPContinue { // Continue loop?
+						i.skipBlock(false)
+						i.index--
+					}
+				}
+			}
+
+			i.skipBlock(true)
+		}
 	}
 
 	i.variables = append(
@@ -180,7 +272,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 				Value: obj.Value{},
 			}}, i.variables...)
 
-	variables := i.variables
+	variables = i.variables
 	index := i.variables[0]
 	element := i.variables[1]
 
@@ -239,6 +331,13 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 					}
 				}
 			}
+			continue
+		} else if tokens[0].Type == fract.TypeElse { // Else block.
+			if len(tokens) > 1 {
+				fract.Error(tokens[0], "Else block is not take any arguments!")
+			}
+
+			i.skipBlock(false)
 			continue
 		}
 
