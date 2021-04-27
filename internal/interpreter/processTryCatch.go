@@ -58,6 +58,9 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 				tokens := i.Tokens[i.index]
 				if tokens[0].Type == fract.TypeBlockEnd {
 					count--
+					if count < 0 {
+						break
+					}
 				} else if parser.IsBlockStatement(tokens) {
 					count++
 				}
@@ -70,6 +73,10 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 					i.index--
 					break
 				}
+			}
+
+			if count < 0 {
+				return
 			}
 
 			for {
