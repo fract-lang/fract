@@ -9,11 +9,13 @@ import (
 // ToArithmetic Parse value to arithmetic value.
 // value Value to parse.
 func ToArithmetic(value string) float64 {
-	if value == grammar.KwTrue {
+	switch value {
+	case grammar.KwTrue:
 		return 1
-	} else if value == grammar.KwFalse {
+	case grammar.KwFalse:
 		return 0
+	default:
+		flt, _ := strconv.ParseFloat(value, 64)
+		return flt
 	}
-	flt, _ := strconv.ParseFloat(value, 64)
-	return flt
 }
