@@ -7,7 +7,7 @@ import "strings"
 func GetWhitespace(count int) string {
 	var sb strings.Builder
 	for count >= 0 {
-		sb.WriteString(" ")
+		sb.WriteByte(' ')
 		count--
 	}
 	return sb.String()

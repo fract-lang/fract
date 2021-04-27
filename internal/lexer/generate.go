@@ -68,8 +68,7 @@ func (l *Lexer) lexString(token *obj.Token, quote, fln string) {
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
 		char := fln[l.Column-1]
-		str := string(char)
-		if str == quote { // Finish?
+		if string(char) == quote { // Finish?
 			sb.WriteByte(char)
 			break
 		} else if !l.processEscapeSequence(sb, fln) {
@@ -90,8 +89,7 @@ func (l *Lexer) lexString(token *obj.Token, quote, fln string) {
 // check Check result.
 func (l *Lexer) processName(token *obj.Token, check string) bool {
 	// Remove punct.
-	if !strings.HasSuffix(check, grammar.TokenUnderscore) &&
-		!strings.HasSuffix(check, grammar.TokenDot) {
+	if !strings.HasSuffix(check, grammar.TokenUnderscore) && !strings.HasSuffix(check, grammar.TokenDot) {
 		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
 		if result {
 			check = check[:len(check)-1]
@@ -117,7 +115,7 @@ func (l *Lexer) processName(token *obj.Token, check string) bool {
 func (l *Lexer) Generate() obj.Token {
 	token := obj.Token{
 		Type: fract.TypeNone,
-		File: &l.File,
+		File: l.File,
 	}
 
 	fln := l.File.Lines[l.Line-1] // Full line.
