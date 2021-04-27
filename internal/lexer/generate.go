@@ -122,6 +122,9 @@ func (l *Lexer) Generate() obj.Token {
 
 	/* Line is finished. */
 	if l.Column > len(fln) {
+		if l.RangeComment {
+			l.File.Lines[l.Line-1] = ""
+		}
 		return token
 	}
 
@@ -408,6 +411,7 @@ func (l *Lexer) Generate() obj.Token {
 		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore
 	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment.
+		l.File.Lines[l.Line-1] = l.File.Lines[l.Line-1][:l.Column-1] // Remove comment from original line.
 		return token
 	case strings.HasPrefix(ln, grammar.TokenQuote): // String.
 		l.lexString(&token, grammar.TokenQuote[0], fln)
