@@ -13,5 +13,7 @@ import (
 // pos Start position of removing.
 // len Count of removing elements.
 func RemoveRange(slice *[]obj.Token, pos, len int) {
-	*slice = append((*slice)[:pos], (*slice)[pos+len:]...)
+	if len > 0 {
+		*slice = append((*slice)[:pos], (*slice)[pos+len:]...)
+	}
 }
