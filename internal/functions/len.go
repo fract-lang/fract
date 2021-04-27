@@ -15,13 +15,13 @@ func Len(f obj.Function, parameters []*obj.Variable) obj.Value {
 
 	if parameter.Array {
 		return obj.Value{
-			Content: []obj.DataFrame{{Data: fmt.Sprintf("%d", len(parameter.Content))}},
+			Content: []obj.DataFrame{{Data: fmt.Sprint(len(parameter.Content))}},
 		}
 	}
 
 	if parameter.Content[0].Type == fract.VALString {
 		return obj.Value{
-			Content: []obj.DataFrame{{Data: fmt.Sprintf("%d", len(parameter.Content[0].Data))}},
+			Content: []obj.DataFrame{{Data: fmt.Sprint(len(parameter.Content[0].Data))}},
 		}
 	}
 

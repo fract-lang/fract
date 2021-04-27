@@ -491,8 +491,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 								Type: fract.VALString,
 							}
 						} else {
-							data = obj.DataFrame{
-								Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position])}
+							data = obj.DataFrame{Data: fmt.Sprint(variable.Value.Content[0].Data[position])}
 						}
 					}
 
@@ -641,8 +640,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						Type: fract.VALString,
 					}
 				} else {
-					data = obj.DataFrame{
-						Data: fmt.Sprintf("%d", variable.Value.Content[0].Data[position])}
+					data = obj.DataFrame{Data: fmt.Sprint(variable.Value.Content[0].Data[position])}
 				}
 			}
 
@@ -742,7 +740,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if err != nil {
 				fract.Error(token, "Invalid value!")
 			}
-			token.Value = fmt.Sprintf("%d", val)
+			token.Value = fmt.Sprint(val)
 		}
 	}
 
