@@ -28,7 +28,7 @@ protected func Sqrt(x)
 		z -= (z * z - x) / (2 * z)
 		z -= (z * z - x) / (2 * z)
 		z -= (z * z - x) / (2 * z)
-	end
+	catch; end
 
 	ret z
 end
