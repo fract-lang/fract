@@ -14,9 +14,9 @@ import (
 
 // ReadyFile Create instance of code file.
 // path Path of file.
-func ReadyFile(path string) obj.CodeFile {
+func ReadyFile(path string) *obj.CodeFile {
 	file, _ := os.Open(path)
-	return obj.CodeFile{
+	return &obj.CodeFile{
 		Lines: ReadyLines(strings.Split(fs.ReadAllText(path), "\n")),
 		Path:  path,
 		File:  file,
