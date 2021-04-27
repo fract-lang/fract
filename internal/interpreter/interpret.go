@@ -7,6 +7,7 @@ package interpreter
 import (
 	"io/ioutil"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
@@ -14,11 +15,11 @@ import (
 
 // Interpret Interpret file.
 func (i *Interpreter) Interpret() {
-	// TODO: Add a garbage collector.
 	if i.Lexer.File.Path == fract.Stdin {
 		// Interpret all lines.
 		for i.index = 0; i.index < len(i.Tokens); i.index++ {
 			i.processTokens(i.Tokens[i.index])
+			runtime.GC()
 		}
 		return
 	}
@@ -57,5 +58,6 @@ func (i *Interpreter) Interpret() {
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {
 		i.processTokens(i.Tokens[i.index])
+		runtime.GC()
 	}
 }
