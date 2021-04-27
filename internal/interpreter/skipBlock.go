@@ -21,7 +21,9 @@ func (i *Interpreter) skipBlock(ifBlock bool) {
 	}
 
 	count := 1
-	for ; i.index < len(i.Tokens); i.index++ {
+	i.index--
+	for {
+		i.index++
 		tokens := i.Tokens[i.index]
 		if tokens[0].Type == fract.TypeBlockEnd {
 			count--
