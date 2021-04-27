@@ -62,13 +62,13 @@ func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 // token Token.
 // quote Quote style.
 // fln Full line text of current code line.
-func (l *Lexer) lexString(token *obj.Token, quote, fln string) {
+func (l *Lexer) lexString(token *obj.Token, quote byte, fln string) {
 	sb := &strings.Builder{}
-	sb.WriteString(quote)
+	sb.WriteByte(quote)
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {
 		char := fln[l.Column-1]
-		if string(char) == quote { // Finish?
+		if char == quote { // Finish?
 			sb.WriteByte(char)
 			break
 		} else if !l.processEscapeSequence(sb, fln) {
@@ -76,7 +76,7 @@ func (l *Lexer) lexString(token *obj.Token, quote, fln string) {
 		}
 	}
 	token.Value = sb.String()
-	if !strings.HasSuffix(token.Value, quote) {
+	if token.Value[len(token.Value)-1] != quote {
 		l.Error("Close quote is not found!")
 	}
 	token.Type = fract.TypeValue
@@ -410,9 +410,9 @@ func (l *Lexer) Generate() obj.Token {
 	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment.
 		return token
 	case strings.HasPrefix(ln, grammar.TokenQuote): // String.
-		l.lexString(&token, grammar.TokenQuote, fln)
+		l.lexString(&token, grammar.TokenQuote[0], fln)
 	case strings.HasPrefix(ln, grammar.TokenDoubleQuote): // String.
-		l.lexString(&token, grammar.TokenDoubleQuote, fln)
+		l.lexString(&token, grammar.TokenDoubleQuote[0], fln)
 	default: // Alternates
 		/* Check variable name. */
 		if check = strings.TrimSpace(regexp.MustCompile(

@@ -185,7 +185,7 @@ func solveProcess(process valueProcess) obj.Value {
 					if strings.Contains(process.SecondV.Content[0].Data, grammar.TokenDot) {
 						fract.Error(process.Second, "Float values cannot concatenate string values!")
 					}
-					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))
+					sb.WriteByte(byte(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))))
 				}
 				value.Content = []obj.DataFrame{
 					{
@@ -200,7 +200,7 @@ func solveProcess(process valueProcess) obj.Value {
 				var sb strings.Builder
 				val := rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))
 				for _, char := range process.FirstV.Content[0].Data {
-					sb.WriteRune(char + val)
+					sb.WriteByte(byte(char + val))
 				}
 				value.Content = []obj.DataFrame{
 					{
@@ -225,7 +225,7 @@ func solveProcess(process valueProcess) obj.Value {
 					if strings.Contains(process.FirstV.Content[0].Data, grammar.TokenDot) {
 						fract.Error(process.Second, "Float values cannot concatenate string values!")
 					}
-					sb.WriteRune(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data)))
+					sb.WriteByte(byte(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))))
 				}
 				value.Content = []obj.DataFrame{
 					{
@@ -240,7 +240,7 @@ func solveProcess(process valueProcess) obj.Value {
 				var sb strings.Builder
 				val := rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))
 				for _, char := range process.SecondV.Content[0].Data {
-					sb.WriteRune(char + val)
+					sb.WriteByte(byte(char + val))
 				}
 				value.Content = []obj.DataFrame{
 					{
