@@ -135,8 +135,7 @@ repeat:
 
 				// Change blocks.
 				count := 0
-				for index := range preter.Tokens {
-					tokens := preter.Tokens[index]
+				for _, tokens := range preter.Tokens {
 					if first := tokens[0]; first.Type == fract.TypeBlockEnd {
 						count--
 						if count < 0 {
