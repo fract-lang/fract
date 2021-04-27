@@ -52,25 +52,23 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
 
-			// Skip not ended blocks.
-			if i.Tokens[i.index+1][0].Type != fract.TypeCatch {
-				count := 0
-				for i.index++; i.index < len(i.Tokens); i.index++ {
-					tokens := i.Tokens[i.index]
-					if tokens[0].Type == fract.TypeBlockEnd {
-						count--
-					} else if parser.IsBlockStatement(tokens) {
-						count++
-					}
+			count := 0
+			for {
+				i.index++
+				tokens := i.Tokens[i.index]
+				if tokens[0].Type == fract.TypeBlockEnd {
+					count--
+				} else if parser.IsBlockStatement(tokens) {
+					count++
+				}
 
-					if count > 0 {
-						continue
-					}
+				if count > 0 {
+					continue
+				}
 
-					if tokens[0].Type == fract.TypeCatch {
-						i.index--
-						break
-					}
+				if tokens[0].Type == fract.TypeCatch {
+					i.index--
+					break
 				}
 			}
 
