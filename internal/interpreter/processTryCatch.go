@@ -8,6 +8,7 @@ import (
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/parser"
 )
 
 // processTryCatch Process Try-Catch block.
@@ -43,7 +44,21 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 			i.functions = i.functions[:functionLen]
 		},
 		Catch: func(e obj.Exception) {
-			// TODO: Fix not finished block skipping.
+			// Skip not ended blocks.
+			count := 1
+			for ; i.index < len(i.Tokens); i.index++ {
+				tokens := i.Tokens[i.index]
+				if tokens[0].Type == fract.TypeBlockEnd {
+					count--
+					if count == 1 {
+						i.index++
+						break
+					}
+				} else if parser.IsBlockStatement(tokens) {
+					count++
+				}
+			}
+
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
