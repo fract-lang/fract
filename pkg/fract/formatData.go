@@ -18,8 +18,7 @@ func FormatData(data obj.DataFrame) string {
 		return data.Data
 	}
 
-	b := new(big.Float)
-	b.SetString(data.Data)
+	b, _ := new(big.Float).SetString(data.Data)
 	data.Data = b.String()
 	if data.Type == VALFloat && !strings.Contains(data.Data, ".") {
 		data.Data += ".0"
