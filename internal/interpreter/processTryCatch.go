@@ -32,6 +32,9 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 
 				if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 					break
+				} else if tokens[0].Type == fract.TypeCatch { // Catch.
+					i.skipBlock(false)
+					break
 				}
 
 				if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
@@ -44,26 +47,33 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 			i.functions = i.functions[:functionLen]
 		},
 		Catch: func(e obj.Exception) {
-			// Skip not ended blocks.
-			count := 1
-			for ; i.index < len(i.Tokens); i.index++ {
-				tokens := i.Tokens[i.index]
-				if tokens[0].Type == fract.TypeBlockEnd {
-					count--
-					if count == 1 {
-						i.index++
-						break
-					}
-				} else if parser.IsBlockStatement(tokens) {
-					count++
-				}
-			}
-
+			i.loopCount = 0
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
 
-			i.index--
+			// Skip not ended blocks.
+			if i.Tokens[i.index+1][0].Type != fract.TypeCatch {
+				count := 0
+				for i.index++; i.index < len(i.Tokens); i.index++ {
+					tokens := i.Tokens[i.index]
+					if tokens[0].Type == fract.TypeBlockEnd {
+						count--
+					} else if parser.IsBlockStatement(tokens) {
+						count++
+					}
+
+					if count > 0 {
+						continue
+					}
+
+					if tokens[0].Type == fract.TypeCatch {
+						i.index--
+						break
+					}
+				}
+			}
+
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
