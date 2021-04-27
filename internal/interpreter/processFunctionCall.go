@@ -63,7 +63,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 						}
 					} else if current.Type == fract.TypeComma && braceCount == 0 {
 						valueList := vector.Sublist(tokens, lastComma, *index-lastComma)
-						if parser.IsParamSet(*valueList) {
+						if (*valueList)[0].Type == fract.TypeName && (*valueList)[1].Value == grammar.TokenEquals {
 							*index -= 4
 							return returnValue
 						}
@@ -75,7 +75,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 
 				if lastComma < tokenLen {
 					valueSlice := tokens[lastComma:]
-					if parser.IsParamSet(valueSlice) {
+					if valueSlice[0].Type == fract.TypeName && valueSlice[1].Value == grammar.TokenEquals {
 						*index -= 4
 						return returnValue
 					}
@@ -101,7 +101,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			current = valueList[0]
 
 			// Check param set.
-			if length >= 2 && parser.IsParamSet(valueList) {
+			if length >= 2 && valueList[0].Type == fract.TypeName && valueList[1].Value == grammar.TokenEquals {
 				length -= 2
 				if length < 1 {
 					fract.Error(current, "Value is not defined!")
