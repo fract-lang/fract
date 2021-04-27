@@ -21,7 +21,7 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 				str = "[]"
 			} else {
 				sb := strings.Builder{}
-				sb.WriteRune('[')
+				sb.WriteByte('[')
 				for _, data := range value.Content {
 					sb.WriteString(data.Data + " ")
 				}
