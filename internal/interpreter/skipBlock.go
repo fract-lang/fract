@@ -13,9 +13,7 @@ import (
 // ifBlock Enable skip if statement is block start?
 func (i *Interpreter) skipBlock(ifBlock bool) {
 	if ifBlock {
-		first := i.Tokens[i.index][0]
-		if first.Type == fract.TypeIf || first.Type == fract.TypeLoop ||
-			first.Type == fract.TypeFunction {
+		if parser.IsBlockStatement(i.Tokens[i.index]) {
 			i.index++
 		} else {
 			return

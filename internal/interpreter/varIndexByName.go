@@ -20,14 +20,12 @@ func (i *Interpreter) varIndexByName(name obj.Token) (int, *Interpreter) {
 		name.Value = name.Value[1:]
 	}
 
-	index := strings.Index(name.Value, grammar.TokenDot)
-
-	if index != -1 {
-		iindex := i.importIndexByName(name.Value[:index])
-		if iindex == -1 {
+	if index := strings.Index(name.Value, grammar.TokenDot); index != -1 {
+		if iindex := i.importIndexByName(name.Value[:index]); iindex == -1 {
 			fract.Error(name, "'"+name.Value[:index]+"' is not defined!")
+		} else {
+			i = i.Imports[iindex].Source
 		}
-		i = i.Imports[iindex].Source
 		name.Value = name.Value[index+1:]
 
 		for index, current := range i.variables {

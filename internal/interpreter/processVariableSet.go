@@ -31,14 +31,15 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		fract.Error(_name, "Variable is not defined in this name!: "+_name.Value)
 	}
 
-	setIndex := -1
 	variable := i.variables[index]
-	setter := tokens[1]
 
-	// Check const state
+	// Check const state.
 	if variable.Const {
-		fract.Error(setter, "Values is cannot changed of constant defines!")
+		fract.Error(tokens[1], "Values is cannot changed of constant defines!")
 	}
+
+	setter := tokens[1]
+	setIndex := -1
 
 	// Array setter?
 	if setter.Type == fract.TypeBrace && setter.Value == grammar.TokenLBracket {
@@ -46,27 +47,31 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		if !variable.Value.Array {
 			fract.Error(setter, "Variable is not array!")
 		}
+
 		// Find close bracket.
 		for cindex := 2; cindex < len(tokens); cindex++ {
 			current := tokens[cindex]
-			if current.Type != fract.TypeBrace ||
-				current.Value != grammar.TokenRBracket {
+			if current.Type != fract.TypeBrace || current.Value != grammar.TokenRBracket {
 				continue
 			}
 
 			valueList := vector.Sublist(tokens, 2, cindex-2)
+
 			// Index value is empty?
 			if valueList == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
+
 			position, err := strconv.Atoi(i.processValue(valueList).Content[0].Data)
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}
+
 			position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
 			if position == -1 {
 				fract.Error(setter, "Index is out of range!")
 			}
+
 			setIndex = position
 			vector.RemoveRange(&tokens, 1, cindex)
 			setter = tokens[1]
@@ -95,6 +100,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		if value.Array {
 			fract.Error(setter, "Array is cannot set as indexed value!")
 		}
+
 		switch setter.Value {
 		case grammar.TokenEquals: // =
 			variable.Value.Content[setIndex] = value.Content[0]
@@ -125,6 +131,4 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 				})
 		}
 	}
-
-	i.variables[index] = variable
 }

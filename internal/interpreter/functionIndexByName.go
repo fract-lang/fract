@@ -20,11 +20,8 @@ func (i *Interpreter) functionIndexByName(name obj.Token) (int, *Interpreter) {
 		name.Value = name.Value[1:]
 	}
 
-	index := strings.Index(name.Value, grammar.TokenDot)
-
-	if index != -1 {
-		iindex := i.importIndexByName(name.Value[:index])
-		if iindex == -1 {
+	if index := strings.Index(name.Value, grammar.TokenDot); index != -1 {
+		if i.importIndexByName(name.Value[:index]) == -1 {
 			fract.Error(name, "'"+name.Value[:index]+"' is not defined!")
 		}
 		i = i.Imports[i.importIndexByName(name.Value[:index])].Source

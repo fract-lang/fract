@@ -43,6 +43,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 			i.functions = i.functions[:functionLen]
 		},
 		Catch: func(e obj.Exception) {
+			// TODO: Fix not finished block skipping.
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]

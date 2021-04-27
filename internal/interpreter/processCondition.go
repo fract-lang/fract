@@ -77,7 +77,6 @@ func compare(value0, value1 obj.Value, operator string) bool {
 			(data0.Type != fract.VALString && data1.Type == fract.VALString) {
 			return false
 		}
-
 		return compare_values(data0, data1)
 	}
 
@@ -92,8 +91,8 @@ func compare(value0, value1 obj.Value, operator string) bool {
 			return operator == grammar.NotEquals
 		}
 
-		for index := range value0.Content {
-			if !compare_values(value0.Content[index], value1.Content[index]) {
+		for index, val0Content := range value0.Content {
+			if !compare_values(val0Content, value1.Content[index]) {
 				return false
 			}
 		}
@@ -120,8 +119,7 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 		// Is and long statement?
 		if len(*ands) > 1 {
 			for aindex := range *ands {
-				if !compare(i.processValue(
-					&(*ands)[aindex]), TRUE, grammar.Equals) {
+				if !compare(i.processValue(&(*ands)[aindex]), TRUE, grammar.Equals) {
 					return grammar.KwFalse
 				}
 			}

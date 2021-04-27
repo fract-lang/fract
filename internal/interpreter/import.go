@@ -15,10 +15,10 @@ func (i *Interpreter) Import() {
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {
 		tokens := i.Tokens[i.index]
-		switch first := tokens[0]; first.Type {
+		switch tokens[0].Type {
 		case fract.TypeProtected: // Protected declaration.
 			if len(tokens) < 2 {
-				fract.Error(first, "Protected but what is it protected?")
+				fract.Error(tokens[0], "Protected but what is it protected?")
 			}
 			second := tokens[1]
 			tokens = tokens[1:]

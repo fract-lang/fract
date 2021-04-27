@@ -35,10 +35,13 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	)
 
 	// Decompose arguments.
-	if tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes,
-		grammar.TokenRParenthes, false); tokens != nil {
-		braceCount, lastComma, tokenLen := 0, 0, len(tokens)
-		paramSet := false
+	if tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes, grammar.TokenRParenthes, false); tokens != nil {
+		var (
+			braceCount int
+			lastComma  int
+			paramSet   bool
+			tokenLen   = len(tokens)
+		)
 
 		// processArgument Process function argument.
 		// current Current token.
@@ -67,8 +70,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 							*index -= 4
 							return returnValue
 						}
-						returnValue.Content = append(returnValue.Content,
-							i.processValue(valueList).Content...)
+						returnValue.Content = append(returnValue.Content, i.processValue(valueList).Content...)
 						lastComma = *index + 1
 					}
 				}
@@ -79,8 +81,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 						*index -= 4
 						return returnValue
 					}
-					returnValue.Content = append(returnValue.Content,
-						i.processValue(&valueSlice).Content...)
+					returnValue.Content = append(returnValue.Content, i.processValue(&valueSlice).Content...)
 				}
 
 				return returnValue
@@ -89,9 +90,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			length := *index - lastComma
 			if length < 1 {
 				fract.Error(current, "Value is not defined!")
-			}
-
-			if count >= len(*function.Parameters) {
+			} else if count >= len(*function.Parameters) {
 				fract.Error(current, "Argument overflow!")
 			}
 
@@ -134,8 +133,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 			}
 
 			if paramSet {
-				fract.Error(current,
-					"After the parameter has been given a special value, all parameters must be shown privately!")
+				fract.Error(current, "After the parameter has been given a special value, all parameters must be shown privately!")
 			}
 
 			count++

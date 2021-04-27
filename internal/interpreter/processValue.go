@@ -37,8 +37,7 @@ type valueProcess struct {
 func (i *Interpreter) processRange(tokens *[]obj.Token) {
 	/* Check parentheses range. */
 	for {
-		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes,
-			grammar.TokenRParenthes, true)
+		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes, grammar.TokenRParenthes, true)
 
 		/* Parentheses are not found! */
 		if found == -1 {
@@ -74,12 +73,12 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 					Value: grammar.TokenDoubleQuote + val.Content[0].Data + grammar.TokenDoubleQuote,
 					Type:  fract.TypeValue,
 				})
-				continue
+			} else {
+				vector.Insert(tokens, found, obj.Token{
+					Value: fract.FormatData(val.Content[0]),
+					Type:  fract.TypeValue,
+				})
 			}
-			vector.Insert(tokens, found, obj.Token{
-				Value: fract.FormatData(val.Content[0]),
-				Type:  fract.TypeValue,
-			})
 		}
 	}
 }
@@ -175,11 +174,12 @@ func solveProcess(process valueProcess) obj.Value {
 					value.Content = process.FirstV.Content
 					return value
 				}
+
 				if len(process.FirstV.Content[0].Data) != len(process.SecondV.Content) &&
 					(len(process.FirstV.Content[0].Data) != 1 && len(process.SecondV.Content) != 1) {
-					fract.Error(process.Second,
-						"Array element count is not one or equals to first array!")
+					fract.Error(process.Second, "Array element count is not one or equals to first array!")
 				}
+
 				var sb strings.Builder
 				for _, char := range process.FirstV.Content[0].Data {
 					if strings.Contains(process.SecondV.Content[0].Data, grammar.TokenDot) {
@@ -187,6 +187,7 @@ func solveProcess(process valueProcess) obj.Value {
 					}
 					sb.WriteByte(byte(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))))
 				}
+
 				value.Content = []obj.DataFrame{
 					{
 						Data: sb.String(),
@@ -197,11 +198,13 @@ func solveProcess(process valueProcess) obj.Value {
 				if process.SecondV.Content[0].Type == fract.VALFloat {
 					fract.Error(process.Second, "Float values cannot concatenate string values!")
 				}
+
 				var sb strings.Builder
 				val := rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))
 				for _, char := range process.FirstV.Content[0].Data {
 					sb.WriteByte(byte(char + val))
 				}
+
 				value.Content = []obj.DataFrame{
 					{
 						Data: sb.String(),
@@ -215,11 +218,12 @@ func solveProcess(process valueProcess) obj.Value {
 					value.Content = process.SecondV.Content
 					return value
 				}
+
 				if len(process.FirstV.Content[0].Data) != len(process.SecondV.Content) &&
 					(len(process.FirstV.Content[0].Data) != 1 && len(process.SecondV.Content) != 1) {
-					fract.Error(process.Second,
-						"Array element count is not one or equals to first array!")
+					fract.Error(process.Second, "Array element count is not one or equals to first array!")
 				}
+
 				var sb strings.Builder
 				for _, char := range process.SecondV.Content[0].Data {
 					if strings.Contains(process.FirstV.Content[0].Data, grammar.TokenDot) {
@@ -227,6 +231,7 @@ func solveProcess(process valueProcess) obj.Value {
 					}
 					sb.WriteByte(byte(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))))
 				}
+
 				value.Content = []obj.DataFrame{
 					{
 						Data: sb.String(),
@@ -237,11 +242,13 @@ func solveProcess(process valueProcess) obj.Value {
 				if process.FirstV.Content[0].Type == fract.VALFloat {
 					fract.Error(process.First, "Float values cannot concatenate string values!")
 				}
+
 				var sb strings.Builder
 				val := rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))
 				for _, char := range process.SecondV.Content[0].Data {
 					sb.WriteByte(byte(char + val))
 				}
+
 				value.Content = []obj.DataFrame{
 					{
 						Data: sb.String(),
@@ -284,8 +291,7 @@ func solveProcess(process valueProcess) obj.Value {
 
 		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
 			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
-			fract.Error(process.Second,
-				"Array element count is not one or equals to first array!")
+			fract.Error(process.Second, "Array element count is not one or equals to first array!")
 		}
 
 		if len(process.FirstV.Content) == 1 {
@@ -373,8 +379,8 @@ func solveProcess(process valueProcess) obj.Value {
 func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 	tokens *[]obj.Token, index int) int {
 	var (
+		minussed bool
 		token    = operation.First
-		minussed = false
 	)
 
 	// applyMinus Apply minus assignment.
@@ -455,8 +461,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if value.Array {
 						fract.Error((*tokens)[index], "Arrays is not used in index access!")
 					} else if value.Content[0].Type != fract.VALInteger {
-						fract.Error((*tokens)[index],
-							"Only integer values can used in index access!")
+						fract.Error((*tokens)[index], "Only integer values can used in index access!")
 					}
 					position, err := strconv.Atoi(value.Content[0].Data)
 					if err != nil {
@@ -464,10 +469,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					}
 
 					variable := source.variables[vindex]
-
 					if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
-						fract.Error((*tokens)[index],
-							"Index accessor is cannot used with non-array variables!")
+						fract.Error((*tokens)[index], "Index accessor is cannot used with non-array variables!")
 					}
 
 					if variable.Value.Array {
@@ -600,11 +603,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 
 			value := i.processValue(valueList)
 			if value.Array {
-				fract.Error((*tokens)[index],
-					"Arrays is not used in index access!")
+				fract.Error((*tokens)[index], "Arrays is not used in index access!")
 			} else if value.Content[0].Type != fract.VALInteger {
-				fract.Error((*tokens)[index],
-					"Only integer values can used in index access!")
+				fract.Error((*tokens)[index], "Only integer values can used in index access!")
 			}
 
 			position, err := strconv.Atoi(value.Content[0].Data)
@@ -615,8 +616,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			variable := source.variables[vindex]
 
 			if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
-				fract.Error((*tokens)[oindex],
-					"Index accessor is cannot used with non-array variables!")
+				fract.Error((*tokens)[oindex], "Index accessor is cannot used with non-array variables!")
 			}
 
 			if variable.Value.Array {

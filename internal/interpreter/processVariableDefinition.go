@@ -95,14 +95,17 @@ func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bo
 					bracket--
 				}
 			}
+
 			if bracket > 0 {
 				continue
 			}
+
 			if token.Type == fract.TypeComma {
 				appendVariable(tokens[last:index])
 				last = index + 1
 			}
 		}
+
 		if len(tokens) != last {
 			appendVariable(tokens[last:])
 		}
