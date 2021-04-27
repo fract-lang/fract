@@ -61,13 +61,13 @@ func init() {
 	}
 
 	var sb strings.Builder
-	os.Args = os.Args[1:]
-	for _, current := range os.Args {
+	for _, current := range os.Args[1:] {
 		sb.WriteString(" " + current)
 	}
 	os.Args[0] = sb.String()[1:]
 
-	processCommand(commands.GetNamespace(os.Args[0]),
+	processCommand(
+		commands.GetNamespace(os.Args[0]),
 		commands.RemoveNamespace(os.Args[0]))
 
 	os.Exit(0)
@@ -108,7 +108,8 @@ repeat:
 					// Check multiline comment.
 					if preter.Lexer.RangeComment {
 						input := cli.Input(" | ")
-						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
+						preter.Lexer.File.Lines = append(
+							preter.Lexer.File.Lines,
 							interpreter.ReadyLines([]string{input})...)
 						goto reTokenizeUnNil
 					}
@@ -123,7 +124,8 @@ repeat:
 						preter.Lexer.BracketCount > 0 ||
 						preter.Lexer.ParenthesCount > 0 {
 						input := cli.Input(" | ")
-						preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
+						preter.Lexer.File.Lines = append(
+							preter.Lexer.File.Lines,
 							interpreter.ReadyLines([]string{input})...)
 						goto reTokenize
 					}
@@ -147,7 +149,8 @@ repeat:
 
 				if count > 0 { // Check blocks.
 					input := cli.Input(" | ")
-					preter.Lexer.File.Lines = append(preter.Lexer.File.Lines,
+					preter.Lexer.File.Lines = append(
+						preter.Lexer.File.Lines,
 						interpreter.ReadyLines([]string{input})...)
 					goto reTokenize
 				}
