@@ -403,6 +403,11 @@ reverse(-500) # Returns: 500
 ```
 try
   # ...
+end
+```
+```
+try
+  # ...
 catch
   # ...
 end

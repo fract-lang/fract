@@ -99,6 +99,9 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 					break
 				}
 			}
+
+			i.variables = i.variables[:variableLen]
+			i.functions = i.functions[:functionLen]
 		},
 	}.Do()
 
