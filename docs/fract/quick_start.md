@@ -318,6 +318,26 @@ end
 # Output: 0, 2, 4
 ```
 
+### Loop and else blocks
+Highly functional loop else blocks can be defined arbitrarily. <br>
+These blocks execute when the array is empty for foreach loops and the loop never returns in while loops.
+
+#### Examples Syntaxes
+```
+for bool
+  # ...
+else
+  # ...
+end
+```
+```
+for _ in array
+  # ...
+else
+  # ...
+end
+```
+
 ## Functions
 Functions are very useful for adding functionality to your code.
 
