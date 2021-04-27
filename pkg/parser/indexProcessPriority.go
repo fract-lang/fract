@@ -38,23 +38,24 @@ func IndexProcessPriority(tokens []obj.Token) int {
 		binaryOrAnd := -1
 		additionOrSubtraction := -1
 
-		if token.Value == grammar.TokenPercent { // Modulus.
+		switch token.Value {
+		case grammar.TokenPercent: // Modulus.
 			return index
-		} else if token.Value == grammar.TokenStar ||
-			token.Value == grammar.TokenSlash ||
-			token.Value == grammar.TokenBackslash ||
-			token.Value == grammar.IntegerDivision ||
-			token.Value == grammar.IntegerDivideWithBigger { // Multiply or division.
+		case grammar.TokenStar,
+			grammar.TokenSlash,
+			grammar.TokenBackslash,
+			grammar.IntegerDivision,
+			grammar.IntegerDivideWithBigger: // Multiply or division.
 			if multiplyOrDivive == -1 {
 				multiplyOrDivive = index
 			}
-		} else if token.Value == grammar.TokenPlus ||
-			token.Value == grammar.TokenMinus { // Addition or subtraction.
+		case grammar.TokenPlus,
+			grammar.TokenMinus: // Addition or subtraction.
 			if additionOrSubtraction == -1 {
 				additionOrSubtraction = index
 			}
-		} else if token.Value == grammar.TokenAmper ||
-			token.Value == grammar.TokenVerticalBar {
+		case grammar.TokenAmper,
+			grammar.TokenVerticalBar:
 			if binaryOrAnd == -1 {
 				binaryOrAnd = index
 			}
