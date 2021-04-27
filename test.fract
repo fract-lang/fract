@@ -1,4 +1,4 @@
-func test(a, b, c =4)
+func test(a, b, c=4)
  print(a)
  del a
  print(b)

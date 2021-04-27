@@ -6,8 +6,9 @@ import "strings"
 // count Count of whitespace.
 func GetWhitespace(count int) string {
 	var sb strings.Builder
-	for counter := 1; counter <= count; counter++ {
-		sb.WriteRune(' ')
+	for count >= 0 {
+		sb.WriteString(" ")
+		count--
 	}
 	return sb.String()
 }
