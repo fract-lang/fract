@@ -406,12 +406,10 @@ func solveProcess(process valueProcess) obj.Value {
 			process.FirstV.Content = []obj.DataFrame{{Data: "0"}}
 		}
 
-		value.Content = []obj.DataFrame{
-			readyDataFrame(obj.DataFrame{
-				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
-						arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))}),
-		}
+		value.Content[0] = readyDataFrame(obj.DataFrame{
+			Data: fmt.Sprintf(fract.FloatFormat,
+				solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
+					arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))})
 	}
 
 	return value
