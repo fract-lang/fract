@@ -250,7 +250,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		source.index = -1
 
 		// Interpret block.
-		except.Block{
+		block := except.Block{
 			Try: func() {
 				for {
 					source.index++
@@ -269,24 +269,8 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 					}
 				}
 			},
-			Catch: func(e obj.Exception) {
-				source.Tokens = itokens
-
-				// Remove temporary functions.
-				source.functions = source.functions[:functionLen]
-
-				// Remove temporary variables.
-				source.variables = variables
-
-				source.functionCount--
-				source.funcTempVariables = old
-				source.index = nameIndex
-
-				if fract.TryCount > 0 {
-					panic(fmt.Errorf(e.Message))
-				}
-			},
-		}.Do()
+		}
+		block.Do()
 
 		source.Tokens = itokens
 
@@ -299,6 +283,10 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 		source.functionCount--
 		source.funcTempVariables = old
 		source.index = nameIndex
+
+		if block.Exception != nil {
+			panic(fmt.Errorf(block.Exception.Message))
+		}
 	}
 
 	return returnValue

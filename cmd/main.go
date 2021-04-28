@@ -89,7 +89,7 @@ func main() {
 	preter.ApplyEmbedFunctions()
 
 repeat:
-	except.Block{
+	(&except.Block{
 		Try: func() {
 			for {
 				input := cli.Input(">> ")
@@ -157,12 +157,12 @@ repeat:
 				preter.Interpret()
 			}
 		},
-		Catch: func(e obj.Exception) {
+		Catch: func(e *obj.Exception) {
 			if e.Message != "" {
 				fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
 				fmt.Println(e.Message)
 			}
 		},
-	}.Do()
+	}).Do()
 	goto repeat
 }

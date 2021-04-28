@@ -24,7 +24,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 	functionLen := len(i.functions)
 	kwstate := fract.TypeNone
 
-	except.Block{
+	(&except.Block{
 		Try: func() {
 			for {
 				i.index++
@@ -46,7 +46,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
 		},
-		Catch: func(e obj.Exception) {
+		Catch: func(e *obj.Exception) {
 			i.loopCount = 0
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]
@@ -110,7 +110,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) int16 {
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
 		},
-	}.Do()
+	}).Do()
 
 	return kwstate
 }

@@ -29,5 +29,5 @@ func ErrorCustom(file *obj.CodeFile, line, column int, message string) obj.Excep
 	}
 
 	fmt.Println(e.Message)
-	panic(nil)
+	panic(fmt.Errorf(""))
 }

@@ -39,12 +39,12 @@ func Process(command string) {
 	preter := interpreter.New(".", command)
 	preter.ApplyEmbedFunctions()
 
-	except.Block{
+	(&except.Block{
 		Try: func() {
 			preter.Interpret()
 		},
-		Catch: func(e obj.Exception) {
+		Catch: func(e *obj.Exception) {
 			os.Exit(0)
 		},
-	}.Do()
+	}).Do()
 }
