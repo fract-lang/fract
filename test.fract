@@ -219,3 +219,8 @@ open std.strings
 print(strings.Upper("mertCa-n"))
 
 <#
+
+
+open std.strings
+
+print(strings.Lower("MertCa-N"))
