@@ -15,7 +15,7 @@ func Int(f obj.Function, parameters []*obj.Variable) obj.Value {
 	switch parameters[1].Value.Content[0].Data { // Cast type.
 	case "strcode":
 		data := parameters[0].Value.Content[0]
-		if data.Type != fract.VALString || data.Data == "" || len(data.Data) > 1 {
+		if data.Type != fract.VALString || len(data.Data) != 1 {
 			return obj.Value{
 				Content: []obj.DataFrame{
 					{
@@ -33,9 +33,7 @@ func Int(f obj.Function, parameters []*obj.Variable) obj.Value {
 				},
 			},
 		}
-	case "object":
-		fallthrough
-	default:
+	default: // Object.
 		return obj.Value{
 			Content: []obj.DataFrame{
 				{

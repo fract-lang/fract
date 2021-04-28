@@ -20,9 +20,12 @@ Parse type.
 Parse object to string data.
 + ``parse`` <br>
 Parse value to string.
++ ``bytecode`` <br>
+Parse string from byte or byte array.
 
 ## Examples
 ```
 string(3435)                  # {[{3435 0}] false}
 string(3435, type="parse")    # 3435
+string(65, type="bytecode")   # A
 ```

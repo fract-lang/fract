@@ -2,6 +2,7 @@ package functions
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
@@ -39,7 +40,29 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 				},
 			},
 		}
-	default: // Objects.
+	case "bytecode":
+		value := parameters[0].Value
+
+		str := ""
+
+		for _, data := range value.Content {
+			if data.Type != fract.VALInteger {
+				str += " "
+			}
+
+			result, _ := strconv.ParseInt(data.Data, 10, 32)
+			str += string(rune(result))
+		}
+
+		return obj.Value{
+			Content: []obj.DataFrame{
+				{
+					Data: str,
+					Type: fract.VALString,
+				},
+			},
+		}
+	default: // Object.
 		return obj.Value{
 			Content: []obj.DataFrame{
 				{
