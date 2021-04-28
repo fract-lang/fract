@@ -113,24 +113,44 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(*tokens, grammar.LogicalOr)
-	for _, current := range *ors {
+	for _, or := range *ors {
 		// Decompose and conditions.
-		ands := parser.DecomposeConditionalProcess(current, grammar.LogicalAnd)
+		ands := parser.DecomposeConditionalProcess(or, grammar.LogicalAnd)
 		// Is and long statement?
 		if len(*ands) > 1 {
-			for aindex := range *ands {
-				if !compare(i.processValue(&(*ands)[aindex]), TRUE, grammar.Equals) {
+			for _, and := range *ands {
+				operatorIndex, operator := parser.FindConditionOperator(and)
+
+				// Operator is not found?
+				if operatorIndex == -1 {
+					if compare(i.processValue(&and), TRUE, grammar.Equals) {
+						return grammar.KwTrue
+					}
+					continue
+				}
+
+				// Operator is first or last?
+				if operatorIndex == 0 {
+					fract.Error(and[0], "Comparison values are missing!")
+				} else if operatorIndex == len(and)-1 {
+					fract.Error(and[len(and)-1], "Comparison values are missing!")
+				}
+
+				if !compare(
+					i.processValue(vector.Sublist(and, 0, operatorIndex)),
+					i.processValue(vector.Sublist(and, operatorIndex+1, len(and)-operatorIndex-1)),
+					operator) {
 					return grammar.KwFalse
 				}
 			}
 			return grammar.KwTrue
 		}
 
-		operatorIndex, operator := parser.FindConditionOperator(current)
+		operatorIndex, operator := parser.FindConditionOperator(or)
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			if compare(i.processValue(&current), TRUE, grammar.Equals) {
+			if compare(i.processValue(&or), TRUE, grammar.Equals) {
 				return grammar.KwTrue
 			}
 			continue
@@ -138,14 +158,14 @@ func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
 
 		// Operator is first or last?
 		if operatorIndex == 0 {
-			fract.Error(current[0], "Comparison values are missing!")
-		} else if operatorIndex == len(current)-1 {
-			fract.Error(current[len(current)-1], "Comparison values are missing!")
+			fract.Error(or[0], "Comparison values are missing!")
+		} else if operatorIndex == len(or)-1 {
+			fract.Error(or[len(or)-1], "Comparison values are missing!")
 		}
 
 		if compare(
-			i.processValue(vector.Sublist(current, 0, operatorIndex)),
-			i.processValue(vector.Sublist(current, operatorIndex+1, len(current)-operatorIndex-1)),
+			i.processValue(vector.Sublist(or, 0, operatorIndex)),
+			i.processValue(vector.Sublist(or, operatorIndex+1, len(or)-operatorIndex-1)),
 			operator) {
 			return grammar.KwTrue
 		}
