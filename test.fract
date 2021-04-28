@@ -204,6 +204,18 @@ print(strings.IsUpper("XAAA*"))
 
 <#
 
+#>
+
 open std.strings
 
 print(strings.IsLower("xaaa*"))
+
+<#
+
+#>
+
+open std.strings
+
+print(strings.Upper("mertCa-n"))
+
+<#
