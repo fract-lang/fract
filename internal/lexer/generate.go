@@ -120,7 +120,7 @@ func (l *Lexer) Generate() obj.Token {
 
 	fln := l.File.Lines[l.Line-1] // Full line.
 
-	/* Line is finished. */
+	// Line is finished.
 	if l.Column > len(fln) {
 		if l.RangeComment {
 			l.File.Lines[l.Line-1] = ""
@@ -131,7 +131,7 @@ func (l *Lexer) Generate() obj.Token {
 	// Resume.
 	ln := fln[l.Column-1:]
 
-	/* Skip spaces. */
+	// Skip spaces.
 	for index, char := range ln {
 		if char == ' ' || char == '\t' {
 			l.Column++
@@ -141,16 +141,18 @@ func (l *Lexer) Generate() obj.Token {
 		break
 	}
 
-	/* Content is empty. */
+	// Content is empty.
 	if ln == "" {
 		return token
 	}
 
-	/* Set token values. */
+	// Set token values.
 	token.Column = l.Column
 	token.Line = l.Line
 
-	/* Tokenize. */
+	// ************
+	//   Tokenize
+	// ************
 
 	if l.RangeComment { // Range comment.
 		if strings.HasPrefix(ln, grammar.RangeCommentClose) { // Range comment close.

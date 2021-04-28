@@ -7,9 +7,9 @@ How to interpret?
 > Using [make](https://github.com/fract-lang/fract/blob/master/docs/interpreter/modules/make.md) module.
 
 ```
-dir$ fract make main.fract
+> fract make main.fract
 ```
 OR
 ```
-dir$ fract make main
+> fract make main
 ```

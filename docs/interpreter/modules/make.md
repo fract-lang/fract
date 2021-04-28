@@ -7,25 +7,21 @@ Make module used for interpret Fract codes.
 
 Examples:
 ```
-dir$ fract make main.fract
+> fract make main.fract
 [Your Code Output]
-dir$ 
 ```
 ```
-dir$ fract make main
+> fract make main
 [Your Code Output]
-dir$ 
 ```
 
 Make module is can be directly called with file name. <br>
 Examples:
 ```
-dir$ fract main.fract
+> fract main.fract
 [Your Code Output]
-dir$ 
 ```
 ```
-dir$ fract main
+> fract main
 [Your Code Output]
-dir$ 
 ```
