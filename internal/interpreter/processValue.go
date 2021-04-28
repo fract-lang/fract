@@ -159,10 +159,37 @@ func solveProcess(process valueProcess) obj.Value {
 	if (len(process.FirstV.Content) != 0 && process.FirstV.Content[0].Type == fract.VALString) ||
 		(len(process.SecondV.Content) != 0 && process.SecondV.Content[0].Type == fract.VALString) {
 		if process.FirstV.Content[0].Type == process.SecondV.Content[0].Type { // Both string?
-			value.Content = []obj.DataFrame{{
-				Data: process.FirstV.Content[0].Data + process.SecondV.Content[0].Data,
-				Type: fract.VALString,
-			}}
+			value.Content[0].Type = fract.VALString
+			switch process.Operator.Value {
+			case grammar.TokenPlus:
+				value.Content[0].Data = process.FirstV.Content[0].Data + process.SecondV.Content[0].Data
+			case grammar.TokenMinus:
+				firstLen := len(process.FirstV.Content[0].Data)
+				secondLen := len(process.SecondV.Content[0].Data)
+
+				if firstLen == 0 || secondLen == 0 {
+					value.Content[0].Data = ""
+					break
+				}
+
+				if firstLen == 1 && secondLen > 1 {
+					fRune := rune(process.FirstV.Content[0].Data[0])
+					for _, char := range process.SecondV.Content[0].Data {
+						value.Content[0].Data += string(fRune - char)
+					}
+				} else if secondLen == 1 && firstLen > 1 {
+					fRune := rune(process.SecondV.Content[0].Data[0])
+					for _, char := range process.FirstV.Content[0].Data {
+						value.Content[0].Data += string(fRune - char)
+					}
+				} else {
+					for index, char := range process.FirstV.Content[0].Data {
+						value.Content[0].Data += string(char - rune(process.SecondV.Content[0].Data[index]))
+					}
+				}
+			default:
+				fract.Error(process.Operator, "This operator is not defined for string types!")
+			}
 			return value
 		}
 
