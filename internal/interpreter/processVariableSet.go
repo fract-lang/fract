@@ -107,18 +107,59 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 
 		switch setter.Value {
 		case grammar.TokenEquals: // =
-			variable.Value.Content[setIndex] = value.Content[0]
+			if variable.Value.Array {
+				variable.Value.Content[setIndex] = value.Content[0]
+			} else {
+				if value.Content[0].Type != fract.VALString {
+					fract.Error(setter, "Value type is not string!")
+				} else if len(value.Content[0].Data) > 1 {
+					fract.Error(setter, "Value length is should be maximum one!")
+				}
+				bytes := []byte(variable.Value.Content[0].Data)
+				if value.Content[0].Data == "" {
+					bytes[setIndex] = 0
+				} else {
+					bytes[setIndex] = value.Content[0].Data[0]
+				}
+				variable.Value.Content[0].Data = string(bytes)
+			}
 		default: // Other assignments.
-			variable.Value.Content[setIndex] = solveProcess(
-				valueProcess{
-					Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
-					First:    tokens[0],
-					FirstV: obj.Value{
-						Content: []obj.DataFrame{variable.Value.Content[setIndex]},
-					},
-					Second:  setter,
-					SecondV: value,
-				}).Content[0]
+			if variable.Value.Array {
+				variable.Value.Content[setIndex] = solveProcess(
+					valueProcess{
+						Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
+						First:    tokens[0],
+						FirstV: obj.Value{
+							Content: []obj.DataFrame{variable.Value.Content[setIndex]},
+						},
+						Second:  setter,
+						SecondV: value,
+					}).Content[0]
+			} else {
+				value = solveProcess(
+					valueProcess{
+						Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
+						First:    tokens[0],
+						FirstV: obj.Value{
+							Content: []obj.DataFrame{variable.Value.Content[setIndex]},
+						},
+						Second:  setter,
+						SecondV: value,
+					})
+				if value.Content[0].Type != fract.VALString {
+					fract.Error(setter, "Value type is not string!")
+				} else if len(value.Content[0].Data) > 1 {
+					fract.Error(setter, "Value length is should be maximum one!")
+				}
+
+				bytes := []byte(variable.Value.Content[0].Data)
+				if value.Content[0].Data == "" {
+					bytes[setIndex] = 0
+				} else {
+					bytes[setIndex] = value.Content[0].Data[0]
+				}
+				variable.Value.Content[0].Data = string(bytes)
+			}
 		}
 	} else {
 		switch setter.Value {
