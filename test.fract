@@ -220,7 +220,15 @@ print(strings.Upper("mertCa-n"))
 
 <#
 
+#>
 
 open std.strings
 
 print(strings.Lower("MertCa-N"))
+
+<#
+
+
+open std.strings
+
+print(strings.Capitalize("fract language"))
