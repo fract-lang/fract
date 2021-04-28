@@ -11,5 +11,5 @@
 #
 
 protected func IsLetter(char)
- ret (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
+	ret (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
 end
