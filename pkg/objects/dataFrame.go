@@ -5,5 +5,5 @@ type DataFrame struct {
 	// Data.
 	Data string
 	// Data type.
-	Type int16
+	Type uint8
 }
