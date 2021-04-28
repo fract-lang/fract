@@ -173,12 +173,14 @@ func solveProcess(process valueProcess) obj.Value {
 				}
 
 				if firstLen == 1 && secondLen > 1 {
-					fRune := rune(process.FirstV.Content[0].Data[0])
+					result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 32)
+					fRune := rune(result)
 					for _, char := range process.SecondV.Content[0].Data {
 						value.Content[0].Data += string(fRune - char)
 					}
 				} else if secondLen == 1 && firstLen > 1 {
-					fRune := rune(process.SecondV.Content[0].Data[0])
+					result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 32)
+					fRune := rune(result)
 					for _, char := range process.FirstV.Content[0].Data {
 						value.Content[0].Data += string(fRune - char)
 					}
@@ -207,37 +209,46 @@ func solveProcess(process valueProcess) obj.Value {
 					fract.Error(process.Second, "Array element count is not one or equals to first array!")
 				}
 
+				if strings.Contains(process.SecondV.Content[0].Data, grammar.TokenDot) {
+					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
+				}
+
+				result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 32)
+				_rune := rune(result)
+
 				var sb strings.Builder
 				for _, char := range process.FirstV.Content[0].Data {
-					if strings.Contains(process.SecondV.Content[0].Data, grammar.TokenDot) {
-						fract.Error(process.Second, "Float values cannot concatenate string values!")
+					switch process.Operator.Value {
+					case grammar.TokenPlus:
+						sb.WriteByte(byte(char + _rune))
+					case grammar.TokenMinus:
+						sb.WriteByte(byte(char - _rune))
+					default:
+						fract.Error(process.Operator, "This operator is not defined for string types!")
 					}
-					sb.WriteByte(byte(char + rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))))
 				}
 
-				value.Content = []obj.DataFrame{
-					{
-						Data: sb.String(),
-						Type: fract.VALString,
-					},
-				}
+				value.Content[0].Data = sb.String()
 			} else {
-				if process.SecondV.Content[0].Type == fract.VALFloat {
-					fract.Error(process.Second, "Float values cannot concatenate string values!")
+				if process.SecondV.Content[0].Type != fract.VALInteger {
+					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
 				}
 
 				var sb strings.Builder
-				val := rune(arithmetic.ToArithmetic(process.SecondV.Content[0].Data))
+				result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 32)
+				_rune := rune(result)
 				for _, char := range process.FirstV.Content[0].Data {
-					sb.WriteByte(byte(char + val))
+					switch process.Operator.Value {
+					case grammar.TokenPlus:
+						sb.WriteByte(byte(char + _rune))
+					case grammar.TokenMinus:
+						sb.WriteByte(byte(char - _rune))
+					default:
+						fract.Error(process.Operator, "This operator is not defined for string types!")
+					}
 				}
 
-				value.Content = []obj.DataFrame{
-					{
-						Data: sb.String(),
-						Type: fract.VALString,
-					},
-				}
+				value.Content[0].Data = sb.String()
 			}
 		} else {
 			if process.FirstV.Array {
@@ -251,37 +262,45 @@ func solveProcess(process valueProcess) obj.Value {
 					fract.Error(process.Second, "Array element count is not one or equals to first array!")
 				}
 
+				if strings.Contains(process.FirstV.Content[0].Data, grammar.TokenDot) {
+					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
+				}
+
+				result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 32)
+				_rune := rune(result)
+
 				var sb strings.Builder
 				for _, char := range process.SecondV.Content[0].Data {
-					if strings.Contains(process.FirstV.Content[0].Data, grammar.TokenDot) {
-						fract.Error(process.Second, "Float values cannot concatenate string values!")
+					switch process.Operator.Value {
+					case grammar.TokenPlus:
+						sb.WriteByte(byte(char + _rune))
+					case grammar.TokenMinus:
+						sb.WriteByte(byte(char - _rune))
+					default:
+						fract.Error(process.Operator, "This operator is not defined for string types!")
 					}
-					sb.WriteByte(byte(char + rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))))
 				}
 
-				value.Content = []obj.DataFrame{
-					{
-						Data: sb.String(),
-						Type: fract.VALString,
-					},
-				}
+				value.Content[0].Data = sb.String()
 			} else {
-				if process.FirstV.Content[0].Type == fract.VALFloat {
-					fract.Error(process.First, "Float values cannot concatenate string values!")
+				if process.FirstV.Content[0].Type != fract.VALInteger {
+					fract.Error(process.First, "Only string and integer values cannot concatenate string values!")
 				}
-
 				var sb strings.Builder
-				val := rune(arithmetic.ToArithmetic(process.FirstV.Content[0].Data))
+				result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 32)
+				_rune := rune(result)
 				for _, char := range process.SecondV.Content[0].Data {
-					sb.WriteByte(byte(char + val))
+					switch process.Operator.Value {
+					case grammar.TokenPlus:
+						sb.WriteByte(byte(char + _rune))
+					case grammar.TokenMinus:
+						sb.WriteByte(byte(char - _rune))
+					default:
+						fract.Error(process.Operator, "This operator is not defined for string types!")
+					}
 				}
 
-				value.Content = []obj.DataFrame{
-					{
-						Data: sb.String(),
-						Type: fract.VALString,
-					},
-				}
+				value.Content[0].Data = sb.String()
 			}
 		}
 		return value
