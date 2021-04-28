@@ -7,16 +7,16 @@
 #
 # Description
 # ----------------
-# Returns true if string is uppercase, false if not.
+# Returns true if string is lowercase, false if not.
 #
 
-protected func IsUpper(str)
+protected func IsLower(str)
 	for _, char in str
 		if IsLetter(char) == false
 			ret false
 		end
 		const code = int(char, type="strcode")
-		if code < 65 || code > 90
+		if code < 97 || code > 122
 			ret false
 		end
 	else

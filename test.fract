@@ -196,6 +196,14 @@ print(strings.IsLetter("X"))
 
 <#
 
+#>
+
 open std.strings
 
 print(strings.IsUpper("XAAA*"))
+
+<#
+
+open std.strings
+
+print(strings.IsLower("xaaa*"))
