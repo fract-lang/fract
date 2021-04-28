@@ -21,7 +21,7 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 			if len(value.Content) == 0 {
 				str = "[]"
 			} else {
-				sb := strings.Builder{}
+				var sb strings.Builder
 				sb.WriteByte('[')
 				for _, data := range value.Content {
 					sb.WriteString(data.Data + " ")
@@ -43,21 +43,21 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 	case "bytecode":
 		value := parameters[0].Value
 
-		str := ""
+		var sb strings.Builder
 
 		for _, data := range value.Content {
 			if data.Type != fract.VALInteger {
-				str += " "
+				sb.WriteByte(' ')
 			}
 
 			result, _ := strconv.ParseInt(data.Data, 10, 32)
-			str += string(rune(result))
+			sb.WriteByte(byte(result))
 		}
 
 		return obj.Value{
 			Content: []obj.DataFrame{
 				{
-					Data: str,
+					Data: sb.String(),
 					Type: fract.VALString,
 				},
 			},
