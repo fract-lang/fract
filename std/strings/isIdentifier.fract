@@ -1,0 +1,30 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# A string is considered a valid identifier if it only contains alphanumeric letters (a-z) and (0-9),
+# or underscores (_). A valid identifier cannot start with a number, or contain any spaces.
+#
+
+protected func IsIdentifier(str)
+	if str == ""
+		ret false
+	end
+
+	if IsNumericChar(str[0])
+		ret false
+	end
+
+	for _, char in str
+		if char <> "_" && IsLetter(char) == false && IsNumericChar(char) == false
+			ret false
+		end
+	end
+
+	ret true
+end

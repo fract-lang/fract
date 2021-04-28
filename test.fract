@@ -244,6 +244,7 @@ print(strings.SwapCase("Fract language"))
 
 <#
 
+#>
 
 open std.strings
 
@@ -251,3 +252,10 @@ const bytes = strings.GetBytes("Fract language")
 
 print(bytes)
 print(string(bytes, type="bytecode"))
+
+<#
+
+
+open std.strings
+
+print(strings.IsIdentifier("_Fr4a_ct"))
