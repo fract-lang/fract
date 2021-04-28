@@ -18,7 +18,7 @@ import (
 // tokens Tokens to process.
 // nested Is nested?
 //! A change added here(especially added a code block) must also be added to "import.go"!
-func (i *Interpreter) processTokens(tokens []obj.Token) int16 {
+func (i *Interpreter) processTokens(tokens []obj.Token) uint8 {
 	tokens = append([]obj.Token{}, tokens...)
 
 	switch first := tokens[0]; first.Type {

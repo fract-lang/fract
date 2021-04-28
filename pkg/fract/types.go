@@ -6,79 +6,79 @@ package fract
 
 const (
 	// TypeNone NA
-	TypeNone int16 = -1
+	TypeNone uint8 = 0
 	// TypeIgnore Ignore.
-	TypeIgnore int16 = 1
+	TypeIgnore uint8 = 1
 
 	// TypeComment Comment.
-	TypeComment int16 = 1100
+	TypeComment uint8 = 100
 	// TypeOperator Operator.
-	TypeOperator int16 = 1101
+	TypeOperator uint8 = 101
 	// TypePrint Print.
-	TypePrint int16 = 1102
+	TypePrint uint8 = 102
 	// TypeValue Value.
-	TypeValue int16 = 1103
+	TypeValue uint8 = 103
 	// TypeBrace Bracket.
-	TypeBrace int16 = 1104
+	TypeBrace uint8 = 104
 	// TypeVariable Variable define.
-	TypeVariable int16 = 1105
+	TypeVariable uint8 = 105
 	// TypeName Name type.
-	TypeName int16 = 1106
+	TypeName uint8 = 106
 	// TypeDelete Delete from memory.
-	TypeDelete int16 = 1107
+	TypeDelete uint8 = 107
 	// TypeComma Comma.
-	TypeComma int16 = 1108
+	TypeComma uint8 = 108
 	// TypeBooleanTrue Boolean true.
-	TypeBooleanTrue int16 = 119
+	TypeBooleanTrue uint8 = 109
 	// TypeBooleanFalse Boolean false.
-	TypeBooleanFalse int16 = 1110
+	TypeBooleanFalse uint8 = 110
 	// TypeBlockEnd End of block.
-	TypeBlockEnd int16 = 1111
+	TypeBlockEnd uint8 = 111
 	// TypeIf If.
-	TypeIf int16 = 1112
+	TypeIf uint8 = 112
 	// TypeElseIf Else if.
-	TypeElseIf int16 = 1113
+	TypeElseIf uint8 = 113
 	// TypeElse Else.
-	TypeElse int16 = 1114
+	TypeElse uint8 = 114
 	// TypeStatementTerminator Statement terminator.
-	TypeStatementTerminator int16 = 1115
+	TypeStatementTerminator uint8 = 115
 	// TypeLoop Loop.
-	TypeLoop int16 = 1116
+	TypeLoop uint8 = 116
 	// TypeIn In.
-	TypeIn int16 = 1117
+	TypeIn uint8 = 117
 	// TypeBreak Break loop.
-	TypeBreak int16 = 1118
+	TypeBreak uint8 = 118
 	// TypeContinue Continue loop.
-	TypeContinue int16 = 1119
+	TypeContinue uint8 = 119
 	// TypeFunction Function declare.
-	TypeFunction int16 = 1120
+	TypeFunction uint8 = 120
 	// TypeReturn Return.
-	TypeReturn int16 = 1121
+	TypeReturn uint8 = 121
 	// TypeProtected Protected.
-	TypeProtected int16 = 1122
+	TypeProtected uint8 = 122
 	// TypeTry Try.
-	TypeTry int16 = 1123
+	TypeTry uint8 = 123
 	// TypeCatch Catch.
-	TypeCatch int16 = 1124
+	TypeCatch uint8 = 124
 	// TypeImport Import.
-	TypeImport int16 = 1125
+	TypeImport uint8 = 125
 	// TypeParams Params.
-	TypeParams int16 = 1126
+	TypeParams uint8 = 126
 
 	// LOOPBreak Break loop.
-	LOOPBreak int16 = 0
+	LOOPBreak uint8 = 1
 	// LOOPContinue Continue loop.
-	LOOPContinue int16 = 1
+	LOOPContinue uint8 = 2
 
 	// FUNCReturn Return value.
-	FUNCReturn int16 = 2
+	FUNCReturn uint8 = 3
 
 	// VALInteger Integer value.
-	VALInteger int16 = 0
+	VALInteger uint8 = 0
 	// VALFloat Float value.
-	VALFloat int16 = 1
+	VALFloat uint8 = 1
 	// VALString String value.
-	VALString int16 = 2
+	VALString uint8 = 2
 	// Boolean Boolean value.
-	VALBoolean int16 = 3
+	VALBoolean uint8 = 3
 )

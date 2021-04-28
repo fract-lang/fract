@@ -44,7 +44,7 @@ func Range(f obj.Function, parameters []*obj.Variable) obj.Value {
 		}
 	}
 
-	var dtype int16
+	var dtype uint8
 	if start.Content[0].Type == fract.VALFloat ||
 		to.Content[0].Type == fract.VALFloat ||
 		step.Content[0].Type == fract.VALFloat {

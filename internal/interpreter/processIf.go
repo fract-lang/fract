@@ -15,7 +15,7 @@ import (
 // And returns loop keyword state.
 //
 // tokens Tokens to process.
-func (i *Interpreter) processIf(tokens []obj.Token) int16 {
+func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 	tokenLen := len(tokens)
 	conditionList := vector.Sublist(tokens, 1, tokenLen-1)
 

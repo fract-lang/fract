@@ -7,7 +7,7 @@ type Token struct {
 	// Value of token.
 	Value string
 	// Type of token.
-	Type int16
+	Type uint8
 	// Line of token.
 	Line int
 	// Column of token.
