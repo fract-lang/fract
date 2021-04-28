@@ -44,7 +44,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 	// Array setter?
 	if setter.Type == fract.TypeBrace && setter.Value == grammar.TokenLBracket {
 		// Variable is not array?
-		if !variable.Value.Array {
+		if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
 			fract.Error(setter, "Variable is not array!")
 		}
 
@@ -67,7 +67,11 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 				fract.Error(setter, "Value out of range!")
 			}
 
-			position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+			if variable.Value.Array {
+				position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
+			} else {
+				position = parser.ProcessArrayIndex(len(variable.Value.Content[0].Data), position)
+			}
 			if position == -1 {
 				fract.Error(setter, "Index is out of range!")
 			}
