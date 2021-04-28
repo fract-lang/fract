@@ -338,6 +338,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 			}
 
 			i.skipBlock(false)
+			i.index--
 			continue
 		}
 
