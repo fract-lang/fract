@@ -1,0 +1,27 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns true if char is letter, false if not.
+#
+
+protected func IsUpper(str)
+	for _, char in str
+		if IsLetter(char) == false
+			ret false
+		end
+		const code = int(char, type="strcode")
+		if code < 65 || code > 90
+			ret false
+		end
+	else
+		ret false
+	end
+
+	ret true
+end
