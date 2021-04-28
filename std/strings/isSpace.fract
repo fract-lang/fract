@@ -1,0 +1,23 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Check if all the characters in the text are whitespaces.
+#
+
+protected func IsSpace(str)
+	for _, char in str
+		if char <> "\t" && char <> " " && char <> "\v" && char <> "\n" && char <> "\r"
+			ret false
+		end
+	else
+		ret false
+	end
+
+	ret true
+end
