@@ -22,7 +22,7 @@ func PrintValue(value obj.Value) bool {
 		if len(value.Content) == 0 {
 			fmt.Print("[]")
 		} else {
-			sb := strings.Builder{}
+			var sb strings.Builder
 			sb.WriteByte('[')
 			for _, data := range value.Content {
 				sb.WriteString(FormatData(data) + " ")
