@@ -219,7 +219,8 @@ func (i *Interpreter) processLoop(tokens []obj.Token) int16 {
 	variables := i.variables
 
 	// Empty array?
-	if len(value.Content) == 0 {
+	if value.Array && len(value.Content) == 0 ||
+		value.Content[0].Type == fract.VALString && value.Content[0].Data == "" {
 		for {
 			i.index++
 			tokens := i.Tokens[i.index]
