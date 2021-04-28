@@ -1,0 +1,28 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Swaps cases, lowercase becomes uppercase and vice versa.
+#
+
+protected func SwapCase(str)
+	for index, char in str
+		if IsLetter(char) == false
+			continue
+		end
+		if IsLower(char)
+			str[index] = char - 32
+		else
+			str[index] = char + 32
+		end
+	else
+		ret ""
+	end
+
+	ret str
+end
