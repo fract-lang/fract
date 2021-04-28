@@ -143,10 +143,21 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 			Name:                  "int",
 			Protected:             true,
 			Tokens:                nil,
-			DefaultParameterCount: 0,
+			DefaultParameterCount: 1,
 			Parameters: &[]obj.Parameter{
 				{
 					Name: "object",
+				},
+				{
+					Name: "type",
+					Default: obj.Value{
+						Content: []obj.DataFrame{
+							{
+								Data: "parse",
+								Type: fract.VALString,
+							},
+						},
+					},
 				},
 			},
 		},
