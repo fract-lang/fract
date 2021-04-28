@@ -1,0 +1,23 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Converts the first character to uppercase.
+#
+
+protected func Capitalize(str)
+	if str == ""
+  ret str
+ end
+
+ if IsLetter(str[0]) && IsLower(str[0])
+  str[0] = Upper(str[0])
+ end
+
+ ret str
+end
