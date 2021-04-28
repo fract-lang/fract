@@ -1,0 +1,21 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns string as byte array.
+#
+
+protected func GetBytes(str)
+ var bytes = []
+
+	for _, char in str
+  bytes = [ bytes, int(char, type="strcode") ]
+ end
+
+ ret bytes
+end
