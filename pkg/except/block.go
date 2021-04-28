@@ -7,5 +7,7 @@ type Block struct {
 	// Main block.
 	Try func()
 	// On panic catch.
-	Catch func(obj.Exception)
+	Catch func(*obj.Exception)
+	// Handled exception.
+	Exception *obj.Exception
 }
