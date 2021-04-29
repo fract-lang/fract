@@ -216,7 +216,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 		fract.Error(tokens[0], "Foreach loop must defined array value!")
 	}
 
-	variables := i.variables
+	varLen := len(i.variables)
 
 	// Empty array?
 	if value.Array && len(value.Content) == 0 ||
@@ -237,7 +237,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 
 					if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 						// Remove temporary variables.
-						i.variables = variables
+						i.variables = i.variables[:varLen]
 						// Remove temporary functions.
 						i.functions = i.functions[:functionLen]
 
@@ -273,7 +273,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 				Value: obj.Value{},
 			}}, i.variables...)
 
-	variables = i.variables
+	varLen += 2
 	index := i.variables[0]
 	element := i.variables[1]
 
@@ -306,7 +306,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
-			i.variables = variables
+			i.variables = i.variables[:varLen]
 			// Remove temporary functions.
 			i.functions = i.functions[:functionLen]
 
@@ -355,6 +355,6 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 	}
 
 	// Remove loop variables.
-	i.variables = variables[2:]
+	i.variables = i.variables[2:]
 	return processKwState()
 }
