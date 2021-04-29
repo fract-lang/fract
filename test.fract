@@ -271,6 +271,13 @@ print(strings.IsSpace("      \v\t\n"))
 
 <#
 
+#>
 
 print(132e-3)
 print(132E-3)
+
+<#
+
+
+print(NaN + 2)
+print( 3535+4 )

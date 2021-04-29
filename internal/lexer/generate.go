@@ -165,33 +165,36 @@ func (l *Lexer) Generate() obj.Token {
 
 	switch check := strings.TrimSpace(regexp.MustCompile(
 		`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)\-[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
-	case check != "" &&
+	case (check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
 			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
-			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn): // Numeric value.
-		// Remove punct.
-		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
-		if result {
-			check = check[:len(check)-1]
-		}
-		clen := len(check)
-		check = strings.ReplaceAll(check, " ", "")
-		l.Column += clen - len(check)
-
-		if strings.HasPrefix(check, "0x") {
-			// Parse hexadecimal to decimal.
-			bigInt := new(big.Int)
-			bigInt.SetString(check[2:], 16)
-			check = bigInt.String()
+			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn)) ||
+		isKeywordToken(ln, "NaN"): // Numeric value.
+		if check == "" {
+			check = "NaN"
 		} else {
-			// Parse floating-point.
-			bigFloat := new(big.Float)
-			_, fail := bigFloat.SetString(check)
-			if !fail {
-				check = bigFloat.String()
+			// Remove punct.
+			if last := check[len(check)-1]; last != '0' && last != '1' &&
+				last != '2' && last != '3' && last != '4' && last != '5' &&
+				last != '6' && last != '7' && last != '8' && last != '9' {
+				check = check[:len(check)-1]
+			}
+
+			if strings.HasPrefix(check, "0x") {
+				// Parse hexadecimal to decimal.
+				bigInt := new(big.Int)
+				bigInt.SetString(check[2:], 16)
+				check = bigInt.String()
+			} else {
+				// Parse floating-point.
+				bigFloat := new(big.Float)
+				_, fail := bigFloat.SetString(check)
+				if !fail {
+					check = bigFloat.String()
+				}
 			}
 		}
 
