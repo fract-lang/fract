@@ -12,7 +12,7 @@
 
 protected func IsSpace(str)
 	for _, char in str
-		if char <> "\t" && char <> " " && char <> "\v" && char <> "\n" && char <> "\r"
+		if char <> "\t" && char <> " " && char <> "\v" && char <> "\n" && char <> "\r" && char <> "\f"
 			ret false
 		end
 	else
