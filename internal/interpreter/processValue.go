@@ -53,7 +53,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 			for _, current := range val.Content {
 				found++
 				vector.Insert(tokens, found, obj.Token{
-					Value: fract.FormatData(current),
+					Value: current.Data,
 					Type:  fract.TypeValue,
 				})
 				found++
@@ -75,7 +75,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 				})
 			} else {
 				vector.Insert(tokens, found, obj.Token{
-					Value: fract.FormatData(val.Content[0]),
+					Value: val.Content[0].Data,
 					Type:  fract.TypeValue,
 				})
 			}
@@ -320,7 +320,6 @@ func solveProcess(process valueProcess) obj.Value {
 			process.SecondV.Content[0].Type == fract.VALFloat {
 			dataFrame.Type = fract.VALFloat
 		}
-		dataFrame.Data = fract.FormatData(dataFrame)
 		return dataFrame
 	}
 
@@ -444,8 +443,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				if data.Type == fract.VALBoolean ||
 					data.Type == fract.VALFloat ||
 					data.Type == fract.VALInteger {
-					data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
-					val.Content[index].Data = fract.FormatData(data)
+					val.Content[index].Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
 				}
 			}
 			return val
@@ -454,8 +452,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if data := val.Content[0]; data.Type == fract.VALBoolean ||
 			data.Type == fract.VALFloat ||
 			data.Type == fract.VALInteger {
-			data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
-			val.Content[0].Data = fract.FormatData(data)
+			val.Content[0].Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
 		}
 
 		return val
@@ -779,12 +776,14 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				fract.Error(token, "Invalid value!")
 			}
 			token.Value = fmt.Sprintf(fract.FloatFormat, val)
+			token.Type = fract.VALFloat
 		} else {
 			val, err := strconv.ParseInt(token.Value, 10, 64)
 			if err != nil {
 				fract.Error(token, "Invalid value!")
 			}
 			token.Value = fmt.Sprint(val)
+			token.Type = fract.VALInteger
 		}
 	}
 
@@ -825,7 +824,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				operation.SecondV.Content[0].Type = fract.VALBoolean
 				operation.SecondV = applyMinus(operation.SecondV)
 			}
-		} else if strings.Contains(token.Value, grammar.TokenDot) { // Float?
+		} else if token.Type == fract.VALFloat { // Float?
 			if first {
 				operation.FirstV.Content[0].Type = fract.VALFloat
 				operation.FirstV = applyMinus(operation.FirstV)

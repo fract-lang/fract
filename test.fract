@@ -285,7 +285,32 @@ print( 3535+4 )
 
 <#
 
+#>
+
 open std.math
 
 print(math.IsNaN(NaN))
 print(math.IsNaN(5))
+
+<#
+
+open std.math
+open std.arithmetic
+
+print(math.E)
+print(math.Pi)
+print(math.Phi)
+print(math.Sqrt2)
+print(math.SqrtE)
+print(math.SqrtPi)
+print(math.SqrtPhi)
+print(math.Ln2)
+print(math.Log2E)
+print(math.Ln10)
+print(math.Log10E)
+print(3.40282346638528859811704183484516925440e+38)
+print(1.401298464324817070923729583289916131280e-45)
+print(0xFFFFEAF)
+print(arithmetic.INT8_MAX)
+print(arithmetic.FLOAT32_MAX)
+print(arithmetic.FLOAT64_MAX)

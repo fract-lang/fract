@@ -41,17 +41,25 @@
 # INT64_MIN
 #  Minimum value of 64bit integer.
 #
+# FLOAT32_MAX
+#  Maximum value of 32bit float.
+#
+# FLOAT64_MAX
+#  Maximum value of 64bit float.
+#
 
 
 protected const (
 	TRUE          = 1,
 	FALSE         = 0,
-	INT8_MAX      = 127,
-	INT16_MAX     = 32767,
-	INT32_MAX     = 2147483647,
-	INT64_MAX     = 9223372036854775807,
-	INT8_MIN      = -128,
-	INT16_MIN     = -32768,
-	INT32_MIN     = -2147483648,
-	INT64_MIN     = -9223372036854775808,
+	INT8_MAX      = 1 << 7 - 1,
+	INT16_MAX     = 1 << 15 - 1,
+	INT32_MAX     = 1 << 31 - 1,
+	INT64_MAX     = 11 << 63 - 1,
+	INT8_MIN      = -1 << 7,
+	INT16_MIN     = -1 << 15,
+	INT32_MIN     = -1 << 31,
+	INT64_MIN     = -1 << 63,
+	FLOAT32_MAX   = 3.40282346638528859811704183484516925440e+38,
+	FLOAT64_MAX   = 1.797693134862315708145274237317043567981e+308
 )
