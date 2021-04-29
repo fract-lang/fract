@@ -163,6 +163,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 						i.index--
 					}
 				} else {
+					i.skipBlock(true)
 					if _else {
 						continue
 					}
