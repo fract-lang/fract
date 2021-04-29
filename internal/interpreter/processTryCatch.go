@@ -55,7 +55,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) uint8 {
 			count := 0
 			for {
 				i.index++
-				tokens := i.Tokens[i.index]
+				tokens = i.Tokens[i.index]
 				if tokens[0].Type == fract.TypeBlockEnd {
 					count--
 					if count < 0 {
@@ -70,40 +70,30 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) uint8 {
 				}
 
 				if tokens[0].Type == fract.TypeCatch {
-					i.index--
 					break
 				}
 			}
 
-			if count < 0 {
+			if count < 0 { // Ended block.
 				return
 			}
-			// TODO: Optimize here.
+
+			// Catch block.
+
+			if len(tokens) > 1 {
+				fract.Error(tokens[1], "Invalid syntax!")
+			}
+
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
 
 				if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 					break
-				} else if tokens[0].Type == fract.TypeCatch { // Catch.
-					if len(tokens) > 1 {
-						fract.Error(tokens[1], "Invalid syntax!")
-					}
+				}
 
-					for {
-						i.index++
-						tokens := i.Tokens[i.index]
-
-						if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
-							break
-						}
-
-						if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
-							i.skipBlock(false)
-						}
-					}
-
-					break
+				if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
+					i.skipBlock(false)
 				}
 			}
 
