@@ -1,0 +1,15 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Returns true if number is NaN, false if not.
+#
+
+protected func IsNaN(x)
+	ret x <> x
+end

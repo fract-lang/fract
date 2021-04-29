@@ -278,6 +278,14 @@ print(132E-3)
 
 <#
 
+#>
 
 print(NaN + 2)
 print( 3535+4 )
+
+<#
+
+open std.math
+
+print(math.IsNaN(NaN))
+print(math.IsNaN(5))
