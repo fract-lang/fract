@@ -78,7 +78,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) uint8 {
 			if count < 0 {
 				return
 			}
-
+			// TODO: Optimize here.
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]

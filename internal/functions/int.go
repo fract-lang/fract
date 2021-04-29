@@ -37,7 +37,7 @@ func Int(f obj.Function, parameters []*obj.Variable) obj.Value {
 		return obj.Value{
 			Content: []obj.DataFrame{
 				{
-					Data: fmt.Sprint(int64(arithmetic.ToArithmetic(parameters[0].Value.Content[0].Data))),
+					Data: fmt.Sprint(int(arithmetic.ToArithmetic(parameters[0].Value.Content[0].Data))),
 					Type: fract.VALInteger,
 				},
 			},
