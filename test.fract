@@ -263,7 +263,14 @@ print(strings.IsIdentifier("_Fr4a_ct"))
 
 <#
 
+#>
 
 open std.strings
 
 print(strings.IsSpace("      \v\t\n"))
+
+<#
+
+
+print(132e-3)
+print(132E-3)
