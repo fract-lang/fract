@@ -12,7 +12,7 @@
 
 protected func Sqrt(x)
 	if x <= 0
-		ret 0
+		ret NaN
 	end
 
 	var z = 1.0
