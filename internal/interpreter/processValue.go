@@ -7,6 +7,7 @@ package interpreter
 import (
 	"fmt"
 	"math"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -124,11 +125,11 @@ func solve(operator obj.Token, first, second float64) float64 {
 			result = math.RoundToEven(result)
 		}
 	case grammar.TokenVerticalBar: // Binary or.
-		result = float64(int64(first) | int64(second))
+		result = float64(int(first) | int(second))
 	case grammar.TokenAmper: // Binary and.
-		result = float64(int64(first) & int64(second))
+		result = float64(int(first) & int(second))
 	case grammar.TokenCaret: // Bitwise exclusive or.
-		result = float64(int64(first) ^ int64(second))
+		result = float64(int(first) ^ int(second))
 	case grammar.Exponentiation: // Exponentiation.
 		result = math.Pow(first, second)
 	case grammar.TokenPercent: // Mod.
@@ -137,12 +138,12 @@ func solve(operator obj.Token, first, second float64) float64 {
 		if second < 0 {
 			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
-		result = float64(int64(first) << int64(second))
+		result = float64(int(first) << int(second))
 	case grammar.RightBinaryShift:
 		if second < 0 {
 			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
-		result = float64(int64(first) >> int64(second))
+		result = float64(int(first) >> int(second))
 	default:
 		fract.Error(operator, "Operator is invalid!")
 	}
@@ -774,20 +775,14 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
 		if strings.Contains(token.Value, grammar.TokenDot) ||
 			strings.ContainsAny(token.Value, "eE") || token.Value == "NaN" {
-			val, err := strconv.ParseFloat(token.Value, 64)
-			if err != nil {
-				fract.Error(token, "Invalid value!")
-			}
-			token.Value = fmt.Sprintf(fract.FloatFormat, val)
 			token.Type = fract.VALFloat
 		} else {
-			val, err := strconv.ParseInt(token.Value, 10, 64)
-			if err != nil {
-				fract.Error(token, "Invalid value!")
-			}
-			token.Value = fmt.Sprint(val)
 			token.Type = fract.VALInteger
 		}
+
+		prs, _ := new(big.Float).SetString(token.Value)
+		val, _ := prs.Float64()
+		token.Value = fmt.Sprint(val)
 	}
 
 	if first {
