@@ -175,6 +175,7 @@ func (l *Lexer) Generate() obj.Token {
 		isKeywordToken(ln, "NaN"): // Numeric value.
 		if check == "" {
 			check = "NaN"
+			l.Column += 3
 		} else {
 			// Remove punct.
 			if last := check[len(check)-1]; last != '0' && last != '1' &&
@@ -182,6 +183,8 @@ func (l *Lexer) Generate() obj.Token {
 				last != '6' && last != '7' && last != '8' && last != '9' {
 				check = check[:len(check)-1]
 			}
+
+			l.Column += len(check)
 
 			if strings.HasPrefix(check, "0x") {
 				// Parse hexadecimal to decimal.
@@ -200,6 +203,7 @@ func (l *Lexer) Generate() obj.Token {
 
 		token.Value = check
 		token.Type = fract.TypeValue
+		return token
 	case strings.HasPrefix(ln, grammar.TokenSemicolon): // Statement terminator.
 		token.Value = grammar.TokenSemicolon
 		token.Type = fract.TypeStatementTerminator
