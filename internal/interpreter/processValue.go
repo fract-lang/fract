@@ -53,7 +53,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 			for _, current := range val.Content {
 				found++
 				vector.Insert(tokens, found, obj.Token{
-					Value: current.Data,
+					Value: fract.FormatData(current),
 					Type:  fract.TypeValue,
 				})
 				found++
@@ -75,7 +75,7 @@ func (i *Interpreter) processRange(tokens *[]obj.Token) {
 				})
 			} else {
 				vector.Insert(tokens, found, obj.Token{
-					Value: val.Content[0].Data,
+					Value: fract.FormatData(val.Content[0]),
 					Type:  fract.TypeValue,
 				})
 			}
@@ -320,6 +320,7 @@ func solveProcess(process valueProcess) obj.Value {
 			process.SecondV.Content[0].Type == fract.VALFloat {
 			dataFrame.Type = fract.VALFloat
 		}
+		dataFrame.Data = fract.FormatData(dataFrame)
 		return dataFrame
 	}
 
@@ -443,7 +444,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				if data.Type == fract.VALBoolean ||
 					data.Type == fract.VALFloat ||
 					data.Type == fract.VALInteger {
-					val.Content[index].Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+					data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+					val.Content[index].Data = fract.FormatData(data)
 				}
 			}
 			return val
@@ -452,7 +454,8 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		if data := val.Content[0]; data.Type == fract.VALBoolean ||
 			data.Type == fract.VALFloat ||
 			data.Type == fract.VALInteger {
-			val.Content[0].Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+			data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+			val.Content[0].Data = fract.FormatData(data)
 		}
 
 		return val
