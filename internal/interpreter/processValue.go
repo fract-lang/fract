@@ -773,7 +773,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
 		if strings.Contains(token.Value, grammar.TokenDot) ||
-			strings.Contains(token.Value, "e") {
+			strings.ContainsAny(token.Value, "eE") {
 			val, err := strconv.ParseFloat(token.Value, 64)
 			if err != nil {
 				fract.Error(token, "Invalid value!")
