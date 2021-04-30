@@ -214,7 +214,7 @@ func solveProcess(process valueProcess) obj.Value {
 					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
 				}
 
-				result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 32)
+				result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 64)
 				_rune := rune(result)
 
 				var sb strings.Builder
@@ -236,7 +236,7 @@ func solveProcess(process valueProcess) obj.Value {
 				}
 
 				var sb strings.Builder
-				result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 32)
+				result, _ := strconv.ParseInt(process.SecondV.Content[0].Data, 10, 64)
 				_rune := rune(result)
 				for _, char := range process.FirstV.Content[0].Data {
 					switch process.Operator.Value {
@@ -267,7 +267,7 @@ func solveProcess(process valueProcess) obj.Value {
 					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
 				}
 
-				result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 32)
+				result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 64)
 				_rune := rune(result)
 
 				var sb strings.Builder
@@ -288,7 +288,7 @@ func solveProcess(process valueProcess) obj.Value {
 					fract.Error(process.First, "Only string and integer values cannot concatenate string values!")
 				}
 				var sb strings.Builder
-				result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 32)
+				result, _ := strconv.ParseInt(process.FirstV.Content[0].Data, 10, 64)
 				_rune := rune(result)
 				for _, char := range process.SecondV.Content[0].Data {
 					switch process.Operator.Value {
@@ -774,15 +774,17 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
 		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
 		if strings.Contains(token.Value, grammar.TokenDot) ||
-			strings.ContainsAny(token.Value, "eE") || token.Value == "NaN" {
+			strings.ContainsAny(token.Value, "eE") {
 			token.Type = fract.VALFloat
 		} else {
 			token.Type = fract.VALInteger
 		}
 
-		prs, _ := new(big.Float).SetString(token.Value)
-		val, _ := prs.Float64()
-		token.Value = fmt.Sprint(val)
+		if token.Value != "NaN" {
+			prs, _ := new(big.Float).SetString(token.Value)
+			val, _ := prs.Float64()
+			token.Value = fmt.Sprint(val)
+		}
 	}
 
 	if first {

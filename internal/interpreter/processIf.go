@@ -81,7 +81,6 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 				if state == grammar.KwTrue && kwstate == fract.TypeNone {
 					if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
 						i.skipBlock(false)
-						goto ret
 					}
 				} else {
 					i.skipBlock(true)
@@ -119,7 +118,6 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 				if kwstate == fract.TypeNone {
 					if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
 						i.skipBlock(false)
-						goto ret
 					}
 				}
 			}
@@ -129,7 +127,6 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 		if state == grammar.KwTrue && kwstate == fract.TypeNone {
 			if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
 				i.skipBlock(false)
-				goto ret
 			}
 		} else {
 			i.skipBlock(true)

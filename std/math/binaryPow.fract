@@ -10,7 +10,7 @@
 # Returns power using binary exponentiation of number.
 #
 
-protected func BinaryPow(x, y, z=false)
+protected func BinaryPow(x, y, z=NaN)
 	var n = 1
 	
 	for y > 0
@@ -22,7 +22,7 @@ protected func BinaryPow(x, y, z=false)
 		y >>= 1
 	end
 
-	if z <> false
+	if IsNaN(z) == false
 		ret n % z
 	end
 

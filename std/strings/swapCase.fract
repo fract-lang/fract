@@ -17,7 +17,7 @@ protected func SwapCase(str)
 		end
 		if IsLower(char)
 			str[index] = char - 32
-		else
+		elif IsUpper(char)
 			str[index] = char + 32
 		end
 	else

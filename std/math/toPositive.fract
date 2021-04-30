@@ -1,0 +1,19 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Reverse negative number to positive number.
+#
+
+protected func ToPositive(x)
+	if x > 0
+		ret x
+	end
+	
+	ret -x
+end

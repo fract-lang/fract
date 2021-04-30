@@ -63,7 +63,7 @@ func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 // quote Quote style.
 // fln Full line text of current code line.
 func (l *Lexer) lexString(token *obj.Token, quote byte, fln string) {
-	sb := &strings.Builder{}
+	sb := new(strings.Builder)
 	sb.WriteByte(quote)
 	l.Column++
 	for ; l.Column < len(fln)+1; l.Column++ {

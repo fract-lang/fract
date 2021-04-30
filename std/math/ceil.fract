@@ -7,7 +7,7 @@
 #
 # Description
 # ----------------
-# Returns Returns the smallest (closest to negative infinity).
+# Returns the smallest (closest to negative infinity).
 #
 
 protected func Ceil(x)

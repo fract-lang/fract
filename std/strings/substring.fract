@@ -17,12 +17,13 @@ protected func Substring(str, start, length)
 
 	const strlen = len(str)
 
-	if start > strlen
+	if start >= strlen
 		ret ""
 	elif start + length > strlen
 		length = strlen - start
 	end
 
+	#print(length + start - 1)
 	var newStr = ""
 	for _, index in range(start, length + start - 1)
 		newStr += str[index]
