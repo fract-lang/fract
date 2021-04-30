@@ -14,9 +14,9 @@ Object to check.
 
 ## Examples
 ```
-open std.arithmetic
+open std.math
 
-print(arithmetic.IsNumeric(5))      # True
-print(arithmetic.IsNumeric("544"))  # True
-print(arithmetic.IsNumeric("F"))    # False
+print(math.IsNumeric(5))      # True
+print(math.IsNumeric("544"))  # True
+print(math.IsNumeric("F"))    # False
 ```
