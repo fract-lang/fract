@@ -27,7 +27,6 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 	}
 
 	state := i.processCondition(conditionList)
-	actioned := state == grammar.KwTrue
 	variableLen := len(i.variables)
 	functionLen := len(i.functions)
 	kwstate := fract.TypeNone
@@ -51,6 +50,11 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 					first.Column+len(first.Value), "Condition is empty!")
 			}
 
+			if state == grammar.KwTrue {
+				i.skipBlock(false)
+				goto ret
+			}
+
 			state = i.processCondition(conditionList)
 
 			// Interpret/skip block.
@@ -62,20 +66,22 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret
 				} else if first.Type == fract.TypeIf { // If block.
-					if state == grammar.KwTrue && !actioned && kwstate == fract.TypeNone {
+					if state == grammar.KwTrue && kwstate == fract.TypeNone {
 						i.processIf(tokens)
 					} else {
 						i.skipBlock(true)
 					}
 					continue
 				} else if first.Type == fract.TypeElseIf || first.Type == fract.TypeElse { // Else if or else block.
+					i.index--
 					break
 				}
 
 				// Condition is true?
-				if state == grammar.KwTrue && !actioned && kwstate == fract.TypeNone {
+				if state == grammar.KwTrue && kwstate == fract.TypeNone {
 					if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
 						i.skipBlock(false)
+						goto ret
 					}
 				} else {
 					i.skipBlock(true)
@@ -84,9 +90,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 
 			if state == grammar.KwTrue {
 				i.skipBlock(false)
-				i.index--
-			} else if !actioned {
-				actioned = state == grammar.KwTrue
+				goto ret
 			}
 			continue
 		} else if first.Type == fract.TypeElse { // Else block.
@@ -103,7 +107,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 				if first.Type == fract.TypeBlockEnd { // Block is ended.
 					goto ret
 				} else if first.Type == fract.TypeIf { // If block.
-					if !actioned && kwstate == fract.TypeNone {
+					if kwstate == fract.TypeNone {
 						i.processIf(tokens)
 					} else {
 						i.skipBlock(true)
@@ -112,9 +116,10 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 				}
 
 				// Condition is true?
-				if !actioned && kwstate == fract.TypeNone {
+				if kwstate == fract.TypeNone {
 					if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
 						i.skipBlock(false)
+						goto ret
 					}
 				}
 			}
@@ -124,6 +129,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 		if state == grammar.KwTrue && kwstate == fract.TypeNone {
 			if kwstate = i.processTokens(tokens); kwstate != fract.TypeNone {
 				i.skipBlock(false)
+				goto ret
 			}
 		} else {
 			i.skipBlock(true)
