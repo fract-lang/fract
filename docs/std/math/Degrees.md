@@ -9,8 +9,8 @@ protected func Degrees(radians)
 ```
 
 ## Parameters
-+ ``x`` <br>
-Numeric.
++ ``radians`` <br>
+Radians to parse.
 
 ## Examples
 ```
