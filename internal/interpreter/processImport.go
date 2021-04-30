@@ -79,7 +79,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		}
 	}
 
-	source := &Interpreter{}
+	source := new(Interpreter)
 	source.ApplyEmbedFunctions()
 	for _, current := range content {
 		// Skip directories.

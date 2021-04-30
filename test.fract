@@ -297,7 +297,6 @@ print(math.IsNaN(5))
 #>
 
 open std.math
-open std.arithmetic
 
 print(math.E)
 print(math.Pi)
@@ -313,9 +312,9 @@ print(math.Log10E)
 print(3.40282346638528859811704183484516925440e+38)
 print(1.401298464324817070923729583289916131280e-45)
 print(0xFFFFEAF)
-print(arithmetic.INT8_MAX)
-print(arithmetic.FLOAT32_MAX)
-print(arithmetic.FLOAT64_MAX)
+print(math.INT8_MAX)
+print(math.FLOAT32_MAX)
+print(math.FLOAT64_MAX)
 
 <#
 

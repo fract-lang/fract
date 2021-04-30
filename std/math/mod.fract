@@ -10,6 +10,6 @@
 # Returns modulo of number.
 #
 
-protected func Mod(number, y=2)
-	ret number % y
+protected func Mod(x, y=2)
+	ret x % y
 end

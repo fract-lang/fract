@@ -15,7 +15,7 @@ protected func Contains(array, element, start=0)
 		ret false
 	end
 
-	for _, index in range(start, len(array) - start + 1)
+	for _, index in range(start, len(array) - start - 1)
 		if array[index] == element
 			ret true
 		end

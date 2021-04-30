@@ -7,9 +7,13 @@
 #
 # Description
 # ----------------
-# Returns string as byte array.
+# Reverse positive number to negative number.
 #
 
-protected func GetBytes(str)
-	ret [ int(str, type="strcode") ]
+protected func ToNegative(x)
+	if x < 0
+		ret x
+	end
+	
+	ret -x
 end
