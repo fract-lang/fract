@@ -12,7 +12,7 @@ protected func Sub(array, start, length)
 + ``array`` <br>
 Array.
 + ``start`` <br>
-Start index.
+Start index of take.
 + ``length`` <br>
 Length.
 
