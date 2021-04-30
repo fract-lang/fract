@@ -34,11 +34,12 @@ func (i *Interpreter) Import() {
 		case fract.TypeFunction: // Function definiton.
 			i.processFunction(tokens, false)
 		case fract.TypeImport: // Import.
-			source := Interpreter{}
+			source := new(Interpreter)
+			source.ApplyEmbedFunctions()
 			source.processImport(tokens)
 
 			i.variables = append(i.variables, source.variables...)
-			i.functions = append(i.functions, source.functions...)
+			i.functions = append(i.functions, source.functions[:]...)
 			i.Imports = append(i.Imports, source.Imports...)
 		case fract.TypeIf: // if-elif-else.
 			i.skipBlock(true)
