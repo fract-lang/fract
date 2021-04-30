@@ -131,7 +131,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 					Default: obj.Value{
 						Content: []obj.DataFrame{
 							{
-								Data: "object",
+								Data: "parse",
 								Type: fract.VALString,
 							},
 						},
