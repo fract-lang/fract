@@ -294,6 +294,8 @@ print(math.IsNaN(5))
 
 <#
 
+#>
+
 open std.math
 open std.arithmetic
 
@@ -314,3 +316,11 @@ print(0xFFFFEAF)
 print(arithmetic.INT8_MAX)
 print(arithmetic.FLOAT32_MAX)
 print(arithmetic.FLOAT64_MAX)
+
+<#
+
+open std.strings
+
+var bytes = int("Hello 😋", type="strcode")
+print(bytes)
+print(string(bytes, type="bytecode"))

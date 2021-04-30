@@ -11,11 +11,5 @@
 #
 
 protected func GetBytes(str)
- var bytes = []
-
-	for _, char in str
-  bytes = [ bytes, int(char, type="strcode") ]
- end
-
- ret bytes
+	ret [ int(str, type="strcode") ]
 end
