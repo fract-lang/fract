@@ -5,7 +5,7 @@ Returns power using binary exponentiation of number.
 
 ## Define
 ```
-protected func BinaryPow(x, y, z=false)
+protected func BinaryPow(x, y, z=NaN)
 ```
 
 ## Parameters
