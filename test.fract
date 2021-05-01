@@ -353,9 +353,17 @@ print(math.FLOAT64_MAX)
 
 <#
 
+#>
 
 open std.strings
 
 var bytes = int("Hello 😋", type="strcode")
 print(bytes)
 print(string(bytes, type="bytecode"))
+
+<#
+
+open std.runtime
+
+print(runtime.OS)
+print(runtime.ARCH)
