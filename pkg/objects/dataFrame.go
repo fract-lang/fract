@@ -1,9 +1,7 @@
 package objects
 
-// DataFrame data instance.
+// Data instance.
 type DataFrame struct {
-	// Data.
 	Data string
-	// Data type.
 	Type uint8
 }

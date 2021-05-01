@@ -19,18 +19,13 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// valueProcess Value process instance.
+// valueProcess instance for solver.
 type valueProcess struct {
-	// First value of process.
-	First obj.Token
-	// Value instance of first value.
-	FirstV obj.Value
-	// Second value of process.
-	Second obj.Token
-	// Value instance of second value.
-	SecondV obj.Value
-	// Operator of process.
-	Operator obj.Token
+	First    obj.Token  // First value of process.
+	FirstV   obj.Value  // Value instance of first value.
+	Second   obj.Token  // Second value of process.
+	SecondV  obj.Value  // Value instance of second value.
+	Operator obj.Token  // Operator of process.
 }
 
 // processRange Process range by value processor principles.
@@ -149,6 +144,22 @@ func solve(operator obj.Token, first, second float64) float64 {
 	}
 
 	return result
+}
+
+// readyDataFrame DataFrame ready to data.
+// dataFrame Destination dataframe.
+func readyDataFrame(process valueProcess, dataFrame obj.DataFrame) obj.DataFrame {
+	if process.FirstV.Content[0].Type == fract.VALString ||
+		process.SecondV.Content[0].Type == fract.VALString {
+		dataFrame.Type = fract.VALString
+	} else if process.Operator.Value == grammar.TokenSlash ||
+		process.Operator.Value == grammar.TokenBackslash ||
+		process.FirstV.Content[0].Type == fract.VALFloat ||
+		process.SecondV.Content[0].Type == fract.VALFloat {
+		dataFrame.Type = fract.VALFloat
+	}
+	dataFrame.Data = fract.FormatData(dataFrame)
+	return dataFrame
 }
 
 // solveProcess Solve arithmetic process.
@@ -309,22 +320,6 @@ func solveProcess(process valueProcess) obj.Value {
 
 	// ****************************
 
-	// readyDataFrame DataFrame ready to data.
-	// dataFrame Destination dataframe.
-	readyDataFrame := func(dataFrame obj.DataFrame) obj.DataFrame {
-		if process.FirstV.Content[0].Type == fract.VALString ||
-			process.SecondV.Content[0].Type == fract.VALString {
-			dataFrame.Type = fract.VALString
-		} else if process.Operator.Value == grammar.TokenSlash ||
-			process.Operator.Value == grammar.TokenBackslash ||
-			process.FirstV.Content[0].Type == fract.VALFloat ||
-			process.SecondV.Content[0].Type == fract.VALFloat {
-			dataFrame.Type = fract.VALFloat
-		}
-		dataFrame.Data = fract.FormatData(dataFrame)
-		return dataFrame
-	}
-
 	if process.FirstV.Array && process.SecondV.Array {
 		value.Array = true
 
@@ -344,25 +339,31 @@ func solveProcess(process valueProcess) obj.Value {
 		if len(process.FirstV.Content) == 1 {
 			first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 			for index, current := range process.SecondV.Content {
-				process.SecondV.Content[index] = readyDataFrame(obj.DataFrame{
+				process.SecondV.Content[index] = readyDataFrame(process,
+					obj.DataFrame{
 					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data)))})
+						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data))),
+					})
 			}
 			value.Content = process.SecondV.Content
 		} else if len(process.SecondV.Content) == 1 {
 			second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = readyDataFrame(obj.DataFrame{
-					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))})
+				process.FirstV.Content[index] = readyDataFrame(process,
+					obj.DataFrame{
+						Data: fmt.Sprintf(fract.FloatFormat,
+							solve(process.Operator, arithmetic.ToArithmetic(current.Data), second)),
+					})
 			}
 			value.Content = process.FirstV.Content
 		} else {
 			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = readyDataFrame(obj.DataFrame{
-					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, arithmetic.ToArithmetic(current.Data),
-							arithmetic.ToArithmetic(process.SecondV.Content[index].Data)))})
+				process.FirstV.Content[index] = readyDataFrame(process,
+					obj.DataFrame{
+						Data: fmt.Sprintf(fract.FloatFormat,
+							solve(process.Operator, arithmetic.ToArithmetic(current.Data),
+								arithmetic.ToArithmetic(process.SecondV.Content[index].Data))),
+					})
 			}
 			value.Content = process.FirstV.Content
 		}
@@ -379,9 +380,11 @@ func solveProcess(process valueProcess) obj.Value {
 
 		second := arithmetic.ToArithmetic(process.SecondV.Content[0].Data)
 		for index, current := range process.FirstV.Content {
-			process.FirstV.Content[index] = readyDataFrame(obj.DataFrame{
-				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator, arithmetic.ToArithmetic(current.Data), second))})
+			process.FirstV.Content[index] = readyDataFrame(process,
+				obj.DataFrame{
+					Data: fmt.Sprintf(fract.FloatFormat,
+						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second)),
+				})
 		}
 		value.Content = process.FirstV.Content
 	} else if process.SecondV.Array {
@@ -397,9 +400,10 @@ func solveProcess(process valueProcess) obj.Value {
 
 		first := arithmetic.ToArithmetic(process.FirstV.Content[0].Data)
 		for index, current := range process.SecondV.Content {
-			process.SecondV.Content[index] = readyDataFrame(obj.DataFrame{
-				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator, arithmetic.ToArithmetic(current.Data), first))})
+			process.SecondV.Content[index] = readyDataFrame(process,
+				obj.DataFrame{
+					Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(current.Data), first)),
+				})
 		}
 		value.Content = process.SecondV.Content
 	} else {
@@ -407,13 +411,50 @@ func solveProcess(process valueProcess) obj.Value {
 			process.FirstV.Content = []obj.DataFrame{{Data: "0"}}
 		}
 
-		value.Content[0] = readyDataFrame(obj.DataFrame{
-			Data: fmt.Sprintf(fract.FloatFormat,
-				solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
-					arithmetic.ToArithmetic(process.SecondV.Content[0].Data)))})
+		value.Content[0] = readyDataFrame(process,
+			obj.DataFrame{
+				Data: fmt.Sprintf(fract.FloatFormat,
+					solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
+						arithmetic.ToArithmetic(process.SecondV.Content[0].Data))),
+			})
 	}
 
 	return value
+}
+
+// applyMinus Apply minus assignment.
+// minussed state.
+// value Value to apply.
+func applyMinus (minussed bool, value obj.Value) obj.Value {
+	if !minussed {
+		return value
+	}
+
+	val := obj.Value{
+		Array:   value.Array,
+		Content: append([]obj.DataFrame{}, value.Content...),
+	}
+
+	if val.Array {
+		for index, data := range val.Content {
+			if data.Type == fract.VALBoolean ||
+				data.Type == fract.VALFloat ||
+				data.Type == fract.VALInteger {
+				data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+				val.Content[index].Data = fract.FormatData(data)
+			}
+		}
+		return val
+	}
+
+	if data := val.Content[0]; data.Type == fract.VALBoolean ||
+		data.Type == fract.VALFloat ||
+		data.Type == fract.VALInteger {
+		data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
+		val.Content[0].Data = fract.FormatData(data)
+	}
+
+	return val
 }
 
 // __processValue Process value.
@@ -427,40 +468,6 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		minussed bool
 		token    = operation.First
 	)
-
-	// applyMinus Apply minus assignment.
-	// value Value to apply.
-	applyMinus := func(value obj.Value) obj.Value {
-		if !minussed {
-			return value
-		}
-
-		val := obj.Value{
-			Array:   value.Array,
-			Content: append([]obj.DataFrame{}, value.Content...),
-		}
-
-		if val.Array {
-			for index, data := range val.Content {
-				if data.Type == fract.VALBoolean ||
-					data.Type == fract.VALFloat ||
-					data.Type == fract.VALInteger {
-					data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
-					val.Content[index].Data = fract.FormatData(data)
-				}
-			}
-			return val
-		}
-
-		if data := val.Content[0]; data.Type == fract.VALBoolean ||
-			data.Type == fract.VALFloat ||
-			data.Type == fract.VALInteger {
-			data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.Data))
-			val.Content[0].Data = fract.FormatData(data)
-		}
-
-		return val
-	}
 
 	if !first {
 		token = operation.Second
@@ -546,11 +553,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					if first {
 						operation.FirstV.Content = []obj.DataFrame{data}
 						operation.FirstV.Array = false
-						operation.FirstV = applyMinus(operation.FirstV)
+						operation.FirstV = applyMinus(minussed, operation.FirstV)
 					} else {
 						operation.SecondV.Content = []obj.DataFrame{data}
 						operation.SecondV.Array = false
-						operation.SecondV = applyMinus(operation.SecondV)
+						operation.SecondV = applyMinus(minussed, operation.SecondV)
 					}
 					return 0
 				} else if next.Value == grammar.TokenLParenthes { // Function?
@@ -575,7 +582,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 						fract.Error(token, "Function is not return any value!")
 					}
 					vector.RemoveRange(tokens, index+1, cindex-index-1)
-					value = applyMinus(value)
+					value = applyMinus(minussed, value)
 					if first {
 						operation.FirstV = value
 					} else {
@@ -594,9 +601,9 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 		variable := source.variables[vindex]
 
 		if first {
-			operation.FirstV = applyMinus(variable.Value)
+			operation.FirstV = applyMinus(minussed, variable.Value)
 		} else {
-			operation.SecondV = applyMinus(variable.Value)
+			operation.SecondV = applyMinus(minussed, variable.Value)
 		}
 		return 0
 	} else if token.Type == fract.TypeBrace {
@@ -624,12 +631,12 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 					operation.FirstV.Array = true
 					operation.FirstV.Content = i.processArrayValue(
 						vector.Sublist(*tokens, oindex, index-oindex+1)).Content
-					operation.FirstV = applyMinus(operation.FirstV)
+					operation.FirstV = applyMinus(minussed, operation.FirstV)
 				} else {
 					operation.SecondV.Array = true
 					operation.SecondV.Content = i.processArrayValue(
 						vector.Sublist(*tokens, oindex, index-oindex+1)).Content
-					operation.SecondV = applyMinus(operation.SecondV)
+					operation.SecondV = applyMinus(minussed, operation.SecondV)
 				}
 				vector.RemoveRange(tokens, oindex, index-oindex)
 				return index - oindex
@@ -692,11 +699,11 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if first {
 				operation.FirstV.Content = []obj.DataFrame{data}
 				operation.FirstV.Array = false
-				operation.FirstV = applyMinus(operation.FirstV)
+				operation.FirstV = applyMinus(minussed, operation.FirstV)
 			} else {
 				operation.SecondV.Content = []obj.DataFrame{data}
 				operation.FirstV.Array = false
-				operation.SecondV = applyMinus(operation.SecondV)
+				operation.SecondV = applyMinus(minussed, operation.SecondV)
 			}
 
 			return index - oindex + 1
@@ -720,8 +727,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 				}
 			}
 
-			value := i.processArrayValue(vector.Sublist(*tokens, index, cindex-index+1))
-			value = applyMinus(value)
+			value := applyMinus(minussed, i.processArrayValue(vector.Sublist(*tokens, index, cindex-index+1)))
 			if first {
 				operation.FirstV = value
 			} else {
@@ -753,7 +759,7 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			if value.Content == nil {
 				fract.Error((*tokens)[oindex], "Function is not return any value!")
 			}
-			value = applyMinus(value)
+			value = applyMinus(minussed, value)
 			if first {
 				operation.FirstV = value
 			} else {
@@ -819,18 +825,18 @@ func (i *Interpreter) _processValue(first bool, operation *valueProcess,
 			token.Type == fract.TypeBooleanFalse {
 			if first {
 				operation.FirstV.Content[0].Type = fract.VALBoolean
-				operation.FirstV = applyMinus(operation.FirstV)
+				operation.FirstV = applyMinus(minussed, operation.FirstV)
 			} else {
 				operation.SecondV.Content[0].Type = fract.VALBoolean
-				operation.SecondV = applyMinus(operation.SecondV)
+				operation.SecondV = applyMinus(minussed, operation.SecondV)
 			}
 		} else if token.Type == fract.VALFloat { // Float?
 			if first {
 				operation.FirstV.Content[0].Type = fract.VALFloat
-				operation.FirstV = applyMinus(operation.FirstV)
+				operation.FirstV = applyMinus(minussed, operation.FirstV)
 			} else {
 				operation.SecondV.Content[0].Type = fract.VALFloat
-				operation.SecondV = applyMinus(operation.SecondV)
+				operation.SecondV = applyMinus(minussed, operation.SecondV)
 			}
 		}
 	}

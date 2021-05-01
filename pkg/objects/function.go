@@ -1,17 +1,11 @@
 package objects
 
-// Function Function instance.
+// Function instance.
 type Function struct {
-	// Name of function.
-	Name string
-	// Line of define.
-	Line int
-	// Block content of function.
-	Tokens [][]Token
-	// Parameters of function.
-	Parameters *[]Parameter
-	// Count of parameters with default value.
+	Name                  string
+	Line                  int          // Line of define.
+	Tokens                [][]Token    // Block content of function.
+	Parameters            *[]Parameter
 	DefaultParameterCount int
-	// Protection state?
-	Protected bool
+	Protected             bool
 }

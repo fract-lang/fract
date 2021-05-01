@@ -13,62 +13,62 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// compare Compare values by operator.
-// value0 First value of comparison.
-// value1 Second value of comparison.
-// operator Operator of comparison.
-func compare(value0, value1 obj.Value, operator string) bool {
-	// compare_values Compare values by operator.
-	// data0 First data to compare.
-	// data1 Secondary data to compare.
-	compare_values := func(data0 obj.DataFrame, data1 obj.DataFrame) bool {
-		if data0.Type != data1.Type &&
-			(data0.Type == fract.VALString || data1.Type == fract.VALString) {
-			return false
-		}
-
-		switch operator {
-		case grammar.Equals: // Equals.
-			if (data0.Type == fract.VALString && data0.Data != data1.Data) ||
-				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) != arithmetic.ToArithmetic(data1.Data)) {
-				return false
-			}
-		case grammar.NotEquals: // Not equals.
-			if (data0.Type == fract.VALString && data0.Data == data1.Data) ||
-				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
-				return false
-			}
-		case grammar.TokenGreat: // Greater.
-			if (data0.Type == fract.VALString && data0.Data <= data1.Data) ||
-				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
-				return false
-			}
-		case grammar.TokenLess: // Less.
-			if (data0.Type == fract.VALString && data0.Data >= data1.Data) ||
-				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
-				return false
-			}
-		case grammar.GreaterEquals: // Greater or equals.
-			if (data0.Type == fract.VALString && data0.Data < data1.Data) ||
-				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) < arithmetic.ToArithmetic(data1.Data)) {
-				return false
-			}
-		case grammar.LessEquals: // Less or equals.
-			if (data0.Type == fract.VALString && data0.Data > data1.Data) ||
-				(data0.Type != fract.VALString &&
-					arithmetic.ToArithmetic(data0.Data) > arithmetic.ToArithmetic(data1.Data)) {
-				return false
-			}
-		}
-
-		return true
+// compareValues Compare values by operator.
+// operator of compare.
+// data0 First data to compare.
+// data1 Secondary data to compare.
+func compareValues(operator string, data0, data1 obj.DataFrame) bool {
+	if data0.Type != data1.Type &&
+		(data0.Type == fract.VALString || data1.Type == fract.VALString) {
+		return false
 	}
 
+	switch operator {
+	case grammar.Equals: // Equals.
+		if (data0.Type == fract.VALString && data0.Data != data1.Data) ||
+			(data0.Type != fract.VALString &&
+				arithmetic.ToArithmetic(data0.Data) != arithmetic.ToArithmetic(data1.Data)) {
+			return false
+		}
+	case grammar.NotEquals: // Not equals.
+		if (data0.Type == fract.VALString && data0.Data == data1.Data) ||
+			(data0.Type != fract.VALString &&
+				arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
+			return false
+		}
+	case grammar.TokenGreat: // Greater.
+		if (data0.Type == fract.VALString && data0.Data <= data1.Data) ||
+			(data0.Type != fract.VALString &&
+				arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
+			return false
+		}
+	case grammar.TokenLess: // Less.
+		if (data0.Type == fract.VALString && data0.Data >= data1.Data) ||
+			(data0.Type != fract.VALString &&
+				arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
+			return false
+		}
+	case grammar.GreaterEquals: // Greater or equals.
+		if (data0.Type == fract.VALString && data0.Data < data1.Data) ||
+			(data0.Type != fract.VALString &&
+				arithmetic.ToArithmetic(data0.Data) < arithmetic.ToArithmetic(data1.Data)) {
+			return false
+		}
+	case grammar.LessEquals: // Less or equals.
+		if (data0.Type == fract.VALString && data0.Data > data1.Data) ||
+			(data0.Type != fract.VALString &&
+				arithmetic.ToArithmetic(data0.Data) > arithmetic.ToArithmetic(data1.Data)) {
+			return false
+		}
+	}
+		return true
+}
+
+// compare values by operator.
+// value0 First value of comparison.
+// value1 Second value of comparison.
+// operator of comparison.
+func compare(value0, value1 obj.Value, operator string) bool {
 	// String comparison.
 	if !value0.Array || !value1.Array {
 		data0 := value0.Content[0]
@@ -77,7 +77,7 @@ func compare(value0, value1 obj.Value, operator string) bool {
 			(data0.Type != fract.VALString && data1.Type == fract.VALString) {
 			return false
 		}
-		return compare_values(data0, data1)
+		return compareValues(operator, data0, data1)
 	}
 
 	// Array comparison.
@@ -92,7 +92,7 @@ func compare(value0, value1 obj.Value, operator string) bool {
 		}
 
 		for index, val0Content := range value0.Content {
-			if !compare_values(val0Content, value1.Content[index]) {
+			if !compareValues(operator, val0Content, value1.Content[index]) {
 				return false
 			}
 		}
@@ -101,7 +101,7 @@ func compare(value0, value1 obj.Value, operator string) bool {
 	}
 
 	// Single value comparison.
-	return compare_values(value0.Content[0], value1.Content[0])
+	return compareValues(operator, value0.Content[0], value1.Content[0])
 }
 
 // processCondition Process conditional expression and return result.
