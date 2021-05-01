@@ -1,7 +1,3 @@
-/*
-	processFunction Function.
-*/
-
 package interpreter
 
 import (
@@ -10,14 +6,11 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// processFunction Process function.
-// tokens Tokens to process.
-// protected Protected?
-func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
+func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 	tokenLen := len(tokens)
 	_name := tokens[1]
 
@@ -40,10 +33,10 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 	}
 
 	i.index++
-	function := obj.Function{
+	function := objects.Function{
 		Name:       _name.Value,
 		Line:       i.index,
-		Parameters: &[]obj.Parameter{},
+		Parameters: &[]objects.Parameter{},
 		Protected:  protected,
 	}
 
@@ -57,7 +50,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 
 		// Decompose function parameters.
 		paramName, defaultDefined := true, false
-		var lastParameter obj.Parameter
+		var lastParameter objects.Parameter
 		for index := 0; index < len(paramList); index++ {
 			current := paramList[index]
 			if paramName {
@@ -67,7 +60,7 @@ func (i *Interpreter) processFunction(tokens []obj.Token, protected bool) {
 					fract.Error(current, "Parameter name is not found!")
 				}
 
-				lastParameter = obj.Parameter{
+				lastParameter = objects.Parameter{
 					Name:   current.Value,
 					Params: index > 0 && paramList[index-1].Type == fract.TypeParams,
 				}

@@ -2,12 +2,11 @@ package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// IsBlockStatement Statement is block?
-// tokens Tokens of statement.
-func IsBlockStatement(tokens []obj.Token) bool {
+// IsBlockStatement returns true if tokens is block start, return false if not.
+func IsBlockStatement(tokens []objects.Token) bool {
 	switch tokens[0].Type {
 	case fract.TypeIf,
 		fract.TypeLoop,

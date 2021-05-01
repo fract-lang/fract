@@ -1,7 +1,3 @@
-/*
-	skipBlock Function.
-*/
-
 package interpreter
 
 import (
@@ -9,8 +5,7 @@ import (
 	"github.com/fract-lang/fract/pkg/parser"
 )
 
-// skipBlock Skip to block end.
-// ifBlock Enable skip if statement is block start?
+// skipBlock skip to block end.
 func (i *Interpreter) skipBlock(ifBlock bool) {
 	if ifBlock {
 		if parser.IsBlockStatement(i.Tokens[i.index]) {

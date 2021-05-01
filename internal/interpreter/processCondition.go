@@ -1,23 +1,15 @@
-/*
-	processCondition Function.
-*/
-
 package interpreter
 
 import (
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// compareValues Compare values by operator.
-// operator of compare.
-// data0 First data to compare.
-// data1 Secondary data to compare.
-func compareValues(operator string, data0, data1 obj.DataFrame) bool {
+func compareValues(operator string, data0, data1 objects.DataFrame) bool {
 	if data0.Type != data1.Type &&
 		(data0.Type == fract.VALString || data1.Type == fract.VALString) {
 		return false
@@ -64,11 +56,7 @@ func compareValues(operator string, data0, data1 obj.DataFrame) bool {
 		return true
 }
 
-// compare values by operator.
-// value0 First value of comparison.
-// value1 Second value of comparison.
-// operator of comparison.
-func compare(value0, value1 obj.Value, operator string) bool {
+func compare(value0, value1 objects.Value, operator string) bool {
 	// String comparison.
 	if !value0.Array || !value1.Array {
 		data0 := value0.Content[0]
@@ -104,12 +92,11 @@ func compare(value0, value1 obj.Value, operator string) bool {
 	return compareValues(operator, value0.Content[0], value1.Content[0])
 }
 
-// processCondition Process conditional expression and return result.
-// tokens Tokens to process.
-func (i *Interpreter) processCondition(tokens *[]obj.Token) string {
+// processCondition returns condition result.
+func (i *Interpreter) processCondition(tokens *[]objects.Token) string {
 	i.processRange(tokens)
 
-	TRUE := obj.Value{Content: []obj.DataFrame{{Data: grammar.KwTrue}}}
+	TRUE := objects.Value{Content: []objects.DataFrame{{Data: grammar.KwTrue}}}
 
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(*tokens, grammar.LogicalOr)

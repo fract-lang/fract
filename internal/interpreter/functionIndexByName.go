@@ -1,7 +1,3 @@
-/*
-	functionIndexByName Function.
-*/
-
 package interpreter
 
 import (
@@ -10,12 +6,11 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// functionIndexByName Find index of function by name.
-// name Name to find.
-func (i *Interpreter) functionIndexByName(name obj.Token) (int, *Interpreter) {
+// functionIndexByName returns index of function by name.
+func (i *Interpreter) functionIndexByName(name objects.Token) (int, *Interpreter) {
 	if name.Value[0] == '-' { // Ignore.
 		name.Value = name.Value[1:]
 	}

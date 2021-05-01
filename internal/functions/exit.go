@@ -5,13 +5,11 @@ import (
 	"strconv"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
 // Exit from application with code.
-// f Function.
-// parameters Parameters.
-func Exit(f obj.Function, parameters []*obj.Variable) {
+func Exit(f objects.Function, parameters []*objects.Variable) {
 	code := parameters[0].Value
 
 	if code.Array {

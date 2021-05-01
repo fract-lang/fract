@@ -4,13 +4,11 @@ import (
 	"strconv"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
 // Make array by size.
-// f Function.
-// parameters Parameters.
-func Make(f obj.Function, parameters []*obj.Variable) obj.Value {
+func Make(f objects.Function, parameters []*objects.Variable) objects.Value {
 	size := parameters[0].Value
 
 	if size.Array {
@@ -24,15 +22,15 @@ func Make(f obj.Function, parameters []*obj.Variable) obj.Value {
 		fract.Error(f.Tokens[0][0], "Size should be minimum zero!")
 	}
 
-	value := obj.Value{Array: true}
+	value := objects.Value{Array: true}
 
 	if sizev > 0 {
 		var index int
 		for ; index < sizev; index++ {
-			value.Content = append(value.Content, obj.DataFrame{Data: "0"})
+			value.Content = append(value.Content, objects.DataFrame{Data: "0"})
 		}
 	} else {
-		value.Content = []obj.DataFrame{}
+		value.Content = []objects.DataFrame{}
 	}
 
 	return value

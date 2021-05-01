@@ -1,19 +1,8 @@
-/*
-	GENERIC FRACT
-*/
-
 package fract
 
 const (
-	// FractVersion Version of Fract.
-	FractVersion = "0.0.1"
-
-	// FractExtension File extension of Fract.
-	FractExtension = ".fract"
-
-	// Stdin Standard input type.
-	Stdin = "<stdin>"
-
-	// Float format.
-	FloatFormat = "%e"
+	FractVersion   = "0.0.1"   // Version of Fract.
+	FractExtension = ".fract"  // File extension of Fract.
+	Stdin          = "<stdin>" // Standard input type.
+	FloatFormat    = "%e"      // Float format.
 )

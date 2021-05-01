@@ -1,21 +1,16 @@
-/*
-	DecomposeArithmeticProcess Function
-*/
-
 package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// DecomposeArithmeticProcesses Decompose and returns arithmetic processes by operators.
-// tokens Tokens to process.
-func DecomposeArithmeticProcesses(tokens []obj.Token) *[]obj.Token {
+// DecomposeArithmeticProcesses returns arithmetic processes by operators.
+func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 	var (
 		operator  bool
-		last      obj.Token
-		processes []obj.Token
+		last      objects.Token
+		processes []objects.Token
 	)
 
 	for index, token := range tokens {

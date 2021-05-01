@@ -1,7 +1,3 @@
-/*
-	Process Function.
-*/
-
 package make
 
 import (
@@ -13,11 +9,10 @@ import (
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/fs"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// Process Process command in module.
-// command Command to process.
+// Process command in module.
 func Process(command string) {
 	if command == "" {
 		fmt.Println("This module cannot only be used!")
@@ -26,7 +21,7 @@ func Process(command string) {
 		command += fract.FractExtension
 	}
 
-	if !fs.ExistFile(command) {
+	if !fs.ExistsFile(command) {
 		fmt.Println("The Fract file is not exists: " + command)
 		return
 	}
@@ -42,7 +37,7 @@ func Process(command string) {
 	
 	(&except.Block{
 		Try: preter.Interpret,
-		Catch: func(e *obj.Exception) {
+		Catch: func(e *objects.Exception) {
 			os.Exit(0)
 		},
 	}).Do()

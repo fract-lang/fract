@@ -1,12 +1,6 @@
-/*
-	ProcessArrayIndex Function.
-*/
-
 package parser
 
-// ProcessArrayIndex Process array index by length.
-// length Length of array.
-// index Index to process.
+// ProcessArrayIndex process array index by length.
 func ProcessArrayIndex(length, index int) int {
 	if index >= 0 {
 		if index >= length {

@@ -1,18 +1,12 @@
-/*
-	processDelete Function.
-*/
-
 package interpreter
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// processDelete Process delete keyword.
-// tokens Tokens to process.
-func (i *Interpreter) processDelete(tokens []obj.Token) {
+func (i *Interpreter) processDelete(tokens []objects.Token) {
 	tokenLen := len(tokens)
 
 	// Value is not defined?

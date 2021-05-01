@@ -1,11 +1,9 @@
 package objects
 
-import (
-	"os"
-)
+import "os"
 
-// Code file instance.
-type CodeFile struct {
+// Source file instance.
+type SourceFile struct {
 	Path  string
 	File  *os.File
 	Lines []string

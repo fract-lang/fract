@@ -1,11 +1,9 @@
 package fract
 
 var (
-	// LiveInterpret Live interpret mode.
-	LiveInterpret = false
+	LiveInterpret bool // Live interpret mode.
 )
 
 var (
-	// TryCount Try-Catch count.
-	TryCount = 0
+	TryCount int // Try-Catch count.
 )

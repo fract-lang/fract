@@ -1,46 +1,23 @@
-/*
-	KEYWORDS
-*/
-
 package grammar
 
 const (
-	// KwImport Import packages.
-	KwImport = "open"
-	// KwFunction Function define.
-	KwFunction = "func"
-	// KwDelete Delete variable.
-	KwDelete = "del"
-	// KwVariable Variable define.
-	KwVariable = "var"
-	// KwConstVariable Const variable define.
-	KwConstVariable = "const"
-	// KwProtected Protect from manuel memory deletion.
-	KwProtected = "protected"
-	// KwReturn Returns.
-	KwReturn = "ret"
-	//KwBlockEnd End of block.
-	KwBlockEnd = "end"
-	// KwForWhileLoop For and while loop.
-	KwForWhileLoop = "for"
-	// KwIn In.
-	KwIn = "in"
-	// KwBreak Break loop.
-	KwBreak = "break"
-	// KwContinue Continue loop.
-	KwContinue = "continue"
-	// KwIf If condition.
-	KwIf = "if"
-	// KwElseIf Else-If alternate.
-	KwElseIf = "elif"
-	// KwElse Else.
-	KwElse = "else"
-	// KwTrue Boolean true(1) value.
-	KwTrue = "true"
-	// KwFalse Boolean false(0) value.
-	KwFalse = "false"
-	// KwTry Try declare.
-	KwTry = "try"
-	// KwCatch Catch declare.
-	KwCatch = "catch"
+	KwImport        = "open"      // Import packages.
+	KwFunction      = "func"      // Function define.
+	KwDelete        = "del"       // Delete define(s).
+	KwVariable      = "var"       // Variable define.
+	KwConstVariable = "const"     // Constant variable define.
+	KwProtected     = "protected" // Protect from manuel memory deletion.
+	KwReturn        = "ret"       // Return value.
+	KwBlockEnd      = "end"       // End of block.
+	KwForWhileLoop  = "for"       // For and while loop.
+	KwIn            = "in"        // In.
+	KwBreak         = "break"     // Break loop.
+	KwContinue      = "continue"  // Continue loop.
+	KwIf            = "if"        // If condition.
+	KwElseIf        = "elif"      // Else-If alternate.
+	KwElse          = "else"      // Else.
+	KwTrue          = "true"      // Boolean true(1) value.
+	KwFalse         = "false"     // Boolean false(0) value.
+	KwTry           = "try"       // Try declare.
+	KwCatch         = "catch"     // Catch declare.
 )

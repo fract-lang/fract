@@ -1,12 +1,6 @@
-/*
-	Import Function.
-*/
-
 package interpreter
 
-import (
-	"github.com/fract-lang/fract/pkg/fract"
-)
+import "github.com/fract-lang/fract/pkg/fract"
 
 // Import content into destination interpeter.
 func (i *Interpreter) Import() {

@@ -1,10 +1,10 @@
 package except
 
-import obj "github.com/fract-lang/fract/pkg/objects"
+import "github.com/fract-lang/fract/pkg/objects"
 
 // Code block instance.
 type Block struct {
 	Try       func()
-	Catch     func(*obj.Exception)
-	Exception *obj.Exception
+	Catch     func(*objects.Exception)
+	Exception *objects.Exception
 }

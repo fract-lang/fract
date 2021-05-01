@@ -1,28 +1,25 @@
-/*
-	ApplyEmbedFunctions Function.
-*/
-
 package interpreter
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// ApplyEmbedFunctions Add embed functions to interpreter source.
+//! Embed functions should have a lowercase names.
+
+// ApplyEmbedFunctions to interpreter source.
 func (i *Interpreter) ApplyEmbedFunctions() {
-	//! Embed functions should have a lowercase names.
 	i.functions = append(i.functions,
-		obj.Function{ // print function.
+		objects.Function{ // print function.
 			Name:                  "print",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 2,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "value",
-					Default: obj.Value{
-						Content: []obj.DataFrame{
+					Default: objects.Value{
+						Content: []objects.DataFrame{
 							{
 								Type: fract.VALString,
 							},
@@ -31,8 +28,8 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 				{
 					Name: "fin",
-					Default: obj.Value{
-						Content: []obj.DataFrame{
+					Default: objects.Value{
+						Content: []objects.DataFrame{
 							{
 								Data: "\n",
 								Type: fract.VALString,
@@ -42,16 +39,16 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{ // input function.
+		objects.Function{ // input function.
 			Name:                  "input",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "message",
-					Default: obj.Value{
-						Content: []obj.DataFrame{
+					Default: objects.Value{
+						Content: []objects.DataFrame{
 							{
 								Data: "",
 								Type: fract.VALString,
@@ -61,37 +58,37 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{ // exit function.
+		objects.Function{ // exit function.
 			Name:                  "exit",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "code",
-					Default: obj.Value{
-						Content: []obj.DataFrame{{Data: "0"}},
+					Default: objects.Value{
+						Content: []objects.DataFrame{{Data: "0"}},
 					},
 				},
 			},
 		},
-		obj.Function{ // len function.
+		objects.Function{ // len function.
 			Name:                  "len",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "object",
 				},
 			},
 		},
-		obj.Function{ // range function.
+		objects.Function{ // range function.
 			Name:                  "range",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "start",
 				},
@@ -100,36 +97,36 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 				{
 					Name: "step",
-					Default: obj.Value{
-						Content: []obj.DataFrame{{Data: "1"}},
+					Default: objects.Value{
+						Content: []objects.DataFrame{{Data: "1"}},
 					},
 				},
 			},
 		},
-		obj.Function{ // make function.
+		objects.Function{ // make function.
 			Name:                  "make",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "size",
 				},
 			},
 		},
-		obj.Function{ // string function.
+		objects.Function{ // string function.
 			Name:                  "string",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "object",
 				},
 				{
 					Name: "type",
-					Default: obj.Value{
-						Content: []obj.DataFrame{
+					Default: objects.Value{
+						Content: []objects.DataFrame{
 							{
 								Data: "parse",
 								Type: fract.VALString,
@@ -139,19 +136,19 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{ // int function.
+		objects.Function{ // int function.
 			Name:                  "int",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 1,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "object",
 				},
 				{
 					Name: "type",
-					Default: obj.Value{
-						Content: []obj.DataFrame{
+					Default: objects.Value{
+						Content: []objects.DataFrame{
 							{
 								Data: "parse",
 								Type: fract.VALString,
@@ -161,12 +158,12 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				},
 			},
 		},
-		obj.Function{ // float function.
+		objects.Function{ // float function.
 			Name:                  "float",
 			Protected:             true,
 			Tokens:                nil,
 			DefaultParameterCount: 0,
-			Parameters: &[]obj.Parameter{
+			Parameters: &[]objects.Parameter{
 				{
 					Name: "object",
 				},

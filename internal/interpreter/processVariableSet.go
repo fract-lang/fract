@@ -1,7 +1,3 @@
-/*
-	processVariableSet Function.
-*/
-
 package interpreter
 
 import (
@@ -9,14 +5,14 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // ProcessVariableSet Process variable set statement.
 // tokens Tokens to process.
-func (i *Interpreter) processVariableSet(tokens []obj.Token) {
+func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 	_name := tokens[0]
 
 	// Name is not name?
@@ -127,10 +123,10 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 			if variable.Value.Array {
 				variable.Value.Content[setIndex] = solveProcess(
 					valueProcess{
-						Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
+						Operator: objects.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 						First:    tokens[0],
-						FirstV: obj.Value{
-							Content: []obj.DataFrame{variable.Value.Content[setIndex]},
+						FirstV: objects.Value{
+							Content: []objects.DataFrame{variable.Value.Content[setIndex]},
 						},
 						Second:  setter,
 						SecondV: value,
@@ -138,10 +134,10 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 			} else {
 				value = solveProcess(
 					valueProcess{
-						Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
+						Operator: objects.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 						First:    tokens[0],
-						FirstV: obj.Value{
-							Content: []obj.DataFrame{variable.Value.Content[setIndex]},
+						FirstV: objects.Value{
+							Content: []objects.DataFrame{variable.Value.Content[setIndex]},
 						},
 						Second:  setter,
 						SecondV: value,
@@ -168,7 +164,7 @@ func (i *Interpreter) processVariableSet(tokens []obj.Token) {
 		default: // Other assignments.
 			variable.Value = solveProcess(
 				valueProcess{
-					Operator: obj.Token{Value: string(setter.Value[:len(setter.Value)-1])},
+					Operator: objects.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 					First:    tokens[0],
 					FirstV:   variable.Value,
 					Second:   setter,

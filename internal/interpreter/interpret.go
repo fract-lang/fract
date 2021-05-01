@@ -1,7 +1,3 @@
-/*
-	Interpret Function
-*/
-
 package interpreter
 
 import (
@@ -13,7 +9,6 @@ import (
 	"github.com/fract-lang/fract/pkg/fract"
 )
 
-// Interpret Interpret file.
 func (i *Interpreter) Interpret() {
 	if i.Lexer.File.Path == fract.Stdin {
 		// Interpret all lines.

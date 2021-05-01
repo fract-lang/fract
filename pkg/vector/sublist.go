@@ -1,21 +1,12 @@
-/*
-	Sublist Function.
-*/
-
 package vector
 
-import (
-	obj "github.com/fract-lang/fract/pkg/objects"
-)
+import "github.com/fract-lang/fract/pkg/objects"
 
-// Sublist Get range.
-// slice Source slice.
-// pos Start position to take.
-// length Count of taken elements.
-func Sublist(slice []obj.Token, pos, length int) *[]obj.Token {
+// Sublist returns slice by position and length.
+func Sublist(slice []objects.Token, position, length int) *[]objects.Token {
 	if length == 0 {
 		return nil
 	}
-	slice = append([]obj.Token{}, slice[pos:pos+length]...)
+	slice = append([]objects.Token{}, slice[position:position+length]...)
 	return &slice
 }

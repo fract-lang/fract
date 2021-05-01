@@ -6,13 +6,11 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// String Convert object to string.
-// f Function.
-// parameters Parameters.
-func String(f obj.Function, parameters []*obj.Variable) obj.Value {
+// String convert object to string.
+func String(f objects.Function, parameters []*objects.Variable) objects.Value {
 	switch parameters[1].Value.Content[0].Data {
 	case "parse":
 		str := ""
@@ -32,8 +30,8 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 			str = parameters[0].Value.Content[0].Data
 		}
 
-		return obj.Value{
-			Content: []obj.DataFrame{
+		return objects.Value{
+			Content: []objects.DataFrame{
 				{
 					Data: str,
 					Type: fract.VALString,
@@ -54,8 +52,8 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 			sb.WriteByte(byte(result))
 		}
 
-		return obj.Value{
-			Content: []obj.DataFrame{
+		return objects.Value{
+			Content: []objects.DataFrame{
 				{
 					Data: sb.String(),
 					Type: fract.VALString,
@@ -63,8 +61,8 @@ func String(f obj.Function, parameters []*obj.Variable) obj.Value {
 			},
 		}
 	default: // Object.
-		return obj.Value{
-			Content: []obj.DataFrame{
+		return objects.Value{
+			Content: []objects.DataFrame{
 				{
 					Data: fmt.Sprint(parameters[0].Value),
 					Type: fract.VALString,

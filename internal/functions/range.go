@@ -5,13 +5,11 @@ import (
 	"strconv"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// Range of object.
-// f Function.
-// parameters Parameters.
-func Range(f obj.Function, parameters []*obj.Variable) obj.Value {
+// Range returns array by parameters.
+func Range(f objects.Function, parameters []*objects.Variable) objects.Value {
 	start := parameters[0].Value
 	to := parameters[1].Value
 	step := parameters[2].Value
@@ -38,7 +36,7 @@ func Range(f obj.Function, parameters []*obj.Variable) obj.Value {
 	stepV, _ := strconv.ParseFloat(step.Content[0].Data, 64)
 
 	if stepV <= 0 {
-		return obj.Value{
+		return objects.Value{
 			Content: nil,
 			Array:   true,
 		}
@@ -51,14 +49,14 @@ func Range(f obj.Function, parameters []*obj.Variable) obj.Value {
 		dtype = fract.VALFloat
 	}
 
-	returnValue := obj.Value{
-		Content: []obj.DataFrame{},
+	returnValue := objects.Value{
+		Content: []objects.DataFrame{},
 		Array:   true,
 	}
 
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			data := obj.DataFrame{
+			data := objects.DataFrame{
 				Data: fmt.Sprintf(fract.FloatFormat, startV),
 				Type: dtype,
 			}
@@ -67,7 +65,7 @@ func Range(f obj.Function, parameters []*obj.Variable) obj.Value {
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			data := obj.DataFrame{
+			data := objects.DataFrame{
 				Data: fmt.Sprintf(fract.FloatFormat, startV),
 				Type: dtype,
 			}

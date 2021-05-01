@@ -1,7 +1,3 @@
-/*
-	Process Function.
-*/
-
 package help
 
 import (
@@ -10,8 +6,7 @@ import (
 	"github.com/fract-lang/fract/pkg/cli"
 )
 
-// Process Process command in module.
-// command Command to process.
+// Process command in module.
 func Process(command string) {
 	if command != "" {
 		fmt.Println("This module can only be used!")

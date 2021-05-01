@@ -1,7 +1,3 @@
-/*
-	processTokens Function.
-*/
-
 package interpreter
 
 import (
@@ -9,17 +5,14 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// processTokens Process tokens and returns true if block end, returns false if not.
-// and returns loop keyword state.
-//
-// tokens Tokens to process.
-// nested Is nested?
 //! A change added here(especially added a code block) must also be added to "import.go"!
-func (i *Interpreter) processTokens(tokens []obj.Token) uint8 {
-	tokens = append([]obj.Token{}, tokens...)
+
+// processTokens returns true if block end, returns false if not and returns keyword state.
+func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
+	tokens = append([]objects.Token{}, tokens...)
 
 	switch first := tokens[0]; first.Type {
 	case

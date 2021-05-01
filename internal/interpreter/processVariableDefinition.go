@@ -1,7 +1,3 @@
-/*
-	processVariableDefinition Function
-*/
-
 package interpreter
 
 import (
@@ -10,15 +6,12 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
 // appendVariable to source from tokens.
-// constant state.
-// protected state.
-// tokens to process.
-func (i *Interpreter)	appendVariable(constant, protected bool, tokens []obj.Token) {
+func (i *Interpreter)	appendVariable(constant, protected bool, tokens []objects.Token) {
 	_name := tokens[0]
 
 	if strings.Contains(_name.Value, grammar.TokenDot) {
@@ -55,7 +48,7 @@ func (i *Interpreter)	appendVariable(constant, protected bool, tokens []obj.Toke
 		fract.Error(tokens[2], "Invalid value!")
 	}
 
-	i.variables = append(i.variables, &obj.Variable{
+	i.variables = append(i.variables, &objects.Variable{
 		Name:      _name.Value,
 		Value:     value,
 		Line:      _name.Line,
@@ -64,10 +57,7 @@ func (i *Interpreter)	appendVariable(constant, protected bool, tokens []obj.Toke
 	})
 }
 
-// processVariable Process variable defination.
-// tokens Tokens to process.
-// protected Protected?
-func (i *Interpreter) processVariableDefinition(tokens []obj.Token, protected bool) {
+func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protected bool) {
 	// Name is not defined?
 	if len(tokens) < 2 {
 		first := tokens[0]

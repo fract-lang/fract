@@ -1,19 +1,14 @@
-/*
-	processTryCatch Function.
-*/
-
 package interpreter
 
 import (
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 )
 
-// processTryCatch Process Try-Catch block.
-// tokens Tokens to process.
-func (i *Interpreter) processTryCatch(tokens []obj.Token) uint8 {
+// processTryCatch process try-catch blocks and returns keyword state.
+func (i *Interpreter) processTryCatch(tokens []objects.Token) uint8 {
 	if len(tokens) > 1 {
 		fract.Error(tokens[1], "Invalid syntax!")
 	}
@@ -46,7 +41,7 @@ func (i *Interpreter) processTryCatch(tokens []obj.Token) uint8 {
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
 		},
-		Catch: func(e *obj.Exception) {
+		Catch: func(e *objects.Exception) {
 			i.loopCount = 0
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]

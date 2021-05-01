@@ -2,13 +2,11 @@ package functions
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// Print values to CLI.
-// f Function.
-// parameters Parameters.
-func Print(f obj.Function, parameters []*obj.Variable) {
+// Print values to cli.
+func Print(f objects.Function, parameters []*objects.Variable) {
 	if parameters[0].Value.Content == nil {
 		fract.Error(f.Tokens[0][0], "Invalid value!")
 	}

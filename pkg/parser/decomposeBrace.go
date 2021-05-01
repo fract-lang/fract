@@ -1,23 +1,14 @@
-/*
-	DecomposeBrace Function
-*/
-
 package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// DecomposeBrace Returns range tokens and index of first parentheses.
+// DecomposeBrace returns range tokens and index of first parentheses.
 // Remove range tokens from original tokens.
-//
-// tokens Tokens to process.
-// open Open bracket.
-// close Close bracket.
-// nonCheck Check empty bracket content.
-func DecomposeBrace(tokens *[]obj.Token, open, close string, nonCheck bool) ([]obj.Token, int) {
+func DecomposeBrace(tokens *[]objects.Token, open, close string, nonCheck bool) ([]objects.Token, int) {
 	var (
 		first int = -1
 		last  int
