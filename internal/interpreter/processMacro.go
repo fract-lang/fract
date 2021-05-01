@@ -129,7 +129,6 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 
 				if state == grammar.KwTrue {
 					i.skipBlock(false)
-					i.index++
 					goto ret
 				}
 

@@ -373,10 +373,21 @@ print(runtime.ARCH)
 <#
 
 
-#define DEFTEST true
+#define PRINT_AS_FLOAT true
+#define PRINT_AS_OBJECTSTR
 
-#if DEFTEST
-  print("If!")
+const value = 4.535
+
+#if PRINT_AS_FLOAT
+  #if PRINT_AS_OBJECTSTR
+    print(string(value, type="object"))
+  #else
+    print(value)
+  #end
 #else
-  print("Else!")
+  #if PRINT_AS_OBJECTSTR
+    print(string(int(value), type="object"))
+  #else
+    print(int(value))
+  #end
 #end
