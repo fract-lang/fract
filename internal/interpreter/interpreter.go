@@ -9,13 +9,13 @@ import (
 type Interpreter struct {
 	variables         []*objects.Variable
 	functions         []objects.Function
-	funcTempVariables int              // Count of function temporary variables.
+	funcTempVariables int                   // Count of function temporary variables.
 	loopCount         int
 	functionCount     int
 	index             int
-	returnValue       *objects.Value   // Pointer of last return value.
+	returnValue       *objects.Value        // Pointer of last return value.
 
 	Lexer             *lexer.Lexer
-	Tokens            [][]objects.Token      // All Tokens of code file.
+	Tokens            [][]objects.Token     // All Tokens of code file.
 	Imports           []*ImportInfo
 }
