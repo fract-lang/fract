@@ -8,9 +8,16 @@
 
 ## Comments
 ``#`` Is used for singline comments.
+
+> If you want to show it as a comment, a space or similar must be after ``#`` otherwise it will be accepted as a macro.
+
 ### Examples
 ```
-555 + 5 # Comment
+# Comment <- Singline comment.
+#Comment  <- Macro
+```
+```
+555 + 5 # Sum.
 ```
 ``#> ... <#`` are used for multiline comments.
 ### Examples
@@ -454,4 +461,33 @@ end
 #end
 
 print(os)
+```
+
+### Macro Defines
+You can define variables for macro conditions.
+
+> Default value is ``false``.
+ 
+> Macro defines is not delete like variables or functions if defined in code block or like.
+
+#### Examples
+```
+#define PRINT_AS_FLOAT true
+#define PRINT_AS_OBJECTSTR
+
+const value = 4.535
+
+#if PRINT_AS_FLOAT
+  #if PRINT_AS_OBJECTSTR
+    print(string(value, type="object"))
+  #else
+    print(value)
+  #end
+#else
+  #if PRINT_AS_OBJECTSTR
+    print(string(int(value), type="object"))
+  #else
+    print(int(value))
+  #end
+#end
 ```
