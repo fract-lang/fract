@@ -157,7 +157,7 @@ func main() {
 	block.Try = interpret
 	block.Catch = catch
 
-repeat:
-	block.Do()
-	goto repeat
+	for {
+		block.Do()
+	}
 }

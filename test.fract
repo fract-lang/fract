@@ -363,7 +363,20 @@ print(string(bytes, type="bytecode"))
 
 <#
 
+#>
+
 open std.runtime
 
 print(runtime.OS)
 print(runtime.ARCH)
+
+<#
+
+
+#define DEFTEST true
+
+#if DEFTEST
+  print("If!")
+#else
+  print("Else!")
+#end
