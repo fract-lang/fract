@@ -435,3 +435,20 @@ catch
   # ...
 end
 ```
+
+
+## Macros
+
+### Macro Conditions
+#### Examples
+```
+#if OS == "windows"
+  const os = "Windows"
+#elif OS == "darwin"
+  const os = "Darwin"
+#else
+  print("ERROR: Invalid operating system!")
+#end
+
+print(os)
+```

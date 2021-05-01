@@ -8,7 +8,8 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
-//! A change added here(especially added a code block) must also be added to "import.go"!
+//! A change added here(especially added a code block) must also be compatible with "import.go" and
+//! add to "isBlockStatement.go" of parser.
 
 // processTokens returns true if block end, returns false if not and returns keyword state.
 func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
@@ -114,6 +115,8 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 		return i.processTryCatch(tokens)
 	case fract.TypeImport: // Import.
 		i.processImport(tokens)
+	case fract.TypeMacro:
+		return i.processMacro(tokens)
 	default:
 		fract.Error(first, "Invalid syntax!")
 	}

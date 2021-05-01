@@ -21,12 +21,25 @@ func (i *Interpreter) ready() {
 
 	// Change blocks.
 	count := 0
+	macroBlockCount := 0
 	last := -1
 	for index, tokens := range i.Tokens {
 		if first := tokens[0]; first.Type == fract.TypeBlockEnd {
 			count--
 			if count < 0 {
 				fract.Error(first, "The extra block end defined!")
+			}
+		} else if first.Type == fract.TypeMacro {
+			if parser.IsBlockStatement(tokens) {
+				macroBlockCount++
+				if macroBlockCount == 1 {
+					last = index
+				}
+			} else if tokens[1].Type == fract.TypeBlockEnd {
+				macroBlockCount--
+				if macroBlockCount < 0 {
+					fract.Error(first, "The extra block end defined!")
+				}
 			}
 		} else if parser.IsBlockStatement(tokens) {
 			count++
@@ -36,7 +49,7 @@ func (i *Interpreter) ready() {
 		}
 	}
 
-	if count > 0 { // Check blocks.
+	if count > 0 || macroBlockCount > 0 { // Check blocks.
 		fract.Error(i.Tokens[last][0], "Block is expected ending...")
 	}
 }

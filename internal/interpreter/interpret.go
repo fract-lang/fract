@@ -24,6 +24,8 @@ func (i *Interpreter) Interpret() {
 		return
 	}
 
+	i.ready()
+
 	{
 		//* Import local directory.
 
@@ -47,8 +49,6 @@ func (i *Interpreter) Interpret() {
 			}
 		}
 	}
-
-	i.ready()
 
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {

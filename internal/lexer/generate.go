@@ -10,10 +10,11 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// isKeywordToken returns true if statement is keyword compatible token, false if not.
-func isKeywordToken(ln, kw string) bool {
-	return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
-}
+// isKeyword returns true if part is keyword, false if not.
+func isKeyword(ln, kw string) bool { return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln) }
+
+// isMacro returns true if part is macro, false if not.
+func isMacro(ln string) bool { return !regexp.MustCompile(`^#(\s+|$)`).MatchString(ln)}
 
 // processEsacepeSequence process char literal espace sequence.
 func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
@@ -163,7 +164,7 @@ func (l *Lexer) Generate() objects.Token {
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
 			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn)) ||
-		isKeywordToken(ln, "NaN"): // Numeric value.
+		isKeyword(ln, "NaN"): // Numeric value.
 		if check == "" {
 			check = "NaN"
 			l.Column += 3
@@ -349,70 +350,75 @@ func (l *Lexer) Generate() objects.Token {
 	case strings.HasPrefix(ln, grammar.Params): // Params.
 		token.Value = grammar.Params
 		token.Type = fract.TypeParams
-	case isKeywordToken(ln, grammar.KwBlockEnd): // End of block.
+	case isKeyword(ln, grammar.KwBlockEnd): // End of block.
 		token.Value = grammar.KwBlockEnd
 		token.Type = fract.TypeBlockEnd
-	case isKeywordToken(ln, grammar.KwVariable): // Variable.
+	case isKeyword(ln, grammar.KwVariable): // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
-	case isKeywordToken(ln, grammar.KwConstVariable): // Const variable.
+	case isKeyword(ln, grammar.KwConstVariable): // Const variable.
 		token.Value = grammar.KwConstVariable
 		token.Type = fract.TypeVariable
-	case isKeywordToken(ln, grammar.KwProtected): // Protected.
+	case isKeyword(ln, grammar.KwProtected): // Protected.
 		token.Value = grammar.KwProtected
 		token.Type = fract.TypeProtected
-	case isKeywordToken(ln, grammar.KwDelete): // Delete.
+	case isKeyword(ln, grammar.KwDelete): // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete
-	case isKeywordToken(ln, grammar.KwIf): // If.
+	case isKeyword(ln, grammar.KwIf): // If.
 		token.Value = grammar.KwIf
 		token.Type = fract.TypeIf
-	case isKeywordToken(ln, grammar.KwElseIf): // Else if.
+	case isKeyword(ln, grammar.KwElseIf): // Else if.
 		token.Value = grammar.KwElseIf
 		token.Type = fract.TypeElseIf
-	case isKeywordToken(ln, grammar.KwElse): // Else.
+	case isKeyword(ln, grammar.KwElse): // Else.
 		token.Value = grammar.KwElse
 		token.Type = fract.TypeElse
-	case isKeywordToken(ln, grammar.KwForWhileLoop): // For and while loop.
+	case isKeyword(ln, grammar.KwForWhileLoop): // For and while loop.
 		token.Value = grammar.KwForWhileLoop
 		token.Type = fract.TypeLoop
-	case isKeywordToken(ln, grammar.KwIn): // In.
+	case isKeyword(ln, grammar.KwIn): // In.
 		token.Value = grammar.KwIn
 		token.Type = fract.TypeIn
-	case isKeywordToken(ln, grammar.KwBreak): // Break.
+	case isKeyword(ln, grammar.KwBreak): // Break.
 		token.Value = grammar.KwBreak
 		token.Type = fract.TypeBreak
-	case isKeywordToken(ln, grammar.KwContinue): // Continue.
+	case isKeyword(ln, grammar.KwContinue): // Continue.
 		token.Value = grammar.KwContinue
 		token.Type = fract.TypeContinue
-	case isKeywordToken(ln, grammar.KwFunction): // Function.
+	case isKeyword(ln, grammar.KwFunction): // Function.
 		token.Value = grammar.KwFunction
 		token.Type = fract.TypeFunction
-	case isKeywordToken(ln, grammar.KwReturn): // Return.
+	case isKeyword(ln, grammar.KwReturn): // Return.
 		token.Value = grammar.KwReturn
 		token.Type = fract.TypeReturn
-	case isKeywordToken(ln, grammar.KwTry): // Try.
+	case isKeyword(ln, grammar.KwTry): // Try.
 		token.Value = grammar.KwTry
 		token.Type = fract.TypeTry
-	case isKeywordToken(ln, grammar.KwCatch): // Catch.
+	case isKeyword(ln, grammar.KwCatch): // Catch.
 		token.Value = grammar.KwCatch
 		token.Type = fract.TypeCatch
-	case isKeywordToken(ln, grammar.KwImport): // Open.
+	case isKeyword(ln, grammar.KwImport): // Open.
 		token.Value = grammar.KwImport
 		token.Type = fract.TypeImport
-	case isKeywordToken(ln, grammar.KwTrue): // True.
+	case isKeyword(ln, grammar.KwTrue): // True.
 		token.Value = grammar.KwTrue
 		token.Type = fract.TypeBooleanTrue
-	case isKeywordToken(ln, grammar.KwFalse): // False.
+	case isKeyword(ln, grammar.KwFalse): // False.
 		token.Value = grammar.KwFalse
 		token.Type = fract.TypeBooleanFalse
 	case strings.HasPrefix(ln, grammar.RangeCommentOpen): // Range comment open.
 		l.RangeComment = true
 		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore
-	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment.
-		l.File.Lines[l.Line-1] = l.File.Lines[l.Line-1][:l.Column-1] // Remove comment from original line.
-		return token
+	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment or macro.
+	if isMacro(ln) {
+		token.Value = grammar.TokenSharp
+		token.Type = fract.TypeMacro
+	} else {
+			l.File.Lines[l.Line-1] = l.File.Lines[l.Line-1][:l.Column-1] // Remove comment from original line.
+			return token
+		}
 	case strings.HasPrefix(ln, grammar.TokenQuote): // String.
 		l.lexString(&token, grammar.TokenQuote[0], fln)
 	case strings.HasPrefix(ln, grammar.TokenDoubleQuote): // String.

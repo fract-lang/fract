@@ -30,6 +30,7 @@ const (
 	TypeCatch               uint8 = 33
 	TypeImport              uint8 = 34
 	TypeParams              uint8 = 35
+	TypeMacro               uint8 = 36
 
 	LOOPBreak    uint8 = 1
 	LOOPContinue uint8 = 2
