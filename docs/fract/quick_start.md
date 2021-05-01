@@ -440,6 +440,9 @@ end
 ## Macros
 
 ### Macro Conditions
+
++ [Macro Condition Variables](https://github.com/fract-lang/fract/blob/master/docs/fract/macro_if_variables.md)
+
 #### Examples
 ```
 #if OS == "windows"
