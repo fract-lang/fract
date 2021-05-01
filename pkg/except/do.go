@@ -6,18 +6,20 @@ package except
 
 import "github.com/fract-lang/fract/pkg/objects"
 
+func (block *Block) catch() {
+	if r := recover(); r != nil {
+		block.Exception = &objects.Exception{
+			Message: r.(error).Error(),
+		}
+
+		if block.Catch != nil {
+			block.Catch(block.Exception)
+		}
+	}
+}
+
 // Do Do call block.
 func (block *Block) Do() {
-	defer func() {
-		if r := recover(); r != nil {
-			block.Exception = &objects.Exception{
-				Message: r.(error).Error(),
-			}
-
-			if block.Catch != nil {
-				block.Catch(block.Exception)
-			}
-		}
-	}()
+	defer block.catch()
 	block.Try()
 }

@@ -22,8 +22,7 @@ func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
 	// Condition is empty?
 	if conditionList == nil {
 		first := tokens[0]
-		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value),
-			"Condition is empty!")
+		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value), "Condition is empty!")
 	}
 
 	state := i.processCondition(conditionList)

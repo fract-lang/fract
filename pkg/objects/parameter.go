@@ -1,11 +1,8 @@
 package objects
 
-// Parameter Parameter instance.
+// Parameter instance.
 type Parameter struct {
-	// Default value of parameter.
 	Default Value
-	// Name of parameter.
-	Name string
-	// Parameter is params typed.
-	Params bool
+	Name    string
+	Params  bool
 }

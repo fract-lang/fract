@@ -4,10 +4,7 @@ import obj "github.com/fract-lang/fract/pkg/objects"
 
 // Code block instance.
 type Block struct {
-	// Main block.
-	Try func()
-	// On panic catch.
-	Catch func(*obj.Exception)
-	// Handled exception.
+	Try       func()
+	Catch     func(*obj.Exception)
 	Exception *obj.Exception
 }

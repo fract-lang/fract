@@ -13,6 +13,15 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
+// processKwState Process and return return value of kwstate.
+// kwsate the keyword state.
+func processKwState(kwstate uint8) uint8 {
+	if kwstate != fract.FUNCReturn {
+		return fract.TypeNone
+	}
+	return kwstate
+}
+
 // processLoop Process loop block.
 // tokens Tokens to process.
 func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
@@ -27,14 +36,6 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 	_break := false
 	kwstate := fract.TypeNone
 	iindex := i.index
-
-	// processKwState Process and return return value of kwstate.
-	processKwState := func() uint8 {
-		if kwstate != fract.FUNCReturn {
-			return fract.TypeNone
-		}
-		return kwstate
-	}
 
 	//*************
 	//    WHILE
@@ -56,7 +57,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 						i.functions = i.functions[:functionLen]
 
 						if _break {
-							return processKwState()
+							return processKwState(kwstate)
 						}
 
 						i.index = iindex
@@ -100,7 +101,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 					condition = i.processCondition(conditionList)
 
 					if _break || condition != grammar.KwTrue {
-						return processKwState()
+						return processKwState(kwstate)
 					}
 
 					i.index = iindex
@@ -123,7 +124,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 
 					if !_else {
 						i.skipBlock(false)
-						return processKwState()
+						return processKwState(kwstate)
 					}
 
 					for {
@@ -136,7 +137,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 							// Remove temporary functions.
 							i.functions = i.functions[:functionLen]
 
-							return processKwState()
+							return processKwState(kwstate)
 						}
 
 						kwstate = i.processTokens(tokens)
@@ -242,7 +243,7 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 						// Remove temporary functions.
 						i.functions = i.functions[:functionLen]
 
-						return processKwState()
+						return processKwState(kwstate)
 					}
 
 					kwstate = i.processTokens(tokens)
@@ -357,5 +358,5 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 
 	// Remove loop variables.
 	i.variables = i.variables[2:]
-	return processKwState()
+	return processKwState(kwstate)
 }

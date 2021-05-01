@@ -12,8 +12,8 @@ import (
 
 // NewStdin Create new instance of interpreter from <stdin>.
 // path Path of directory.
-func NewStdin(path string) Interpreter {
-	return Interpreter{
+func NewStdin(path string) *Interpreter {
+	return &Interpreter{
 		Lexer: &lexer.Lexer{
 			File: &obj.CodeFile{
 				Path:  fract.Stdin,

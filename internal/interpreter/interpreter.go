@@ -1,7 +1,3 @@
-/*
-	THE INTERPRETER STRUCT
-*/
-
 package interpreter
 
 import (
@@ -9,31 +5,17 @@ import (
 	obj "github.com/fract-lang/fract/pkg/objects"
 )
 
-// Interpreter Interprater of Fract.
+// Interpreter of Fract.
 type Interpreter struct {
-	/* PRIVATE */
+	variables         []*obj.Variable
+	functions         []obj.Function
+	funcTempVariables int              // Count of function temporary variables.
+	loopCount         int
+	functionCount     int
+	index             int
+	returnValue       *obj.Value       // Pointer of last return value.
 
-	// Variables.
-	variables []*obj.Variable
-	// Functions.
-	functions []obj.Function
-	// Count of function temporary variables.
-	funcTempVariables int
-	// Loop count.
-	loopCount int
-	// Function count.
-	functionCount int
-	// Interpreter index.
-	index int
-	// Pointer of last return value.
-	returnValue *obj.Value
-
-	/* PUBLIC */
-
-	// Parser of this file.
-	Lexer *lexer.Lexer
-	// All Tokens of code file.
-	Tokens [][]obj.Token
-	// All imported script files.
-	Imports []*ImportInfo
+	Lexer             *lexer.Lexer
+	Tokens            [][]obj.Token    // All Tokens of code file.
+	Imports           []*ImportInfo
 }
