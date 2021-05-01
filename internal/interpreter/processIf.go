@@ -89,6 +89,12 @@ func (i *Interpreter) processIf(tokens []objects.Token) uint8 {
 				fract.Error(first, "Else block is not take any arguments!")
 			}
 
+			if state == grammar.KwTrue {
+				i.skipBlock(false)
+				i.index++
+				goto ret
+			}
+
 			/* Interpret/skip block. */
 			for {
 				i.index++

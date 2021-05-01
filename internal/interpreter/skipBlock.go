@@ -20,13 +20,20 @@ func (i *Interpreter) skipBlock(ifBlock bool) {
 	for {
 		i.index++
 		tokens := i.Tokens[i.index]
-		if tokens[0].Type == fract.TypeBlockEnd {
+		if first := tokens[0]; first.Type == fract.TypeBlockEnd {
 			count--
-			if count == 0 {
-				return
+		} else if first.Type == fract.TypeMacro {
+			if parser.IsBlockStatement(tokens) {
+				count++
+			} else if tokens[1].Type == fract.TypeBlockEnd {
+				count--
 			}
 		} else if parser.IsBlockStatement(tokens) {
 			count++
+		}
+
+		if count == 0 {
+			return
 		}
 	}
 }

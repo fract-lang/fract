@@ -1,80 +1,115 @@
-#var a = 4
-#var b = 4.0
-#var c = false
-#c = true
-#b + a + c
+#>
 
-#var test = [4]
-#test[3] = 1
-#test
-#test[3] = [4]
+var a = 4
+var b = 4.0
+var c = false
+c = true
+b + a + c
 
-#if ((b + b <> 8) && false) || (b + b == 8 && 2 == 2)
-#  3
-#  if true == false
-#    5
-#  elif false == false
-#    10
-#    4
-#  end
-#end
+<#
 
-#var test = [ 0, 1, 0, 0, 0 ]
-#test[4] = 5
-#test1[0] = 2
-#test
-#test1
-#test + test1
+#>
 
-#if true == false
-#  5
-#elif false == false
-#  10
-#  4
-#end
+var test = [4]
+test[3] = 1
+test
+test[3] = [4]
 
-#var t1 = [ 0, 3, 2, 1, 90 ]
-#var t2 = [ ]
-#t1 == t2
+<#
 
-#for index in [ 0, 1, 2, 3, 4.0 ]
-#  var test = index
-#  index
-#end
+#>
+
+if ((b + b <> 8) && false) || (b + b == 8 && 2 == 2)
+  3
+  if true == false
+    5
+  elif false == false
+    10
+    4
+  end
+end
+
+<#
+
+#>
+
+var test = [ 0, 1, 0, 0, 0 ]
+test[4] = 5
+test1[0] = 2
+test
+test1
+test + test1
+
+<#
+
+#>
+
+if true == false
+  5
+elif false == false
+  10
+  4
+end
+
+<#
+
+#>
+
+var t1 = [ 0, 3, 2, 1, 90 ]
+var t2 = [ ]
+t1 == t2
+
+<#
+
+#>
+
+for index in [ 0, 1, 2, 3, 4.0 ]
+  var test = index
+  index
+end
+
+<#
 
 # PRIME NUMBER BETWEEN 1 an 100
-#var num = 1
-#for num <= 100
-#  num = num + 1
-#  var prime = true
-#  var i = 2
-#  for i < num
-#    i = i + 1
-#    if num % i == 0
-#      prime = false
-#      break
-#    end
-#  end
-#  if prime
-#    num
-#  end
-#end
+#>
+var num = 1
+for num <= 100
+  num = num + 1
+  var prime = true
+  var i = 2
+  for i < num
+    i = i + 1
+    if num % i == 0
+      prime = false
+      break
+    end
+  end
+  if prime
+    num
+  end
+end
 
-#var counter = 1
-#for counter <= 500
-#  var total = 0
-#  var ccounter = 1
-#  for ccounter < counter
-#    if counter % ccounter == 0
-#      total = total + ccounter
-#    end
-#    ccounter = ccounter + 1
-#  end
-#  if total == counter
-#    counter
-#  end
-#  counter = counter + 1
-#end
+<#
+
+#>
+
+var counter = 1
+for counter <= 500
+  var total = 0
+  var ccounter = 1
+  for ccounter < counter
+    if counter % ccounter == 0
+      total = total + ccounter
+    end
+    ccounter = ccounter + 1
+  end
+  if total == counter
+    counter
+  end
+  counter = counter + 1
+end
+
+<#
 
 # ARRAY SUM TEST
 #>
@@ -317,6 +352,7 @@ print(math.FLOAT32_MAX)
 print(math.FLOAT64_MAX)
 
 <#
+
 
 open std.strings
 

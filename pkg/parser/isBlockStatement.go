@@ -7,6 +7,10 @@ import (
 
 // IsBlockStatement returns true if tokens is block start, return false if not.
 func IsBlockStatement(tokens []objects.Token) bool {
+	if tokens[0].Type == fract.TypeMacro { // Remove macro token.
+		tokens = tokens[1:]
+	}
+
 	switch tokens[0].Type {
 	case fract.TypeIf,
 		fract.TypeLoop,
@@ -18,7 +22,7 @@ func IsBlockStatement(tokens []objects.Token) bool {
 			if tokens[1].Type == fract.TypeFunction {
 				return true
 			}
-		}
+		}	
 	}
 	return false
 }
