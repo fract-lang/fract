@@ -467,6 +467,8 @@ print(os)
 You can define variables for macro conditions.
 
 > Default value is ``false``.
+ 
+> Macro defines is not delete like variables or functions if defined in code block or like.
 
 #### Examples
 ```
