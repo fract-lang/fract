@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/fract-lang/fract/pkg/fract"
@@ -22,7 +23,7 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 	variables := i.variables
 	functions := i.functions
 
-	i.variables = []*objects.Variable{
+	i.variables = append([]*objects.Variable{
 		{
 			Name: "OS",
 			Value: objects.Value{
@@ -45,7 +46,7 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 				},
 			},
 		},
-	}
+	}, i.macroDefines...)
 
 	state := i.processCondition(conditionList)
 	kwstate := fract.TypeNone
@@ -185,6 +186,45 @@ ret:
 	return kwstate
 }
 
+func (i *Interpreter) processMacroDefine(tokens []objects.Token) *objects.Variable {
+	if len(tokens) < 2 {
+		fract.Error(tokens[0], "Define name is not defined!")
+	}
+
+	name := tokens[1]
+	if name.Type != fract.TypeName {
+		fract.Error(name, "Invalid name!")
+	}
+
+	// Exists name.
+	for _, macro := range i.macroDefines {
+		if macro.Name == name.Value {
+			fract.Error(name, "This macro define is already defined at: " + fmt.Sprint(macro.Line))
+		}
+	}
+
+	macro := &objects.Variable{
+		Name: name.Value,
+		Line: name.Line,
+	}
+
+	if len(tokens) > 2 {
+		variables := i.variables
+		value := tokens[2:]
+		macro.Value = i.processValue(&value)
+		i.variables = variables
+	} else {
+		macro.Value.Content = []objects.DataFrame{
+			{
+				Data: grammar.KwFalse,
+				Type: fract.VALBoolean,
+			},
+		}
+	}
+
+	return macro
+}
+
 // processMacro process macros and returns keyword state.
 func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
 	tokens = tokens[1:]
@@ -192,6 +232,13 @@ func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
 	switch tokens[0].Type {
 	case fract.TypeIf:
 		return i.processMacroIf(tokens)
+	case fract.TypeName:
+		switch tokens[0].Value {
+		case "define": // Macro variable.
+			i.macroDefines = append(i.macroDefines, i.processMacroDefine(tokens))
+			default:
+				fract.Error(tokens[0], "Invalid macro!")
+		}
 	default:
 		fract.Error(tokens[0], "Invalid macro!")
 	}

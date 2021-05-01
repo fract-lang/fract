@@ -9,6 +9,7 @@ import (
 type Interpreter struct {
 	variables         []*objects.Variable
 	functions         []objects.Function
+	macroDefines      []*objects.Variable
 	funcTempVariables int                   // Count of function temporary variables.
 	loopCount         int
 	functionCount     int
