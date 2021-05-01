@@ -1,7 +1,3 @@
-/*
-	Input Function.
-*/
-
 package cli
 
 import (
@@ -10,8 +6,7 @@ import (
 	"os"
 )
 
-// Input Returns input from command-line.
-// message Input message.
+// Input returns input from command-line.
 func Input(message string) string {
 	fmt.Print(message)
 

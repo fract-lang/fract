@@ -1,7 +1,3 @@
-/*
-	PrintMapAsTable Function.
-*/
-
 package cli
 
 import (
@@ -10,8 +6,7 @@ import (
 	"github.com/fract-lang/fract/pkg/str"
 )
 
-// PrintMapAsTable Print map to cli screen as table.
-// dict Map to print.
+// PrintMapAsTable print map to cli screen as table.
 func PrintMapAsTable(dict map[string]string) {
 	maxlen := 0
 	for key := range dict {

@@ -1,21 +1,16 @@
-/*
-	NewStdin Function.
-*/
-
 package interpreter
 
 import (
 	"github.com/fract-lang/fract/internal/lexer"
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// NewStdin Create new instance of interpreter from <stdin>.
-// path Path of directory.
+// NewStdin returns new instance of interpreter from standard input.
 func NewStdin(path string) *Interpreter {
 	return &Interpreter{
 		Lexer: &lexer.Lexer{
-			File: &obj.CodeFile{
+			File: &objects.SourceFile{
 				Path:  fract.Stdin,
 				File:  nil,
 				Lines: nil,

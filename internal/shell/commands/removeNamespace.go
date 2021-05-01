@@ -1,13 +1,8 @@
-/*
-	RemoveNamespace Function.
-*/
-
 package commands
 
 import "strings"
 
-// RemoveNamespace Remove namespace from command.
-// command Command.
+// RemoveNamespace remove namespace from command.
 func RemoveNamespace(command string) string {
 	position := strings.Index(command, " ")
 	if position == -1 {

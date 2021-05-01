@@ -1,17 +1,13 @@
-/*
-	Next Function
-*/
-
 package lexer
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// Next Lex next line.
-func (l *Lexer) Next() []obj.Token {
-	var tokens []obj.Token
+// Next lex next line.
+func (l *Lexer) Next() []objects.Token {
+	var tokens []objects.Token
 
 	// If file is finished?
 	if l.Finished {

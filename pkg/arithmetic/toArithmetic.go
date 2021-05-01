@@ -6,8 +6,7 @@ import (
 	"github.com/fract-lang/fract/pkg/grammar"
 )
 
-// ToArithmetic Parse value to arithmetic value.
-// value Value to parse.
+// ToArithmetic parse value to arithmetic value.
 func ToArithmetic(value string) float64 {
 	switch value {
 	case grammar.KwTrue:

@@ -1,13 +1,8 @@
-/*
-	GetNamespace Function.
-*/
-
 package commands
 
 import "strings"
 
-// GetNamespace Get namespace of command.
-// command Command.
+// GetNamespace returns namespace of command.
 func GetNamespace(command string) string {
 	position := strings.Index(command, " ")
 	if position == -1 {

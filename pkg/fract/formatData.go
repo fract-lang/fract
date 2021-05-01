@@ -1,19 +1,13 @@
-/*
-	FormatData Function.
-*/
-
 package fract
 
 import (
 	"math/big"
 	"strings"
 
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// FormatData Format data value.
-// data Data to format.
-func FormatData(data obj.DataFrame) string {
+func FormatData(data objects.DataFrame) string {
 	if data.Type == VALString || data.Type == VALBoolean {
 		return data.Data
 	}

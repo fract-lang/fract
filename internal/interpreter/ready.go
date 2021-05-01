@@ -5,7 +5,7 @@ import (
 	"github.com/fract-lang/fract/pkg/parser"
 )
 
-// ready Ready to process.
+// ready interpreter to process.
 func (i *Interpreter) ready() {
 	/* Tokenize all lines. */
 	for !i.Lexer.Finished {

@@ -2,13 +2,12 @@ package str
 
 import "strings"
 
-// Returns string whitespace by count.
-// count Count of whitespace.
-func GetWhitespace(count int) string {
+// GetWhitespace returns whitespace string by length.
+func GetWhitespace(length int) string {
 	var sb strings.Builder
-	for count >= 0 {
+	for length >= 0 {
 		sb.WriteByte(' ')
-		count--
+		length--
 	}
 	return sb.String()
 }

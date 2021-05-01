@@ -1,7 +1,3 @@
-/*
-	Error Function.
-*/
-
 package lexer
 
 import (
@@ -11,8 +7,7 @@ import (
 	"github.com/fract-lang/fract/pkg/str"
 )
 
-// Error Exit with error.
-// message Message of error.
+// Error thrown exception.
 func (l Lexer) Error(message string) {
 	fmt.Printf("File: %s\nPosition: %d:%d\n", l.File.Path, l.Line, l.Column)
 	if !l.RangeComment { // Ignore multiline comment error.

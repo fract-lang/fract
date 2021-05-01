@@ -1,15 +1,10 @@
-/*
-	ReadyLines Function.
-*/
-
 package interpreter
 
 import (
 	"strings"
 )
 
-// ReadyLines Ready lines to process.
-// lines Lines to ready.
+// ReadyLines returns lines processed to lexing.
 func ReadyLines(lines []string) []string {
 	readyLines := make([]string, len(lines))
 	for index, line := range lines {

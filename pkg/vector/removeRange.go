@@ -1,19 +1,10 @@
-/*
-	RemoveRange Function.
-*/
-
 package vector
 
-import (
-	obj "github.com/fract-lang/fract/pkg/objects"
-)
+import "github.com/fract-lang/fract/pkg/objects"
 
-// RemoveRange Remove range.
-// slice Source slice.
-// pos Start position of removing.
-// len Count of removing elements.
-func RemoveRange(slice *[]obj.Token, pos, len int) {
-	if len > 0 {
-		*slice = append((*slice)[:pos], (*slice)[pos+len:]...)
+// RemoveRange by position and length.
+func RemoveRange(slice *[]objects.Token, position, length int) {
+	if length > 0 {
+		*slice = append((*slice)[:position], (*slice)[position+length:]...)
 	}
 }

@@ -1,15 +1,13 @@
 package lexer
 
-import (
-	obj "github.com/fract-lang/fract/pkg/objects"
-)
+import "github.com/fract-lang/fract/pkg/objects"
 
 // Lexer of Fract.
 type Lexer struct {
-	lastToken      obj.Token
+	lastToken      objects.Token
 
-	File           *obj.CodeFile
-	Column         int            // Last column.
+	File           *objects.SourceFile
+	Column         int  					     // Last column.
 	Line           int            // Last line.
 	Finished       bool
 	RangeComment   bool

@@ -1,7 +1,3 @@
-/*
-	Generate Function
-*/
-
 package lexer
 
 import (
@@ -11,20 +7,15 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// isKeywordToken Returns true if statement is keyword compatible token, false if not.
-// ln Line.
-// kw Target keyword.
+// isKeywordToken returns true if statement is keyword compatible token, false if not.
 func isKeywordToken(ln, kw string) bool {
 	return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
 }
 
-// processEsacepeSequence Process char literal espace sequence.
-// l Lexer.
-// sb String builder.
-// fln Full line text of current code line.
+// processEsacepeSequence process char literal espace sequence.
 func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
 	if fln[l.Column-1] != '\\' {
@@ -64,12 +55,8 @@ func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	return true
 }
 
-// lexString Lex string literal.
-// l Lexer.
-// token Token.
-// quote Quote style.
-// fln Full line text of current code line.
-func (l *Lexer) lexString(token *obj.Token, quote byte, fln string) {
+// lexString lex string literal.
+func (l *Lexer) lexString(token *objects.Token, quote byte, fln string) {
 	sb := new(strings.Builder)
 	sb.WriteByte(quote)
 	l.Column++
@@ -91,10 +78,7 @@ func (l *Lexer) lexString(token *obj.Token, quote byte, fln string) {
 	l.Column -= sb.Len() - 1
 }
 
-// processName Process name.
-// token Token.
-// check Check result.
-func (l *Lexer) processName(token *obj.Token, check string) bool {
+func (l *Lexer) processName(token *objects.Token, check string) bool {
 	// Remove punct.
 	if !strings.HasSuffix(check, grammar.TokenUnderscore) && !strings.HasSuffix(check, grammar.TokenDot) {
 		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
@@ -118,9 +102,9 @@ func (l *Lexer) processName(token *obj.Token, check string) bool {
 	return true
 }
 
-// Generate Generate next token.
-func (l *Lexer) Generate() obj.Token {
-	token := obj.Token{
+// Generate next token.
+func (l *Lexer) Generate() objects.Token {
+	token := objects.Token{
 		Type: fract.TypeNone,
 		File: l.File,
 	}

@@ -1,7 +1,3 @@
-/*
-	processImport Function.
-*/
-
 package interpreter
 
 import (
@@ -14,8 +10,6 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// processImport Process import.
-// tokens Tokens to process.
 func (i *Interpreter) processImport(tokens []objects.Token) {
 	if len(tokens) == 1 {
 		fract.Error(tokens[0], "Imported but what?")

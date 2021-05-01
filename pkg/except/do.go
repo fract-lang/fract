@@ -1,7 +1,3 @@
-/*
-	Do Function.
-*/
-
 package except
 
 import "github.com/fract-lang/fract/pkg/objects"
@@ -18,7 +14,7 @@ func (block *Block) catch() {
 	}
 }
 
-// Do Do call block.
+// Do execute block.
 func (block *Block) Do() {
 	defer block.catch()
 	block.Try()

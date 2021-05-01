@@ -1,16 +1,8 @@
-/*
-	New Function.
-*/
-
 package interpreter
 
-import (
-	"github.com/fract-lang/fract/internal/lexer"
-)
+import "github.com/fract-lang/fract/internal/lexer"
 
-// New Create new instance of Parser.
-// path Path of directory.
-// fpath Path of destination file.
+// New returns instance of interpreter related to file.
 func New(path, fpath string) *Interpreter {
 	return &Interpreter{
 		Lexer: &lexer.Lexer{

@@ -1,7 +1,3 @@
-/*
-	processLoop
-*/
-
 package interpreter
 
 import (
@@ -9,12 +5,11 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// processKwState Process and return return value of kwstate.
-// kwsate the keyword state.
+// processKwState returns return value of kwstate.
 func processKwState(kwstate uint8) uint8 {
 	if kwstate != fract.FUNCReturn {
 		return fract.TypeNone
@@ -22,9 +17,8 @@ func processKwState(kwstate uint8) uint8 {
 	return kwstate
 }
 
-// processLoop Process loop block.
-// tokens Tokens to process.
-func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
+// processLoop process loop blocks and returns keyword state.
+func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	// Content is empty?
 	if vtokens := vector.Sublist(tokens, 1, len(tokens)-1); vtokens == nil {
 		tokens = nil
@@ -263,16 +257,16 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 	}
 
 	i.variables = append(
-		[]*obj.Variable{
+		[]*objects.Variable{
 			{ // Index.
 				Name: nameToken.Value,
-				Value: obj.Value{
-					Content: []obj.DataFrame{{Data: "0"}},
+				Value: objects.Value{
+					Content: []objects.DataFrame{{Data: "0"}},
 				},
 			},
 			{ // Element.
 				Name:  elementName,
-				Value: obj.Value{},
+				Value: objects.Value{},
 			}}, i.variables...)
 
 	varLen += 2
@@ -292,9 +286,9 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 
 	if element.Name != "" {
 		if value.Array {
-			element.Value.Content = []obj.DataFrame{value.Content[0]}
+			element.Value.Content = []objects.DataFrame{value.Content[0]}
 		} else {
-			element.Value.Content = []obj.DataFrame{{
+			element.Value.Content = []objects.DataFrame{{
 				Data: string(value.Content[0].Data[0]),
 				Type: fract.VALString,
 			}}
@@ -321,14 +315,14 @@ func (i *Interpreter) processLoop(tokens []obj.Token) uint8 {
 			i.index = iindex
 
 			if index.Name != "" {
-				index.Value.Content[0] = obj.DataFrame{Data: fmt.Sprint(vindex)}
+				index.Value.Content[0] = objects.DataFrame{Data: fmt.Sprint(vindex)}
 			}
 
 			if element.Name != "" {
 				if value.Array {
-					element.Value.Content = []obj.DataFrame{value.Content[vindex]}
+					element.Value.Content = []objects.DataFrame{value.Content[vindex]}
 				} else {
-					element.Value.Content[0] = obj.DataFrame{
+					element.Value.Content[0] = objects.DataFrame{
 						Data: string(value.Content[0].Data[vindex]),
 						Type: fract.VALString,
 					}

@@ -3,14 +3,12 @@ package parser
 import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// IndexProcessPriority Find index of priority operator.
-// Returns index of operator if found, returns -1 if not.
-//
-// tokens Tokens to search.
-func IndexProcessPriority(tokens []obj.Token) int {
+// IndexProcessPriority find index of priority operator and
+// returns index of operator if found, returns -1 if not.
+func IndexProcessPriority(tokens []objects.Token) int {
 	bracket := 0
 
 	for index, token := range tokens {

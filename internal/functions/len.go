@@ -4,26 +4,24 @@ import (
 	"fmt"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// Len of object.
-// f Function.
-// parameters Parameters.
-func Len(f obj.Function, parameters []*obj.Variable) obj.Value {
+// Len returns length of object.
+func Len(f objects.Function, parameters []*objects.Variable) objects.Value {
 	parameter := parameters[0].Value
 
 	if parameter.Array {
-		return obj.Value{
-			Content: []obj.DataFrame{{Data: fmt.Sprint(len(parameter.Content))}},
+		return objects.Value{
+			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content))}},
 		}
 	}
 
 	if parameter.Content[0].Type == fract.VALString {
-		return obj.Value{
-			Content: []obj.DataFrame{{Data: fmt.Sprint(len(parameter.Content[0].Data))}},
+		return objects.Value{
+			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content[0].Data))}},
 		}
 	}
 
-	return obj.Value{Content: []obj.DataFrame{{Data: "0"}}}
+	return objects.Value{Content: []objects.DataFrame{{Data: "0"}}}
 }

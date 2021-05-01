@@ -1,7 +1,3 @@
-/*
-	varIndexByName Function.
-*/
-
 package interpreter
 
 import (
@@ -10,12 +6,11 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// varIndexByName Find index of variable by name.
-// name Name to find.
-func (i *Interpreter) varIndexByName(name obj.Token) (int, *Interpreter) {
+// varIndexByName returns index of variable by name.
+func (i *Interpreter) varIndexByName(name objects.Token) (int, *Interpreter) {
 	if name.Value[0] == '-' { // Ignore.
 		name.Value = name.Value[1:]
 	}

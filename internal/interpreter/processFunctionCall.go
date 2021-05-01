@@ -1,7 +1,3 @@
-/*
-	processFunctionCall Function.
-*/
-
 package interpreter
 
 import (
@@ -12,19 +8,15 @@ import (
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// getParamsArgumentValue Decompose params values.
-// tokens Tokens to process.
-// index resume.
-// braceCount Count of brackets.
-// lastComma index.
-func (i *Interpreter) getParamsArgumentValue(tokens []obj.Token, index, braceCount, lastComma *int) obj.Value {
-	returnValue := obj.Value{
-		Content: []obj.DataFrame{},
+// getParamsArgumentValue decompose and returns params values.
+func (i *Interpreter) getParamsArgumentValue(tokens []objects.Token, index, braceCount, lastComma *int) objects.Value {
+	returnValue := objects.Value{
+		Content: []objects.DataFrame{},
 		Array:   true,
 	}
 
@@ -61,17 +53,8 @@ func (i *Interpreter) getParamsArgumentValue(tokens []obj.Token, index, braceCou
 	return returnValue
 }
 
-// processArgument Process function argument.
-// function to call.
-// names already taken.
-// tokens to proces.
-// current Current token.
-// index resume.
-// count Count of appended arguments.
-// braceCount Brackets count.
-// lastComma state.
-func (i *Interpreter) processArgument(function obj.Function, names *[]string, tokens []obj.Token,
-	current obj.Token, index, count, braceCount, lastComma *int) *obj.Variable {
+func (i *Interpreter) processArgument(function objects.Function, names *[]string, tokens []objects.Token,
+	current objects.Token, index, count, braceCount, lastComma *int) *objects.Variable {
 	var paramSet bool
 
 	length := *index - *lastComma
@@ -82,7 +65,7 @@ func (i *Interpreter) processArgument(function obj.Function, names *[]string, to
 	}
 
 	parameter := (*function.Parameters)[*count]
-	variable := &obj.Variable{Name: parameter.Name}
+	variable := &objects.Variable{Name: parameter.Name}
 	valueList := *vector.Sublist(tokens, *lastComma, length)
 	current = valueList[0]
 
@@ -104,7 +87,7 @@ func (i *Interpreter) processArgument(function obj.Function, names *[]string, to
 				valueList = valueList[2:]
 				paramSet = true
 				*names = append(*names, current.Value)
-				returnValue := &obj.Variable{Name: current.Value}
+				returnValue := &objects.Variable{Name: current.Value}
 				//Parameter is params typed?
 				if parameter.Params {
 					*lastComma += 2
@@ -134,9 +117,8 @@ func (i *Interpreter) processArgument(function obj.Function, names *[]string, to
 	return variable
 }
 
-// processFunctionCall Process function call.
-// tokens Tokens to process.
-func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
+// processFunctionCall call function and returns returned value.
+func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value {
 	_name := tokens[0]
 
 	// Name is not defined?
@@ -148,7 +130,7 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	function := source.functions[nameIndex]
 
 	var (
-		vars  []*obj.Variable
+		vars  []*objects.Variable
 		names = new([]string)
 		count = new(int)
 	)
@@ -206,19 +188,19 @@ func (i *Interpreter) processFunctionCall(tokens []obj.Token) obj.Value {
 	for ; *count < len(*function.Parameters); *count++ {
 		current := (*function.Parameters)[*count]
 		if current.Default.Content != nil {
-			vars = append(vars, &obj.Variable{
+			vars = append(vars, &objects.Variable{
 				Name:  current.Name,
 				Value: current.Default,
 			})
 		}
 	}
 
-	returnValue := obj.Value{}
+	returnValue := objects.Value{}
 
 	// Is embed function?
 	if function.Tokens == nil {
 		// Add name token for exceptions.
-		function.Tokens = [][]obj.Token{{_name}}
+		function.Tokens = [][]objects.Token{{_name}}
 
 		switch function.Name {
 		case "print":

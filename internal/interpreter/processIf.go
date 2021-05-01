@@ -1,21 +1,14 @@
-/*
-	processIf Function.
-*/
-
 package interpreter
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// processIf Process if-elif-else blocks and returns loop keyword state.
-// And returns loop keyword state.
-//
-// tokens Tokens to process.
-func (i *Interpreter) processIf(tokens []obj.Token) uint8 {
+// processIf process if-elif-else blocks and returns keyword state.
+func (i *Interpreter) processIf(tokens []objects.Token) uint8 {
 	tokenLen := len(tokens)
 	conditionList := vector.Sublist(tokens, 1, tokenLen-1)
 

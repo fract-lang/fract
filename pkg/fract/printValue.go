@@ -1,19 +1,13 @@
-/*
-	PrintValue Function.
-*/
-
 package fract
 
 import (
 	"fmt"
 	"strings"
 
-	obj "github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// PrintValue Print value to screen.
-// value Value to print.
-func PrintValue(value obj.Value) bool {
+func PrintValue(value objects.Value) bool {
 	if value.Content == nil {
 		return false
 	}

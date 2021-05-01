@@ -2,7 +2,7 @@ package objects
 
 // Token instance.
 type Token struct {
-	File   *CodeFile
+	File   *SourceFile
 	Value  string
 	Type   uint8
 	Line   int
