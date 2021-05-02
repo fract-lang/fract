@@ -14,7 +14,7 @@
 + Simplicity: easy to learn, can be learned in less than an hour
 + Safety: no null, no undefined behavior
 + Unreachable codes are not included in debugging
-+ LMemory consumption is low, does not overload
++ Memory consumption is low, does not overload
 + Efficient and performance, powerfull Go backend
 + Macros like C
 
