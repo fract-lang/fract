@@ -6,6 +6,7 @@
 
 [Docs](https://github.com/fract-lang/fract/tree/master/docs) |
 [Quick Start](https://github.com/fract-lang/fract/blob/master/docs/fract/quick_start.md) |
+[Samples](https://github.com/fract-lang/fract/tree/master/samples) |
 [Contributing](https://github.com/fract-lang/fract/blob/master/CONTRIBUTING.md)
 
 </div>
