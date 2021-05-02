@@ -1,30 +1,30 @@
-# Fract
+<div align="center">
+<p>
+    <img width="300" src="https://raw.githubusercontent.com/fract-lang/resources/main/logo/fract.svg?sanitize=true">
+</p>
+<h1>The Fract Programming Language</h1>
 
-[Quick Start](https://github.com/fract-lang/fract/blob/master/docs/fract/quick_start.md)
+[Docs](https://github.com/fract-lang/fract/tree/master/docs) |
+[Quick Start](https://github.com/fract-lang/fract/blob/master/docs/fract/quick_start.md) |
+[Contributing](https://github.com/fract-lang/fract/blob/master/CONTRIBUTING.md)
 
-## About of Fract
-Fract gets its name from Fraction. It is a programming language focused on mathematics. It is designed to efficiently perform data science, statistics and arithmetic operations.
+</div>
+
+## Key features of Fract
++ Simplicity: easy to learn, can be learned in less than an hour
++ Safety: no null, no undefined behavior
++ Unreachable codes are not included in debugging
++ LMemory consumption is low, does not overload
++ Efficient and performance, powerfull Go backend
++ Macros like C
+
+## Interactive shell preview
+<img src="https://github.com/fract-lang/resources/blob/main/preview/fract_cli.gif?raw=true">
 
 ## FizzBuzz
-FizzBuzz example for the range 1-100.
-```
-for _, number in range(1, 100)
-  if number % 3 == 0 && number % 5 == 0
-    print("FizzBuzz")
-  elif number % 3 == 0
-    print("Fizz")
-  elif number % 5 == 0
-    print("Buzz")
-  else
-    print(number)
-  end
-end
-```
+<img src="https://github.com/fract-lang/resources/blob/main/preview/fizzbuzz.png">
 
 ## How to compile?
 Fract is written in Go. <br>
-Run one of the scripts ``scripts/brun.bat`` or ``scripts/brun.sh`` to compile.
-
-## Contributing
-
-To contribute, please read the contribution guidelines from [here](https://github.com/fract-lang/fract/blob/master/CONTRIBUTING.md).
+Run one of the scripts ``scripts/brun.bat`` or ``scripts/brun.sh`` to compile. <br>
+Also can be write manually: ``go build cmd/main.go``
