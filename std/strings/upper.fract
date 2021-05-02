@@ -15,9 +15,9 @@ protected func Upper(str)
 		if IsLetter(char) == false
 			continue
 		end
-  if IsLower(char)
-   str[index] = char - 32
-  end
+		if IsLower(char)
+			str[index] = char - 32
+		end
 	else
 		ret ""
 	end
