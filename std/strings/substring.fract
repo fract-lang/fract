@@ -23,7 +23,6 @@ protected func Substring(str, start, length)
 		length = strlen - start
 	end
 
-	#print(length + start - 1)
 	var newStr = ""
 	for _, index in range(start, length + start - 1)
 		newStr += str[index]
