@@ -1,0 +1,33 @@
+# Simple calculator in Fract
+
+print("Welcome to Fract simple calculator!")
+print("**** Operations ****")
+print("1 - Add")
+print("2 - Subtract")
+print("3 - Multiple")
+print("4 - Divide")
+print("0 - Exit")
+
+for
+	const input = input("Select your operation: ")
+	if input == "0"
+		break
+	elif input == "1" || input == "2" || input == "3" || input == "4"
+		const (
+			first  = float(input("Enter first number: ")),
+			second = float(input("Enter second number: "))
+		)
+		
+		if input == "1"
+			print(first + second)
+		elif input == "2"
+			print(first - second)
+		elif input == "3"
+			print(first * second)
+		else
+			print(first / second)
+		end
+	else
+		print("Invalid choice!")
+	end
+end
