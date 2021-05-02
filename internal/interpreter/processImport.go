@@ -86,6 +86,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 
 		source.functions = append(source.functions, isource.functions...)
 		source.variables = append(source.variables, isource.variables...)
+		source.macroDefines = append(source.macroDefines, isource.macroDefines...)
 		source.Imports = append(source.Imports, isource.Imports...)
 	}
 

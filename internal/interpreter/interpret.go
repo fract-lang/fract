@@ -3,6 +3,7 @@ package interpreter
 import (
 	"io/ioutil"
 	"os"
+	"path"
 	"runtime"
 	"strings"
 
@@ -29,23 +30,28 @@ func (i *Interpreter) Interpret() {
 	{
 		//* Import local directory.
 
-		path := "." + string(os.PathSeparator)
-		content, err := ioutil.ReadDir(path)
+		dir, _ := os.Getwd()
+		if pdir := path.Dir(i.Lexer.File.Path); pdir != "." {
+			dir = path.Join(dir, pdir)
+		}
+		content, err := ioutil.ReadDir(dir)
 
 		if err == nil {
-			mainName := i.Lexer.File.Path[strings.LastIndex(i.Lexer.File.Path, string(os.PathSeparator))+1:]
+			_, mainName := path.Split(i.Lexer.File.Path)
 			for _, current := range content {
 				// Skip directories.
 				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) ||
-					current.Name() == mainName {
+				current.Name() == mainName {
 					continue
 				}
-
-				source := New(path, path+current.Name())
+				
+				source := New(dir, path.Join(dir, current.Name()))
+				source.ApplyEmbedFunctions()
 				source.Import()
 
 				i.functions = append(i.functions, source.functions...)
 				i.variables = append(i.variables, source.variables...)
+				i.macroDefines = append(i.macroDefines, source.macroDefines...)
 			}
 		}
 	}
