@@ -20,13 +20,13 @@ test[3] = [4]
 #>
 
 if ((b + b <> 8) && false) || (b + b == 8 && 2 == 2)
-  3
-  if true == false
-    5
-  elif false == false
-    10
-    4
-  end
+	3
+	if true == false
+		5
+	elif false == false
+		10
+		4
+	end
 end
 
 <#
@@ -45,10 +45,10 @@ test + test1
 #>
 
 if true == false
-  5
+	5
 elif false == false
-  10
-  4
+	10
+	4
 end
 
 <#
@@ -64,8 +64,8 @@ t1 == t2
 #>
 
 for index in [ 0, 1, 2, 3, 4.0 ]
-  var test = index
-  index
+	var test = index
+	index
 end
 
 <#
@@ -74,19 +74,19 @@ end
 #>
 var num = 1
 for num <= 100
-  num = num + 1
-  var prime = true
-  var i = 2
-  for i < num
-    i = i + 1
-    if num % i == 0
-      prime = false
-      break
-    end
-  end
-  if prime
-    num
-  end
+	num = num + 1
+	var prime = true
+	var i = 2
+	for i < num
+		i = i + 1
+		if num % i == 0
+			prime = false
+			break
+		end
+	end
+	if prime
+		num
+	end
 end
 
 <#
@@ -95,18 +95,18 @@ end
 
 var counter = 1
 for counter <= 500
-  var total = 0
-  var ccounter = 1
-  for ccounter < counter
-    if counter % ccounter == 0
-      total = total + ccounter
-    end
-    ccounter = ccounter + 1
-  end
-  if total == counter
-    counter
-  end
-  counter = counter + 1
+	var total = 0
+	var ccounter = 1
+	for ccounter < counter
+		if counter % ccounter == 0
+			total = total + ccounter
+		end
+		ccounter = ccounter + 1
+	end
+	if total == counter
+		counter
+	end
+	counter = counter + 1
 end
 
 <#
@@ -379,15 +379,15 @@ print(runtime.ARCH)
 const value = 4.535
 
 #if PRINT_AS_FLOAT
-  #if PRINT_AS_OBJECTSTR
-    print(string(value, type="object"))
-  #else
-    print(value)
-  #end
+	#if PRINT_AS_OBJECTSTR
+		print(string(value, type="object"))
+	#else
+		print(value)
+	#end
 #else
-  #if PRINT_AS_OBJECTSTR
-    print(string(int(value), type="object"))
-  #else
-    print(int(value))
-  #end
+	#if PRINT_AS_OBJECTSTR
+		print(string(int(value), type="object"))
+	#else
+		print(int(value))
+	#end
 #end

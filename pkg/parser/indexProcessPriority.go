@@ -11,6 +11,10 @@ import (
 func IndexProcessPriority(tokens []objects.Token) int {
 	bracket := 0
 
+	multiplyOrDivive := -1
+	binaryOrAnd := -1
+	additionOrSubtraction := -1
+
 	for index, token := range tokens {
 		if token.Type == fract.TypeBrace {
 			if token.Value == grammar.TokenLBracket ||
@@ -31,10 +35,6 @@ func IndexProcessPriority(tokens []objects.Token) int {
 			token.Value == grammar.Exponentiation {
 			return index
 		}
-
-		multiplyOrDivive := -1
-		binaryOrAnd := -1
-		additionOrSubtraction := -1
 
 		switch token.Value {
 		case grammar.TokenPercent: // Modulus.
@@ -58,14 +58,14 @@ func IndexProcessPriority(tokens []objects.Token) int {
 				binaryOrAnd = index
 			}
 		}
+	}
 
-		if multiplyOrDivive != -1 {
-			return multiplyOrDivive
-		} else if binaryOrAnd != -1 {
-			return binaryOrAnd
-		} else if additionOrSubtraction != -1 {
-			return additionOrSubtraction
-		}
+	if multiplyOrDivive != -1 {
+		return multiplyOrDivive
+	} else if binaryOrAnd != -1 {
+		return binaryOrAnd
+	} else if additionOrSubtraction != -1 {
+		return additionOrSubtraction
 	}
 
 	return -1
