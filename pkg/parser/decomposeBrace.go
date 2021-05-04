@@ -9,10 +9,7 @@ import (
 // DecomposeBrace returns range tokens and index of first parentheses.
 // Remove range tokens from original tokens.
 func DecomposeBrace(tokens *[]objects.Token, open, close string, nonCheck bool) ([]objects.Token, int) {
-	var (
-		first int = -1
-		last  int
-	)
+	first := -1
 
 	/* Find open parentheses. */
 	if nonCheck {
@@ -23,6 +20,8 @@ func DecomposeBrace(tokens *[]objects.Token, open, close string, nonCheck bool) 
 			} else if !name && current.Type == fract.TypeBrace && current.Value == open {
 				first = index
 				break
+			} else {
+				name = false
 			}
 		}
 	} else {
@@ -54,7 +53,6 @@ func DecomposeBrace(tokens *[]objects.Token, open, close string, nonCheck bool) 
 				count--
 			}
 			if count == 0 {
-				last = index
 				break
 			}
 		}
@@ -69,7 +67,7 @@ func DecomposeBrace(tokens *[]objects.Token, open, close string, nonCheck bool) 
 	}
 
 	/* Remove range from original tokens. */
-	vector.RemoveRange(tokens, first, last-first+1)
+	vector.RemoveRange(tokens, first, (first + length + 1)-first+1)
 
 	if _range == nil {
 		return nil, first
