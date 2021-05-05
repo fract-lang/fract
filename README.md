@@ -17,6 +17,7 @@
 + Unreachable codes are not included in debugging
 + Memory consumption is low, does not overload
 + Efficient and performance, powerfull Go backend
++ Unicode support
 + Macros like C
 
 ## Interactive shell preview
