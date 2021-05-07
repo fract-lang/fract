@@ -1,6 +1,10 @@
 package fract
 
 var (
+	ExecutablePath string
+)
+
+var (
 	LiveInterpret bool // Live interpret mode.
 )
 

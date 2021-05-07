@@ -9,14 +9,9 @@ import (
 func (i *Interpreter) ready() {
 	/* Tokenize all lines. */
 	for !i.Lexer.Finished {
-		cacheTokens := i.Lexer.Next()
-
-		// cacheTokens are empty?
-		if cacheTokens == nil {
-			continue
+		if cacheTokens := i.Lexer.Next(); cacheTokens != nil {
+			i.Tokens = append(i.Tokens, cacheTokens)
 		}
-
-		i.Tokens = append(i.Tokens, cacheTokens)
 	}
 
 	// Change blocks.

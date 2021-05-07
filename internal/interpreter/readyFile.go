@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"os"
-	"path"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fs"
@@ -11,8 +10,6 @@ import (
 
 // ReadyFile returns instance of source file by path.
 func ReadyFile(filepath string) *objects.SourceFile {
-	wd, _ := os.Getwd()
-	filepath = path.Join(wd, filepath)
 	file, _ := os.Open(filepath)
 	return &objects.SourceFile{
 		Lines: ReadyLines(strings.Split(fs.ReadAllText(filepath), "\n")),

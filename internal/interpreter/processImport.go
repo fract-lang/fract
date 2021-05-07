@@ -3,6 +3,7 @@ package interpreter
 import (
 	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
@@ -36,25 +37,27 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		fract.Error(tokens[3], "Invalid syntax!")
 	}
 
-	var path string
+	var importpath string
 	if tokens[index].Type == fract.TypeName {
 		if !strings.HasPrefix(tokens[index].Value, "std") {
 			fract.Error(tokens[index], "Standard import should be starts with 'std' directory.")
 		}
-		path = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
+		importpath = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
 	} else {
-		path = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
+		importpath = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
 			i.processValue(&[]objects.Token{tokens[index]}).Content[0].Data
 	}
+	
+	importpath = path.Join(fract.ExecutablePath, importpath)
 
-	info, err := os.Stat(path)
+	info, err := os.Stat(importpath)
 
 	// Exists directory?
 	if err != nil || !info.IsDir() {
 		fract.Error(tokens[index], "Directory not found/access!")
 	}
 
-	content, err := ioutil.ReadDir(path)
+	content, err := ioutil.ReadDir(importpath)
 	if err != nil {
 		fract.Error(tokens[1], "There is a problem on import: "+err.Error())
 	}
@@ -81,7 +84,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 			continue
 		}
 
-		isource := New(path, path+string(os.PathSeparator)+current.Name())
+		isource := New(importpath, importpath+string(os.PathSeparator)+current.Name())
 		isource.Import()
 
 		source.functions = append(source.functions, isource.functions...)

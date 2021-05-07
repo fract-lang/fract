@@ -23,6 +23,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/fract-lang/fract/internal/interpreter"
@@ -126,8 +128,10 @@ func processCommand(ns, cmd string) {
 }
 
 func init() {
+	fract.ExecutablePath = filepath.Dir(os.Args[0])
+
 	// Check standard library.
-	if info, err := os.Stat("std"); err != nil || !info.IsDir() {
+	if info, err := os.Stat(path.Join(fract.ExecutablePath, "std")); err != nil || !info.IsDir() {
 		fmt.Println("Standard library not found!")
 		cli.Input("\nPress enter for exit...")
 		os.Exit(1)
