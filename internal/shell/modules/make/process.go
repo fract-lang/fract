@@ -28,7 +28,6 @@ func Process(command string) {
 
 	preter := interpreter.New(".", command)
 	preter.ApplyEmbedFunctions()
-
 	
 	(&except.Block{
 		Try: preter.Interpret,
