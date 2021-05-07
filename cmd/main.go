@@ -126,6 +126,13 @@ func processCommand(ns, cmd string) {
 }
 
 func init() {
+	// Check standard library.
+	if info, err := os.Stat("std"); err != nil || !info.IsDir() {
+		fmt.Println("Standard library not found!")
+		cli.Input("\nPress enter for exit...")
+		os.Exit(1)
+	}
+
 	// Not started with arguments.
 	if len(os.Args) < 2 {
 		return
@@ -142,11 +149,6 @@ func init() {
 
 func main() {
 	fmt.Println("Fract " + fract.FractVersion + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
-
-	if info, err := os.Stat("std"); err != nil || !info.IsDir() {
-		fmt.Println("Standard library not found!")
-		return
-	}
 
 	fract.LiveInterpret = true
 
