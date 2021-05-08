@@ -6,7 +6,7 @@ import (
 )
 
 // Print values to cli.
-func Print(f objects.Function, parameters []*objects.Variable) {
+func Print(f objects.Function, parameters []objects.Variable) {
 	if parameters[0].Value.Content == nil {
 		fract.Error(f.Tokens[0][0], "Invalid value!")
 	}

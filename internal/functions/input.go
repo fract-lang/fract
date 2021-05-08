@@ -7,7 +7,7 @@ import (
 )
 
 // Input returns input from command-line.
-func Input(f objects.Function, parameters []*objects.Variable) objects.Value {
+func Input(f objects.Function, parameters []objects.Variable) objects.Value {
 	fract.PrintValue(parameters[0].Value)
 	return objects.Value{
 		Content: []objects.DataFrame{

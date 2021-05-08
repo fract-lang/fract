@@ -8,7 +8,7 @@ import (
 )
 
 // Make array by size.
-func Make(f objects.Function, parameters []*objects.Variable) objects.Value {
+func Make(f objects.Function, parameters []objects.Variable) objects.Value {
 	size := parameters[0].Value
 
 	if size.Array {

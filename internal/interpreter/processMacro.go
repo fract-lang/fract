@@ -23,7 +23,7 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 	variables := i.variables
 	functions := i.functions
 
-	i.variables = append([]*objects.Variable{
+	i.variables = append([]objects.Variable{
 		{
 			Name: "OS",
 			Value: objects.Value{
@@ -93,16 +93,16 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 							goto ret
 						} else if first.Type == fract.TypeIf { // If block.
 							if state == grammar.KwTrue && kwstate == fract.TypeNone {
-							i.processMacroIf(tokens)
-						} else {
-							i.skipBlock(true)
+								i.processMacroIf(tokens)
+							} else {
+								i.skipBlock(true)
+							}
+							continue
+						} else if first.Type == fract.TypeElseIf || first.Type == fract.TypeElse { // Else if or else block.
+							i.index--
+							break
 						}
-						continue
-					} else if first.Type == fract.TypeElseIf || first.Type == fract.TypeElse { // Else if or else block.
-						i.index--
-						break
 					}
-				}
 
 					// Condition is true?
 					if state == grammar.KwTrue && kwstate == fract.TypeNone {
@@ -185,7 +185,7 @@ ret:
 	return kwstate
 }
 
-func (i *Interpreter) processMacroDefine(tokens []objects.Token) *objects.Variable {
+func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variable {
 	if len(tokens) < 2 {
 		fract.Error(tokens[0], "Define name is not defined!")
 	}
@@ -198,11 +198,11 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) *objects.Variab
 	// Exists name.
 	for _, macro := range i.macroDefines {
 		if macro.Name == name.Value {
-			fract.Error(name, "This macro define is already defined at: " + fmt.Sprint(macro.Line))
+			fract.Error(name, "This macro define is already defined at: "+fmt.Sprint(macro.Line))
 		}
 	}
 
-	macro := &objects.Variable{
+	macro := objects.Variable{
 		Name: name.Value,
 		Line: name.Line,
 	}
@@ -234,8 +234,8 @@ func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
 		switch tokens[0].Value {
 		case "define": // Macro variable.
 			i.macroDefines = append(i.macroDefines, i.processMacroDefine(tokens))
-			default:
-				fract.Error(tokens[0], "Invalid macro!")
+		default:
+			fract.Error(tokens[0], "Invalid macro!")
 		}
 	default:
 		fract.Error(tokens[0], "Invalid macro!")

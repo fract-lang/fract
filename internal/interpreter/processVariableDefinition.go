@@ -11,7 +11,7 @@ import (
 )
 
 // appendVariable to source from tokens.
-func (i *Interpreter)	appendVariable(constant, protected bool, tokens []objects.Token) {
+func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.Token) {
 	_name := tokens[0]
 
 	if strings.Contains(_name.Value, grammar.TokenDot) {
@@ -22,7 +22,7 @@ func (i *Interpreter)	appendVariable(constant, protected bool, tokens []objects.
 
 	// Name is already defined?
 	if index, _ := i.varIndexByName(_name); index != -1 {
-		fract.Error(_name, "Variable already defined in this name at line: "+ fmt.Sprint(i.variables[index].Line))
+		fract.Error(_name, "Variable already defined in this name at line: "+fmt.Sprint(i.variables[index].Line))
 	}
 
 	tokensLen := len(tokens)
@@ -48,13 +48,14 @@ func (i *Interpreter)	appendVariable(constant, protected bool, tokens []objects.
 		fract.Error(tokens[2], "Invalid value!")
 	}
 
-	i.variables = append(i.variables, &objects.Variable{
-		Name:      _name.Value,
-		Value:     value,
-		Line:      _name.Line,
-		Const:     constant,
-		Protected: protected,
-	})
+	i.variables = append(i.variables,
+		objects.Variable{
+			Name:      _name.Value,
+			Value:     value,
+			Line:      _name.Line,
+			Const:     constant,
+			Protected: protected,
+		})
 }
 
 func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protected bool) {

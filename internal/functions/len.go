@@ -8,7 +8,7 @@ import (
 )
 
 // Len returns length of object.
-func Len(f objects.Function, parameters []*objects.Variable) objects.Value {
+func Len(f objects.Function, parameters []objects.Variable) objects.Value {
 	parameter := parameters[0].Value
 
 	if parameter.Array {

@@ -172,4 +172,6 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 				})
 		}
 	}
+
+	i.variables[index] = variable
 }
