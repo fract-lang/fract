@@ -58,7 +58,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 				fract.Error(setter, "Index is not defined!")
 			}
 
-			position, err := strconv.Atoi(i.processValue(valueList).Content[0].Data)
+			position, err := strconv.Atoi(i.processValue(*valueList).Content[0].Data)
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}
@@ -91,7 +91,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 			"Value is not defined!")
 	}
 
-	value := i.processValue(vector.Sublist(tokens, 2, len(tokens)-2))
+	value := i.processValue(*vector.Sublist(tokens, 2, len(tokens)-2))
 	if value.Content == nil {
 		fract.Error(tokens[2], "Invalid value!")
 	}

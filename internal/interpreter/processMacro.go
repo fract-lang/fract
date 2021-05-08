@@ -48,7 +48,7 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 		},
 	}, i.macroDefines...)
 
-	state := i.processCondition(conditionList)
+	state := i.processCondition(*conditionList)
 	kwstate := fract.TypeNone
 
 	/* Interpret/skip block. */
@@ -78,7 +78,7 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 					goto ret
 				}
 
-				state = i.processCondition(conditionList)
+				state = i.processCondition(*conditionList)
 
 				// Interpret/skip block.
 				for {
@@ -209,8 +209,7 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) *objects.Variab
 
 	if len(tokens) > 2 {
 		variables := i.variables
-		value := tokens[2:]
-		macro.Value = i.processValue(&value)
+		macro.Value = i.processValue(tokens[2:])
 		i.variables = variables
 	} else {
 		macro.Value.Content = []objects.DataFrame{

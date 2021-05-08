@@ -36,7 +36,7 @@ func (i *Interpreter) getParamsArgumentValue(tokens []objects.Token, index, brac
 				*index -= 4
 				return returnValue
 			}
-			returnValue.Content = append(returnValue.Content, i.processValue(valueList).Content...)
+			returnValue.Content = append(returnValue.Content, i.processValue(*valueList).Content...)
 			*lastComma = *index + 1
 		}
 	}
@@ -47,7 +47,7 @@ func (i *Interpreter) getParamsArgumentValue(tokens []objects.Token, index, brac
 			*index -= 4
 			return returnValue
 		}
-		returnValue.Content = append(returnValue.Content, i.processValue(&valueSlice).Content...)
+		returnValue.Content = append(returnValue.Content, i.processValue(valueSlice).Content...)
 	}
 
 	return returnValue
@@ -84,7 +84,6 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 					}
 				}
 				*count++
-				valueList = valueList[2:]
 				paramSet = true
 				*names = append(*names, current.Value)
 				returnValue := &objects.Variable{Name: current.Value}
@@ -93,7 +92,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 					*lastComma += 2
 					returnValue.Value = i.getParamsArgumentValue(tokens, index, braceCount, lastComma)
 				} else {
-					returnValue.Value = i.processValue(&valueList)
+					returnValue.Value = i.processValue(valueList[2:])
 				}
 				return returnValue
 			}
@@ -112,7 +111,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 	if parameter.Params {
 		variable.Value = i.getParamsArgumentValue(tokens, index, braceCount, lastComma)
 	} else {
-		variable.Value = i.processValue(&valueList)
+		variable.Value = i.processValue(valueList)
 	}
 	return variable
 }

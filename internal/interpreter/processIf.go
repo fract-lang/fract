@@ -18,7 +18,7 @@ func (i *Interpreter) processIf(tokens []objects.Token) uint8 {
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value), "Condition is empty!")
 	}
 
-	state := i.processCondition(conditionList)
+	state := i.processCondition(*conditionList)
 	variableLen := len(i.variables)
 	functionLen := len(i.functions)
 	kwstate := fract.TypeNone
@@ -47,7 +47,7 @@ func (i *Interpreter) processIf(tokens []objects.Token) uint8 {
 				goto ret
 			}
 
-			state = i.processCondition(conditionList)
+			state = i.processCondition(*conditionList)
 
 			// Interpret/skip block.
 			for {

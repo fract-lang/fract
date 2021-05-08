@@ -93,13 +93,13 @@ func compare(value0, value1 objects.Value, operator string) bool {
 }
 
 // processCondition returns condition result.
-func (i *Interpreter) processCondition(tokens *[]objects.Token) string {
-	i.processRange(tokens)
+func (i *Interpreter) processCondition(tokens []objects.Token) string {
+	i.processRange(&tokens)
 
 	TRUE := objects.Value{Content: []objects.DataFrame{{Data: grammar.KwTrue}}}
 
 	// Process condition.
-	ors := parser.DecomposeConditionalProcess(*tokens, grammar.LogicalOr)
+	ors := parser.DecomposeConditionalProcess(tokens, grammar.LogicalOr)
 	for _, or := range *ors {
 		// Decompose and conditions.
 		ands := parser.DecomposeConditionalProcess(or, grammar.LogicalAnd)
@@ -110,7 +110,7 @@ func (i *Interpreter) processCondition(tokens *[]objects.Token) string {
 
 				// Operator is not found?
 				if operatorIndex == -1 {
-					if compare(i.processValue(&and), TRUE, grammar.Equals) {
+					if compare(i.processValue(and), TRUE, grammar.Equals) {
 						return grammar.KwTrue
 					}
 					continue
@@ -124,8 +124,8 @@ func (i *Interpreter) processCondition(tokens *[]objects.Token) string {
 				}
 
 				if !compare(
-					i.processValue(vector.Sublist(and, 0, operatorIndex)),
-					i.processValue(vector.Sublist(and, operatorIndex+1, len(and)-operatorIndex-1)),
+					i.processValue(*vector.Sublist(and, 0, operatorIndex)),
+					i.processValue(*vector.Sublist(and, operatorIndex+1, len(and)-operatorIndex-1)),
 					operator) {
 					return grammar.KwFalse
 				}
@@ -137,7 +137,7 @@ func (i *Interpreter) processCondition(tokens *[]objects.Token) string {
 
 		// Operator is not found?
 		if operatorIndex == -1 {
-			if compare(i.processValue(&or), TRUE, grammar.Equals) {
+			if compare(i.processValue(or), TRUE, grammar.Equals) {
 				return grammar.KwTrue
 			}
 			continue
@@ -151,8 +151,8 @@ func (i *Interpreter) processCondition(tokens *[]objects.Token) string {
 		}
 
 		if compare(
-			i.processValue(vector.Sublist(or, 0, operatorIndex)),
-			i.processValue(vector.Sublist(or, operatorIndex+1, len(or)-operatorIndex-1)),
+			i.processValue(*vector.Sublist(or, 0, operatorIndex)),
+			i.processValue(*vector.Sublist(or, operatorIndex+1, len(or)-operatorIndex-1)),
 			operator) {
 			return grammar.KwTrue
 		}

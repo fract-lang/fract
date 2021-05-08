@@ -43,7 +43,7 @@ func (i *Interpreter)	appendVariable(constant, protected bool, tokens []objects.
 		fract.ErrorCustom(setter.File, setter.Line, setter.Column+len(setter.Value), "Value is not defined!")
 	}
 
-	value := i.processValue(vector.Sublist(tokens, 2, tokensLen-2))
+	value := i.processValue(*vector.Sublist(tokens, 2, tokensLen-2))
 	if value.Content == nil {
 		fract.Error(tokens[2], "Invalid value!")
 	}
