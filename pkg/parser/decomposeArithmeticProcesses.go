@@ -9,30 +9,29 @@ import (
 func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 	var (
 		operator  bool
-		last      objects.Token
+		lastIndex int
 		processes []objects.Token
 	)
 
-	for index, token := range tokens {
-		if token.Type == fract.TypeOperator {
+	for index := 0; index < len(tokens); index++ {
+		switch token := tokens[index]; token.Type {
+		case fract.TypeOperator:
 			if !operator {
 				fract.Error(token, "Operator spam!")
 			}
-			last = token
+			lastIndex = index
 			processes = append(processes, token)
 			operator = false
-		} else if token.Type == fract.TypeValue || token.Type == fract.TypeName ||
-			token.Type == fract.TypeBooleanTrue || token.Type == fract.TypeBooleanFalse ||
-			token.Type == fract.TypeBrace || token.Type == fract.TypeComma {
-			last = token
+		case fract.TypeValue, fract.TypeName, fract.TypeBooleanTrue, fract.TypeBooleanFalse, fract.TypeComma, fract.TypeBrace:
+			lastIndex = index
 			processes = append(processes, token)
 			operator = index < len(tokens)-1
-		} else {
+		default:
 			fract.Error(token, "Invalid value!")
 		}
 	}
 
-	if last.Type == fract.TypeOperator {
+	if processes[lastIndex].Type == fract.TypeOperator {
 		fract.Error(processes[len(processes)-1], "Operator defined, but for what?")
 	}
 
