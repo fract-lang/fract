@@ -120,7 +120,7 @@ func processCommand(ns, cmd string) {
 		ModuleMake.Process(cmd)
 	default:
 		if ModuleMake.Check(ns) {
-			ModuleMake.Process(ns + cmd)
+			ModuleMake.Process(ns)
 		} else {
 			fmt.Println("There is no such command!")
 		}

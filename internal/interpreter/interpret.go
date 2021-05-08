@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -37,7 +38,7 @@ func (i *Interpreter) Interpret() {
 		content, err := ioutil.ReadDir(dir)
 
 		if err == nil {
-			_, mainName := path.Split(i.Lexer.File.Path)
+			_, mainName := filepath.Split(i.Lexer.File.Path)
 			for _, current := range content {
 				// Skip directories.
 				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) ||
