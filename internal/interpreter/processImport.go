@@ -45,7 +45,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		importpath = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
 	} else {
 		importpath = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
-			i.processValue(&[]objects.Token{tokens[index]}).Content[0].Data
+			i.processValue([]objects.Token{tokens[index]}).Content[0].Data
 	}
 	
 	importpath = path.Join(fract.ExecutablePath, importpath)

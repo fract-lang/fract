@@ -56,7 +56,7 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 		}
 
 		// Print value if live interpreting.
-		if value := i.processValue(&tokens); fract.LiveInterpret {
+		if value := i.processValue(tokens); fract.LiveInterpret {
 			if fract.PrintValue(value) {
 				fmt.Println()
 			}
@@ -101,8 +101,7 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 		}
 
 		if len(tokens) > 1 {
-			valueList := tokens[1:]
-			value := i.processValue(&valueList)
+			value := i.processValue(tokens[1:])
 			i.returnValue = &value
 		} else {
 			i.returnValue = nil

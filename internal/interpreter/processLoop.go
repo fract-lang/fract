@@ -79,7 +79,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			}
 
 			/* Interpret/skip block. */
-			conditionList := &tokens
+			conditionList := tokens
 			condition := i.processCondition(conditionList)
 			_else := condition == grammar.KwFalse
 			for {
@@ -205,7 +205,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 		fract.Error(inToken, "Value is not defined!")
 	}
 
-	value := i.processValue(&tokens)
+	value := i.processValue(tokens)
 
 	// Type is not array?
 	if !value.Array && value.Content[0].Type != fract.VALString {

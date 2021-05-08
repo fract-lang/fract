@@ -94,7 +94,7 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 						fract.Error(paramList[start-1], "Value is not defined!")
 					}
 
-					lastParameter.Default = i.processValue(vector.Sublist(paramList, start, index-start))
+					lastParameter.Default = i.processValue(*vector.Sublist(paramList, start, index-start))
 					if lastParameter.Params && !lastParameter.Default.Array {
 						fract.Error(current, "Params parameter is can only take array values!")
 					}
