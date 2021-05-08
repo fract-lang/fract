@@ -9,7 +9,7 @@ import (
 )
 
 // Exit from application with code.
-func Exit(f objects.Function, parameters []*objects.Variable) {
+func Exit(f objects.Function, parameters []objects.Variable) {
 	code := parameters[0].Value
 
 	if code.Array {

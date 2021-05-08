@@ -9,7 +9,7 @@ import (
 )
 
 // Range returns array by parameters.
-func Range(f objects.Function, parameters []*objects.Variable) objects.Value {
+func Range(f objects.Function, parameters []objects.Variable) objects.Value {
 	start := parameters[0].Value
 	to := parameters[1].Value
 	step := parameters[2].Value

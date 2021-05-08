@@ -9,7 +9,7 @@ import (
 )
 
 // Float convert object to float.
-func Float(f objects.Function, parameters []*objects.Variable) objects.Value {
+func Float(f objects.Function, parameters []objects.Variable) objects.Value {
 	return objects.Value{
 		Content: []objects.DataFrame{
 			{

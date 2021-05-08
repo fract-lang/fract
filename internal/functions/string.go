@@ -10,7 +10,7 @@ import (
 )
 
 // String convert object to string.
-func String(f objects.Function, parameters []*objects.Variable) objects.Value {
+func String(f objects.Function, parameters []objects.Variable) objects.Value {
 	switch parameters[1].Value.Content[0].Data {
 	case "parse":
 		str := ""

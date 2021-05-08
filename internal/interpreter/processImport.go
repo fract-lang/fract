@@ -94,7 +94,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 	}
 
 	i.Imports = append(i.Imports,
-		&ImportInfo{
+		ImportInfo{
 			Name:   name,
 			Source: source,
 		})

@@ -9,7 +9,7 @@ import (
 )
 
 // Int convert object to integer.
-func Int(f objects.Function, parameters []*objects.Variable) objects.Value {
+func Int(f objects.Function, parameters []objects.Variable) objects.Value {
 	switch parameters[1].Value.Content[0].Data { // Cast type.
 	case "strcode":
 		var value objects.Value

@@ -54,18 +54,18 @@ func (i *Interpreter) getParamsArgumentValue(tokens []objects.Token, index, brac
 }
 
 func (i *Interpreter) processArgument(function objects.Function, names *[]string, tokens []objects.Token,
-	current objects.Token, index, count, braceCount, lastComma *int) *objects.Variable {
+	current objects.Token, index, count, braceCount, lastComma *int) objects.Variable {
 	var paramSet bool
 
 	length := *index - *lastComma
 	if length < 1 {
 		fract.Error(current, "Value is not defined!")
-	} else if *count >= len(*function.Parameters) {
+	} else if *count >= len(function.Parameters) {
 		fract.Error(current, "Argument overflow!")
 	}
 
-	parameter := (*function.Parameters)[*count]
-	variable := &objects.Variable{Name: parameter.Name}
+	parameter := function.Parameters[*count]
+	variable := objects.Variable{Name: parameter.Name}
 	valueList := *vector.Sublist(tokens, *lastComma, length)
 	current = valueList[0]
 
@@ -76,7 +76,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 			fract.Error(current, "Value is not defined!")
 		}
 
-		for _, parameter := range *function.Parameters {
+		for _, parameter := range function.Parameters {
 			if parameter.Name == current.Value {
 				for _, name := range *names {
 					if name == current.Value {
@@ -86,7 +86,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 				*count++
 				paramSet = true
 				*names = append(*names, current.Value)
-				returnValue := &objects.Variable{Name: current.Value}
+				returnValue := objects.Variable{Name: current.Value}
 				//Parameter is params typed?
 				if parameter.Params {
 					*lastComma += 2
@@ -129,7 +129,7 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 	function := source.functions[nameIndex]
 
 	var (
-		vars  []*objects.Variable
+		vars  []objects.Variable
 		names = new([]string)
 		count = new(int)
 	)
@@ -164,10 +164,10 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 	}
 
 	// All parameters is not defined?
-	if *count < len(*function.Parameters)-function.DefaultParameterCount {
+	if *count < len(function.Parameters)-function.DefaultParameterCount {
 		var sb strings.Builder
 		sb.WriteString("All required positional parameters is not defined:")
-		for _, parameter := range *function.Parameters {
+		for _, parameter := range function.Parameters {
 			if parameter.Default.Content != nil {
 				break
 			}
@@ -184,13 +184,14 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 	}
 
 	// Check default values.
-	for ; *count < len(*function.Parameters); *count++ {
-		current := (*function.Parameters)[*count]
+	for ; *count < len(function.Parameters); *count++ {
+		current := function.Parameters[*count]
 		if current.Default.Content != nil {
-			vars = append(vars, &objects.Variable{
-				Name:  current.Name,
-				Value: current.Default,
-			})
+			vars = append(vars,
+				objects.Variable{
+					Name:  current.Name,
+					Value: current.Default,
+				})
 		}
 	}
 

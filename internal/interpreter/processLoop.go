@@ -257,7 +257,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	}
 
 	i.variables = append(
-		[]*objects.Variable{
+		[]objects.Variable{
 			{ // Index.
 				Name: nameToken.Value,
 				Value: objects.Value{
