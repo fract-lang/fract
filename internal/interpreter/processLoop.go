@@ -270,8 +270,8 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			}}, i.variables...)
 
 	varLen += 2
-	index := i.variables[0]
-	element := i.variables[1]
+	index := &i.variables[0]
+	element := &i.variables[1]
 
 	if index.Name == grammar.TokenUnderscore {
 		index.Name = ""
@@ -322,10 +322,10 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 				if value.Array {
 					element.Value.Content = []objects.DataFrame{value.Content[vindex]}
 				} else {
-					element.Value.Content[0] = objects.DataFrame{
+					element.Value.Content = []objects.DataFrame{{
 						Data: string(value.Content[0].Data[vindex]),
 						Type: fract.VALString,
-					}
+					}}
 				}
 			}
 			continue
