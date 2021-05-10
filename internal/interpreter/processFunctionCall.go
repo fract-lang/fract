@@ -13,8 +13,8 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-// getParamsArgumentValue decompose and returns params values.
-func (i *Interpreter) getParamsArgumentValue(tokens []objects.Token, index, braceCount, lastComma *int) objects.Value {
+// getParamsArgumentValues decompose and returns params values.
+func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, braceCount, lastComma *int) objects.Value {
 	returnValue := objects.Value{
 		Content: []objects.DataFrame{},
 		Array:   true,
@@ -90,7 +90,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 				//Parameter is params typed?
 				if parameter.Params {
 					*lastComma += 2
-					returnValue.Value = i.getParamsArgumentValue(tokens, index, braceCount, lastComma)
+					returnValue.Value = i.getParamsArgumentValues(tokens, index, braceCount, lastComma)
 				} else {
 					returnValue.Value = i.processValue(valueList[2:])
 				}
@@ -109,7 +109,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 	*names = append(*names, variable.Name)
 	// Parameter is params typed?
 	if parameter.Params {
-		variable.Value = i.getParamsArgumentValue(tokens, index, braceCount, lastComma)
+		variable.Value = i.getParamsArgumentValues(tokens, index, braceCount, lastComma)
 	} else {
 		variable.Value = i.processValue(valueList)
 	}
