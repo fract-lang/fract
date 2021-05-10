@@ -17,11 +17,11 @@ import (
 
 // valueProcess instance for solver.
 type valueProcess struct {
-	First    objects.Token  // First value of process.
-	FirstV   objects.Value  // Value instance of first value.
-	Second   objects.Token  // Second value of process.
-	SecondV  objects.Value  // Value instance of second value.
-	Operator objects.Token  // Operator of process.
+	First    objects.Token // First value of process.
+	FirstV   objects.Value // Value instance of first value.
+	Second   objects.Token // Second value of process.
+	SecondV  objects.Value // Value instance of second value.
+	Operator objects.Token // Operator of process.
 }
 
 // processRange by value processor principles.
@@ -330,8 +330,8 @@ func solveProcess(process valueProcess) objects.Value {
 			for index, current := range process.SecondV.Content {
 				process.SecondV.Content[index] = readyDataFrame(process,
 					objects.DataFrame{
-					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, first, arithmetic.ToArithmetic(current.Data))),
+						Data: fmt.Sprintf(fract.FloatFormat,
+							solve(process.Operator, first, arithmetic.ToArithmetic(current.Data))),
 					})
 			}
 			value.Content = process.SecondV.Content
@@ -412,7 +412,7 @@ func solveProcess(process valueProcess) objects.Value {
 }
 
 // applyMinus operator.
-func applyMinus (minussed bool, value objects.Value) objects.Value {
+func applyMinus(minussed bool, value objects.Value) objects.Value {
 	if !minussed {
 		return value
 	}
@@ -620,7 +620,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					operation.SecondV = applyMinus(minussed, operation.SecondV)
 				}
 				vector.RemoveRange(parts, oindex, index-oindex)
-				return index-oindex
+				return index - oindex
 			}
 
 			endToken := (*parts)[oindex-1]
@@ -687,7 +687,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				operation.SecondV = applyMinus(minussed, operation.SecondV)
 			}
 
-			return index-oindex+1
+			return index - oindex + 1
 		} else if token.Value == grammar.TokenLBracket {
 			// Array initializer.
 
@@ -907,7 +907,7 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 			var operation valueProcess
 			operation.First = (*parts)[priorityIndex-1]
 			priorityIndex -= i.processOperationValue(true, &operation, parts, priorityIndex-1)
-			
+
 			operation.Operator = (*parts)[priorityIndex]
 
 			operation.Second = (*parts)[priorityIndex+1]
