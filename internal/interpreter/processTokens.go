@@ -19,9 +19,7 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 	case
 		fract.TypeValue,
 		fract.TypeBrace,
-		fract.TypeName,
-		fract.TypeBooleanTrue,
-		fract.TypeBooleanFalse:
+		fract.TypeName:
 		if first.Type == fract.TypeName {
 			brace := 0
 			for _, current := range tokens {

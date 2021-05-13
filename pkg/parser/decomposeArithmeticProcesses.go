@@ -22,7 +22,7 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 			lastIndex = index
 			processes = append(processes, token)
 			operator = false
-		case fract.TypeValue, fract.TypeName, fract.TypeBooleanTrue, fract.TypeBooleanFalse, fract.TypeComma, fract.TypeBrace:
+		case fract.TypeValue, fract.TypeName, fract.TypeComma, fract.TypeBrace:
 			lastIndex = index
 			processes = append(processes, token)
 			operator = index < len(tokens)-1
