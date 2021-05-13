@@ -802,8 +802,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 
 	// Type check.
 	if token.Type != fract.TypeNone {
-		if token.Type == fract.TypeBooleanTrue ||
-			token.Type == fract.TypeBooleanFalse {
+		if token.Value == grammar.KwTrue || token.Value == grammar.KwFalse {
 			if first {
 				operation.FirstV.Content[0].Type = fract.VALBoolean
 				operation.FirstV = applyMinus(minussed, operation.FirstV)

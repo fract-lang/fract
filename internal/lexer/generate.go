@@ -11,10 +11,12 @@ import (
 )
 
 // isKeyword returns true if part is keyword, false if not.
-func isKeyword(ln, kw string) bool { return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln) }
+func isKeyword(ln, kw string) bool {
+	return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
+}
 
 // isMacro returns true if part is macro, false if not.
-func isMacro(ln string) bool { return !regexp.MustCompile(`^#(\s+|$)`).MatchString(ln)}
+func isMacro(ln string) bool { return !regexp.MustCompile(`^#(\s+|$)`).MatchString(ln) }
 
 // processEsacepeSequence process char literal espace sequence.
 func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
@@ -403,19 +405,19 @@ func (l *Lexer) Generate() objects.Token {
 		token.Type = fract.TypeImport
 	case isKeyword(ln, grammar.KwTrue): // True.
 		token.Value = grammar.KwTrue
-		token.Type = fract.TypeBooleanTrue
+		token.Type = fract.TypeValue
 	case isKeyword(ln, grammar.KwFalse): // False.
 		token.Value = grammar.KwFalse
-		token.Type = fract.TypeBooleanFalse
+		token.Type = fract.TypeValue
 	case strings.HasPrefix(ln, grammar.RangeCommentOpen): // Range comment open.
 		l.RangeComment = true
 		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore
 	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment or macro.
-	if isMacro(ln) {
-		token.Value = grammar.TokenSharp
-		token.Type = fract.TypeMacro
-	} else {
+		if isMacro(ln) {
+			token.Value = grammar.TokenSharp
+			token.Type = fract.TypeMacro
+		} else {
 			l.File.Lines[l.Line-1] = l.File.Lines[l.Line-1][:l.Column-1] // Remove comment from original line.
 			return token
 		}
