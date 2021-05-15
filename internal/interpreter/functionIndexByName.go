@@ -9,9 +9,11 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
+//! This code block very like to varIndexByName function. If you change here, probably you must change there too.
+
 // functionIndexByName returns index of function by name.
 func (i *Interpreter) functionIndexByName(name objects.Token) (int, *Interpreter) {
-	if name.Value[0] == '-' { // Ignore.
+	if name.Value[0] == '-' { // Ignore minus.
 		name.Value = name.Value[1:]
 	}
 
@@ -23,11 +25,7 @@ func (i *Interpreter) functionIndexByName(name objects.Token) (int, *Interpreter
 		name.Value = name.Value[index+1:]
 
 		for index, current := range i.functions {
-			if !unicode.IsUpper(rune(current.Name[0])) {
-				continue
-			}
-
-			if current.Name == name.Value {
+			if unicode.IsUpper(rune(current.Name[0])) && current.Name == name.Value {
 				return index, i
 			}
 		}

@@ -8,8 +8,7 @@ func (i *Interpreter) Import() {
 
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {
-		tokens := i.Tokens[i.index]
-		switch tokens[0].Type {
+		switch tokens := i.Tokens[i.index]; tokens[0].Type {
 		case fract.TypeProtected: // Protected declaration.
 			if len(tokens) < 2 {
 				fract.Error(tokens[0], "Protected but what is it protected?")

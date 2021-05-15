@@ -26,9 +26,7 @@ func IndexProcessPriority(tokens []objects.Token) int {
 			}
 		}
 
-		if bracket > 0 {
-			continue
-		}
+		if bracket > 0 { continue }
 
 		// Exponentiation or shifts.
 		if token.Value == grammar.LeftBinaryShift || token.Value == grammar.RightBinaryShift ||

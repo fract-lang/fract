@@ -22,9 +22,7 @@ func (i *Interpreter) Interpret() {
 	}
 
 	// Lexer is finished.
-	if i.Lexer.Finished {
-		return
-	}
+	if i.Lexer.Finished { return }
 
 	i.ready()
 
@@ -41,8 +39,7 @@ func (i *Interpreter) Interpret() {
 			_, mainName := filepath.Split(i.Lexer.File.Path)
 			for _, current := range content {
 				// Skip directories.
-				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) ||
-				current.Name() == mainName {
+				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) || current.Name() == mainName {
 					continue
 				}
 				
