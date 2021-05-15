@@ -37,12 +37,19 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		fract.Error(tokens[3], "Invalid syntax!")
 	}
 
+	source := new(Interpreter)
+	source.ApplyEmbedFunctions()
+
 	var importpath string
 	if tokens[index].Type == fract.TypeName {
 		if !strings.HasPrefix(tokens[index].Value, "std") {
 			fract.Error(tokens[index], "Standard import should be starts with 'std' directory.")
 		}
-		importpath = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
+
+		switch tokens[index].Value {
+		default:
+			importpath = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
+		}
 	} else {
 		importpath = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
 			i.processValue([]objects.Token{tokens[index]}).Content[0].Data
@@ -53,7 +60,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 	info, err := os.Stat(importpath)
 
 	// Exists directory?
-	if err != nil || !info.IsDir() {
+	if importpath != "" && (err != nil || !info.IsDir()) {
 		fract.Error(tokens[index], "Directory not found/access!")
 	}
 
@@ -76,8 +83,6 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		}
 	}
 
-	source := new(Interpreter)
-	source.ApplyEmbedFunctions()
 	for _, current := range content {
 		// Skip directories.
 		if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) {
