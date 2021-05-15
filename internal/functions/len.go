@@ -15,9 +15,7 @@ func Len(f objects.Function, parameters []objects.Variable) objects.Value {
 		return objects.Value{
 			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content))}},
 		}
-	}
-
-	if parameter.Content[0].Type == fract.VALString {
+	} else if parameter.Content[0].Type == fract.VALString {
 		return objects.Value{
 			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content[0].Data))}},
 		}

@@ -13,6 +13,11 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
+// isParamSet Argument type is param set?
+func isParamSet(tokens []objects.Token) bool {
+	return tokens[0].Type == fract.TypeName && tokens[1].Value == grammar.TokenEquals
+}
+
 // getParamsArgumentValues decompose and returns params values.
 func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, braceCount, lastComma *int) objects.Value {
 	returnValue := objects.Value{
@@ -32,7 +37,7 @@ func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, bra
 			}
 		} else if current.Type == fract.TypeComma && *braceCount == 0 {
 			valueList := vector.Sublist(tokens, *lastComma, *index-*lastComma)
-			if (*valueList)[0].Type == fract.TypeName && (*valueList)[1].Value == grammar.TokenEquals {
+			if isParamSet(*valueList) {
 				*index -= 4
 				return returnValue
 			}
@@ -43,7 +48,7 @@ func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, bra
 
 	if *lastComma < len(tokens) {
 		valueSlice := tokens[*lastComma:]
-		if valueSlice[0].Type == fract.TypeName && valueSlice[1].Value == grammar.TokenEquals {
+		if isParamSet(valueSlice) {
 			*index -= 4
 			return returnValue
 		}
@@ -70,7 +75,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 	current = valueList[0]
 
 	// Check param set.
-	if length >= 2 && valueList[0].Type == fract.TypeName && valueList[1].Value == grammar.TokenEquals {
+	if length >= 2 && isParamSet(valueList) {
 		length -= 2
 		if length < 1 {
 			fract.Error(current, "Value is not defined!")

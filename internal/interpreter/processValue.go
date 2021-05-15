@@ -139,13 +139,10 @@ func solve(operator objects.Token, first, second float64) float64 {
 
 // readyDataFrame to data.
 func readyDataFrame(process valueProcess, dataFrame objects.DataFrame) objects.DataFrame {
-	if process.FirstV.Content[0].Type == fract.VALString ||
-		process.SecondV.Content[0].Type == fract.VALString {
+	if process.FirstV.Content[0].Type == fract.VALString || process.SecondV.Content[0].Type == fract.VALString {
 		dataFrame.Type = fract.VALString
-	} else if process.Operator.Value == grammar.TokenSlash ||
-		process.Operator.Value == grammar.TokenBackslash ||
-		process.FirstV.Content[0].Type == fract.VALFloat ||
-		process.SecondV.Content[0].Type == fract.VALFloat {
+	} else if process.Operator.Value == grammar.TokenSlash || process.Operator.Value == grammar.TokenBackslash ||
+		process.FirstV.Content[0].Type == fract.VALFloat || process.SecondV.Content[0].Type == fract.VALFloat {
 		dataFrame.Type = fract.VALFloat
 	}
 	dataFrame.Data = fract.FormatData(dataFrame)
@@ -330,8 +327,7 @@ func solveProcess(process valueProcess) objects.Value {
 			for index, current := range process.SecondV.Content {
 				process.SecondV.Content[index] = readyDataFrame(process,
 					objects.DataFrame{
-						Data: fmt.Sprintf(fract.FloatFormat,
-							solve(process.Operator, first, arithmetic.ToArithmetic(current.Data))),
+						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, first, arithmetic.ToArithmetic(current.Data))),
 					})
 			}
 			value.Content = process.SecondV.Content
@@ -340,8 +336,7 @@ func solveProcess(process valueProcess) objects.Value {
 			for index, current := range process.FirstV.Content {
 				process.FirstV.Content[index] = readyDataFrame(process,
 					objects.DataFrame{
-						Data: fmt.Sprintf(fract.FloatFormat,
-							solve(process.Operator, arithmetic.ToArithmetic(current.Data), second)),
+						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(current.Data), second)),
 					})
 			}
 			value.Content = process.FirstV.Content
@@ -349,9 +344,7 @@ func solveProcess(process valueProcess) objects.Value {
 			for index, current := range process.FirstV.Content {
 				process.FirstV.Content[index] = readyDataFrame(process,
 					objects.DataFrame{
-						Data: fmt.Sprintf(fract.FloatFormat,
-							solve(process.Operator, arithmetic.ToArithmetic(current.Data),
-								arithmetic.ToArithmetic(process.SecondV.Content[index].Data))),
+						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(current.Data), arithmetic.ToArithmetic(process.SecondV.Content[index].Data))),
 					})
 			}
 			value.Content = process.FirstV.Content
@@ -371,8 +364,7 @@ func solveProcess(process valueProcess) objects.Value {
 		for index, current := range process.FirstV.Content {
 			process.FirstV.Content[index] = readyDataFrame(process,
 				objects.DataFrame{
-					Data: fmt.Sprintf(fract.FloatFormat,
-						solve(process.Operator, arithmetic.ToArithmetic(current.Data), second)),
+					Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(current.Data), second)),
 				})
 		}
 		value.Content = process.FirstV.Content
@@ -402,9 +394,7 @@ func solveProcess(process valueProcess) objects.Value {
 
 		value.Content[0] = readyDataFrame(process,
 			objects.DataFrame{
-				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data),
-						arithmetic.ToArithmetic(process.SecondV.Content[0].Data))),
+				Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(process.FirstV.Content[0].Data), arithmetic.ToArithmetic(process.SecondV.Content[0].Data))),
 			})
 	}
 
@@ -755,13 +745,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 	// Single value.
 	//
 
-	if (token.Type == fract.TypeValue &&
-		token.Value != grammar.KwTrue &&
-		token.Value != grammar.KwFalse) &&
-		!strings.HasPrefix(token.Value, grammar.TokenQuote) &&
-		!strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
-		if strings.Contains(token.Value, grammar.TokenDot) ||
-			strings.ContainsAny(token.Value, "eE") {
+	if (token.Type == fract.TypeValue && token.Value != grammar.KwTrue && token.Value != grammar.KwFalse) &&
+		!strings.HasPrefix(token.Value, grammar.TokenQuote) && !strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
+		if strings.Contains(token.Value, grammar.TokenDot) || strings.ContainsAny(token.Value, "eE") {
 			token.Type = fract.VALFloat
 		} else {
 			token.Type = fract.VALInteger
@@ -820,14 +806,13 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			}
 		}
 	}
-
 	return 0
 }
 
 func (i *Interpreter) processArrayValue(tokens []objects.Token) objects.Value {
 	value := objects.Value{
-		Content: []objects.DataFrame{},
 		Array:   true,
+		Content: []objects.DataFrame{},
 	}
 
 	first := tokens[0]
@@ -869,7 +854,6 @@ func (i *Interpreter) processArrayValue(tokens []objects.Token) objects.Value {
 func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 	value := objects.Value{
 		Content: []objects.DataFrame{{}},
-		Array:   false,
 	}
 
 	i.processRange(&tokens)

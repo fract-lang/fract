@@ -32,8 +32,6 @@ func (i *Interpreter) skipBlock(ifBlock bool) {
 			count++
 		}
 
-		if count == 0 {
-			return
-		}
+		if count == 0 { return }
 	}
 }

@@ -5,6 +5,19 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
+// Check expected bracket or like and returns true if require retokenize, returns false if not.
+// Thrown exception is syntax error.
+func (l *Lexer) checkExpected(message string) bool {
+	if l.Finished {
+		if l.File.Path != fract.Stdin {
+			l.Line-- // Subtract for correct line number.
+			l.Error(message)
+		}
+		return false
+	}
+	return true
+}
+
 // Next lex next line.
 func (l *Lexer) Next() []objects.Token {
 	var tokens []objects.Token
@@ -49,42 +62,15 @@ tokenize:
 	// Line equals to or bigger then last line.
 	l.Finished = l.Line > len(l.File.Lines)
 
-	if l.ParenthesCount > 0 { // Check parentheses.
-		if l.Finished {
-			if l.File.Path != fract.Stdin {
-				l.Line-- // Subtract for correct line number.
-				l.Error("Parentheses is expected to close...")
-			}
-		} else {
-			goto tokenize
-		}
-	} else if l.BraceCount > 0 { // Check braces.
-		if l.Finished {
-			if l.File.Path != fract.Stdin {
-				l.Line-- // Subtract for correct line number.
-				l.Error("Brace is expected to close...")
-			}
-		} else {
-			goto tokenize
-		}
-	} else if l.BracketCount > 0 { // Check brackets.
-		if l.Finished {
-			if l.File.Path != fract.Stdin {
-				l.Line-- // Subrract for correct line number.
-				l.Error("Bracket is expected to close...")
-			}
-		} else {
-			goto tokenize
-		}
-	} else if l.RangeComment {
-		if l.Finished {
-			if l.File.Path != fract.Stdin {
-				l.Line--
-				l.Error("Multiline comment is expected to close...")
-			}
-		} else {
-			goto tokenize
-		}
+	switch {
+	case l.ParenthesCount > 0: // Check parentheses.
+		if l.checkExpected("Parentheses is expected to close...") { goto tokenize }
+	case l.BraceCount > 0: // Check braces.
+		if l.checkExpected("Brace is expected to close...") { goto tokenize }
+	case l.BracketCount > 0: // Check brackets.
+		if l.checkExpected("Bracket is expected to close...") { goto tokenize }
+	case l.RangeComment:
+		if l.checkExpected("Multiline comment is expected to close...") { goto tokenize}
 	}
 
 	return tokens

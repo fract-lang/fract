@@ -10,20 +10,28 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
+var (
+	numericPattern = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
+	namePattern    = *regexp.MustCompile(`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`)
+	macroPattern   = *regexp.MustCompile(`^#(\s+|$)`)
+)
+
 // isKeyword returns true if part is keyword, false if not.
-func isKeyword(ln, kw string) bool {
-	return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
-}
+func isKeyword(ln, kw string) bool { return regexp.MustCompile("^" + kw  + `(\s+|$|[[:punct:]])`).MatchString(ln) }
 
 // isMacro returns true if part is macro, false if not.
-func isMacro(ln string) bool { return !regexp.MustCompile(`^#(\s+|$)`).MatchString(ln) }
+func isMacro(ln string) bool { return !macroPattern.MatchString(ln) }
+
+// getName returns name if next token is name, returns empty string if not.
+func getName(ln string) string { return namePattern.FindString(ln) }
+
+// getNumeric returns numeric if next token is numeric, returns empty string if not.
+func getNumeric(ln string) string { return numericPattern.FindString(ln) }
 
 // processEsacepeSequence process char literal espace sequence.
 func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
-	if fln[l.Column-1] != '\\' {
-		return false
-	}
+	if fln[l.Column-1] != '\\' { return false }
 
 	l.Column++
 	if l.Column >= len(fln)+1 {
@@ -136,9 +144,7 @@ func (l *Lexer) Generate() objects.Token {
 	}
 
 	// Content is empty.
-	if ln == "" {
-		return token
-	}
+	if ln == "" { return token }
 
 	// Set token values.
 	token.Column = l.Column
@@ -157,8 +163,7 @@ func (l *Lexer) Generate() objects.Token {
 		}
 	}
 
-	switch check := strings.TrimSpace(regexp.MustCompile(
-		`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`).FindString(ln)); {
+	switch check := getNumeric(ln); {
 	case (check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
 			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
@@ -246,9 +251,7 @@ func (l *Lexer) Generate() objects.Token {
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.TokenMinus): // Subtraction.
 		/* Check variable name. */
-		if check = strings.TrimSpace(regexp.MustCompile(
-			`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
-			FindString(ln)); check != "" { // Name.
+		if check := getName(ln); check != "" { // Name.
 			if !l.processName(&token, check) {
 				return token
 			}
@@ -427,9 +430,7 @@ func (l *Lexer) Generate() objects.Token {
 		l.lexString(&token, grammar.TokenDoubleQuote[0], fln)
 	default: // Alternates
 		/* Check variable name. */
-		if check = strings.TrimSpace(regexp.MustCompile(
-			`^([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`).
-			FindString(ln)); check != "" { // Name.
+		if check := getName(ln); check != "" { // Name.
 			if !l.processName(&token, check) {
 				return token
 			}

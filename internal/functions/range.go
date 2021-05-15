@@ -23,11 +23,9 @@ func Range(f objects.Function, parameters []objects.Variable) objects.Value {
 	}
 
 	if start.Content[0].Type != fract.VALInteger &&
-		start.Content[0].Type != fract.VALFloat ||
-		to.Content[0].Type != fract.VALInteger &&
-			to.Content[0].Type != fract.VALFloat ||
-		step.Content[0].Type != fract.VALInteger &&
-			step.Content[0].Type != fract.VALFloat {
+		start.Content[0].Type != fract.VALFloat || to.Content[0].Type != fract.VALInteger &&
+		to.Content[0].Type != fract.VALFloat || step.Content[0].Type != fract.VALInteger &&
+		step.Content[0].Type != fract.VALFloat {
 		fract.Error(f.Tokens[0][0], "Values should be integer or float!")
 	}
 
@@ -43,9 +41,7 @@ func Range(f objects.Function, parameters []objects.Variable) objects.Value {
 	}
 
 	var dtype uint8
-	if start.Content[0].Type == fract.VALFloat ||
-		to.Content[0].Type == fract.VALFloat ||
-		step.Content[0].Type == fract.VALFloat {
+	if start.Content[0].Type == fract.VALFloat || to.Content[0].Type == fract.VALFloat || step.Content[0].Type == fract.VALFloat {
 		dtype = fract.VALFloat
 	}
 

@@ -32,9 +32,9 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 						brace--
 					}
 				}
-				if brace > 0 {
-					continue
-				}
+				
+				if brace > 0 { continue }
+
 				if current.Type == fract.TypeOperator &&
 					(current.Value == grammar.TokenEquals ||
 						current.Value == grammar.AdditionAssignment ||

@@ -52,9 +52,8 @@ func DecomposeBrace(tokens *[]objects.Token, open, close string, nonCheck bool) 
 			} else if current.Value == close {
 				count--
 			}
-			if count == 0 {
-				break
-			}
+
+			if count == 0 { break }
 		}
 		length++
 	}

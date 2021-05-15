@@ -68,6 +68,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 			} else {
 				position = parser.ProcessArrayIndex(len(variable.Value.Content[0].Data), position)
 			}
+
 			if position == -1 {
 				fract.Error(setter, "Index is out of range!")
 			}
@@ -111,12 +112,14 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 				} else if len(value.Content[0].Data) > 1 {
 					fract.Error(setter, "Value length is should be maximum one!")
 				}
+
 				bytes := []byte(variable.Value.Content[0].Data)
 				if value.Content[0].Data == "" {
 					bytes[setIndex] = 0
 				} else {
 					bytes[setIndex] = value.Content[0].Data[0]
 				}
+
 				variable.Value.Content[0].Data = string(bytes)
 			}
 		default: // Other assignments.
@@ -142,6 +145,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 						Second:  setter,
 						SecondV: value,
 					})
+
 				if value.Content[0].Type != fract.VALString {
 					fract.Error(setter, "Value type is not string!")
 				} else if len(value.Content[0].Data) > 1 {
@@ -154,6 +158,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 				} else {
 					bytes[setIndex] = value.Content[0].Data[0]
 				}
+				
 				variable.Value.Content[0].Data = string(bytes)
 			}
 		}
