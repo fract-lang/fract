@@ -171,9 +171,9 @@ func (l *Lexer) Generate() objects.Token {
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
 			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn)) ||
-		isKeyword(ln, "NaN"): // Numeric value.
+		isKeyword(ln, grammar.KwNaN): // Numeric value.
 		if check == "" {
-			check = "NaN"
+			check = grammar.KwNaN
 			l.Column += 3
 		} else {
 			// Remove punct.

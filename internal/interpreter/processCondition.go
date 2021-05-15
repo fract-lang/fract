@@ -10,50 +10,43 @@ import (
 )
 
 func compareValues(operator string, data0, data1 objects.DataFrame) bool {
-	if data0.Type != data1.Type &&
-		(data0.Type == fract.VALString || data1.Type == fract.VALString) {
+	if data0.Type != data1.Type && (data0.Type == fract.VALString || data1.Type == fract.VALString) {
 		return false
 	}
 
 	switch operator {
 	case grammar.Equals: // Equals.
 		if (data0.Type == fract.VALString && data0.Data != data1.Data) ||
-			(data0.Type != fract.VALString &&
-				arithmetic.ToArithmetic(data0.Data) != arithmetic.ToArithmetic(data1.Data)) {
+			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) != arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
 	case grammar.NotEquals: // Not equals.
 		if (data0.Type == fract.VALString && data0.Data == data1.Data) ||
-			(data0.Type != fract.VALString &&
-				arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
+			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
 	case grammar.TokenGreat: // Greater.
 		if (data0.Type == fract.VALString && data0.Data <= data1.Data) ||
-			(data0.Type != fract.VALString &&
-				arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
+			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
 	case grammar.TokenLess: // Less.
 		if (data0.Type == fract.VALString && data0.Data >= data1.Data) ||
-			(data0.Type != fract.VALString &&
-				arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
+			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
 	case grammar.GreaterEquals: // Greater or equals.
 		if (data0.Type == fract.VALString && data0.Data < data1.Data) ||
-			(data0.Type != fract.VALString &&
-				arithmetic.ToArithmetic(data0.Data) < arithmetic.ToArithmetic(data1.Data)) {
+			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) < arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
 	case grammar.LessEquals: // Less or equals.
 		if (data0.Type == fract.VALString && data0.Data > data1.Data) ||
-			(data0.Type != fract.VALString &&
-				arithmetic.ToArithmetic(data0.Data) > arithmetic.ToArithmetic(data1.Data)) {
+			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) > arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
 	}
-		return true
+	return true
 }
 
 func compare(value0, value1 objects.Value, operator string) bool {
@@ -70,8 +63,7 @@ func compare(value0, value1 objects.Value, operator string) bool {
 
 	// Array comparison.
 	if value0.Array || value1.Array {
-		if (value0.Array && !value1.Array) ||
-			(!value0.Array && value1.Array) {
+		if (value0.Array && !value1.Array) || (!value0.Array && value1.Array) {
 			return false
 		}
 

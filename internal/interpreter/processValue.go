@@ -753,7 +753,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			token.Type = fract.VALInteger
 		}
 
-		if token.Value != "NaN" {
+		if token.Value != grammar.KwNaN {
 			prs, _ := new(big.Float).SetString(token.Value)
 			val, _ := prs.Float64()
 			token.Value = fmt.Sprint(val)
