@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fract-lang/fract/internal/functions"
+	"github.com/fract-lang/fract/internal/functions/embed"
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/grammar"
@@ -207,25 +207,28 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 		// Add name token for exceptions.
 		function.Tokens = [][]objects.Token{{_name}}
 
-		switch function.Name {
-		case "print":
-			functions.Print(function, vars)
-		case "input":
-			returnValue = functions.Input(function, vars)
-		case "len":
-			returnValue = functions.Len(function, vars)
-		case "range":
-			returnValue = functions.Range(function, vars)
-		case "make":
-			returnValue = functions.Make(function, vars)
-		case "string":
-			returnValue = functions.String(function, vars)
-		case "int":
-			returnValue = functions.Int(function, vars)
-		case "float":
-			returnValue = functions.Float(function, vars)
-		default:
-			functions.Exit(function, vars)
+		switch source.Lexer.File.Path {
+		default: //* Direct embed functions.
+			switch function.Name {
+			case "print":
+				embed.Print(function, vars)
+			case "input":
+				returnValue = embed.Input(function, vars)
+			case "len":
+				returnValue = embed.Len(function, vars)
+			case "range":
+				returnValue = embed.Range(function, vars)
+			case "make":
+				returnValue = embed.Make(function, vars)
+			case "string":
+				returnValue = embed.String(function, vars)
+			case "int":
+				returnValue = embed.Int(function, vars)
+			case "float":
+				returnValue = embed.Float(function, vars)
+			default:
+				embed.Exit(function, vars)
+			}
 		}
 	} else {
 		// Process block.

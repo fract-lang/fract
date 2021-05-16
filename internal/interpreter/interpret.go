@@ -12,7 +12,7 @@ import (
 )
 
 func (i *Interpreter) Interpret() {
-	if i.Lexer.File.Path == fract.Stdin {
+	if i.Lexer.File.Path == "<stdin>" {
 		// Interpret all lines.
 		for i.index = 0; i.index < len(i.Tokens); i.index++ {
 			i.processTokens(i.Tokens[i.index])
