@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"github.com/fract-lang/fract/internal/lexer"
-	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -11,7 +10,7 @@ func NewStdin(path string) *Interpreter {
 	return &Interpreter{
 		Lexer: &lexer.Lexer{
 			File: &objects.SourceFile{
-				Path:  fract.Stdin,
+				Path:  "<stdin>",
 				File:  nil,
 				Lines: nil,
 			},

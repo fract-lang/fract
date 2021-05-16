@@ -9,7 +9,7 @@ import (
 // Thrown exception is syntax error.
 func (l *Lexer) checkExpected(message string) bool {
 	if l.Finished {
-		if l.File.Path != fract.Stdin {
+		if l.File.Path != "<stdin>" {
 			l.Line-- // Subtract for correct line number.
 			l.Error(message)
 		}

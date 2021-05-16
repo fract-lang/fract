@@ -25,7 +25,7 @@ func (i *Interpreter) functionIndexByName(name objects.Token) (int, *Interpreter
 		name.Value = name.Value[index+1:]
 
 		for index, current := range i.functions {
-			if unicode.IsUpper(rune(current.Name[0])) && current.Name == name.Value {
+			if (current.Tokens == nil || unicode.IsUpper(rune(current.Name[0]))) && current.Name == name.Value {
 				return index, i
 			}
 		}
