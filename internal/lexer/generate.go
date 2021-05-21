@@ -17,7 +17,9 @@ var (
 )
 
 // isKeyword returns true if part is keyword, false if not.
-func isKeyword(ln, kw string) bool { return regexp.MustCompile("^" + kw  + `(\s+|$|[[:punct:]])`).MatchString(ln) }
+func isKeyword(ln, kw string) bool {
+	return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
+}
 
 // isMacro returns true if part is macro, false if not.
 func isMacro(ln string) bool { return !macroPattern.MatchString(ln) }
@@ -31,7 +33,9 @@ func getNumeric(ln string) string { return numericPattern.FindString(ln) }
 // processEsacepeSequence process char literal espace sequence.
 func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
-	if fln[l.Column-1] != '\\' { return false }
+	if fln[l.Column-1] != '\\' {
+		return false
+	}
 
 	l.Column++
 	if l.Column >= len(fln)+1 {
@@ -91,7 +95,7 @@ func (l *Lexer) lexString(token *objects.Token, quote byte, fln string) {
 
 func (l *Lexer) processName(token *objects.Token, check string) bool {
 	// Remove punct.
-	if !strings.HasSuffix(check, grammar.TokenUnderscore) && !strings.HasSuffix(check, grammar.TokenDot) {
+	if check[len(check)-1] != '_' && check[len(check)-1] != '.' {
 		result, _ := regexp.MatchString(`(\s|[[:punct:]])$`, check)
 		if result {
 			check = check[:len(check)-1]
@@ -99,7 +103,7 @@ func (l *Lexer) processName(token *objects.Token, check string) bool {
 	}
 
 	// Name is finished with dot?
-	if strings.HasSuffix(check, grammar.TokenDot) {
+	if check[len(check)-1] == '.' {
 		if l.RangeComment { // Ignore comment content.
 			l.Column++
 			token.Type = fract.TypeIgnore
@@ -144,7 +148,9 @@ func (l *Lexer) Generate() objects.Token {
 	}
 
 	// Content is empty.
-	if ln == "" { return token }
+	if ln == "" {
+		return token
+	}
 
 	// Set token values.
 	token.Column = l.Column
@@ -166,7 +172,7 @@ func (l *Lexer) Generate() objects.Token {
 	switch check := getNumeric(ln); {
 	case (check != "" &&
 		(l.lastToken.Value == "" || l.lastToken.Type == fract.TypeOperator ||
-			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != grammar.TokenRBracket) ||
+			(l.lastToken.Type == fract.TypeBrace && l.lastToken.Value != "]") ||
 			l.lastToken.Type == fract.TypeStatementTerminator || l.lastToken.Type == fract.TypeLoop ||
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
@@ -203,8 +209,8 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = check
 		token.Type = fract.TypeValue
 		return token
-	case strings.HasPrefix(ln, grammar.TokenSemicolon): // Statement terminator.
-		token.Value = grammar.TokenSemicolon
+	case ln[0] == ';': // Statement terminator.
+		token.Value = ";"
 		token.Type = fract.TypeStatementTerminator
 		l.Line--
 	case strings.HasPrefix(ln, grammar.AdditionAssignment): // Addition assignment.
@@ -246,10 +252,10 @@ func (l *Lexer) Generate() objects.Token {
 	case strings.HasPrefix(ln, grammar.IntegerDivideWithBigger): // Integer divide with bigger.
 		token.Value = grammar.IntegerDivideWithBigger
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenPlus): // Addition.
-		token.Value = grammar.TokenPlus
+	case ln[0] == '+': // Addition.
+		token.Value = "+"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenMinus): // Subtraction.
+	case ln[0] == '-': // Subtraction.
 		/* Check variable name. */
 		if check := getName(ln); check != "" { // Name.
 			if !l.processName(&token, check) {
@@ -257,55 +263,55 @@ func (l *Lexer) Generate() objects.Token {
 			}
 			break
 		}
-		token.Value = grammar.TokenMinus
+		token.Value = "-"
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.Exponentiation): // Exponentiation.
 		token.Value = grammar.Exponentiation
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenStar): // Multiplication.
-		token.Value = grammar.TokenStar
+	case ln[0] == '*': // Multiplication.
+		token.Value = "*"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenSlash): // Division.
-		token.Value = grammar.TokenSlash
+	case ln[0] == '/': // Division.
+		token.Value = "/"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenPercent): // Mod.
-		token.Value = grammar.TokenPercent
+	case ln[0] == '%': // Mod.
+		token.Value = "%"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenBackslash): // Divisin with bigger.
-		token.Value = grammar.TokenBackslash
+	case ln[0] == '\\': // Divisin with bigger.
+		token.Value = "\\"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenLParenthes): // Open parentheses.
+	case ln[0] == '(': // Open parentheses.
 		l.ParenthesCount++
-		token.Value = grammar.TokenLParenthes
+		token.Value = "("
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.TokenRParenthes): // Close parentheses.
+	case ln[0] == ')': // Close parentheses.
 		l.ParenthesCount--
 		if l.ParenthesCount < 0 {
 			l.Error("The extra parentheses are closed!")
 		}
-		token.Value = grammar.TokenRParenthes
+		token.Value = ")"
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.TokenLBrace): // Open brace.
+	case ln[0] == '{': // Open brace.
 		l.BraceCount++
-		token.Value = grammar.TokenLBrace
+		token.Value = "{"
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.TokenRBrace): // Close brace.
+	case ln[0] == '}': // Close brace.
 		l.BraceCount--
 		if l.BraceCount < 0 {
 			l.Error("The extra brace are closed!")
 		}
-		token.Value = grammar.TokenRBrace
+		token.Value = "}"
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.TokenLBracket): // Open bracket.
+	case ln[0] == '[': // Open bracket.
 		l.BracketCount++
-		token.Value = grammar.TokenLBracket
+		token.Value = "["
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.TokenRBracket): // Close bracket.
+	case ln[0] == ']': // Close bracket.
 		l.BracketCount--
 		if l.BracketCount < 0 {
 			l.Error("The extra bracket are closed!")
 		}
-		token.Value = grammar.TokenRBracket
+		token.Value = "]"
 		token.Type = fract.TypeBrace
 	case strings.HasPrefix(ln, grammar.LeftBinaryShift): // Left shift.
 		token.Value = grammar.LeftBinaryShift
@@ -313,8 +319,8 @@ func (l *Lexer) Generate() objects.Token {
 	case strings.HasPrefix(ln, grammar.RightBinaryShift): // Right shift.
 		token.Value = grammar.RightBinaryShift
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenComma): // Comma.
-		token.Value = grammar.TokenComma
+	case ln[0] == ',': // Comma.
+		token.Value = ","
 		token.Type = fract.TypeComma
 	case strings.HasPrefix(ln, grammar.LogicalAnd): // Logical and (&&).
 		token.Value = grammar.LogicalAnd
@@ -322,14 +328,14 @@ func (l *Lexer) Generate() objects.Token {
 	case strings.HasPrefix(ln, grammar.LogicalOr): // Logical or (||).
 		token.Value = grammar.LogicalOr
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenVerticalBar): // Vertical bar.
-		token.Value = grammar.TokenVerticalBar
+	case ln[0] == '|': // Vertical bar.
+		token.Value = "|"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenAmper): // Amper.
-		token.Value = grammar.TokenAmper
+	case ln[0] == '&': // Amper.
+		token.Value = "&"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenCaret): // Bitwise exclusive or(^).
-		token.Value = grammar.TokenCaret
+	case ln[0] == '^': // Bitwise exclusive or(^).
+		token.Value = "^"
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.GreaterEquals): // Greater than or equals to (>=).
 		token.Value = grammar.GreaterEquals
@@ -343,14 +349,14 @@ func (l *Lexer) Generate() objects.Token {
 	case strings.HasPrefix(ln, grammar.NotEquals): // Not equals to (<>).
 		token.Value = grammar.NotEquals
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenGreat): // Greater than (>).
-		token.Value = grammar.TokenGreat
+	case ln[0] == '>': // Greater than (>).
+		token.Value = ">"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenLess): // Less than (<).
-		token.Value = grammar.TokenLess
+	case ln[0] == '<': // Less than (<).
+		token.Value = "<"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.TokenEquals): // Equals(=).
-		token.Value = grammar.TokenEquals
+	case ln[0] == '=': // Equals(=).
+		token.Value = "="
 		token.Type = fract.TypeOperator
 	case strings.HasPrefix(ln, grammar.Params): // Params.
 		token.Value = grammar.Params
@@ -416,18 +422,18 @@ func (l *Lexer) Generate() objects.Token {
 		l.RangeComment = true
 		token.Value = grammar.RangeCommentOpen
 		token.Type = fract.TypeIgnore
-	case strings.HasPrefix(ln, grammar.TokenSharp): // Singleline comment or macro.
+	case ln[0] == '#': // Singleline comment or macro.
 		if isMacro(ln) {
-			token.Value = grammar.TokenSharp
+			token.Value = "#"
 			token.Type = fract.TypeMacro
 		} else {
 			l.File.Lines[l.Line-1] = l.File.Lines[l.Line-1][:l.Column-1] // Remove comment from original line.
 			return token
 		}
-	case strings.HasPrefix(ln, grammar.TokenQuote): // String.
-		l.lexString(&token, grammar.TokenQuote[0], fln)
-	case strings.HasPrefix(ln, grammar.TokenDoubleQuote): // String.
-		l.lexString(&token, grammar.TokenDoubleQuote[0], fln)
+	case ln[0] == '\'': // String.
+		l.lexString(&token, '\'', fln)
+	case ln[0] == '"': // String.
+		l.lexString(&token, '"', fln)
 	default: // Alternates
 		/* Check variable name. */
 		if check := getName(ln); check != "" { // Name.

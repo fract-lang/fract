@@ -7,7 +7,6 @@ import (
 	"github.com/fract-lang/fract/internal/functions/embed"
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
@@ -15,7 +14,7 @@ import (
 
 // isParamSet Argument type is param set?
 func isParamSet(tokens []objects.Token) bool {
-	return tokens[0].Type == fract.TypeName && tokens[1].Value == grammar.TokenEquals
+	return tokens[0].Type == fract.TypeName && tokens[1].Value == "="
 }
 
 // getParamsArgumentValues decompose and returns params values.
@@ -28,9 +27,7 @@ func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, bra
 	for ; *index < len(tokens); *index++ {
 		current := tokens[*index]
 		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLParenthes ||
-				current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLBracket {
+			if current.Value == "(" || current.Value == "{" || current.Value == "[" {
 				*braceCount++
 			} else {
 				*braceCount--
@@ -140,7 +137,7 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 	)
 
 	// Decompose arguments.
-	if tokens, _ = parser.DecomposeBrace(&tokens, grammar.TokenLParenthes, grammar.TokenRParenthes, false); tokens != nil {
+	if tokens, _ = parser.DecomposeBrace(&tokens, "(", ")", false); tokens != nil {
 		var (
 			braceCount = new(int)
 			lastComma  = new(int)
@@ -149,9 +146,7 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 		for index := 0; index < len(tokens); index++ {
 			current := tokens[index]
 			if current.Type == fract.TypeBrace {
-				if current.Value == grammar.TokenLParenthes ||
-					current.Value == grammar.TokenLBrace ||
-					current.Value == grammar.TokenLBracket {
+				if current.Value == "(" || current.Value == "{" || current.Value == "[" {
 					*braceCount++
 				} else {
 					*braceCount--

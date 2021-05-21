@@ -188,7 +188,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			fract.Error(tokens[1], "Element name is not defined!")
 		}
 
-		if tokens[2].Value != grammar.TokenUnderscore {
+		if tokens[2].Value != "_" {
 			elementName = tokens[2].Value
 		}
 
@@ -273,7 +273,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	index := &i.variables[0]
 	element := &i.variables[1]
 
-	if index.Name == grammar.TokenUnderscore {
+	if index.Name == "_" {
 		index.Name = ""
 	}
 

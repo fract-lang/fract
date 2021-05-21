@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -16,9 +15,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		fract.Error(tokens[0], "Imported but what?")
 	}
 
-	if tokens[1].Type != fract.TypeName && (tokens[1].Type != fract.TypeValue ||
-		(!strings.HasPrefix(tokens[1].Value, grammar.TokenDoubleQuote) &&
-			!strings.HasPrefix(tokens[1].Value, grammar.TokenQuote))) {
+	if tokens[1].Type != fract.TypeName && (tokens[1].Type != fract.TypeValue || tokens[1].Value[0] != '"' && tokens[1].Value[0] != '.') {
 		fract.Error(tokens[1], "Import path should be string or standard path!")
 	}
 
@@ -48,13 +45,13 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 
 		switch tokens[index].Value {
 		default:
-			importpath = strings.ReplaceAll(tokens[index].Value, grammar.TokenDot, string(os.PathSeparator))
+			importpath = strings.ReplaceAll(tokens[index].Value, ".", string(os.PathSeparator))
 		}
 	} else {
 		importpath = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
 			i.processValue([]objects.Token{tokens[index]}).Content[0].Data
 	}
-	
+
 	importpath = path.Join(fract.ExecutablePath, importpath)
 
 	info, err := os.Stat(importpath)

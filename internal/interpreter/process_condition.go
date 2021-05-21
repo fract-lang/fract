@@ -25,12 +25,12 @@ func compareValues(operator string, data0, data1 objects.DataFrame) bool {
 			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
-	case grammar.TokenGreat: // Greater.
+	case ">": // Greater.
 		if (data0.Type == fract.VALString && data0.Data <= data1.Data) ||
 			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
 			return false
 		}
-	case grammar.TokenLess: // Less.
+	case "<": // Less.
 		if (data0.Type == fract.VALString && data0.Data >= data1.Data) ||
 			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
 			return false
