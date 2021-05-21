@@ -1,6 +1,7 @@
 package grammar
 
 const (
+	KwNaN           = "NaN"       // Not a number.
 	KwImport        = "open"      // Import packages.
 	KwFunction      = "func"      // Function define.
 	KwDelete        = "del"       // Delete define(s).
