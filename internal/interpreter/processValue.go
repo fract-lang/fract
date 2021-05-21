@@ -444,7 +444,7 @@ func applyMinus (minussed bool, value objects.Value) objects.Value {
 	return val
 }
 
-func (i *Interpreter) processOperationValue(first bool, operation *valueProcess, tokens *[]objects.Token, index int) int {
+func (i *Interpreter) processOperationValue(first bool, operation *valueProcess, parts *[]objects.Token, index int) int {
 	var (
 		minussed bool
 		token    = operation.First
@@ -457,8 +457,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 	minussed = token.Type == fract.TypeName && token.Value[0] == '-'
 
 	if token.Type == fract.TypeName {
-		if index < len(*tokens)-1 {
-			next := (*tokens)[index+1]
+		if index < len(*parts)-1 {
+			next := (*parts)[index+1]
 			// Array?
 			if next.Type == fract.TypeBrace {
 				if next.Value == grammar.TokenLBracket {
@@ -470,8 +470,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					// Find close bracket.
 					cindex := index + 1
 					bracketCount := 1
-					for ; cindex < len(*tokens); cindex++ {
-						current := (*tokens)[cindex]
+					for ; cindex < len(*parts); cindex++ {
+						current := (*parts)[cindex]
 						if current.Type == fract.TypeBrace {
 							if current.Value == grammar.TokenLBracket {
 								bracketCount++
@@ -484,7 +484,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 						}
 					}
 
-					valueList := vector.Sublist(*tokens, index+2, cindex-index-3)
+					valueList := vector.Sublist(*parts, index+2, cindex-index-3)
 					// Index value is empty?
 					if valueList == nil {
 						fract.Error(token, "Index is not defined!")
@@ -492,18 +492,18 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 
 					value := i.processValue(valueList)
 					if value.Array {
-						fract.Error((*tokens)[index], "Arrays is not used in index access!")
+						fract.Error((*parts)[index], "Arrays is not used in index access!")
 					} else if value.Content[0].Type != fract.VALInteger {
-						fract.Error((*tokens)[index], "Only integer values can used in index access!")
+						fract.Error((*parts)[index], "Only integer values can used in index access!")
 					}
 					position, err := strconv.Atoi(value.Content[0].Data)
 					if err != nil {
-						fract.Error((*tokens)[index], "Invalid value!")
+						fract.Error((*parts)[index], "Invalid value!")
 					}
 
 					variable := source.variables[vindex]
 					if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
-						fract.Error((*tokens)[index], "Index accessor is cannot used with non-array variables!")
+						fract.Error((*parts)[index], "Index accessor is cannot used with non-array variables!")
 					}
 
 					if variable.Value.Array {
@@ -513,9 +513,10 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					}
 
 					if position == -1 {
-						fract.Error((*tokens)[index], "Index is out of range!")
+						fract.Error((*parts)[index], "Index is out of range!")
 					}
-					vector.RemoveRange(tokens, index+1, cindex-index-1)
+
+					vector.RemoveRange(parts, index+1, cindex-index-1)
 
 					var data objects.DataFrame
 					if variable.Value.Array {
@@ -545,8 +546,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					// Find close parentheses.
 					cindex := index + 1
 					bracketCount := 1
-					for ; cindex < len(*tokens); cindex++ {
-						current := (*tokens)[cindex]
+					for ; cindex < len(*parts); cindex++ {
+						current := (*parts)[cindex]
 						if current.Type == fract.TypeBrace {
 							if current.Value == grammar.TokenLParenthes {
 								bracketCount++
@@ -558,11 +559,11 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 							}
 						}
 					}
-					value := i.processFunctionCall(*vector.Sublist(*tokens, index, cindex-index))
+					value := i.processFunctionCall(*vector.Sublist(*parts, index, cindex-index))
 					if !operation.FirstV.Array && value.Content == nil {
 						fract.Error(token, "Function is not return any value!")
 					}
-					vector.RemoveRange(tokens, index+1, cindex-index-1)
+					vector.RemoveRange(parts, index+1, cindex-index-1)
 					value = applyMinus(minussed, value)
 					if first {
 						operation.FirstV = value
@@ -593,7 +594,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			bracketCount := 1
 			oindex := index - 1
 			for ; oindex >= 0; oindex-- {
-				current := (*tokens)[oindex]
+				current := (*parts)[oindex]
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenRBracket {
 						bracketCount++
@@ -607,28 +608,28 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			}
 
 			// Finished?
-			if oindex == 0 {
+			if oindex == 0 || (*parts)[oindex-1].Type != fract.TypeName {
 				if first {
 					operation.FirstV.Array = true
 					operation.FirstV.Content = i.processArrayValue(
-						vector.Sublist(*tokens, oindex, index-oindex+1)).Content
+						vector.Sublist(*parts, oindex, index-oindex+1)).Content
 					operation.FirstV = applyMinus(minussed, operation.FirstV)
 				} else {
 					operation.SecondV.Array = true
 					operation.SecondV.Content = i.processArrayValue(
-						vector.Sublist(*tokens, oindex, index-oindex+1)).Content
+						vector.Sublist(*parts, oindex, index-oindex+1)).Content
 					operation.SecondV = applyMinus(minussed, operation.SecondV)
 				}
-				vector.RemoveRange(tokens, oindex, index-oindex)
-				return index - oindex
+				vector.RemoveRange(parts, oindex, index-oindex)
+				return index-oindex
 			}
 
-			endToken := (*tokens)[oindex-1]
+			endToken := (*parts)[oindex-1]
 			vindex, source := i.varIndexByName(endToken)
 			if vindex == -1 {
 				fract.Error(endToken, "Variable is not defined in this name!: "+endToken.Value)
 			}
-			valueList := vector.Sublist(*tokens, oindex+1, index-oindex-1)
+			valueList := vector.Sublist(*parts, oindex+1, index-oindex-1)
 			// Index value is empty?
 			if valueList == nil {
 				fract.Error(endToken, "Index is not defined!")
@@ -636,20 +637,20 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 
 			value := i.processValue(valueList)
 			if value.Array {
-				fract.Error((*tokens)[index], "Arrays is not used in index access!")
+				fract.Error((*parts)[index], "Arrays is not used in index access!")
 			} else if value.Content[0].Type != fract.VALInteger {
-				fract.Error((*tokens)[index], "Only integer values can used in index access!")
+				fract.Error((*parts)[index], "Only integer values can used in index access!")
 			}
 
 			position, err := strconv.Atoi(value.Content[0].Data)
 			if err != nil {
-				fract.Error((*tokens)[oindex], "Invalid value!")
+				fract.Error((*parts)[oindex], "Invalid value!")
 			}
 
 			variable := source.variables[vindex]
 
 			if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
-				fract.Error((*tokens)[oindex], "Index accessor is cannot used with non-array variables!")
+				fract.Error((*parts)[oindex], "Index accessor is cannot used with non-array variables!")
 			}
 
 			if variable.Value.Array {
@@ -659,9 +660,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			}
 
 			if position == -1 {
-				fract.Error((*tokens)[oindex], "Index is out of range!")
+				fract.Error((*parts)[oindex], "Index is out of range!")
 			}
-			vector.RemoveRange(tokens, oindex-1, index-oindex+1)
+			vector.RemoveRange(parts, oindex-1, index-oindex+1)
 
 			var data objects.DataFrame
 			if variable.Value.Array {
@@ -687,15 +688,15 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				operation.SecondV = applyMinus(minussed, operation.SecondV)
 			}
 
-			return index - oindex + 1
+			return index-oindex+1
 		} else if token.Value == grammar.TokenLBracket {
 			// Array initializer.
 
 			// Find close brace.
 			cindex := index + 1
 			braceCount := 1
-			for ; cindex < len(*tokens); cindex++ {
-				current := (*tokens)[cindex]
+			for ; cindex < len(*parts); cindex++ {
+				current := (*parts)[cindex]
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenLBracket {
 						braceCount++
@@ -708,13 +709,13 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}
 			}
 
-			value := applyMinus(minussed, i.processArrayValue(vector.Sublist(*tokens, index, cindex-index+1)))
+			value := applyMinus(minussed, i.processArrayValue(vector.Sublist(*parts, index, cindex-index+1)))
 			if first {
 				operation.FirstV = value
 			} else {
 				operation.SecondV = value
 			}
-			vector.RemoveRange(tokens, index+1, cindex-index-1)
+			vector.RemoveRange(parts, index+1, cindex-index)
 			return 0
 		} else if token.Value == grammar.TokenRParenthes {
 			// Function.
@@ -723,7 +724,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			bracketCount := 1
 			oindex := index - 1
 			for ; oindex >= 0; oindex-- {
-				current := (*tokens)[oindex]
+				current := (*parts)[oindex]
 				if current.Type == fract.TypeBrace {
 					if current.Value == grammar.TokenRBracket {
 						bracketCount++
@@ -736,9 +737,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}
 			}
 			oindex++
-			value := i.processFunctionCall(*vector.Sublist(*tokens, oindex, index-oindex+1))
+			value := i.processFunctionCall(*vector.Sublist(*parts, oindex, index-oindex+1))
 			if value.Content == nil {
-				fract.Error((*tokens)[oindex], "Function is not return any value!")
+				fract.Error((*parts)[oindex], "Function is not return any value!")
 			}
 			value = applyMinus(minussed, value)
 			if first {
@@ -746,7 +747,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			} else {
 				operation.SecondV = value
 			}
-			vector.RemoveRange(tokens, oindex, index-oindex)
+			vector.RemoveRange(parts, oindex, index-oindex)
 			return index - oindex
 		}
 	}
@@ -907,6 +908,7 @@ func (i *Interpreter) processValue(tokens *[]objects.Token) objects.Value {
 			var operation valueProcess
 			operation.First = (*parts)[priorityIndex-1]
 			priorityIndex -= i.processOperationValue(true, &operation, parts, priorityIndex-1)
+			
 			operation.Operator = (*parts)[priorityIndex]
 
 			operation.Second = (*parts)[priorityIndex+1]
