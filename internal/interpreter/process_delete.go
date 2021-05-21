@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -34,9 +33,9 @@ func (i *Interpreter) processDelete(tokens []objects.Token) {
 
 		if index < tokenLen-1 {
 			next := tokens[index+1]
-			if next.Type == fract.TypeBrace && next.Value == grammar.TokenLParenthes {
+			if next.Type == fract.TypeBrace && next.Value == "(" {
 				nnext := tokens[index+2]
-				if !(nnext.Type == fract.TypeBrace && nnext.Value == grammar.TokenRParenthes) {
+				if !(nnext.Type == fract.TypeBrace && nnext.Value == ")") {
 					fract.Error(nnext, "Invalid syntax!")
 				}
 				index += 2

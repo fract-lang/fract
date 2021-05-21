@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
@@ -17,7 +16,7 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
-	} else if strings.Contains(_name.Value, grammar.TokenDot) {
+	} else if strings.Contains(_name.Value, ".") {
 		fract.Error(_name, "Names is cannot include dot!")
 	}
 
@@ -41,7 +40,7 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 	}
 
 	dtToken := tokens[tokenLen-1]
-	if dtToken.Type != fract.TypeBrace || dtToken.Value != grammar.TokenRParenthes {
+	if dtToken.Type != fract.TypeBrace || dtToken.Value != ")" {
 		fract.Error(dtToken, "Invalid syntax!")
 	}
 
@@ -72,15 +71,14 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 				paramName = true
 
 				// Default value definition?
-				if current.Value == grammar.TokenEquals {
+				if current.Value == "=" {
 					brace := 0
 					index++
 					start := index
 					for ; index < len(paramList); index++ {
 						current = paramList[index]
 						if current.Type == fract.TypeBrace {
-							if current.Value == grammar.TokenLBrace || current.Value == grammar.TokenLParenthes ||
-								current.Value == grammar.TokenLBracket {
+							if current.Value == "{" || current.Value == "(" || current.Value == "[" {
 								brace++
 							} else {
 								brace--

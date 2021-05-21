@@ -27,7 +27,7 @@ type valueProcess struct {
 // processRange by value processor principles.
 func (i *Interpreter) processRange(tokens *[]objects.Token) {
 	for {
-		_range, found := parser.DecomposeBrace(tokens, grammar.TokenLParenthes, grammar.TokenRParenthes, true)
+		_range, found := parser.DecomposeBrace(tokens, "(", ")", true)
 
 		/* Parentheses are not found! */
 		if found == -1 {
@@ -37,7 +37,7 @@ func (i *Interpreter) processRange(tokens *[]objects.Token) {
 		val := i.processValue(_range)
 		if val.Array {
 			vector.Insert(tokens, found, objects.Token{
-				Value: grammar.TokenLBracket,
+				Value: "[",
 				Type:  fract.TypeBrace,
 			})
 			for _, current := range val.Content {
@@ -48,19 +48,19 @@ func (i *Interpreter) processRange(tokens *[]objects.Token) {
 				})
 				found++
 				vector.Insert(tokens, found, objects.Token{
-					Value: grammar.TokenComma,
+					Value: ",",
 					Type:  fract.TypeComma,
 				})
 			}
 			found++
 			vector.Insert(tokens, found, objects.Token{
-				Value: grammar.TokenRBracket,
+				Value: "]",
 				Type:  fract.TypeBrace,
 			})
 		} else {
 			if val.Content[0].Type == fract.VALString {
 				vector.Insert(tokens, found, objects.Token{
-					Value: grammar.TokenDoubleQuote + val.Content[0].Data + grammar.TokenDoubleQuote,
+					Value: "\"" + val.Content[0].Data + "\"",
 					Type:  fract.TypeValue,
 				})
 			} else {
@@ -77,10 +77,10 @@ func (i *Interpreter) processRange(tokens *[]objects.Token) {
 func solve(operator objects.Token, first, second float64) float64 {
 	var result float64
 
-	if operator.Value == grammar.TokenBackslash ||
+	if operator.Value == "\\" ||
 		operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
-		if operator.Value == grammar.TokenBackslash {
-			operator.Value = grammar.TokenSlash
+		if operator.Value == "\\" {
+			operator.Value = "/"
 		} else {
 			operator.Value = grammar.IntegerDivision
 		}
@@ -93,15 +93,13 @@ func solve(operator objects.Token, first, second float64) float64 {
 	}
 
 	switch operator.Value {
-	case grammar.TokenPlus: // Addition.
+	case "+": // Addition.
 		result = first + second
-	case grammar.TokenMinus: // Subtraction.
+	case "-": // Subtraction.
 		result = first - second
-	case grammar.TokenStar: // Multiply.
+	case "*": // Multiply.
 		result = first * second
-	case
-		grammar.TokenSlash,
-		grammar.IntegerDivision: // Division.
+	case "/", grammar.IntegerDivision: // Division.
 		if first == 0 || second == 0 {
 			fract.Error(operator, "Divide by zero!")
 		}
@@ -110,15 +108,15 @@ func solve(operator objects.Token, first, second float64) float64 {
 		if operator.Value == grammar.IntegerDivision {
 			result = math.RoundToEven(result)
 		}
-	case grammar.TokenVerticalBar: // Binary or.
+	case "|": // Binary or.
 		result = float64(int(first) | int(second))
-	case grammar.TokenAmper: // Binary and.
+	case "&": // Binary and.
 		result = float64(int(first) & int(second))
-	case grammar.TokenCaret: // Bitwise exclusive or.
+	case "^": // Bitwise exclusive or.
 		result = float64(int(first) ^ int(second))
 	case grammar.Exponentiation: // Exponentiation.
 		result = math.Pow(first, second)
-	case grammar.TokenPercent: // Mod.
+	case "%": // Mod.
 		result = math.Mod(first, second)
 	case grammar.LeftBinaryShift: // Left shift.
 		if second < 0 {
@@ -141,7 +139,7 @@ func solve(operator objects.Token, first, second float64) float64 {
 func readyDataFrame(process valueProcess, dataFrame objects.DataFrame) objects.DataFrame {
 	if process.FirstV.Content[0].Type == fract.VALString || process.SecondV.Content[0].Type == fract.VALString {
 		dataFrame.Type = fract.VALString
-	} else if process.Operator.Value == grammar.TokenSlash || process.Operator.Value == grammar.TokenBackslash ||
+	} else if process.Operator.Value == "/" || process.Operator.Value == "\\" ||
 		process.FirstV.Content[0].Type == fract.VALFloat || process.SecondV.Content[0].Type == fract.VALFloat {
 		dataFrame.Data = fract.FormatData(dataFrame)
 		return dataFrame
@@ -159,9 +157,9 @@ func solveProcess(process valueProcess) objects.Value {
 		if process.FirstV.Content[0].Type == process.SecondV.Content[0].Type { // Both string?
 			value.Content[0].Type = fract.VALString
 			switch process.Operator.Value {
-			case grammar.TokenPlus:
+			case "+":
 				value.Content[0].Data = process.FirstV.Content[0].Data + process.SecondV.Content[0].Data
-			case grammar.TokenMinus:
+			case "-":
 				firstLen := len(process.FirstV.Content[0].Data)
 				secondLen := len(process.SecondV.Content[0].Data)
 
@@ -207,7 +205,7 @@ func solveProcess(process valueProcess) objects.Value {
 					fract.Error(process.Second, "Array element count is not one or equals to first array!")
 				}
 
-				if strings.Contains(process.SecondV.Content[0].Data, grammar.TokenDot) {
+				if strings.Contains(process.SecondV.Content[0].Data, ".") {
 					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
 				}
 
@@ -217,9 +215,9 @@ func solveProcess(process valueProcess) objects.Value {
 				var sb strings.Builder
 				for _, char := range process.FirstV.Content[0].Data {
 					switch process.Operator.Value {
-					case grammar.TokenPlus:
+					case "+":
 						sb.WriteByte(byte(char + _rune))
-					case grammar.TokenMinus:
+					case "-":
 						sb.WriteByte(byte(char - _rune))
 					default:
 						fract.Error(process.Operator, "This operator is not defined for string types!")
@@ -237,9 +235,9 @@ func solveProcess(process valueProcess) objects.Value {
 				_rune := rune(result)
 				for _, char := range process.FirstV.Content[0].Data {
 					switch process.Operator.Value {
-					case grammar.TokenPlus:
+					case "+":
 						sb.WriteByte(byte(char + _rune))
-					case grammar.TokenMinus:
+					case "-":
 						sb.WriteByte(byte(char - _rune))
 					default:
 						fract.Error(process.Operator, "This operator is not defined for string types!")
@@ -260,7 +258,7 @@ func solveProcess(process valueProcess) objects.Value {
 					fract.Error(process.Second, "Array element count is not one or equals to first array!")
 				}
 
-				if strings.Contains(process.FirstV.Content[0].Data, grammar.TokenDot) {
+				if strings.Contains(process.FirstV.Content[0].Data, ".") {
 					fract.Error(process.Second, "Only string and integer values cannot concatenate string values!")
 				}
 
@@ -270,9 +268,9 @@ func solveProcess(process valueProcess) objects.Value {
 				var sb strings.Builder
 				for _, char := range process.SecondV.Content[0].Data {
 					switch process.Operator.Value {
-					case grammar.TokenPlus:
+					case "+":
 						sb.WriteByte(byte(char + _rune))
-					case grammar.TokenMinus:
+					case "-":
 						sb.WriteByte(byte(char - _rune))
 					default:
 						fract.Error(process.Operator, "This operator is not defined for string types!")
@@ -289,9 +287,9 @@ func solveProcess(process valueProcess) objects.Value {
 				_rune := rune(result)
 				for _, char := range process.SecondV.Content[0].Data {
 					switch process.Operator.Value {
-					case grammar.TokenPlus:
+					case "+":
 						sb.WriteByte(byte(char + _rune))
-					case grammar.TokenMinus:
+					case "-":
 						sb.WriteByte(byte(char - _rune))
 					default:
 						fract.Error(process.Operator, "This operator is not defined for string types!")
@@ -451,7 +449,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			next := (*parts)[index+1]
 			// Array?
 			if next.Type == fract.TypeBrace {
-				if next.Value == grammar.TokenLBracket {
+				if next.Value == "[" {
 					vindex, source := i.varIndexByName(token)
 					if vindex == -1 {
 						fract.Error(token, "Variable is not defined in this name!: "+token.Value)
@@ -463,9 +461,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					for ; cindex < len(*parts); cindex++ {
 						current := (*parts)[cindex]
 						if current.Type == fract.TypeBrace {
-							if current.Value == grammar.TokenLBracket {
+							if current.Value == "[" {
 								bracketCount++
-							} else if current.Value == grammar.TokenRBracket {
+							} else if current.Value == "]" {
 								bracketCount--
 								if bracketCount == 0 {
 									break
@@ -532,16 +530,16 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 						operation.SecondV = applyMinus(minussed, operation.SecondV)
 					}
 					return 0
-				} else if next.Value == grammar.TokenLParenthes { // Function?
+				} else if next.Value == "(" { // Function?
 					// Find close parentheses.
 					cindex := index + 1
 					bracketCount := 1
 					for ; cindex < len(*parts); cindex++ {
 						current := (*parts)[cindex]
 						if current.Type == fract.TypeBrace {
-							if current.Value == grammar.TokenLParenthes {
+							if current.Value == "(" {
 								bracketCount++
-							} else if current.Value == grammar.TokenRParenthes {
+							} else if current.Value == ")" {
 								bracketCount--
 								if bracketCount == 0 {
 									break
@@ -579,16 +577,16 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 		}
 		return 0
 	} else if token.Type == fract.TypeBrace {
-		if token.Value == grammar.TokenRBracket {
+		if token.Value == "}" {
 			// Find open bracket.
 			bracketCount := 1
 			oindex := index - 1
 			for ; oindex >= 0; oindex-- {
 				current := (*parts)[oindex]
 				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenRBracket {
+					if current.Value == "}" {
 						bracketCount++
-					} else if current.Value == grammar.TokenLBracket {
+					} else if current.Value == "{" {
 						bracketCount--
 						if bracketCount == 0 {
 							break
@@ -677,7 +675,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			}
 
 			return index - oindex + 1
-		} else if token.Value == grammar.TokenLBracket {
+		} else if token.Value == "[" {
 			// Array initializer.
 
 			// Find close brace.
@@ -686,9 +684,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			for ; cindex < len(*parts); cindex++ {
 				current := (*parts)[cindex]
 				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenLBracket {
+					if current.Value == "[" {
 						braceCount++
-					} else if current.Value == grammar.TokenRBracket {
+					} else if current.Value == "]" {
 						braceCount--
 						if braceCount == 0 {
 							break
@@ -705,7 +703,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			}
 			vector.RemoveRange(parts, index+1, cindex-index)
 			return 0
-		} else if token.Value == grammar.TokenRParenthes {
+		} else if token.Value == "]" {
 			// Function.
 
 			// Find open parentheses.
@@ -714,9 +712,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			for ; oindex >= 0; oindex-- {
 				current := (*parts)[oindex]
 				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenRBracket {
+					if current.Value == "]" {
 						bracketCount++
-					} else if current.Value == grammar.TokenLBracket {
+					} else if current.Value == "[" {
 						bracketCount--
 						if bracketCount == 0 {
 							break
@@ -745,8 +743,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 	//
 
 	if (token.Type == fract.TypeValue && token.Value != grammar.KwTrue && token.Value != grammar.KwFalse) &&
-		!strings.HasPrefix(token.Value, grammar.TokenQuote) && !strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) {
-		if strings.Contains(token.Value, grammar.TokenDot) || strings.ContainsAny(token.Value, "eE") {
+		token.Value[0] != '\'' && token.Value[0] != '"' {
+		if strings.Contains(token.Value, ".") || strings.ContainsAny(token.Value, "eE") {
 			token.Type = fract.VALFloat
 		} else {
 			token.Type = fract.VALInteger
@@ -761,8 +759,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 
 	if first {
 		operation.FirstV.Array = false
-		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
-			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
+		if token.Value[0] == '\'' || token.Value[0] == '"' { // String?
 			operation.FirstV.Content = []objects.DataFrame{{
 				Data: token.Value[1 : len(token.Value)-1],
 				Type: fract.VALString,
@@ -773,8 +770,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 		}
 	} else {
 		operation.SecondV.Array = false
-		if strings.HasPrefix(token.Value, grammar.TokenQuote) ||
-			strings.HasPrefix(token.Value, grammar.TokenDoubleQuote) { // String?
+		if token.Value[0] == '\'' || token.Value[0] == '"' { // String?
 			operation.SecondV.Content = []objects.DataFrame{{
 				Data: token.Value[1 : len(token.Value)-1],
 				Type: fract.VALString,
@@ -821,9 +817,7 @@ func (i *Interpreter) processArrayValue(tokens []objects.Token) objects.Value {
 	brace := 0
 	for index := 1; index < len(tokens)-1; index++ {
 		if current := tokens[index]; current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLBracket ||
-				current.Value == grammar.TokenLParenthes {
+			if current.Value == "[" || current.Value == "{" || current.Value == "(" {
 				brace++
 			} else {
 				brace--
@@ -860,17 +854,14 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 	brace := 0
 	for _, current := range tokens {
 		if current.Type == fract.TypeBrace {
-			if current.Value == grammar.TokenLBrace ||
-				current.Value == grammar.TokenLBracket ||
-				current.Value == grammar.TokenLParenthes {
+			if current.Value == "{" || current.Value == "[" || current.Value == "(" {
 				brace++
 			} else {
 				brace--
 			}
 		} else if brace == 0 && current.Type == fract.TypeOperator &&
-			(current.Value == grammar.LogicalAnd || current.Value == grammar.LogicalOr ||
-				current.Value == grammar.Equals || current.Value == grammar.NotEquals ||
-				current.Value == grammar.TokenGreat || current.Value == grammar.TokenLess ||
+			(current.Value == grammar.LogicalAnd || current.Value == grammar.LogicalOr || current.Value == grammar.Equals ||
+				current.Value == grammar.NotEquals || current.Value == ">" || current.Value == "<" ||
 				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
 			value.Content = []objects.DataFrame{{
 				Data: i.processCondition(tokens),
@@ -896,7 +887,7 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 
 			resultValue := solveProcess(operation)
 
-			operation.Operator.Value = grammar.TokenPlus
+			operation.Operator.Value = "+"
 			operation.Second = (*parts)[priorityIndex+1]
 			operation.FirstV = value
 			operation.SecondV = resultValue

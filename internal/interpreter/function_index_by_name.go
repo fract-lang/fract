@@ -5,7 +5,6 @@ import (
 	"unicode"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -17,7 +16,7 @@ func (i *Interpreter) functionIndexByName(name objects.Token) (int, *Interpreter
 		name.Value = name.Value[1:]
 	}
 
-	if index := strings.Index(name.Value, grammar.TokenDot); index != -1 {
+	if index := strings.Index(name.Value, "."); index != -1 {
 		if i.importIndexByName(name.Value[:index]) == -1 {
 			fract.Error(name, "'"+name.Value[:index]+"' is not defined!")
 		}

@@ -17,16 +17,16 @@ func IndexProcessPriority(tokens []objects.Token) int {
 
 	for index, token := range tokens {
 		if token.Type == fract.TypeBrace {
-			if token.Value == grammar.TokenLBracket ||
-				token.Value == grammar.TokenLBrace ||
-				token.Value == grammar.TokenLParenthes {
+			if token.Value == "[" || token.Value == "{" || token.Value == "(" {
 				bracket++
 			} else {
 				bracket--
 			}
 		}
 
-		if bracket > 0 { continue }
+		if bracket > 0 {
+			continue
+		}
 
 		// Exponentiation or shifts.
 		if token.Value == grammar.LeftBinaryShift || token.Value == grammar.RightBinaryShift ||
@@ -35,23 +35,17 @@ func IndexProcessPriority(tokens []objects.Token) int {
 		}
 
 		switch token.Value {
-		case grammar.TokenPercent: // Modulus.
+		case "%": // Modulus.
 			return index
-		case grammar.TokenStar,
-			grammar.TokenSlash,
-			grammar.TokenBackslash,
-			grammar.IntegerDivision,
-			grammar.IntegerDivideWithBigger: // Multiply or division.
+		case "*", "/", "\\", grammar.IntegerDivision, grammar.IntegerDivideWithBigger: // Multiply or division.
 			if multiplyOrDivive == -1 {
 				multiplyOrDivive = index
 			}
-		case grammar.TokenPlus,
-			grammar.TokenMinus: // Addition or subtraction.
+		case "+", "-": // Addition or subtraction.
 			if additionOrSubtraction == -1 {
 				additionOrSubtraction = index
 			}
-		case grammar.TokenAmper,
-			grammar.TokenVerticalBar:
+		case "&", "|":
 			if binaryOrAnd == -1 {
 				binaryOrAnd = index
 			}

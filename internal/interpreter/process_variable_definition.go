@@ -14,9 +14,9 @@ import (
 func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.Token) {
 	_name := tokens[0]
 
-	if strings.Contains(_name.Value, grammar.TokenDot) {
+	if strings.Contains(_name.Value, ".") {
 		fract.Error(_name, "Names is cannot include dot!")
-	} else if _name.Value == grammar.TokenUnderscore {
+	} else if _name.Value == "_" {
 		fract.Error(_name, "Ignore operator is cannot be variable name!")
 	}
 
@@ -34,7 +34,7 @@ func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.
 
 	setter := tokens[1]
 	// Setter is not a setter operator?
-	if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals {
+	if setter.Type != fract.TypeOperator && setter.Value != "=" {
 		fract.Error(setter, "This is not a setter operator!: "+setter.Value)
 	}
 
@@ -70,15 +70,13 @@ func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protecte
 
 	if pre.Type == fract.TypeName {
 		i.appendVariable(constant, protected, tokens[1:])
-	} else if pre.Type == fract.TypeBrace && pre.Value == grammar.TokenLParenthes {
+	} else if pre.Type == fract.TypeBrace && pre.Value == "(" {
 		tokens = tokens[2 : len(tokens)-1]
 		last := 0
 		bracket := 0
 		for index, token := range tokens {
 			if token.Type == fract.TypeBrace {
-				if token.Value == grammar.TokenLBrace ||
-					token.Value == grammar.TokenLBracket ||
-					token.Value == grammar.TokenLParenthes {
+				if token.Value == "{" || token.Value == "[" || token.Value == "(" {
 					bracket++
 				} else {
 					bracket--

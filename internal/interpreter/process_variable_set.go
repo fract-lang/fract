@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
@@ -18,7 +17,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 	// Name is not name?
 	if _name.Type != fract.TypeName {
 		fract.Error(_name, "This is not a valid name!")
-	} else if _name.Value == grammar.TokenUnderscore {
+	} else if _name.Value == "_" {
 		fract.Error(_name, "Ignore operator is cannot set!")
 	}
 
@@ -38,7 +37,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 	setIndex := -1
 
 	// Array setter?
-	if setter.Type == fract.TypeBrace && setter.Value == grammar.TokenLBracket {
+	if setter.Type == fract.TypeBrace && setter.Value == "{" {
 		// Variable is not array?
 		if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
 			fract.Error(setter, "Variable is not array!")
@@ -47,7 +46,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 		// Find close bracket.
 		for cindex := 2; cindex < len(tokens); cindex++ {
 			current := tokens[cindex]
-			if current.Type != fract.TypeBrace || current.Value != grammar.TokenRBracket {
+			if current.Type != fract.TypeBrace || current.Value != "}" {
 				continue
 			}
 
@@ -103,7 +102,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 		}
 
 		switch setter.Value {
-		case grammar.TokenEquals: // =
+		case "=": // =
 			if variable.Value.Array {
 				variable.Value.Content[setIndex] = value.Content[0]
 			} else {
@@ -158,13 +157,13 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 				} else {
 					bytes[setIndex] = value.Content[0].Data[0]
 				}
-				
+
 				variable.Value.Content[0].Data = string(bytes)
 			}
 		}
 	} else {
 		switch setter.Value {
-		case grammar.TokenEquals: // =
+		case "=": // =
 			variable.Value = value
 		default: // Other assignments.
 			variable.Value = solveProcess(

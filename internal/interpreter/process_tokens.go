@@ -24,19 +24,19 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 			brace := 0
 			for _, current := range tokens {
 				if current.Type == fract.TypeBrace {
-					if current.Value == grammar.TokenLBrace ||
-						current.Value == grammar.TokenLBracket ||
-						current.Value == grammar.TokenLParenthes {
+					if current.Value == "{" || current.Value == "[" || current.Value == "(" {
 						brace++
 					} else {
 						brace--
 					}
 				}
-				
-				if brace > 0 { continue }
+
+				if brace > 0 {
+					continue
+				}
 
 				if current.Type == fract.TypeOperator &&
-					(current.Value == grammar.TokenEquals ||
+					(current.Value == "=" ||
 						current.Value == grammar.AdditionAssignment ||
 						current.Value == grammar.SubtractionAssignment ||
 						current.Value == grammar.MultiplicationAssignment ||
