@@ -64,9 +64,7 @@ func interpret() {
 			}
 
 			// cacheTokens are empty?
-			if cacheTokens == nil {
-				continue
-			}
+			if cacheTokens == nil { continue }
 
 			// Check parentheses.
 			if preter.Lexer.BraceCount > 0 ||
@@ -120,7 +118,7 @@ func processCommand(ns, cmd string) {
 		ModuleMake.Process(cmd)
 	default:
 		if ModuleMake.Check(ns) {
-			ModuleMake.Process(ns + cmd)
+			ModuleMake.Process(ns)
 		} else {
 			fmt.Println("There is no such command!")
 		}
@@ -138,12 +136,12 @@ func init() {
 	}
 
 	// Not started with arguments.
-	if len(os.Args) < 2 {
-		return
-	}
+	if len(os.Args) < 2 { return }
 
 	var sb strings.Builder
-	for _, current := range os.Args[1:] { sb.WriteString(" " + current) }
+	for _, current := range os.Args[1:] {
+		sb.WriteString(" " + current)
+	}
 	os.Args[0] = sb.String()[1:]
 
 	processCommand(commands.GetNamespace(os.Args[0]), commands.RemoveNamespace(os.Args[0]))
@@ -163,7 +161,5 @@ func main() {
 	block.Try = interpret
 	block.Catch = catch
 
-	for {
-		block.Do()
-	}
+	for { block.Do() }
 }

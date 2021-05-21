@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func (i *Interpreter) Interpret() {
-	if i.Lexer.File.Path == fract.Stdin {
+	if i.Lexer.File.Path == "<stdin>" {
 		// Interpret all lines.
 		for i.index = 0; i.index < len(i.Tokens); i.index++ {
 			i.processTokens(i.Tokens[i.index])
@@ -21,9 +22,7 @@ func (i *Interpreter) Interpret() {
 	}
 
 	// Lexer is finished.
-	if i.Lexer.Finished {
-		return
-	}
+	if i.Lexer.Finished { return }
 
 	i.ready()
 
@@ -37,11 +36,10 @@ func (i *Interpreter) Interpret() {
 		content, err := ioutil.ReadDir(dir)
 
 		if err == nil {
-			_, mainName := path.Split(i.Lexer.File.Path)
+			_, mainName := filepath.Split(i.Lexer.File.Path)
 			for _, current := range content {
 				// Skip directories.
-				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) ||
-				current.Name() == mainName {
+				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) || current.Name() == mainName {
 					continue
 				}
 				
