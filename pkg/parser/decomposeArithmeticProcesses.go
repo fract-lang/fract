@@ -9,7 +9,7 @@ import (
 func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 	var (
 		operator  bool
-		last      objects.Token
+		lastIndex int
 		processes []objects.Token
 	)
 
@@ -18,13 +18,13 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 			if !operator {
 				fract.Error(token, "Operator spam!")
 			}
-			last = token
+			lastIndex = index
 			processes = append(processes, token)
 			operator = false
 		} else if token.Type == fract.TypeValue || token.Type == fract.TypeName ||
 			token.Type == fract.TypeBooleanTrue || token.Type == fract.TypeBooleanFalse ||
 			token.Type == fract.TypeBrace || token.Type == fract.TypeComma {
-			last = token
+			lastIndex = index
 			processes = append(processes, token)
 			operator = index < len(tokens)-1
 		} else {
@@ -32,7 +32,23 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 		}
 	}
 
-	if last.Type == fract.TypeOperator {
+	if lastIndex < len(tokens) {
+		token := tokens[lastIndex]
+		if token.Type == fract.TypeOperator {
+			if !operator {
+				fract.Error(token, "Operator spam!")
+			}
+			processes = append(processes, token)
+		} else if token.Type == fract.TypeValue || token.Type == fract.TypeName ||
+			token.Type == fract.TypeBooleanTrue || token.Type == fract.TypeBooleanFalse ||
+			token.Type == fract.TypeBrace || token.Type == fract.TypeComma {
+			processes = append(processes, token)
+		} else {
+			fract.Error(token, "Invalid value!")
+		}
+	}
+
+	if processes[len(processes)-1].Type == fract.TypeOperator {
 		fract.Error(processes[len(processes)-1], "Operator defined, but for what?")
 	}
 
