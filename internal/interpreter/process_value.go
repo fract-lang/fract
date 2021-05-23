@@ -436,10 +436,12 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 	var (
 		minussed bool
 		token    = operation.First
+		result   = &operation.FirstV
 	)
 
 	if !first {
 		token = operation.Second
+		result = &operation.SecondV
 	}
 
 	minussed = token.Type == fract.TypeName && token.Value[0] == '-'
@@ -520,15 +522,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 						}
 					}
 
-					if first {
-						operation.FirstV.Content = []objects.DataFrame{data}
-						operation.FirstV.Array = false
-						operation.FirstV = applyMinus(minussed, operation.FirstV)
-					} else {
-						operation.SecondV.Content = []objects.DataFrame{data}
-						operation.SecondV.Array = false
-						operation.SecondV = applyMinus(minussed, operation.SecondV)
-					}
+					result.Content = []objects.DataFrame{data}
+					result.Array = false
+					*result = applyMinus(minussed, *result)
 					return 0
 				} else if next.Value == "(" { // Function?
 					// Find close parentheses.
@@ -552,12 +548,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 						fract.Error(token, "Function is not return any value!")
 					}
 					vector.RemoveRange(parts, index+1, cindex-index-1)
-					value = applyMinus(minussed, value)
-					if first {
-						operation.FirstV = value
-					} else {
-						operation.SecondV = value
-					}
+					*result = applyMinus(minussed, value)
 					return 0
 				}
 			}
@@ -570,11 +561,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 
 		variable := source.variables[vindex]
 
-		if first {
-			operation.FirstV = applyMinus(minussed, variable.Value)
-		} else {
-			operation.SecondV = applyMinus(minussed, variable.Value)
-		}
+		*result = applyMinus(minussed, variable.Value)
 		return 0
 	} else if token.Type == fract.TypeBrace {
 		if token.Value == "}" {
@@ -597,15 +584,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 
 			// Finished?
 			if oindex == 0 || (*parts)[oindex-1].Type != fract.TypeName {
-				if first {
-					operation.FirstV.Array = true
-					operation.FirstV.Content = i.processArrayValue(*vector.Sublist(*parts, oindex, index-oindex+1)).Content
-					operation.FirstV = applyMinus(minussed, operation.FirstV)
-				} else {
-					operation.SecondV.Array = true
-					operation.SecondV.Content = i.processArrayValue(*vector.Sublist(*parts, oindex, index-oindex+1)).Content
-					operation.SecondV = applyMinus(minussed, operation.SecondV)
-				}
+				result.Array = true
+				result.Content = i.processArrayValue(*vector.Sublist(*parts, oindex, index-oindex+1)).Content
+				*result = applyMinus(minussed, *result)
 				vector.RemoveRange(parts, oindex, index-oindex)
 				return index - oindex
 			}
@@ -664,15 +645,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}
 			}
 
-			if first {
-				operation.FirstV.Content = []objects.DataFrame{data}
-				operation.FirstV.Array = false
-				operation.FirstV = applyMinus(minussed, operation.FirstV)
-			} else {
-				operation.SecondV.Content = []objects.DataFrame{data}
-				operation.FirstV.Array = false
-				operation.SecondV = applyMinus(minussed, operation.SecondV)
-			}
+			result.Content = []objects.DataFrame{data}
+			result.Array = false
+			*result = applyMinus(minussed, *result)
 
 			return index - oindex + 1
 		} else if token.Value == "[" {
@@ -695,12 +670,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}
 			}
 
-			value := applyMinus(minussed, i.processArrayValue(*vector.Sublist(*parts, index, cindex-index+1)))
-			if first {
-				operation.FirstV = value
-			} else {
-				operation.SecondV = value
-			}
+			*result = applyMinus(minussed, i.processArrayValue(*vector.Sublist(*parts, index, cindex-index+1)))
 			vector.RemoveRange(parts, index+1, cindex-index)
 			return 0
 		} else if token.Value == "]" {
@@ -727,12 +697,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			if value.Content == nil {
 				fract.Error((*parts)[oindex], "Function is not return any value!")
 			}
-			value = applyMinus(minussed, value)
-			if first {
-				operation.FirstV = value
-			} else {
-				operation.SecondV = value
-			}
+			*result = applyMinus(minussed, value)
 			vector.RemoveRange(parts, oindex, index-oindex)
 			return index - oindex
 		}
@@ -757,48 +722,25 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 		}
 	}
 
-	if first {
-		operation.FirstV.Array = false
-		if token.Value[0] == '\'' || token.Value[0] == '"' { // String?
-			operation.FirstV.Content = []objects.DataFrame{{
-				Data: token.Value[1 : len(token.Value)-1],
-				Type: fract.VALString,
-			}}
-			token.Type = fract.TypeNone // Skip type check.
-		} else {
-			operation.FirstV.Content = []objects.DataFrame{{Data: token.Value}}
-		}
+	result.Array = false
+	if token.Value[0] == '\'' || token.Value[0] == '"' { // String?
+		result.Content = []objects.DataFrame{{
+			Data: token.Value[1 : len(token.Value)-1],
+			Type: fract.VALString,
+		}}
+		token.Type = fract.TypeNone // Skip type check.
 	} else {
-		operation.SecondV.Array = false
-		if token.Value[0] == '\'' || token.Value[0] == '"' { // String?
-			operation.SecondV.Content = []objects.DataFrame{{
-				Data: token.Value[1 : len(token.Value)-1],
-				Type: fract.VALString,
-			}}
-			token.Type = fract.TypeNone // Skip type check.
-		} else {
-			operation.SecondV.Content = []objects.DataFrame{{Data: token.Value}}
-		}
+		result.Content = []objects.DataFrame{{Data: token.Value}}
 	}
 
 	// Type check.
 	if token.Type != fract.TypeNone {
 		if token.Value == grammar.KwTrue || token.Value == grammar.KwFalse {
-			if first {
-				operation.FirstV.Content[0].Type = fract.VALBoolean
-				operation.FirstV = applyMinus(minussed, operation.FirstV)
-			} else {
-				operation.SecondV.Content[0].Type = fract.VALBoolean
-				operation.SecondV = applyMinus(minussed, operation.SecondV)
-			}
+			result.Content[0].Type = fract.VALBoolean
+			*result = applyMinus(minussed, *result)
 		} else if token.Type == fract.VALFloat { // Float?
-			if first {
-				operation.FirstV.Content[0].Type = fract.VALFloat
-				operation.FirstV = applyMinus(minussed, operation.FirstV)
-			} else {
-				operation.SecondV.Content[0].Type = fract.VALFloat
-				operation.SecondV = applyMinus(minussed, operation.SecondV)
-			}
+			result.Content[0].Type = fract.VALFloat
+			*result = applyMinus(minussed, *result)
 		}
 	}
 
