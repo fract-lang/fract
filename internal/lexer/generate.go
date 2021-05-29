@@ -36,7 +36,6 @@ func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	if fln[l.Column-1] != '\\' {
 		return false
 	}
-
 	l.Column++
 	if l.Column >= len(fln)+1 {
 		l.Error("Charray literal is not defined full!")
@@ -66,7 +65,6 @@ func (l *Lexer) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	default:
 		l.Error("Invalid escape sequence!")
 	}
-
 	return true
 }
 
@@ -89,7 +87,6 @@ func (l *Lexer) lexString(token *objects.Token, quote byte, fln string) {
 		l.Error("Close quote is not found!")
 	}
 	token.Type = fract.TypeValue
-
 	l.Column -= sb.Len() - 1
 }
 
@@ -101,7 +98,6 @@ func (l *Lexer) processName(token *objects.Token, check string) bool {
 			check = check[:len(check)-1]
 		}
 	}
-
 	// Name is finished with dot?
 	if check[len(check)-1] == '.' {
 		if l.RangeComment { // Ignore comment content.
@@ -111,7 +107,6 @@ func (l *Lexer) processName(token *objects.Token, check string) bool {
 		}
 		l.Error("What you mean?")
 	}
-
 	token.Value = check
 	token.Type = fract.TypeName
 	return true
@@ -125,7 +120,6 @@ func (l *Lexer) Generate() objects.Token {
 	}
 
 	fln := l.File.Lines[l.Line-1] // Full line.
-
 	// Line is finished.
 	if l.Column > len(fln) {
 		if l.RangeComment {
@@ -133,10 +127,8 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		return token
 	}
-
 	// Resume.
 	ln := fln[l.Column-1:]
-
 	// Skip spaces.
 	for index, char := range ln {
 		if char == ' ' || char == '\t' {
@@ -146,12 +138,10 @@ func (l *Lexer) Generate() objects.Token {
 		ln = ln[index:]
 		break
 	}
-
 	// Content is empty.
 	if ln == "" {
 		return token
 	}
-
 	// Set token values.
 	token.Column = l.Column
 	token.Line = l.Line
@@ -188,9 +178,7 @@ func (l *Lexer) Generate() objects.Token {
 				last != '6' && last != '7' && last != '8' && last != '9' {
 				check = check[:len(check)-1]
 			}
-
 			l.Column += len(check)
-
 			if strings.HasPrefix(check, "0x") {
 				// Parse hexadecimal to decimal.
 				bigInt := new(big.Int)
@@ -205,7 +193,6 @@ func (l *Lexer) Generate() objects.Token {
 				}
 			}
 		}
-
 		token.Value = check
 		token.Type = fract.TypeValue
 		return token
@@ -452,6 +439,5 @@ func (l *Lexer) Generate() objects.Token {
 
 	/* Add length to column. */
 	l.Column += len(token.Value)
-
 	return token
 }

@@ -14,7 +14,6 @@ import (
 // processTokens returns true if block end, returns false if not and returns keyword state.
 func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 	tokens = append([]objects.Token{}, tokens...)
-
 	switch first := tokens[0]; first.Type {
 	case
 		fract.TypeValue,
@@ -30,11 +29,9 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 						brace--
 					}
 				}
-
 				if brace > 0 {
 					continue
 				}
-
 				if current.Type == fract.TypeOperator &&
 					(current.Value == "=" ||
 						current.Value == grammar.AdditionAssignment ||
@@ -52,7 +49,6 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 				}
 			}
 		}
-
 		// Print value if live interpreting.
 		if value := i.processValue(tokens); fract.LiveInterpret {
 			if fract.PrintValue(value) {
@@ -97,14 +93,12 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 		if i.functionCount == 0 {
 			fract.Error(first, "Return keyword only used in functions!")
 		}
-
 		if len(tokens) > 1 {
 			value := i.processValue(tokens[1:])
 			i.returnValue = &value
 		} else {
 			i.returnValue = nil
 		}
-
 		return fract.FUNCReturn
 	case fract.TypeFunction: // Function definiton.
 		i.processFunction(tokens, false)
@@ -117,6 +111,5 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 	default:
 		fract.Error(first, "Invalid syntax!")
 	}
-
 	return fract.TypeNone
 }

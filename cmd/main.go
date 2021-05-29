@@ -51,21 +51,19 @@ func interpret() {
 		preter.Lexer.Finished = false
 		preter.Lexer.Line = 1
 		preter.Lexer.Column = 1
-
 		/* Tokenize all lines. */
 		for !preter.Lexer.Finished {
 			cacheTokens := preter.Lexer.Next()
-
 			// Check multiline comment.
 			if preter.Lexer.RangeComment {
 				input := cli.Input(" | ")
 				preter.Lexer.File.Lines = append(preter.Lexer.File.Lines, interpreter.ReadyLines([]string{input})...)
 				goto reTokenizeUnNil
 			}
-
 			// cacheTokens are empty?
-			if cacheTokens == nil { continue }
-
+			if cacheTokens == nil {
+				continue
+			}
 			// Check parentheses.
 			if preter.Lexer.BraceCount > 0 ||
 				preter.Lexer.BracketCount > 0 ||
@@ -74,10 +72,8 @@ func interpret() {
 				preter.Lexer.File.Lines = append(preter.Lexer.File.Lines, interpreter.ReadyLines([]string{input})...)
 				goto reTokenize
 			}
-
 			preter.Tokens = append(preter.Tokens, cacheTokens)
 		}
-
 		// Change blocks.
 		count := 0
 		for _, tokens := range preter.Tokens {
@@ -90,13 +86,11 @@ func interpret() {
 				count++
 			}
 		}
-
 		if count > 0 { // Check blocks.
 			input := cli.Input(" | ")
 			preter.Lexer.File.Lines = append(preter.Lexer.File.Lines, interpreter.ReadyLines([]string{input})...)
 			goto reTokenize
 		}
-
 		preter.Interpret()
 	}
 }
@@ -127,39 +121,35 @@ func processCommand(ns, cmd string) {
 
 func init() {
 	fract.ExecutablePath = filepath.Dir(os.Args[0])
-
 	// Check standard library.
 	if info, err := os.Stat(path.Join(fract.ExecutablePath, "std")); err != nil || !info.IsDir() {
 		fmt.Println("Standard library not found!")
 		cli.Input("\nPress enter for exit...")
 		os.Exit(1)
 	}
-
 	// Not started with arguments.
-	if len(os.Args) < 2 { return }
+	if len(os.Args) < 2 {
+		return
+	}
 
 	var sb strings.Builder
 	for _, current := range os.Args[1:] {
 		sb.WriteString(" " + current)
 	}
 	os.Args[0] = sb.String()[1:]
-
 	processCommand(commands.GetNamespace(os.Args[0]), commands.RemoveNamespace(os.Args[0]))
-
 	os.Exit(0)
 }
 
 func main() {
 	fmt.Println("Fract " + fract.FractVersion + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
-
 	fract.LiveInterpret = true
-
 	preter = interpreter.NewStdin(".")
 	preter.ApplyEmbedFunctions()
-
 	block := new(except.Block)
 	block.Try = interpret
 	block.Catch = catch
-
-	for { block.Do() }
+	for {
+		block.Do()
+	}
 }

@@ -14,7 +14,6 @@ func (l Lexer) Error(message string) {
 		fmt.Println("    " + strings.ReplaceAll(strings.TrimSpace(l.File.Lines[l.Line-1]), "\t", " "))
 		fmt.Println(str.GetWhitespace(4+l.Column-2) + "^")
 	}
-
 	fmt.Println(message)
 	panic(nil)
 }

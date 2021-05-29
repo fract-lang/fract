@@ -18,6 +18,5 @@ protected func IsSpace(str)
 	else
 		ret false
 	end
-
 	ret true
 end

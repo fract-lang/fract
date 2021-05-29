@@ -15,7 +15,5 @@ func FindConditionOperator(tokens []objects.Token) (int, string) {
 			return index, current.Value
 		}
 	}
-
-	// Not found.
 	return -1, ""
 }

@@ -7,7 +7,6 @@ func (block *Block) catch() {
 		block.Exception = &objects.Exception{
 			Message: r.(error).Error(),
 		}
-
 		if block.Catch != nil {
 			block.Catch(block.Exception)
 		}

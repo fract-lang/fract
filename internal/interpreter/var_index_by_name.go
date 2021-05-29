@@ -15,7 +15,6 @@ func (i *Interpreter) varIndexByName(name objects.Token) (int, *Interpreter) {
 	if name.Value[0] == '-' { // Ignore minus.
 		name.Value = name.Value[1:]
 	}
-
 	if index := strings.Index(name.Value, "."); index != -1 {
 		if iindex := i.importIndexByName(name.Value[:index]); iindex == -1 {
 			fract.Error(name, "'"+name.Value[:index]+"' is not defined!")
@@ -23,7 +22,6 @@ func (i *Interpreter) varIndexByName(name objects.Token) (int, *Interpreter) {
 			i = i.Imports[iindex].Source
 		}
 		name.Value = name.Value[index+1:]
-
 		for index, current := range i.variables {
 			if (current.Line == -1 || unicode.IsUpper(rune(current.Name[0]))) && current.Name == name.Value {
 				return index, i
@@ -31,7 +29,6 @@ func (i *Interpreter) varIndexByName(name objects.Token) (int, *Interpreter) {
 		}
 		return -1, nil
 	}
-
 	for index, current := range i.variables {
 		if current.Name == name.Value {
 			return index, i

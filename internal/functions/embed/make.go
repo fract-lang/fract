@@ -10,7 +10,6 @@ import (
 // Make array by size.
 func Make(f objects.Function, parameters []objects.Variable) objects.Value {
 	size := parameters[0].Value
-
 	if size.Array {
 		fract.Error(f.Tokens[0][0], "Array is not a valid value!")
 	} else if size.Content[0].Type != fract.VALInteger {
@@ -23,7 +22,6 @@ func Make(f objects.Function, parameters []objects.Variable) objects.Value {
 	}
 
 	value := objects.Value{Array: true}
-
 	if sizev > 0 {
 		var index int
 		for ; index < sizev; index++ {
@@ -32,6 +30,5 @@ func Make(f objects.Function, parameters []objects.Variable) objects.Value {
 	} else {
 		value.Content = []objects.DataFrame{}
 	}
-
 	return value
 }

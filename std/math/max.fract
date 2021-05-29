@@ -11,9 +11,8 @@
 #
 
 protected func Max(x, y)
- if x > y
-  ret x
- end
-
- ret y
+	if x > y
+		ret x
+	end
+	ret y
 end

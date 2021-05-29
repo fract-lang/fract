@@ -5,7 +5,6 @@ import "github.com/fract-lang/fract/pkg/fract"
 // Import content into destination interpeter.
 func (i *Interpreter) Import() {
 	i.ready()
-
 	// Interpret all lines.
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {
 		switch tokens := i.Tokens[i.index]; tokens[0].Type {

@@ -14,7 +14,6 @@ func PrintMapAsTable(dict map[string]string) {
 			maxlen = len(key)
 		}
 	}
-	
 	maxlen += 5
 	for key := range dict {
 		fmt.Println(key + " " + str.GetWhitespace(maxlen-len(key)) + dict[key])

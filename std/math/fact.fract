@@ -16,6 +16,5 @@ protected func Fact(x)
 	elif x == 0
 		ret 1
 	end
-
 	ret x * Fact(x - 1)
 end

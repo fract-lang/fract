@@ -14,7 +14,6 @@ func String(f objects.Function, parameters []objects.Variable) objects.Value {
 	switch parameters[1].Value.Content[0].Data {
 	case "parse":
 		str := ""
-
 		if value := parameters[0].Value; value.Array {
 			if len(value.Content) == 0 {
 				str = "[]"
@@ -29,7 +28,6 @@ func String(f objects.Function, parameters []objects.Variable) objects.Value {
 		} else {
 			str = parameters[0].Value.Content[0].Data
 		}
-
 		return objects.Value{
 			Content: []objects.DataFrame{
 				{
@@ -40,18 +38,14 @@ func String(f objects.Function, parameters []objects.Variable) objects.Value {
 		}
 	case "bytecode":
 		value := parameters[0].Value
-
 		var sb strings.Builder
-
 		for _, data := range value.Content {
 			if data.Type != fract.VALInteger {
 				sb.WriteByte(' ')
 			}
-
 			result, _ := strconv.ParseInt(data.Data, 10, 32)
 			sb.WriteByte(byte(result))
 		}
-
 		return objects.Value{
 			Content: []objects.DataFrame{
 				{

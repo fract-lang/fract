@@ -12,7 +12,6 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 		lastIndex int
 		processes []objects.Token
 	)
-
 	for index := 0; index < len(tokens); index++ {
 		switch token := tokens[index]; token.Type {
 		case fract.TypeOperator:
@@ -45,10 +44,8 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 			fract.Error(token, "Invalid value!")
 		}
 	}
-
 	if processes[len(processes)-1].Type == fract.TypeOperator {
 		fract.Error(processes[len(processes)-1], "Operator defined, but for what?")
 	}
-
 	return &processes
 }

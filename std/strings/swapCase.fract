@@ -23,6 +23,5 @@ protected func SwapCase(str)
 	else
 		ret ""
 	end
-
 	ret str
 end

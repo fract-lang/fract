@@ -15,13 +15,11 @@ protected func Min(array)
 	if length == 0
 		ret 0
 	end
-
 	var min = array[0]
 	for _, element in array
 		if min > element
 			min = element
 		end
 	end
-	
 	ret min
 end

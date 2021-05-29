@@ -16,6 +16,5 @@ protected func Ceil(x)
 	elif x - int(x) > 0
 		ret int(x + 1)
 	end
-
 	ret int(x)
 end

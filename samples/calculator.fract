@@ -17,7 +17,6 @@ for
 			first  = float(input("Enter first number: ")),
 			second = float(input("Enter second number: "))
 		)
-		
 		if input == "1"
 			print(first + second)
 		elif input == "2"

@@ -22,6 +22,5 @@ protected func IsUpper(str)
 	else
 		ret false
 	end
-
 	ret true
 end

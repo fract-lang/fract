@@ -12,12 +12,10 @@
 
 protected func Reverse(array)
 	const arlen = len(array)
-	
 	for index in range(0, arlen / 2)
 		const cache = array[index]
 		array[index] = array[arlen - index - 1]
 		array[arlen - index - 1] = cache
 	end
-
 	ret array
 end

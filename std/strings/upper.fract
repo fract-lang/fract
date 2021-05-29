@@ -21,6 +21,5 @@ protected func Upper(str)
 	else
 		ret ""
 	end
-
 	ret str
 end

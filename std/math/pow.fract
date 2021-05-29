@@ -15,10 +15,8 @@ protected func Pow(x, y, z=NaN)
 	for _, a in range(1, y)
 		n *= x
 	end
-
 	if IsNaN(z) == false
 		ret n % z
 	end
-
 	ret n
 end

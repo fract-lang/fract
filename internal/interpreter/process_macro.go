@@ -13,16 +13,13 @@ import (
 func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 	tokenLen := len(tokens)
 	conditionList := vector.Sublist(tokens, 1, tokenLen-1)
-
 	// Condition is empty?
 	if conditionList == nil {
 		first := tokens[0]
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value), "Condition is empty!")
 	}
-
 	variables := i.variables
 	functions := i.functions
-
 	i.variables = append([]objects.Variable{
 		{
 			Name: "OS",
@@ -47,16 +44,13 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 			},
 		},
 	}, i.macroDefines...)
-
 	state := i.processCondition(*conditionList)
 	kwstate := fract.TypeNone
-
 	/* Interpret/skip block. */
 	for {
 		i.index++
 		tokens := i.Tokens[i.index]
 		first := tokens[0]
-
 		if first.Type == fract.TypeMacro {
 			tokens := tokens[1:]
 			first = tokens[0]
@@ -65,27 +59,22 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 			} else if first.Type == fract.TypeElseIf { // Else if block.
 				tokenLen = len(tokens)
 				conditionList := vector.Sublist(tokens, 1, tokenLen-1)
-
 				// Condition is empty?
 				if conditionList == nil {
 					first := tokens[0]
 					fract.ErrorCustom(first.File, first.Line,
 						first.Column+len(first.Value), "Condition is empty!")
 				}
-
 				if state == grammar.KwTrue {
 					i.skipBlock(false)
 					goto ret
 				}
-
 				state = i.processCondition(*conditionList)
-
 				// Interpret/skip block.
 				for {
 					i.index++
 					tokens := i.Tokens[i.index]
 					first := tokens[0]
-
 					if first.Type == fract.TypeMacro {
 						tokens := tokens[1:]
 						first = tokens[0]
@@ -103,7 +92,6 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 							break
 						}
 					}
-
 					// Condition is true?
 					if state == grammar.KwTrue && kwstate == fract.TypeNone {
 						i.variables, variables = variables, i.variables
@@ -116,7 +104,6 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 						i.skipBlock(true)
 					}
 				}
-
 				if state == grammar.KwTrue {
 					i.skipBlock(false)
 					goto ret
@@ -126,22 +113,18 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 				if len(tokens) > 1 {
 					fract.Error(first, "Else block is not take any arguments!")
 				}
-
 				if state == grammar.KwTrue {
 					i.skipBlock(false)
 					goto ret
 				}
-
 				/* Interpret/skip block. */
 				for {
 					i.index++
 					tokens := i.Tokens[i.index]
 					first := tokens[0]
-
 					if first.Type == fract.TypeMacro {
 						tokens = tokens[1:]
 						first = tokens[0]
-
 						if first.Type == fract.TypeBlockEnd { // Block is ended.
 							goto ret
 						} else if first.Type == fract.TypeIf { // If block.
@@ -153,7 +136,6 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 							continue
 						}
 					}
-
 					// Condition is true?
 					if kwstate == fract.TypeNone {
 						i.variables, variables = variables, i.variables
@@ -166,7 +148,6 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 				}
 			}
 		}
-
 		// Condition is true?
 		if state == grammar.KwTrue && kwstate == fract.TypeNone {
 			i.variables, variables = variables, i.variables
@@ -189,24 +170,20 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variabl
 	if len(tokens) < 2 {
 		fract.Error(tokens[0], "Define name is not defined!")
 	}
-
 	name := tokens[1]
 	if name.Type != fract.TypeName {
 		fract.Error(name, "Invalid name!")
 	}
-
 	// Exists name.
 	for _, macro := range i.macroDefines {
 		if macro.Name == name.Value {
 			fract.Error(name, "This macro define is already defined at: "+fmt.Sprint(macro.Line))
 		}
 	}
-
 	macro := objects.Variable{
 		Name: name.Value,
 		Line: name.Line,
 	}
-
 	if len(tokens) > 2 {
 		variables := i.variables
 		macro.Value = i.processValue(tokens[2:])
@@ -219,14 +196,12 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variabl
 			},
 		}
 	}
-
 	return macro
 }
 
 // processMacro process macros and returns keyword state.
 func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
 	tokens = tokens[1:]
-
 	switch tokens[0].Type {
 	case fract.TypeIf:
 		return i.processMacroIf(tokens)
@@ -240,6 +215,5 @@ func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
 	default:
 		fract.Error(tokens[0], "Invalid macro!")
 	}
-
 	return fract.TypeNone
 }
