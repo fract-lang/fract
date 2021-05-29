@@ -10,11 +10,9 @@ import (
 // returns index of operator if found, returns -1 if not.
 func IndexProcessPriority(tokens []objects.Token) int {
 	bracket := 0
-
 	multiplyOrDivive := -1
 	binaryOrAnd := -1
 	additionOrSubtraction := -1
-
 	for index, token := range tokens {
 		if token.Type == fract.TypeBrace {
 			if token.Value == "[" || token.Value == "{" || token.Value == "(" {
@@ -23,17 +21,14 @@ func IndexProcessPriority(tokens []objects.Token) int {
 				bracket--
 			}
 		}
-
 		if bracket > 0 {
 			continue
 		}
-
 		// Exponentiation or shifts.
 		if token.Value == grammar.LeftBinaryShift || token.Value == grammar.RightBinaryShift ||
 			token.Value == grammar.Exponentiation {
 			return index
 		}
-
 		switch token.Value {
 		case "%": // Modulus.
 			return index
@@ -59,6 +54,5 @@ func IndexProcessPriority(tokens []objects.Token) int {
 	} else if additionOrSubtraction != -1 {
 		return additionOrSubtraction
 	}
-
 	return -1
 }

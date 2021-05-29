@@ -20,21 +20,19 @@ func (i *Interpreter) Interpret() {
 		}
 		return
 	}
-
 	// Lexer is finished.
-	if i.Lexer.Finished { return }
+	if i.Lexer.Finished {
+		return
+	}
 
 	i.ready()
-
 	{
 		//* Import local directory.
-
 		dir, _ := os.Getwd()
 		if pdir := path.Dir(i.Lexer.File.Path); pdir != "." {
 			dir = path.Join(dir, pdir)
 		}
 		content, err := ioutil.ReadDir(dir)
-
 		if err == nil {
 			_, mainName := filepath.Split(i.Lexer.File.Path)
 			for _, current := range content {
@@ -42,11 +40,9 @@ func (i *Interpreter) Interpret() {
 				if current.IsDir() || !strings.HasSuffix(current.Name(), fract.FractExtension) || current.Name() == mainName {
 					continue
 				}
-				
 				source := New(dir, path.Join(dir, current.Name()))
 				source.ApplyEmbedFunctions()
 				source.Import()
-
 				i.functions = append(i.functions, source.functions...)
 				i.variables = append(i.variables, source.variables...)
 				i.macroDefines = append(i.macroDefines, source.macroDefines...)

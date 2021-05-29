@@ -15,7 +15,6 @@ protected func IsIdentifier(str)
 	if str == ""
 		ret false
 	end
-
 	func isNumericChar(char)
 		ret (
 			char == "0" ||
@@ -30,16 +29,13 @@ protected func IsIdentifier(str)
 			char == "9"
 		)
 	end
-
 	if isNumericChar(str[0])
 		ret false
 	end
-
 	for _, char in str
 		if char <> "_" && IsLetter(char) == false && isNumericChar(char) == false
 			ret false
 		end
 	end
-
 	ret true
 end

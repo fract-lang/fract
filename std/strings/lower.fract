@@ -21,6 +21,5 @@ protected func Lower(str)
 	else
 		ret ""
 	end
-
 	ret str
 end

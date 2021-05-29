@@ -18,11 +18,9 @@ func findNextOperator(tokens []objects.Token, pos int, operator string) int {
 				brace--
 			}
 		}
-
 		if brace > 0 {
 			continue
 		}
-
 		if current.Type == fract.TypeOperator && current.Value == operator {
 			return pos
 		}
@@ -33,10 +31,8 @@ func findNextOperator(tokens []objects.Token, pos int, operator string) int {
 // DecomposeConditionalProcess returns conditional expressions by operators.
 func DecomposeConditionalProcess(tokens []objects.Token, operator string) *[][]objects.Token {
 	var expressions [][]objects.Token
-
 	last := 0
 	index := findNextOperator(tokens, last, operator)
-
 	for index != -1 {
 		if index-last == 0 {
 			fract.Error(tokens[last], "Where is the condition?")
@@ -48,10 +44,8 @@ func DecomposeConditionalProcess(tokens []objects.Token, operator string) *[][]o
 			fract.Error(tokens[len(tokens)-1], "Operator defined, but for what?")
 		}
 	}
-
 	if last != len(tokens) {
 		expressions = append(expressions, *vector.Sublist(tokens, last, len(tokens)-last))
 	}
-
 	return &expressions
 }

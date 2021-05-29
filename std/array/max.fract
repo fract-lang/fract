@@ -15,13 +15,11 @@ protected func Max(array)
 	if length == 0
 		ret 0
 	end
-
 	var max = array[0]
 	for _, element in array
 		if max < element
 			max = element
 		end
 	end
-	
 	ret max
 end

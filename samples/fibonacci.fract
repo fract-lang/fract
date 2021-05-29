@@ -4,7 +4,6 @@ var (
 	n2     = 1,
 	count  = 0
 )
-
 if nterms <= 0
 	print("Please enter a positive integer!")
 else

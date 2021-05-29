@@ -16,12 +16,10 @@ protected func Prime(x)
 	elif x < 2 || x % 2 == 0
 		ret false
 	end
-
 	for _, y in range(2, x - 1)
 		if x % y == 0
 			ret false
 		end
 	end
- 
 	ret true
 end

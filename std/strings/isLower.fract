@@ -22,6 +22,5 @@ protected func IsLower(str)
 	else
 		ret false
 	end
-
 	ret true
 end

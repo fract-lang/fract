@@ -23,7 +23,6 @@ func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, bra
 		Content: []objects.DataFrame{},
 		Array:   true,
 	}
-
 	for ; *index < len(tokens); *index++ {
 		current := tokens[*index]
 		if current.Type == fract.TypeBrace {
@@ -51,26 +50,22 @@ func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, bra
 		}
 		returnValue.Content = append(returnValue.Content, i.processValue(valueSlice).Content...)
 	}
-
 	return returnValue
 }
 
 func (i *Interpreter) processArgument(function objects.Function, names *[]string, tokens []objects.Token,
 	current objects.Token, index, count, braceCount, lastComma *int) objects.Variable {
 	var paramSet bool
-
 	length := *index - *lastComma
 	if length < 1 {
 		fract.Error(current, "Value is not defined!")
 	} else if *count >= len(function.Parameters) {
 		fract.Error(current, "Argument overflow!")
 	}
-
 	parameter := function.Parameters[*count]
 	variable := objects.Variable{Name: parameter.Name}
 	valueList := *vector.Sublist(tokens, *lastComma, length)
 	current = valueList[0]
-
 	// Check param set.
 	if length >= 2 && isParamSet(valueList) {
 		length -= 2
@@ -99,14 +94,11 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 				return returnValue
 			}
 		}
-
 		fract.Error(current, "Parameter is not defined in this name!: "+current.Value)
 	}
-
 	if paramSet {
 		fract.Error(current, "After the parameter has been given a special value, all parameters must be shown privately!")
 	}
-
 	*count++
 	*names = append(*names, variable.Name)
 	// Parameter is params typed?
@@ -121,28 +113,23 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 // processFunctionCall call function and returns returned value.
 func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value {
 	_name := tokens[0]
-
 	// Name is not defined?
 	nameIndex, source := i.functionIndexByName(_name)
 	if nameIndex == -1 {
 		fract.Error(_name, "Function is not defined in this name!: "+_name.Value)
 	}
-
-	function := source.functions[nameIndex]
-
 	var (
-		vars  []objects.Variable
-		names = new([]string)
-		count = new(int)
+		function = source.functions[nameIndex]
+		names    = new([]string)
+		count    = new(int)
+		vars     []objects.Variable
 	)
-
 	// Decompose arguments.
 	if tokens, _ = parser.DecomposeBrace(&tokens, "(", ")", false); tokens != nil {
 		var (
 			braceCount = new(int)
 			lastComma  = new(int)
 		)
-
 		for index := 0; index < len(tokens); index++ {
 			current := tokens[index]
 			if current.Type == fract.TypeBrace {
@@ -156,7 +143,6 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 				*lastComma = index + 1
 			}
 		}
-
 		if *lastComma < len(tokens) {
 			tokenLen := len(tokens)
 			vars = append(vars, i.processArgument(function, names, tokens, tokens[*lastComma], &tokenLen, count, braceCount, lastComma))
@@ -196,12 +182,10 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 	}
 
 	returnValue := objects.Value{}
-
 	// Is embed function?
 	if function.Tokens == nil {
 		// Add name token for exceptions.
 		function.Tokens = [][]objects.Token{{_name}}
-
 		switch source.Lexer.File.Path {
 		default: //* Direct embed functions.
 			switch function.Name {
@@ -227,25 +211,19 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 		}
 	} else {
 		// Process block.
-
 		variables := source.variables
 		if source.funcTempVariables == 0 {
 			source.funcTempVariables = len(source.variables)
 		}
 		source.variables = append(vars, source.variables[:source.funcTempVariables]...)
-
 		source.functionCount++
-
 		old := source.funcTempVariables
 		source.funcTempVariables = len(vars)
-
 		functionLen := len(source.functions)
 		nameIndex = source.index
 		itokens := source.Tokens
 		source.Tokens = function.Tokens
-
 		source.index = -1
-
 		// Interpret block.
 		block := except.Block{
 			Try: func() {
@@ -253,7 +231,6 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 					source.index++
 					tokens := source.Tokens[source.index]
 					source.funcTempVariables = len(source.variables) - source.funcTempVariables
-
 					if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 						break
 					} else if source.processTokens(tokens) == fract.FUNCReturn {
@@ -268,23 +245,17 @@ func (i *Interpreter) processFunctionCall(tokens []objects.Token) objects.Value 
 			},
 		}
 		block.Do()
-
 		source.Tokens = itokens
-
 		// Remove temporary functions.
 		source.functions = source.functions[:functionLen]
-
 		// Remove temporary variables.
 		source.variables = variables
-
 		source.functionCount--
 		source.funcTempVariables = old
 		source.index = nameIndex
-
 		if block.Exception != nil {
 			panic(fmt.Errorf(block.Exception.Message))
 		}
 	}
-
 	return returnValue
 }

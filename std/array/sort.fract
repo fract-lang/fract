@@ -12,9 +12,7 @@
 
 protected func Sort(array)
 	# BUBBLE SORT
-	
 	const length  = len(array) - 2
-
 	for _, i in range(0, length)
 		var updated = false
 		for _, j in range(0, length - i)
@@ -25,11 +23,9 @@ protected func Sort(array)
 				array[j + 1] = cache
 			end
 		end
-
 		if updated == false
 			break
 		end
 	end
-
 	ret array
 end

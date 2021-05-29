@@ -14,19 +14,15 @@ protected func Substring(str, start, length)
 	if start < 0 || length < 0
 		ret ""
 	end
-
 	const strlen = len(str)
-
 	if start >= strlen
 		ret ""
 	elif start + length > strlen
 		length = strlen - start
 	end
-
 	var newStr = ""
 	for _, index in range(start, length + start - 1)
 		newStr += str[index]
 	end
-
 	ret newStr
 end

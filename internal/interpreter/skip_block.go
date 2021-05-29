@@ -14,7 +14,6 @@ func (i *Interpreter) skipBlock(ifBlock bool) {
 			return
 		}
 	}
-
 	count := 1
 	i.index--
 	for {
@@ -31,7 +30,8 @@ func (i *Interpreter) skipBlock(ifBlock bool) {
 		} else if parser.IsBlockStatement(tokens) {
 			count++
 		}
-
-		if count == 0 { return }
+		if count == 0 {
+			return
+		}
 	}
 }

@@ -12,12 +12,10 @@
 
 protected func Capitalize(str)
 	if str == ""
-  ret str
- end
-
- if IsLetter(str[0]) && IsLower(str[0])
-  str[0] = Upper(str[0])
- end
-
- ret str
+		ret str
+	end
+	if IsLetter(str[0]) && IsLower(str[0])
+		str[0] = Upper(str[0])
+	end
+	ret str
 end

@@ -11,9 +11,8 @@
 #
 
 protected func Min(x, y)
- if x < y
-  ret x
- end
-
- ret y
+	if x < y
+		ret x
+	end
+	ret y
 end

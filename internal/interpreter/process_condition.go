@@ -60,26 +60,21 @@ func compare(value0, value1 objects.Value, operator string) bool {
 		}
 		return compareValues(operator, data0, data1)
 	}
-
 	// Array comparison.
 	if value0.Array || value1.Array {
 		if (value0.Array && !value1.Array) || (!value0.Array && value1.Array) {
 			return false
 		}
-
 		if len(value0.Content) != len(value1.Content) {
 			return operator == grammar.NotEquals
 		}
-
 		for index, val0Content := range value0.Content {
 			if !compareValues(operator, val0Content, value1.Content[index]) {
 				return false
 			}
 		}
-
 		return true
 	}
-
 	// Single value comparison.
 	return compareValues(operator, value0.Content[0], value1.Content[0])
 }
@@ -87,9 +82,7 @@ func compare(value0, value1 objects.Value, operator string) bool {
 // processCondition returns condition result.
 func (i *Interpreter) processCondition(tokens []objects.Token) string {
 	i.processRange(&tokens)
-
 	TRUE := objects.Value{Content: []objects.DataFrame{{Data: grammar.KwTrue}}}
-
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(tokens, grammar.LogicalOr)
 	for _, or := range *ors {
@@ -99,7 +92,6 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 		if len(*ands) > 1 {
 			for _, and := range *ands {
 				operatorIndex, operator := parser.FindConditionOperator(and)
-
 				// Operator is not found?
 				if operatorIndex == -1 {
 					if compare(i.processValue(and), TRUE, grammar.Equals) {
@@ -107,14 +99,12 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 					}
 					continue
 				}
-
 				// Operator is first or last?
 				if operatorIndex == 0 {
 					fract.Error(and[0], "Comparison values are missing!")
 				} else if operatorIndex == len(and)-1 {
 					fract.Error(and[len(and)-1], "Comparison values are missing!")
 				}
-
 				if !compare(
 					i.processValue(*vector.Sublist(and, 0, operatorIndex)),
 					i.processValue(*vector.Sublist(and, operatorIndex+1, len(and)-operatorIndex-1)),
@@ -126,7 +116,6 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 		}
 
 		operatorIndex, operator := parser.FindConditionOperator(or)
-
 		// Operator is not found?
 		if operatorIndex == -1 {
 			if compare(i.processValue(or), TRUE, grammar.Equals) {
@@ -134,14 +123,12 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 			}
 			continue
 		}
-
 		// Operator is first or last?
 		if operatorIndex == 0 {
 			fract.Error(or[0], "Comparison values are missing!")
 		} else if operatorIndex == len(or)-1 {
 			fract.Error(or[len(or)-1], "Comparison values are missing!")
 		}
-
 		if compare(
 			i.processValue(*vector.Sublist(or, 0, operatorIndex)),
 			i.processValue(*vector.Sublist(or, operatorIndex+1, len(or)-operatorIndex-1)),
@@ -149,6 +136,5 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 			return grammar.KwTrue
 		}
 	}
-
 	return grammar.KwFalse
 }

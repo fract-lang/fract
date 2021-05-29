@@ -13,7 +13,6 @@ func (i *Interpreter) ready() {
 			i.Tokens = append(i.Tokens, cacheTokens)
 		}
 	}
-
 	// Change blocks.
 	count := 0
 	macroBlockCount := 0
@@ -43,7 +42,6 @@ func (i *Interpreter) ready() {
 			}
 		}
 	}
-
 	if count > 0 || macroBlockCount > 0 { // Check blocks.
 		fract.Error(i.Tokens[last][0], "Block is expected ending...")
 	}

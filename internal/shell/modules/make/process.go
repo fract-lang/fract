@@ -20,7 +20,6 @@ func Process(command string) {
 	} else if !strings.HasSuffix(command, fract.FractExtension) {
 		command += fract.FractExtension
 	}
-
 	if !fs.ExistsFile(command) {
 		fmt.Println("The Fract file is not exists: " + command)
 		return
@@ -28,7 +27,6 @@ func Process(command string) {
 
 	preter := interpreter.New(".", command)
 	preter.ApplyEmbedFunctions()
-	
 	(&except.Block{
 		Try: preter.Interpret,
 		Catch: func(e *objects.Exception) {

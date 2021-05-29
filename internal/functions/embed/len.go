@@ -10,7 +10,6 @@ import (
 // Len returns length of object.
 func Len(f objects.Function, parameters []objects.Variable) objects.Value {
 	parameter := parameters[0].Value
-
 	if parameter.Array {
 		return objects.Value{
 			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content))}},
@@ -20,6 +19,5 @@ func Len(f objects.Function, parameters []objects.Variable) objects.Value {
 			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content[0].Data))}},
 		}
 	}
-
 	return objects.Value{Content: []objects.DataFrame{{Data: "0"}}}
 }

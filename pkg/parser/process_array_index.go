@@ -8,7 +8,6 @@ func ProcessArrayIndex(length, index int) int {
 		}
 		return index
 	}
-
 	index = length + index
 	if index < 0 || index >= length {
 		return -1

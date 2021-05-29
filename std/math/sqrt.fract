@@ -14,9 +14,7 @@ protected func Sqrt(x)
 	if x <= 0
 		ret NaN
 	end
-
 	var z = 1.0
-	
 	try
 		z -= (z * z - x) / (2 * z)
 		z -= (z * z - x) / (2 * z)
@@ -29,6 +27,5 @@ protected func Sqrt(x)
 		z -= (z * z - x) / (2 * z)
 		z -= (z * z - x) / (2 * z)
 	end
-
 	ret z
 end
