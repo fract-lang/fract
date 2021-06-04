@@ -16,3 +16,7 @@
 
 # Hide Visual Studio Code Directory
 .vscode
+
+# Vim swap files
+*.swp
+

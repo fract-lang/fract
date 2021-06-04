@@ -22,5 +22,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-go build -v cmd/main.go
-./main $@
+if [ -f cmd/main.go ]; then
+  MAIN_FILE="cmd/main.go"
+else
+  MAIN_FILE="../cmd/main.go"
+fi
+
+go build -v $MAIN_FILE
+
+if [ $? -eq 0 ]; then
+  ./main
+else
+  echo; echo "An unexpected error occurred while compiling Fract. Check errors above."
+fi
+
