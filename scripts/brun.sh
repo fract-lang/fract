@@ -31,7 +31,7 @@ fi
 go build -v $MAIN_FILE
 
 if [ $? -eq 0 ]; then
-  ./main
+  ./main $@
 else
   echo; echo "An unexpected error occurred while compiling Fract. Check errors above."
 fi
