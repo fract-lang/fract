@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/sh
 # MIT License
 # 
 # Copyright (c) 2021 Fract
