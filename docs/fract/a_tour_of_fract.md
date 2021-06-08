@@ -1,4 +1,4 @@
-# Quick Start to Fract
+# A Tour of Fract
 
 + [Keywords](https://github.com/fract-lang/fract/blob/master/docs/Fract/keywords.md)
 + [Data Types](https://github.com/fract-lang/fract/blob/master/docs/Fract/data_types.md)
@@ -467,7 +467,7 @@ print(os)
 You can define variables for macro conditions.
 
 > Default value is ``false``.
- 
+
 > Macro defines is not delete like variables or functions if defined in code block or like.
 
 #### Examples
@@ -490,4 +490,45 @@ const value = 4.535
     print(int(value))
   #end
 #end
+```
+
+## Defer Keyword
+A defer statement defers the execution of a function until the block ends.
+<br>
+The deferred call's arguments are evaluated immediately, but the function call is not executed until the block end.
+<br>
+Each of these is assumed as an independent block for defer: Main program body, Try-Cath, Functions.
+
+```
+defer print("world")
+print("hello")
+
+# OUTPUT
+# hello
+# world
+```
+
+Deferred function calls are pushed onto a stack. When a function returns, its deferred calls are executed in last-in-first-out order.
+```
+print("counting")
+
+for _, i in range(0, 9)
+	defer print(i)
+end
+
+print("done")
+
+# OUTPUT
+# counting
+# done
+# 9
+# 8
+# 7
+# 6
+# 5
+# 4
+# 3
+# 2
+# 1
+# 0
 ```

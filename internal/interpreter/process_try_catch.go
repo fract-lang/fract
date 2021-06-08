@@ -15,6 +15,7 @@ func (i *Interpreter) processTryCatch(tokens []objects.Token) uint8 {
 	fract.TryCount++
 	variableLen := len(i.variables)
 	functionLen := len(i.functions)
+	deferLen := len(defers)
 	kwstate := fract.TypeNone
 	(&except.Block{
 		Try: func() {
@@ -34,12 +35,17 @@ func (i *Interpreter) processTryCatch(tokens []objects.Token) uint8 {
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
+			for index := len(defers) - 1; index >= deferLen; index-- {
+				defers[index].call()
+			}
+			defers = defers[:deferLen]
 		},
 		Catch: func(e *objects.Exception) {
 			i.loopCount = 0
 			fract.TryCount--
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
+			defers = defers[:deferLen]
 			count := 0
 			for {
 				i.index++
@@ -79,6 +85,10 @@ func (i *Interpreter) processTryCatch(tokens []objects.Token) uint8 {
 			}
 			i.variables = i.variables[:variableLen]
 			i.functions = i.functions[:functionLen]
+			for index := len(defers) - 1; index >= deferLen; index-- {
+				defers[index].call()
+			}
+			defers = defers[:deferLen]
 		},
 	}).Do()
 	return kwstate

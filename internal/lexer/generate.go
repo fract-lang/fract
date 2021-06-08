@@ -363,6 +363,9 @@ func (l *Lexer) Generate() objects.Token {
 	case isKeyword(ln, grammar.KwDelete): // Delete.
 		token.Value = grammar.KwDelete
 		token.Type = fract.TypeDelete
+	case isKeyword(ln, grammar.KwDefer): // Defer.
+		token.Value = grammar.KwDefer
+		token.Type = fract.TypeDefer
 	case isKeyword(ln, grammar.KwIf): // If.
 		token.Value = grammar.KwIf
 		token.Type = fract.TypeIf

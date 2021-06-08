@@ -10,6 +10,12 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
+// Information of import.
+type importInfo struct {
+	Name   string       // Package name.
+	Source *Interpreter // Source of package.
+}
+
 func (i *Interpreter) processImport(tokens []objects.Token) {
 	if len(tokens) == 1 {
 		fract.Error(tokens[0], "Imported but what?")
@@ -82,7 +88,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		source.Imports = append(source.Imports, isource.Imports...)
 	}
 	i.Imports = append(i.Imports,
-		ImportInfo{
+		importInfo{
 			Name:   name,
 			Source: source,
 		})

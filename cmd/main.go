@@ -143,7 +143,7 @@ func init() {
 
 func main() {
 	fmt.Println("Fract " + fract.FractVersion + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
-	fract.LiveInterpret = true
+	fract.InteractiveShell = true
 	preter = interpreter.NewStdin(".")
 	preter.ApplyEmbedFunctions()
 	block := new(except.Block)

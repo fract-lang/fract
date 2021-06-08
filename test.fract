@@ -372,6 +372,7 @@ print(runtime.ARCH)
 
 <#
 
+#>
 
 #define PRINT_AS_FLOAT true
 #define PRINT_AS_OBJECTSTR
@@ -391,3 +392,13 @@ const value = 4.535
 		print(int(value))
 	#end
 #end
+
+<#
+
+print("counting")
+
+for _, i in range(0, 9)
+	defer print(i)
+end
+
+print("done")

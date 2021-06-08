@@ -5,6 +5,10 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
+var (
+	defers []functionCall
+)
+
 // Interpreter of Fract.
 type Interpreter struct {
 	variables         []objects.Variable
@@ -18,5 +22,5 @@ type Interpreter struct {
 
 	Lexer   *lexer.Lexer
 	Tokens  [][]objects.Token // All Tokens of code file.
-	Imports []ImportInfo
+	Imports []importInfo
 }

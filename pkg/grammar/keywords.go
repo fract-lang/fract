@@ -21,4 +21,5 @@ const (
 	KwFalse         = "false"     // Boolean false(0) value.
 	KwTry           = "try"       // Try declare.
 	KwCatch         = "catch"     // Catch declare.
+	KwDefer         = "defer"     // Defer.
 )

@@ -50,7 +50,7 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 			}
 		}
 		// Print value if live interpreting.
-		if value := i.processValue(tokens); fract.LiveInterpret {
+		if value := i.processValue(tokens); fract.InteractiveShell {
 			if fract.PrintValue(value) {
 				fmt.Println()
 			}
@@ -106,8 +106,19 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 		return i.processTryCatch(tokens)
 	case fract.TypeImport: // Import.
 		i.processImport(tokens)
-	case fract.TypeMacro:
+	case fract.TypeMacro: // Macro.
 		return i.processMacro(tokens)
+	case fract.TypeDefer: // Defer.
+		if l := len(tokens); l < 2 {
+			fract.Error(tokens[0], "Function is not defined!")
+		} else if tokens[1].Type != fract.TypeName {
+			fract.Error(tokens[1], "Invalid syntax!")
+		} else if l < 3 {
+			fract.Error(tokens[1], "Invalid syntax!")
+		} else if tokens[2].Type != fract.TypeBrace || tokens[2].Value != "(" {
+			fract.Error(tokens[2], "Invalid syntax!")
+		}
+		defers = append(defers, i.processFunctionCallModel(tokens[1:]))
 	default:
 		fract.Error(first, "Invalid syntax!")
 	}

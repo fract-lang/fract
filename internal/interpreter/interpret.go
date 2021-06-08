@@ -18,7 +18,7 @@ func (i *Interpreter) Interpret() {
 			i.processTokens(i.Tokens[i.index])
 			runtime.GC()
 		}
-		return
+		goto final
 	}
 	// Lexer is finished.
 	if i.Lexer.Finished {
@@ -54,5 +54,10 @@ func (i *Interpreter) Interpret() {
 	for i.index = 0; i.index < len(i.Tokens); i.index++ {
 		i.processTokens(i.Tokens[i.index])
 		runtime.GC()
+	}
+
+final:
+	for index := len(defers) - 1; index >= 0; index-- {
+		defers[index].call()
 	}
 }
