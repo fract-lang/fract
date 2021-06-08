@@ -82,4 +82,8 @@
     <td align="center"><b>open</b></td>
     <td>Import directory.</td>
   </tr>
+  <tr>
+    <td align="center"><b>defer</b></td>
+    <td>Defers the execution of a function until the block ends</td>
+  </tr>
 </table>
