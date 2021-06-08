@@ -239,7 +239,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 				Name:  elementName,
 				Value: objects.Value{},
 			}}, i.variables...)
-	varLen := len(i.variables)
+	vars := i.variables
 	index := &i.variables[0]
 	element := &i.variables[1]
 	if index.Name == "_" {
@@ -267,7 +267,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 		tokens := i.Tokens[i.index]
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
-			i.variables = i.variables[:varLen]
+			i.variables = vars
 			// Remove temporary functions.
 			i.functions = i.functions[:functionLen]
 			vindex++
@@ -313,6 +313,6 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 		}
 	}
 	// Remove loop variables.
-	i.variables = i.variables[2:]
+	i.variables = vars[2:]
 	return processKwState(kwstate)
 }
