@@ -186,10 +186,10 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	if !value.Array && value.Content[0].Type != fract.VALString {
 		fract.Error(tokens[0], "Foreach loop must defined array value!")
 	}
-	varLen := len(i.variables)
 	// Empty array?
 	if value.Array && len(value.Content) == 0 ||
 		value.Content[0].Type == fract.VALString && value.Content[0].Data == "" {
+		varLen := len(i.variables)
 		for {
 			i.index++
 			tokens := i.Tokens[i.index]
@@ -229,14 +229,17 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			{ // Index.
 				Name: nameToken.Value,
 				Value: objects.Value{
-					Content: []objects.DataFrame{{Data: "0"}},
+					Content: []objects.DataFrame{{
+						Data: "0",
+						Type: fract.VALInteger,
+					}},
 				},
 			},
 			{ // Element.
 				Name:  elementName,
 				Value: objects.Value{},
 			}}, i.variables...)
-	varLen += 2
+	varLen := len(i.variables)
 	index := &i.variables[0]
 	element := &i.variables[1]
 	if index.Name == "_" {
@@ -275,7 +278,10 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			}
 			i.index = iindex
 			if index.Name != "" {
-				index.Value.Content[0] = objects.DataFrame{Data: fmt.Sprint(vindex)}
+				index.Value.Content = []objects.DataFrame{{
+					Data: fmt.Sprint(vindex),
+					Type: fract.VALInteger,
+				}}
 			}
 			if element.Name != "" {
 				if value.Array {

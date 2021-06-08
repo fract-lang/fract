@@ -397,7 +397,7 @@ const value = 4.535
 
 print("counting")
 
-for _, i in range(0, 9)
+for i in range(0, 9)
 	defer print(i)
 end
 
