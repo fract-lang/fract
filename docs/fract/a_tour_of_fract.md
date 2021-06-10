@@ -150,13 +150,6 @@ var (
 )
 del a, b         # Remove 'a' and 'b' variables from memory
                  # No defined variables
-
-------------------
-
-# Function removing
-
-del a()          # Remove 'a' function from memory
-del a, a()       # Remove 'a' variable and function from memory
 ```
 
 ### Protected Keyword
@@ -426,6 +419,18 @@ func reverse(x)
 end
 
 reverse(-500) # Returns: 500
+```
+
+### Functions as V
+```
+func hello()
+  print("Hello World!")
+end
+
+const SayHi = hello
+SayHi()
+
+# OUTPUT: Hello World!
 ```
 
 ## Exception Handling

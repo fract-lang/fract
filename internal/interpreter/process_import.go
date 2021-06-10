@@ -49,7 +49,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		}
 	} else {
 		importpath = tokens[0].File.Path[:strings.LastIndex(tokens[0].File.Path, string(os.PathSeparator))+1] +
-			i.processValue([]objects.Token{tokens[index]}).Content[0].Data
+			i.processValue([]objects.Token{tokens[index]}).Content[0].String()
 	}
 	importpath = path.Join(fract.ExecutablePath, importpath)
 	info, err := os.Stat(importpath)
@@ -61,6 +61,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 	if err != nil {
 		fract.Error(tokens[1], "There is a problem on import: "+err.Error())
 	}
+	// TODO: Improve naming.
 	var name string
 	if index == 1 {
 		name = info.Name()
@@ -70,7 +71,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 	// Check name.
 	for _, _import := range i.Imports {
 		if _import.Name == name {
-			fract.Error(tokens[1], "'"+name+"' is already defined!")
+			fract.Error(tokens[1], "\""+name+"\" is already defined!")
 		}
 	}
 	for _, current := range content {

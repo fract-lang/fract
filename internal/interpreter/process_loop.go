@@ -183,12 +183,12 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	}
 	value := i.processValue(tokens)
 	// Type is not array?
-	if !value.Array && value.Content[0].Type != fract.VALString {
+	if !value.Array && value.Content[0].Type != objects.VALString {
 		fract.Error(tokens[0], "Foreach loop must defined array value!")
 	}
 	// Empty array?
 	if value.Array && len(value.Content) == 0 ||
-		value.Content[0].Type == fract.VALString && value.Content[0].Data == "" {
+		value.Content[0].Type == objects.VALString && value.Content[0].Data == "" {
 		varLen := len(i.variables)
 		for {
 			i.index++
@@ -229,9 +229,9 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			{ // Index.
 				Name: nameToken.Value,
 				Value: objects.Value{
-					Content: []objects.DataFrame{{
+					Content: []objects.Data{{
 						Data: "0",
-						Type: fract.VALInteger,
+						Type: objects.VALInteger,
 					}},
 				},
 			},
@@ -249,15 +249,15 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	if value.Array {
 		length = len(value.Content)
 	} else {
-		length = len(value.Content[0].Data)
+		length = len(value.Content[0].String())
 	}
 	if element.Name != "" {
 		if value.Array {
-			element.Value.Content = []objects.DataFrame{value.Content[0]}
+			element.Value.Content = []objects.Data{value.Content[0]}
 		} else {
-			element.Value.Content = []objects.DataFrame{{
-				Data: string(value.Content[0].Data[0]),
-				Type: fract.VALString,
+			element.Value.Content = []objects.Data{{
+				Data: string(value.Content[0].String()[0]),
+				Type: objects.VALString,
 			}}
 		}
 	}
@@ -273,23 +273,23 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			vindex++
 			if _break ||
 				(value.Array && vindex == len(value.Content) ||
-					!value.Array && vindex == len(value.Content[0].Data)) {
+					!value.Array && vindex == len(value.Content[0].String())) {
 				break
 			}
 			i.index = iindex
 			if index.Name != "" {
-				index.Value.Content = []objects.DataFrame{{
+				index.Value.Content = []objects.Data{{
 					Data: fmt.Sprint(vindex),
-					Type: fract.VALInteger,
+					Type: objects.VALInteger,
 				}}
 			}
 			if element.Name != "" {
 				if value.Array {
-					element.Value.Content = []objects.DataFrame{value.Content[vindex]}
+					element.Value.Content = []objects.Data{value.Content[vindex]}
 				} else {
-					element.Value.Content = []objects.DataFrame{{
-						Data: string(value.Content[0].Data[vindex]),
-						Type: fract.VALString,
+					element.Value.Content = []objects.Data{{
+						Data: string(value.Content[0].String()[vindex]),
+						Type: objects.VALString,
 					}}
 				}
 			}

@@ -20,16 +20,16 @@ func Range(f objects.Function, parameters []objects.Variable) objects.Value {
 	} else if step.Array {
 		fract.Error(f.Tokens[0][0], "'step' argument should be numeric!")
 	}
-	if start.Content[0].Type != fract.VALInteger &&
-		start.Content[0].Type != fract.VALFloat || to.Content[0].Type != fract.VALInteger &&
-		to.Content[0].Type != fract.VALFloat || step.Content[0].Type != fract.VALInteger &&
-		step.Content[0].Type != fract.VALFloat {
+	if start.Content[0].Type != objects.VALInteger &&
+		start.Content[0].Type != objects.VALFloat || to.Content[0].Type != objects.VALInteger &&
+		to.Content[0].Type != objects.VALFloat || step.Content[0].Type != objects.VALInteger &&
+		step.Content[0].Type != objects.VALFloat {
 		fract.Error(f.Tokens[0][0], "Values should be integer or float!")
 	}
 
-	startV, _ := strconv.ParseFloat(start.Content[0].Data, 64)
-	toV, _ := strconv.ParseFloat(to.Content[0].Data, 64)
-	stepV, _ := strconv.ParseFloat(step.Content[0].Data, 64)
+	startV, _ := strconv.ParseFloat(start.Content[0].String(), 64)
+	toV, _ := strconv.ParseFloat(to.Content[0].String(), 64)
+	stepV, _ := strconv.ParseFloat(step.Content[0].String(), 64)
 	if stepV <= 0 {
 		return objects.Value{
 			Content: nil,
@@ -38,29 +38,29 @@ func Range(f objects.Function, parameters []objects.Variable) objects.Value {
 	}
 
 	var dtype uint8
-	if start.Content[0].Type == fract.VALFloat || to.Content[0].Type == fract.VALFloat || step.Content[0].Type == fract.VALFloat {
-		dtype = fract.VALFloat
+	if start.Content[0].Type == objects.VALFloat || to.Content[0].Type == objects.VALFloat || step.Content[0].Type == objects.VALFloat {
+		dtype = objects.VALFloat
 	}
 	returnValue := objects.Value{
-		Content: []objects.DataFrame{},
+		Content: []objects.Data{},
 		Array:   true,
 	}
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			data := objects.DataFrame{
+			data := objects.Data{
 				Data: fmt.Sprintf(fract.FloatFormat, startV),
 				Type: dtype,
 			}
-			data.Data = fract.FormatData(data)
+			data.Data = data.Format()
 			returnValue.Content = append(returnValue.Content, data)
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			data := objects.DataFrame{
+			data := objects.Data{
 				Data: fmt.Sprintf(fract.FloatFormat, startV),
 				Type: dtype,
 			}
-			data.Data = fract.FormatData(data)
+			data.Data = data.Format()
 			returnValue.Content = append(returnValue.Content, data)
 		}
 	}

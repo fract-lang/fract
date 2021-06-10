@@ -132,13 +132,13 @@ func init() {
 		return
 	}
 
+	defer os.Exit(0)
 	var sb strings.Builder
 	for _, current := range os.Args[1:] {
 		sb.WriteString(" " + current)
 	}
 	os.Args[0] = sb.String()[1:]
 	processCommand(commands.GetNamespace(os.Args[0]), commands.RemoveNamespace(os.Args[0]))
-	os.Exit(0)
 }
 
 func main() {

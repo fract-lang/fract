@@ -3,6 +3,7 @@ package interpreter
 import (
 	"fmt"
 	"strings"
+	"unicode"
 
 	"github.com/fract-lang/fract/internal/functions/embed"
 	"github.com/fract-lang/fract/pkg/except"
@@ -26,28 +27,25 @@ func (c functionCall) call() objects.Value {
 	if c.function.Tokens == nil {
 		// Add name token for exceptions.
 		c.function.Tokens = [][]objects.Token{{c.name}}
-		switch c.source.Lexer.File.Path {
-		default: //* Direct embed functions.
-			switch c.function.Name {
-			case "print":
-				embed.Print(c.function, c.args)
-			case "input":
-				returnValue = embed.Input(c.function, c.args)
-			case "len":
-				returnValue = embed.Len(c.function, c.args)
-			case "range":
-				returnValue = embed.Range(c.function, c.args)
-			case "make":
-				returnValue = embed.Make(c.function, c.args)
-			case "string":
-				returnValue = embed.String(c.function, c.args)
-			case "int":
-				returnValue = embed.Int(c.function, c.args)
-			case "float":
-				returnValue = embed.Float(c.function, c.args)
-			default:
-				embed.Exit(c.function, c.args)
-			}
+		switch c.function.Name {
+		case "print":
+			embed.Print(c.function, c.args)
+		case "input":
+			returnValue = embed.Input(c.function, c.args)
+		case "len":
+			returnValue = embed.Len(c.function, c.args)
+		case "range":
+			returnValue = embed.Range(c.function, c.args)
+		case "make":
+			returnValue = embed.Make(c.function, c.args)
+		case "string":
+			returnValue = embed.String(c.function, c.args)
+		case "int":
+			returnValue = embed.Int(c.function, c.args)
+		case "float":
+			returnValue = embed.Float(c.function, c.args)
+		default:
+			embed.Exit(c.function, c.args)
 		}
 	} else {
 		// Process block.
@@ -72,6 +70,10 @@ func (c functionCall) call() objects.Value {
 					c.source.index++
 					tokens := c.source.Tokens[c.source.index]
 					c.source.funcTempVariables = len(c.source.variables) - c.source.funcTempVariables
+					/*for _, t := range tokens {
+						fmt.Print(t.Value)
+					}
+					fmt.Println()*/
 					if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 						break
 					} else if c.source.processTokens(tokens) == fract.FUNCReturn {
@@ -114,7 +116,7 @@ func isParamSet(tokens []objects.Token) bool {
 // getParamsArgumentValues decompose and returns params values.
 func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, braceCount, lastComma *int) objects.Value {
 	returnValue := objects.Value{
-		Content: []objects.DataFrame{},
+		Content: []objects.Data{},
 		Array:   true,
 	}
 	for ; *index < len(tokens); *index++ {
@@ -166,7 +168,6 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 		if length < 1 {
 			fract.Error(current, "Value is not defined!")
 		}
-
 		for _, parameter := range function.Parameters {
 			if parameter.Name == current.Value {
 				for _, name := range *names {
@@ -188,7 +189,7 @@ func (i *Interpreter) processArgument(function objects.Function, names *[]string
 				return returnValue
 			}
 		}
-		fract.Error(current, "Parameter is not defined in this name!: "+current.Value)
+		fract.Error(current, "Parameter is not defined in this name: "+current.Value)
 	}
 	if paramSet {
 		fract.Error(current, "After the parameter has been given a special value, all parameters must be shown privately!")
@@ -209,14 +210,42 @@ func (i *Interpreter) processFunctionCallModel(tokens []objects.Token) functionC
 	_name := tokens[0]
 	// Name is not defined?
 	nameIndex, source := i.functionIndexByName(_name)
+	var function objects.Function
 	if nameIndex == -1 {
-		fract.Error(_name, "Function is not defined in this name!: "+_name.Value)
+		_name := _name
+		if index := strings.Index(_name.Value, "."); index != -1 {
+			if i.importIndexByName(_name.Value[:index]) == -1 {
+				fract.Error(_name, "'"+_name.Value[:index]+"' is not defined!")
+			}
+			source = i.Imports[i.importIndexByName(_name.Value[:index])].Source
+			_name.Value = _name.Value[index+1:]
+			for _, current := range source.variables {
+				if unicode.IsUpper(rune(current.Name[0])) && current.Name == _name.Value && !current.Value.Array && current.Value.Content[0].Type == objects.VALFunction {
+					_name.File = nil
+					function = current.Value.Content[0].Data.(objects.Function)
+					break
+				}
+			}
+		} else {
+			for _, current := range i.variables {
+				if current.Name == _name.Value && !current.Value.Array && current.Value.Content[0].Type == objects.VALFunction {
+					_name.File = nil
+					function = current.Value.Content[0].Data.(objects.Function)
+					source = i
+					break
+				}
+			}
+		}
+		if _name.File != nil {
+			fract.Error(_name, "Function is not defined in this name: "+_name.Value)
+		}
+	} else {
+		function = source.functions[nameIndex]
 	}
 	var (
-		function = source.functions[nameIndex]
-		names    = new([]string)
-		count    = new(int)
-		args     []objects.Variable
+		names = new([]string)
+		count = new(int)
+		args  []objects.Variable
 	)
 	// Decompose arguments.
 	if tokens, _ = parser.DecomposeBrace(&tokens, "(", ")", false); tokens != nil {

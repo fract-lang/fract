@@ -10,8 +10,8 @@ import (
 
 //! This code block very like to functionIndexByName function. If you change here, probably you must change there too.
 
-// varIndexByName returns index of variable by name.
-func (i *Interpreter) varIndexByName(name objects.Token) (int, *Interpreter) {
+// variableIndexByName returns index of variable by name.
+func (i *Interpreter) variableIndexByName(name objects.Token) (int, *Interpreter) {
 	if name.Value[0] == '-' { // Ignore minus.
 		name.Value = name.Value[1:]
 	}

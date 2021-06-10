@@ -19,8 +19,8 @@ func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.
 		fract.Error(_name, "Ignore operator is cannot be variable name!")
 	}
 	// Name is already defined?
-	if index, _ := i.varIndexByName(_name); index != -1 {
-		fract.Error(_name, "Variable already defined in this name at line: "+fmt.Sprint(i.variables[index].Line))
+	if line := i.DefinedName(_name); line != -1 {
+		fract.Error(_name, "\""+_name.Value+"\" is already defined at line: "+fmt.Sprint(line))
 	}
 	tokensLen := len(tokens)
 	// Setter is not defined?
@@ -30,7 +30,7 @@ func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.
 	setter := tokens[1]
 	// Setter is not a setter operator?
 	if setter.Type != fract.TypeOperator && setter.Value != "=" {
-		fract.Error(setter, "This is not a setter operator!: "+setter.Value)
+		fract.Error(setter, "This is not a setter operator: "+setter.Value)
 	}
 	// Value is not defined?
 	if tokensLen < 3 {

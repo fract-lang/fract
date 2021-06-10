@@ -11,10 +11,10 @@ import (
 // Float convert object to float.
 func Float(f objects.Function, parameters []objects.Variable) objects.Value {
 	return objects.Value{
-		Content: []objects.DataFrame{
+		Content: []objects.Data{
 			{
-				Data: fmt.Sprintf(fract.FloatFormat, arithmetic.ToArithmetic(parameters[0].Value.Content[0].Data)),
-				Type: fract.VALFloat,
+				Data: fmt.Sprintf(fract.FloatFormat, arithmetic.ToArithmetic(parameters[0].Value.Content[0].String())),
+				Type: objects.VALFloat,
 			},
 		},
 	}

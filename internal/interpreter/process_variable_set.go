@@ -19,9 +19,9 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 	} else if _name.Value == "_" {
 		fract.Error(_name, "Ignore operator is cannot set!")
 	}
-	index, _ := i.varIndexByName(_name)
+	index, _ := i.variableIndexByName(_name)
 	if index == -1 {
-		fract.Error(_name, "Variable is not defined in this name!: "+_name.Value)
+		fract.Error(_name, "Variable is not defined in this name: "+_name.Value)
 	}
 	variable := i.variables[index]
 	// Check const state.
@@ -33,7 +33,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 	// Array setter?
 	if setter.Type == fract.TypeBrace && setter.Value == "{" {
 		// Variable is not array?
-		if !variable.Value.Array && variable.Value.Content[0].Type != fract.VALString {
+		if !variable.Value.Array && variable.Value.Content[0].Type != objects.VALString {
 			fract.Error(setter, "Variable is not array!")
 		}
 		// Find close bracket.
@@ -47,14 +47,14 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 			if valueList == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			position, err := strconv.Atoi(i.processValue(*valueList).Content[0].Data)
+			position, err := strconv.Atoi(i.processValue(*valueList).Content[0].String())
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}
 			if variable.Value.Array {
 				position = parser.ProcessArrayIndex(len(variable.Value.Content), position)
 			} else {
-				position = parser.ProcessArrayIndex(len(variable.Value.Content[0].Data), position)
+				position = parser.ProcessArrayIndex(len(variable.Value.Content[0].String()), position)
 			}
 			if position == -1 {
 				fract.Error(setter, "Index is out of range!")
@@ -90,16 +90,16 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 			if variable.Value.Array {
 				variable.Value.Content[setIndex] = value.Content[0]
 			} else {
-				if value.Content[0].Type != fract.VALString {
+				if value.Content[0].Type != objects.VALString {
 					fract.Error(setter, "Value type is not string!")
-				} else if len(value.Content[0].Data) > 1 {
+				} else if len(value.Content[0].String()) > 1 {
 					fract.Error(setter, "Value length is should be maximum one!")
 				}
-				bytes := []byte(variable.Value.Content[0].Data)
+				bytes := []byte(variable.Value.Content[0].String())
 				if value.Content[0].Data == "" {
 					bytes[setIndex] = 0
 				} else {
-					bytes[setIndex] = value.Content[0].Data[0]
+					bytes[setIndex] = value.Content[0].String()[0]
 				}
 				variable.Value.Content[0].Data = string(bytes)
 			}
@@ -110,7 +110,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 						Operator: objects.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 						First:    tokens[0],
 						FirstV: objects.Value{
-							Content: []objects.DataFrame{variable.Value.Content[setIndex]},
+							Content: []objects.Data{variable.Value.Content[setIndex]},
 						},
 						Second:  setter,
 						SecondV: value,
@@ -121,21 +121,21 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 						Operator: objects.Token{Value: string(setter.Value[:len(setter.Value)-1])},
 						First:    tokens[0],
 						FirstV: objects.Value{
-							Content: []objects.DataFrame{variable.Value.Content[setIndex]},
+							Content: []objects.Data{variable.Value.Content[setIndex]},
 						},
 						Second:  setter,
 						SecondV: value,
 					})
-				if value.Content[0].Type != fract.VALString {
+				if value.Content[0].Type != objects.VALString {
 					fract.Error(setter, "Value type is not string!")
-				} else if len(value.Content[0].Data) > 1 {
+				} else if len(value.Content[0].String()) > 1 {
 					fract.Error(setter, "Value length is should be maximum one!")
 				}
-				bytes := []byte(variable.Value.Content[0].Data)
+				bytes := []byte(variable.Value.Content[0].String())
 				if value.Content[0].Data == "" {
 					bytes[setIndex] = 0
 				} else {
-					bytes[setIndex] = value.Content[0].Data[0]
+					bytes[setIndex] = value.Content[0].String()[0]
 				}
 				variable.Value.Content[0].Data = string(bytes)
 			}

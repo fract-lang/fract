@@ -19,9 +19,8 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 		fract.Error(_name, "Names is cannot include dot!")
 	}
 	// Name is already defined?
-	if index, _ := i.functionIndexByName(_name); index != -1 {
-		fract.Error(_name, "Already defined function in this name at line: "+
-			fmt.Sprint(i.functions[index].Line))
+	if line := i.DefinedName(_name); line != -1 {
+		fract.Error(_name, "\""+_name.Value+"\" is already defined at line: "+fmt.Sprint(line))
 	}
 	// Function parentheses are not defined?
 	if tokenLen < 4 {
@@ -101,6 +100,7 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 		}
 	}
 	i.skipBlock(false)
-	function.Tokens = i.Tokens[function.Line : function.Line+i.index-function.Line+1]
+	function.Tokens = i.Tokens[function.Line : i.index+1]
+	function.Line = _name.Line
 	i.functions = append(i.functions, function)
 }

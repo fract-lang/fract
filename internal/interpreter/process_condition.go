@@ -9,40 +9,40 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
-func compareValues(operator string, data0, data1 objects.DataFrame) bool {
-	if data0.Type != data1.Type && (data0.Type == fract.VALString || data1.Type == fract.VALString) {
+func compareValues(operator string, data0, data1 objects.Data) bool {
+	if data0.Type != data1.Type && (data0.Type == objects.VALString || data1.Type == objects.VALString) {
 		return false
 	}
 
 	switch operator {
 	case grammar.Equals: // Equals.
-		if (data0.Type == fract.VALString && data0.Data != data1.Data) ||
-			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) != arithmetic.ToArithmetic(data1.Data)) {
+		if (data0.Type == objects.VALString && data0.Data != data1.Data) ||
+			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) != arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
 	case grammar.NotEquals: // Not equals.
-		if (data0.Type == fract.VALString && data0.Data == data1.Data) ||
-			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) == arithmetic.ToArithmetic(data1.Data)) {
+		if (data0.Type == objects.VALString && data0.Data == data1.Data) ||
+			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) == arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
 	case ">": // Greater.
-		if (data0.Type == fract.VALString && data0.Data <= data1.Data) ||
-			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) <= arithmetic.ToArithmetic(data1.Data)) {
+		if (data0.Type == objects.VALString && data0.String() <= data1.String()) ||
+			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) <= arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
 	case "<": // Less.
-		if (data0.Type == fract.VALString && data0.Data >= data1.Data) ||
-			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) >= arithmetic.ToArithmetic(data1.Data)) {
+		if (data0.Type == objects.VALString && data0.String() >= data1.String()) ||
+			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) >= arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
 	case grammar.GreaterEquals: // Greater or equals.
-		if (data0.Type == fract.VALString && data0.Data < data1.Data) ||
-			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) < arithmetic.ToArithmetic(data1.Data)) {
+		if (data0.Type == objects.VALString && data0.String() < data1.String()) ||
+			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) < arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
 	case grammar.LessEquals: // Less or equals.
-		if (data0.Type == fract.VALString && data0.Data > data1.Data) ||
-			(data0.Type != fract.VALString && arithmetic.ToArithmetic(data0.Data) > arithmetic.ToArithmetic(data1.Data)) {
+		if (data0.Type == objects.VALString && data0.String() > data1.String()) ||
+			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) > arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
 	}
@@ -54,8 +54,8 @@ func compare(value0, value1 objects.Value, operator string) bool {
 	if !value0.Array || !value1.Array {
 		data0 := value0.Content[0]
 		data1 := value1.Content[0]
-		if (data0.Type == fract.VALString && data1.Type != fract.VALString) ||
-			(data0.Type != fract.VALString && data1.Type == fract.VALString) {
+		if (data0.Type == objects.VALString && data1.Type != objects.VALString) ||
+			(data0.Type != objects.VALString && data1.Type == objects.VALString) {
 			return false
 		}
 		return compareValues(operator, data0, data1)
@@ -82,7 +82,7 @@ func compare(value0, value1 objects.Value, operator string) bool {
 // processCondition returns condition result.
 func (i *Interpreter) processCondition(tokens []objects.Token) string {
 	i.processRange(&tokens)
-	TRUE := objects.Value{Content: []objects.DataFrame{{Data: grammar.KwTrue}}}
+	TRUE := objects.Value{Content: []objects.Data{{Data: grammar.KwTrue}}}
 	// Process condition.
 	ors := parser.DecomposeConditionalProcess(tokens, grammar.LogicalOr)
 	for _, or := range *ors {

@@ -51,7 +51,7 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 		}
 		// Print value if live interpreting.
 		if value := i.processValue(tokens); fract.InteractiveShell {
-			if fract.PrintValue(value) {
+			if value.Print() {
 				fmt.Println()
 			}
 		}

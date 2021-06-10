@@ -1,7 +1,6 @@
 package interpreter
 
 import (
-	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -19,9 +18,9 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "value",
 					Default: objects.Value{
-						Content: []objects.DataFrame{
+						Content: []objects.Data{
 							{
-								Type: fract.VALString,
+								Type: objects.VALString,
 							},
 						},
 					},
@@ -29,10 +28,10 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "fin",
 					Default: objects.Value{
-						Content: []objects.DataFrame{
+						Content: []objects.Data{
 							{
 								Data: "\n",
-								Type: fract.VALString,
+								Type: objects.VALString,
 							},
 						},
 					},
@@ -48,10 +47,10 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "message",
 					Default: objects.Value{
-						Content: []objects.DataFrame{
+						Content: []objects.Data{
 							{
 								Data: "",
-								Type: fract.VALString,
+								Type: objects.VALString,
 							},
 						},
 					},
@@ -67,7 +66,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "code",
 					Default: objects.Value{
-						Content: []objects.DataFrame{{Data: "0"}},
+						Content: []objects.Data{{Data: "0"}},
 					},
 				},
 			},
@@ -98,7 +97,7 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "step",
 					Default: objects.Value{
-						Content: []objects.DataFrame{{Data: "1"}},
+						Content: []objects.Data{{Data: "1"}},
 					},
 				},
 			},
@@ -126,10 +125,10 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "type",
 					Default: objects.Value{
-						Content: []objects.DataFrame{
+						Content: []objects.Data{
 							{
 								Data: "parse",
-								Type: fract.VALString,
+								Type: objects.VALString,
 							},
 						},
 					},
@@ -148,10 +147,10 @@ func (i *Interpreter) ApplyEmbedFunctions() {
 				{
 					Name: "type",
 					Default: objects.Value{
-						Content: []objects.DataFrame{
+						Content: []objects.Data{
 							{
 								Data: "parse",
-								Type: fract.VALString,
+								Type: objects.VALString,
 							},
 						},
 					},

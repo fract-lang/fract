@@ -24,10 +24,10 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 		{
 			Name: "OS",
 			Value: objects.Value{
-				Content: []objects.DataFrame{
+				Content: []objects.Data{
 					{
 						Data: runtime.GOOS,
-						Type: fract.VALString,
+						Type: objects.VALString,
 					},
 				},
 			},
@@ -35,10 +35,10 @@ func (i *Interpreter) processMacroIf(tokens []objects.Token) uint8 {
 		{
 			Name: "ARCH",
 			Value: objects.Value{
-				Content: []objects.DataFrame{
+				Content: []objects.Data{
 					{
 						Data: runtime.GOARCH,
-						Type: fract.VALString,
+						Type: objects.VALString,
 					},
 				},
 			},
@@ -177,7 +177,7 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variabl
 	// Exists name.
 	for _, macro := range i.macroDefines {
 		if macro.Name == name.Value {
-			fract.Error(name, "This macro define is already defined at: "+fmt.Sprint(macro.Line))
+			fract.Error(name, "This macro define is already defined in this name at line: "+fmt.Sprint(macro.Line))
 		}
 	}
 	macro := objects.Variable{
@@ -189,10 +189,10 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variabl
 		macro.Value = i.processValue(tokens[2:])
 		i.variables = variables
 	} else {
-		macro.Value.Content = []objects.DataFrame{
+		macro.Value.Content = []objects.Data{
 			{
 				Data: grammar.KwFalse,
-				Type: fract.VALBoolean,
+				Type: objects.VALBoolean,
 			},
 		}
 	}

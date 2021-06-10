@@ -3,7 +3,6 @@ package embed
 import (
 	"fmt"
 
-	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -12,12 +11,12 @@ func Len(f objects.Function, parameters []objects.Variable) objects.Value {
 	parameter := parameters[0].Value
 	if parameter.Array {
 		return objects.Value{
-			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content))}},
+			Content: []objects.Data{{Data: fmt.Sprint(len(parameter.Content))}},
 		}
-	} else if parameter.Content[0].Type == fract.VALString {
+	} else if parameter.Content[0].Type == objects.VALString {
 		return objects.Value{
-			Content: []objects.DataFrame{{Data: fmt.Sprint(len(parameter.Content[0].Data))}},
+			Content: []objects.Data{{Data: fmt.Sprint(len(parameter.Content[0].String()))}},
 		}
 	}
-	return objects.Value{Content: []objects.DataFrame{{Data: "0"}}}
+	return objects.Value{Content: []objects.Data{{Data: "0"}}}
 }

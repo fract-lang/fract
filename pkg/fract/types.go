@@ -35,9 +35,4 @@ const (
 	LOOPContinue uint8 = 2
 
 	FUNCReturn uint8 = 3
-
-	VALInteger uint8 = 0
-	VALFloat   uint8 = 1
-	VALString  uint8 = 2
-	VALBoolean uint8 = 3
 )

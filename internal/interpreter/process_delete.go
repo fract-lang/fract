@@ -27,32 +27,19 @@ func (i *Interpreter) processDelete(tokens []objects.Token) {
 		if current.Type != fract.TypeName {
 			fract.Error(current, "This is not deletable object!")
 		}
-		if index < tokenLen-1 {
-			next := tokens[index+1]
-			if next.Type == fract.TypeBrace && next.Value == "(" {
-				nnext := tokens[index+2]
-				if !(nnext.Type == fract.TypeBrace && nnext.Value == ")") {
-					fract.Error(nnext, "Invalid syntax!")
-				}
-				index += 2
-				position, source := i.functionIndexByName(current)
-				// Name is not defined?
-				if position == -1 {
-					fract.Error(current, "Name is not defined!")
-				}
-				// Protected?
-				if source.functions[position].Protected {
-					fract.Error(current, "Protected objects cannot be deleted manually from memory!")
-				}
-				source.functions = append(source.functions[:position], source.functions[position+1:]...)
-				comma = true
-				continue
-			}
-		}
-		position, source := i.varIndexByName(current)
+		position, source := i.variableIndexByName(current)
 		// Name is not defined?
 		if position == -1 {
-			fract.Error(current, "Name is not defined!")
+			position, source := i.functionIndexByName(current)
+			if position == -1 {
+				fract.Error(current, "\""+current.Value+"\" is not defined!")
+			}
+			// Protected?
+			if source.functions[position].Protected {
+				fract.Error(current, "Protected objects cannot be deleted manually from memory!")
+			}
+			source.functions = append(source.functions[:position], source.functions[position+1:]...)
+			continue
 		}
 		// Protected?
 		if source.variables[position].Protected {
