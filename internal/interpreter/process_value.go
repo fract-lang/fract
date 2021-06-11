@@ -537,8 +537,11 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}},
 			}
 		case 'v':
-			variable := source.variables[vindex]
-			*result = applyMinus(minussed, variable.Value)
+			//! Immutability.
+			value := source.variables[vindex].Value
+			value.Content = append(make([]objects.Data, 0), value.Content...)
+
+			*result = applyMinus(minussed, value)
 		}
 		return 0
 	} else if token.Type == fract.TypeBrace {

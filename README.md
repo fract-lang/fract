@@ -13,14 +13,14 @@
 
 ## Key features of Fract
 + Simplicity: easy to learn, can be learned in less than an hour
-+ Safety: no null, no undefined behavior
++ Safety: no null, no undefined behavior, immutability by default
 + Unreachable codes are not included in debugging
 + Memory consumption is low, does not overload
 + Efficient and performance, powerfull Go backend
 + Unicode support
 + Macros like C
 
-## Interactive shell preview
+## Interactive Shell
 <img src="https://github.com/fract-lang/resources/blob/main/preview/fract_cli.gif?raw=true">
 
 ## FizzBuzz
