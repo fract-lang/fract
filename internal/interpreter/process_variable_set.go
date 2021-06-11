@@ -31,7 +31,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 	setter := tokens[1]
 	setIndex := -1
 	// Array setter?
-	if setter.Type == fract.TypeBrace && setter.Value == "{" {
+	if setter.Type == fract.TypeBrace && setter.Value == "[" {
 		// Variable is not array?
 		if !variable.Value.Array && variable.Value.Content[0].Type != objects.VALString {
 			fract.Error(setter, "Variable is not array!")
@@ -39,7 +39,7 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 		// Find close bracket.
 		for cindex := 2; cindex < len(tokens); cindex++ {
 			current := tokens[cindex]
-			if current.Type != fract.TypeBrace || current.Value != "}" {
+			if current.Type != fract.TypeBrace || current.Value != "]" {
 				continue
 			}
 			valueList := vector.Sublist(tokens, 2, cindex-2)
@@ -65,12 +65,6 @@ func (i *Interpreter) processVariableSet(tokens []objects.Token) {
 			break
 		}
 	}
-
-	/*
-		// Setter is not a setter operator?
-		if setter.Type != fract.TypeOperator && setter.Value != grammar.TokenEquals {
-			fract.Error(setter, "This is not a setter operator!"+setter.Value)
-		}*/
 
 	// Value are not defined?
 	if len(tokens) < 3 {
