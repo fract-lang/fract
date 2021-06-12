@@ -499,7 +499,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				case "(":
 					// Find close parentheses.
 					cindex := index + 1
-					bracketCount := 1
+					bracketCount := 0
 					for ; cindex < len(*parts); cindex++ {
 						current := (*parts)[cindex]
 						if current.Type == fract.TypeBrace {
@@ -513,7 +513,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 							}
 						}
 					}
-					value := i.processFunctionCall(*vector.Sublist(*parts, index, cindex-index))
+					cindex++
+					value := i.processFunctionCall((*parts)[index:cindex])
 					if !operation.FirstV.Array && value.Content == nil {
 						fract.Error(token, "Function is not return any value!")
 					}
@@ -640,7 +641,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					}
 				}
 			}
-			*result = applyMinus(minussed, i.processArrayValue(*vector.Sublist(*parts, index, cindex-index+1)))
+			*result = applyMinus(minussed, i.processArrayValue((*parts)[index:cindex+1]))
 			vector.RemoveRange(parts, index+1, cindex-index)
 			return 0
 		case "]":
@@ -663,7 +664,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			// Finished?
 			if oindex == 0 {
 				result.Array = true
-				result.Content = i.processArrayValue(*vector.Sublist(*parts, oindex, index-oindex+1)).Content
+				result.Content = i.processArrayValue((*parts)[oindex : index+1]).Content
 				*result = applyMinus(minussed, *result)
 				vector.RemoveRange(parts, oindex, index-oindex)
 				return index - oindex
@@ -738,7 +739,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}
 			}
 			oindex--
-			value := i.processFunctionCall(*vector.Sublist(*parts, oindex, index-oindex+1))
+			value := i.processFunctionCall((*parts)[oindex : index+1])
 			if value.Content == nil {
 				fract.Error((*parts)[oindex], "Function is not return any value!")
 			}
