@@ -6,7 +6,7 @@ import "github.com/fract-lang/fract/pkg/objects"
 // 'f' -> Function.
 // 'v' -> Variable.
 
-func (i *Interpreter) DefineByName(name objects.Token) (int, rune, *Interpreter) {
+func (i *Interpreter) defineByName(name objects.Token) (int, rune, *Interpreter) {
 	index, source := i.functionIndexByName(name)
 	if index != -1 {
 		return index, 'f', source
@@ -18,7 +18,7 @@ func (i *Interpreter) DefineByName(name objects.Token) (int, rune, *Interpreter)
 	return -1, '-', nil
 }
 
-func (i *Interpreter) DefinedName(name objects.Token) int {
+func (i *Interpreter) definedName(name objects.Token) int {
 	if name.Value[0] == '-' { // Ignore minus.
 		name.Value = name.Value[1:]
 	}

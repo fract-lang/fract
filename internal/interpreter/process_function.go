@@ -19,7 +19,7 @@ func (i *Interpreter) processFunction(tokens []objects.Token, protected bool) {
 		fract.Error(_name, "Names is cannot include dot!")
 	}
 	// Name is already defined?
-	if line := i.DefinedName(_name); line != -1 {
+	if line := i.definedName(_name); line != -1 {
 		fract.Error(_name, "\""+_name.Value+"\" is already defined at line: "+fmt.Sprint(line))
 	}
 	// Function parentheses are not defined?

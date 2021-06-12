@@ -26,7 +26,7 @@ func (i *Interpreter) appendVariable(md variableMetadata, tokens []objects.Token
 		fract.Error(_name, "Ignore operator is cannot be variable name!")
 	}
 	// Name is already defined?
-	if line := i.DefinedName(_name); line != -1 {
+	if line := i.definedName(_name); line != -1 {
 		fract.Error(_name, "\""+_name.Value+"\" is already defined at line: "+fmt.Sprint(line))
 	}
 	tokensLen := len(tokens)

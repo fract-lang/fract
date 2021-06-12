@@ -415,7 +415,6 @@ func applyMinus(minussed bool, value objects.Value) objects.Value {
 }
 
 func (i *Interpreter) processOperationValue(first bool, operation *valueProcess, parts *[]objects.Token, index int) int {
-	// TODO: Update coroutines.
 	var (
 		token  = operation.First
 		result = &operation.FirstV
@@ -430,8 +429,9 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			next := (*parts)[index+1]
 			// Array?
 			if next.Type == fract.TypeBrace {
-				if next.Value == "[" {
-					vindex, t, source := i.DefineByName(token) //! HERE
+				switch next.Value {
+				case "[":
+					vindex, t, source := i.defineByName(token)
 					if vindex == -1 || t != 'v' {
 						fract.Error(token, "Variable is not defined in this name: "+token.Value)
 					}
@@ -496,7 +496,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					result.Array = false
 					*result = applyMinus(minussed, *result)
 					return 0
-				} else if next.Value == "(" { // Function?
+				case "(":
 					// Find close parentheses.
 					cindex := index + 1
 					bracketCount := 1
@@ -523,7 +523,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}
 			}
 		}
-		vindex, t, source := i.DefineByName(token) //! HERE
+		vindex, t, source := i.defineByName(token)
 		if vindex == -1 {
 			fract.Error(token, "Variable is not defined in this name: "+token.Value)
 		}
@@ -545,7 +545,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 		}
 		return 0
 	} else if token.Type == fract.TypeBrace {
-		if token.Value == "}" {
+		switch token.Value {
+		case "}":
 			// Find open bracket.
 			bracketCount := 1
 			oindex := index - 1
@@ -571,7 +572,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				return index - oindex
 			}
 			endToken := (*parts)[oindex-1]
-			vindex, t, source := i.DefineByName(token) //! HERE
+			vindex, t, source := i.defineByName(token)
 			if vindex == -1 || t != 'v' {
 				fract.Error(endToken, "Variable is not defined in this name: "+endToken.Value)
 			}
@@ -620,7 +621,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			result.Array = false
 			*result = applyMinus(minussed, *result)
 			return index - oindex + 1
-		} else if token.Value == "[" {
+		case "[":
 			// Array initializer.
 
 			// Find close brace.
@@ -642,7 +643,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			*result = applyMinus(minussed, i.processArrayValue(*vector.Sublist(*parts, index, cindex-index+1)))
 			vector.RemoveRange(parts, index+1, cindex-index)
 			return 0
-		} else if token.Value == "]" {
+		case "]":
 			// Find open bracket.
 			bracketCount := 1
 			oindex := index - 1
@@ -668,8 +669,8 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				return index - oindex
 			}
 			endToken := (*parts)[oindex-1]
-			vindex, source := i.variableIndexByName(endToken)
-			if vindex == -1 {
+			vindex, t, source := i.defineByName(endToken)
+			if vindex == -1 || t != 'v' {
 				fract.Error(endToken, "Variable is not defined in this name!: "+endToken.Value)
 			}
 			valueList := vector.Sublist(*parts, oindex+1, index-oindex-1)
@@ -717,34 +718,34 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 			result.Array = false
 			*result = applyMinus(minussed, *result)
 			return index - oindex + 1
-		}
-	} else if token.Value == ")" {
-		// Function.
+		case ")":
+			// Function.
 
-		// Find open parentheses.
-		bracketCount := 1
-		oindex := index - 1
-		for ; oindex >= 0; oindex-- {
-			current := (*parts)[oindex]
-			if current.Type == fract.TypeBrace {
-				if current.Value == ")" {
-					bracketCount++
-				} else if current.Value == "(" {
-					bracketCount--
-					if bracketCount == 0 {
-						break
+			// Find open parentheses.
+			bracketCount := 1
+			oindex := index - 1
+			for ; oindex >= 0; oindex-- {
+				current := (*parts)[oindex]
+				if current.Type == fract.TypeBrace {
+					if current.Value == ")" {
+						bracketCount++
+					} else if current.Value == "(" {
+						bracketCount--
+						if bracketCount == 0 {
+							break
+						}
 					}
 				}
 			}
+			oindex--
+			value := i.processFunctionCall(*vector.Sublist(*parts, oindex, index-oindex+1))
+			if value.Content == nil {
+				fract.Error((*parts)[oindex], "Function is not return any value!")
+			}
+			*result = applyMinus(minussed, value)
+			vector.RemoveRange(parts, oindex, index-oindex)
+			return index - oindex
 		}
-		oindex++
-		value := i.processFunctionCall(*vector.Sublist(*parts, oindex, index-oindex+1))
-		if value.Content == nil {
-			fract.Error((*parts)[oindex], "Function is not return any value!")
-		}
-		*result = applyMinus(minussed, value)
-		vector.RemoveRange(parts, oindex, index-oindex)
-		return index - oindex
 	}
 
 	//* Single value.
