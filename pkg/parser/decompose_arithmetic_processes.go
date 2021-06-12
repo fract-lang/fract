@@ -29,8 +29,7 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 			fract.Error(token, "Invalid value!")
 		}
 	}
-
-	if lastIndex < len(tokens) {
+	if lastIndex < len(tokens)-1 {
 		token := tokens[lastIndex]
 		if token.Type == fract.TypeOperator {
 			if !operator {
@@ -45,7 +44,7 @@ func DecomposeArithmeticProcesses(tokens []objects.Token) *[]objects.Token {
 		}
 	}
 	if processes[len(processes)-1].Type == fract.TypeOperator {
-		fract.Error(processes[len(processes)-1], "Operator defined, but for what?")
+		fract.Error(processes[len(processes)-1], "Operator overflow!")
 	}
 	return &processes
 }

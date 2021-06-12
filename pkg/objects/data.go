@@ -27,6 +27,9 @@ func (d Data) String() string {
 	case VALFunction:
 		return "object.function"
 	default:
+		if d.Data == nil {
+			return "0"
+		}
 		return d.Data.(string)
 	}
 }
