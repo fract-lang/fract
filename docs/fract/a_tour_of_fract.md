@@ -94,6 +94,9 @@ var [NAME] = [VALUE]
 ```
 const [NAME] = [VALUE]
 ```
+```
+mut [NAME] = [VALUE]
+```
 ### Examples
 ```
 const Pi = 3.14

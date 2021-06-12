@@ -537,9 +537,11 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 				}},
 			}
 		case 'v':
-			//! Immutability.
-			value := source.variables[vindex].Value
-			value.Content = append(make([]objects.Data, 0), value.Content...)
+			variable := source.variables[vindex]
+			value := variable.Value
+			if !variable.Mutable { //! Immutability.
+				value.Content = append(make([]objects.Data, 0), variable.Value.Content...)
+			}
 
 			*result = applyMinus(minussed, value)
 		}

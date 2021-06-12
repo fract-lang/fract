@@ -10,8 +10,15 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
+// Metadata of variable declaration.
+type variableMetadata struct {
+	constant  bool
+	mutable   bool
+	protected bool
+}
+
 // appendVariable to source from tokens.
-func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.Token) {
+func (i *Interpreter) appendVariable(md variableMetadata, tokens []objects.Token) {
 	_name := tokens[0]
 	if strings.Contains(_name.Value, ".") {
 		fract.Error(_name, "Names is cannot include dot!")
@@ -45,8 +52,9 @@ func (i *Interpreter) appendVariable(constant, protected bool, tokens []objects.
 			Name:      _name.Value,
 			Value:     value,
 			Line:      _name.Line,
-			Const:     constant,
-			Protected: protected,
+			Const:     md.constant,
+			Mutable:   md.mutable,
+			Protected: md.protected,
 		})
 }
 
@@ -56,10 +64,14 @@ func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protecte
 		first := tokens[0]
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value), "Name is not found!")
 	}
-	constant := tokens[0].Value == grammar.KwConstVariable
+	md := variableMetadata{
+		constant:  tokens[0].Value == grammar.KwConstant,
+		mutable:   tokens[0].Value == grammar.KwMut,
+		protected: protected,
+	}
 	pre := tokens[1]
 	if pre.Type == fract.TypeName {
-		i.appendVariable(constant, protected, tokens[1:])
+		i.appendVariable(md, tokens[1:])
 	} else if pre.Type == fract.TypeBrace && pre.Value == "(" {
 		tokens = tokens[2 : len(tokens)-1]
 		last := 0
@@ -76,12 +88,12 @@ func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protecte
 				continue
 			}
 			if token.Type == fract.TypeComma {
-				i.appendVariable(constant, protected, tokens[last:index])
+				i.appendVariable(md, tokens[last:index])
 				last = index + 1
 			}
 		}
 		if len(tokens) != last {
-			i.appendVariable(constant, protected, tokens[last:])
+			i.appendVariable(md, tokens[last:])
 		}
 	} else {
 		fract.Error(pre, "Invalid syntax!")

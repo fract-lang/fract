@@ -395,6 +395,8 @@ const value = 4.535
 
 <#
 
+#>
+
 print("counting")
 
 for i in range(0, 9)
@@ -402,3 +404,15 @@ for i in range(0, 9)
 end
 
 print("done")
+
+<#
+
+func test(a)
+	a[0] = 90
+end
+
+mut a = [3,2,5,6,4]
+var b = a
+print(a)
+# test(a)
+print(a)

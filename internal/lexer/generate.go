@@ -356,8 +356,11 @@ func (l *Lexer) Generate() objects.Token {
 	case isKeyword(ln, grammar.KwVariable): // Variable.
 		token.Value = grammar.KwVariable
 		token.Type = fract.TypeVariable
-	case isKeyword(ln, grammar.KwConstVariable): // Const variable.
-		token.Value = grammar.KwConstVariable
+	case isKeyword(ln, grammar.KwMut): // Mutable variable.
+		token.Value = grammar.KwMut
+		token.Type = fract.TypeVariable
+	case isKeyword(ln, grammar.KwConstant): // Constant.
+		token.Value = grammar.KwConstant
 		token.Type = fract.TypeVariable
 	case isKeyword(ln, grammar.KwProtected): // Protected.
 		token.Value = grammar.KwProtected

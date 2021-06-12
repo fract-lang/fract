@@ -8,11 +8,15 @@
   </tr>
   <tr>
     <td align="center"><b>var</b></td>
-    <td>Define variable.</td>
+    <td>Declare variable.</td>
   </tr>
   <tr>
     <td align="center"><b>const</b></td>
-    <td>Define const variable.</td>
+    <td>Declare constant variable.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>mut</b></td>
+    <td>Declare mutable variable.</td>
   </tr>
   <tr>
     <td align="center"><b>del</b></td>
@@ -64,7 +68,7 @@
   </tr>
   <tr>
     <td align="center"><b>func</b></td>
-    <td>Define function.</td>
+    <td>Declare function.</td>
   </tr>
   <tr>
     <td align="center"><b>ret</b></td>

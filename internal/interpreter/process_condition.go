@@ -9,6 +9,8 @@ import (
 	"github.com/fract-lang/fract/pkg/vector"
 )
 
+// TODO: Add "in" keyword.
+
 func compareValues(operator string, data0, data1 objects.Data) bool {
 	if data0.Type != data1.Type && (data0.Type == objects.VALString || data1.Type == objects.VALString) {
 		return false
