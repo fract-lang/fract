@@ -413,6 +413,7 @@ end
 
 mut a = [3,2,5,6,4]
 var b = a
+b[0] = 90
 print(a)
 # test(a)
 print(a)

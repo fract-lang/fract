@@ -847,34 +847,33 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 			return value
 		}
 	}
-	// TODO: Optimize here.
-	parts := parser.DecomposeArithmeticProcesses(tokens)
-	if priorityIndex := parser.IndexProcessPriority(*parts); priorityIndex != -1 {
+	parser.CheckArithmeticProcesses(tokens)
+	if priorityIndex := parser.IndexProcessPriority(tokens); priorityIndex != -1 {
 		// Decompose arithmetic operations.
 		for priorityIndex != -1 {
 			var operation valueProcess
-			operation.First = (*parts)[priorityIndex-1]
-			priorityIndex -= i.processOperationValue(true, &operation, parts, priorityIndex-1)
-			operation.Operator = (*parts)[priorityIndex]
-			operation.Second = (*parts)[priorityIndex+1]
-			priorityIndex -= i.processOperationValue(false, &operation, parts, priorityIndex+1)
+			operation.First = tokens[priorityIndex-1]
+			priorityIndex -= i.processOperationValue(true, &operation, &tokens, priorityIndex-1)
+			operation.Operator = tokens[priorityIndex]
+			operation.Second = tokens[priorityIndex+1]
+			priorityIndex -= i.processOperationValue(false, &operation, &tokens, priorityIndex+1)
 			resultValue := solveProcess(operation)
 			operation.Operator.Value = "+"
-			operation.Second = (*parts)[priorityIndex+1]
+			operation.Second = tokens[priorityIndex+1]
 			operation.FirstV = value
 			operation.SecondV = resultValue
 			value = solveProcess(operation)
 			// Remove processed processes.
-			vector.RemoveRange(parts, priorityIndex-1, 3)
-			vector.Insert(parts, priorityIndex-1, objects.Token{Value: "0"})
+			vector.RemoveRange(&tokens, priorityIndex-1, 3)
+			vector.Insert(&tokens, priorityIndex-1, objects.Token{Value: "0"})
 			// Find next operator.
-			priorityIndex = parser.IndexProcessPriority(*parts)
+			priorityIndex = parser.IndexProcessPriority(tokens)
 		}
 	} else {
 		var operation valueProcess
-		operation.First = (*parts)[0]
+		operation.First = tokens[0]
 		operation.FirstV.Array = true //* Ignore nil control if function call.
-		i.processOperationValue(true, &operation, parts, 0)
+		i.processOperationValue(true, &operation, &tokens, 0)
 		value = operation.FirstV
 	}
 	return value

@@ -201,6 +201,7 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variabl
 
 // processMacro process macros and returns keyword state.
 func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
+	// TODO: Add import broker.
 	tokens = tokens[1:]
 	switch tokens[0].Type {
 	case fract.TypeIf:
