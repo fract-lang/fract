@@ -7,13 +7,15 @@ import (
 )
 
 // FindConditionOperator return next condition operator.
-func FindConditionOperator(tokens []objects.Token) (int, string) {
+func FindConditionOperator(tokens []objects.Token) (int, objects.Token) {
 	for index, current := range tokens {
-		if current.Type == fract.TypeOperator && (current.Value == grammar.Equals ||
+		if (current.Type == fract.TypeOperator && (current.Value == grammar.Equals ||
 			current.Value == grammar.NotEquals || current.Value == ">" || current.Value == "<" ||
-			current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
-			return index, current.Value
+			current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals)) ||
+			current.Type == fract.TypeIn {
+			return index, current
 		}
 	}
-	return -1, ""
+	var token objects.Token
+	return -1, token
 }

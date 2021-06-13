@@ -830,6 +830,7 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 	value := objects.Value{Content: []objects.Data{{}}}
 
 	// Is conditional expression?
+	//! If when add new conditional operator, must append here.
 	brace := 0
 	for _, current := range tokens {
 		if current.Type == fract.TypeBrace {
@@ -838,10 +839,10 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 			} else {
 				brace--
 			}
-		} else if brace == 0 && current.Type == fract.TypeOperator &&
-			(current.Value == grammar.LogicalAnd || current.Value == grammar.LogicalOr || current.Value == grammar.Equals ||
-				current.Value == grammar.NotEquals || current.Value == ">" || current.Value == "<" ||
-				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals) {
+		} else if brace == 0 &&
+			(current.Type == fract.TypeOperator && (current.Value == grammar.LogicalAnd || current.Value == grammar.LogicalOr ||
+				current.Value == grammar.Equals || current.Value == grammar.NotEquals || current.Value == ">" || current.Value == "<" ||
+				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals)) || current.Type == fract.TypeIn {
 			value.Content = []objects.Data{{
 				Data: i.processCondition(tokens),
 				Type: objects.VALBoolean,

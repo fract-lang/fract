@@ -540,3 +540,55 @@ print("done")
 # 1
 # 0
 ```
+
+## `in` Keyword with Enumerables
+You can contains checking with `in` keyword. <br>
+Search value can any value, checked value is should be enumerable value. <br>
+If the checked value is string, all data of the search value must be string.
+
+Examples;
+```
+if "ert" in "Mertcan"
+	print("Yes!")
+else
+	print("No!")
+end
+
+# OUTPUT: Yes!
+```
+```
+if ["Hola", "Bojour", "Selam", "Hello"] in "Hi"
+	print("Yes!")
+else
+	print("No!")
+end
+
+# OUTPUT: No!
+```
+```
+if ["f", "a", "g", "u"] in "Fract!"
+	print("Yes!")
+else
+	print("No!")
+end
+
+# OUTPUT: Yes!
+```
+```
+if [1, 3, 4] in [4, 2, 7]
+	print("Yes!")
+else
+	print("No!")
+end
+
+# OUTPUT: Yes!
+```
+```
+if 4 in [4, 2, 7]
+	print("Yes!")
+else
+	print("No!")
+end
+
+# OUTPUT: Yes!
+```

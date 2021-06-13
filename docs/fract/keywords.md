@@ -52,7 +52,7 @@
   </tr>
   <tr>
     <td align="center"><b>in</b></td>
-    <td>Range loop declare.</td>
+    <td>Range loop declare, check is contains.</td>
   </tr>
   <tr>
     <td align="center"><b>break</b></td>
