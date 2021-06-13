@@ -424,7 +424,7 @@ end
 reverse(-500) # Returns: 500
 ```
 
-### Functions as V
+### Functions as Value
 ```
 func hello()
   print("Hello World!")
