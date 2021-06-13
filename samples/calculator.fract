@@ -1,3 +1,5 @@
+#pragma enofi
+
 # Simple calculator in Fract
 
 print("Welcome to Fract simple calculator!")

@@ -210,6 +210,18 @@ func (i *Interpreter) processMacro(tokens []objects.Token) uint8 {
 		switch tokens[0].Value {
 		case "define": // Macro variable.
 			i.macroDefines = append(i.macroDefines, i.processMacroDefine(tokens))
+		case "pragma":
+			if len(tokens) != 2 || tokens[1].Type != fract.TypeName {
+				fract.Error(tokens[0], "Invalid pragma syntax!")
+			}
+			switch tokens[1].Value {
+			case "enofi":
+				if i.loopCount == -1 {
+					i.loopCount = 0
+				}
+			default:
+				fract.Error(tokens[1], "Invalid pragma!")
+			}
 		default:
 			fract.Error(tokens[0], "Invalid macro!")
 		}

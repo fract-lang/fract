@@ -500,6 +500,15 @@ const value = 4.535
 #end
 ```
 
+## Pragmas
+
++ [Pragmas](https://github.com/fract-lang/fract/blob/master/docs/fract/pragmas.md)
+
+### Examples
+```
+#pragma enofi
+```
+
 ## Defer Keyword
 A defer statement defers the execution of a function until the block ends.
 <br>

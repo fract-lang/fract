@@ -81,6 +81,7 @@ func (i *Interpreter) processImport(tokens []objects.Token) {
 		}
 
 		isource := New(importpath, importpath+string(os.PathSeparator)+current.Name())
+		isource.loopCount = -1 //! Tag as import source.
 		isource.Import()
 
 		source.functions = append(source.functions, isource.functions...)

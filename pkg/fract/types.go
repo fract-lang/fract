@@ -33,6 +33,5 @@ const (
 
 	LOOPBreak    uint8 = 1
 	LOOPContinue uint8 = 2
-
-	FUNCReturn uint8 = 3
+	FUNCReturn   uint8 = 3
 )

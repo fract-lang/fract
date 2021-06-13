@@ -35,6 +35,9 @@ func (i *Interpreter) Import() {
 			i.Imports = append(i.Imports, source.Imports...)
 		case fract.TypeMacro: // Macro.
 			i.processMacro(tokens)
+			if i.loopCount != -1 { // Breaked import.
+				return
+			}
 		default:
 			i.skipBlock(true)
 		}

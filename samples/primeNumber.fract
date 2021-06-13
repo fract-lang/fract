@@ -1,3 +1,5 @@
+#pragma enofi
+
 # PRIME NUMBER BETWEEN 1 an 100
 for _, x in range(2, 100)
 	if x == 2
