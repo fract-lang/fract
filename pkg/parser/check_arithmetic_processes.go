@@ -5,11 +5,11 @@ import (
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
-// CheckArithmeticProcesses returns arithmetic processes by operators.
+// Check arithmetic processes validity.
 func CheckArithmeticProcesses(tokens []objects.Token) {
 	var (
-		operator  bool
-		lastIndex int
+		operator bool
+		brace    int
 	)
 	for index := 0; index < len(tokens); index++ {
 		switch token := tokens[index]; token.Type {
@@ -17,22 +17,23 @@ func CheckArithmeticProcesses(tokens []objects.Token) {
 			if !operator {
 				fract.Error(token, "Operator spam!")
 			}
-			lastIndex = index
 			operator = false
 		case fract.TypeValue, fract.TypeName, fract.TypeComma, fract.TypeBrace:
-			lastIndex = index
+			switch token.Type {
+			case fract.TypeBrace:
+				if token.Value == "(" || token.Value == "[" || token.Value == "{" {
+					brace++
+				} else {
+					brace--
+				}
+			case fract.TypeComma:
+				if brace == 0 {
+					fract.Error(token, "Invalid syntax!")
+				}
+			}
 			operator = index < len(tokens)-1
 		default:
-			fract.Error(token, "Invalid value!")
-		}
-	}
-	if lastIndex < len(tokens)-1 {
-		token := tokens[lastIndex]
-		if token.Type == fract.TypeOperator && !operator {
-			fract.Error(token, "Operator spam!")
-		} else if token.Type != fract.TypeValue && token.Type != fract.TypeName &&
-			token.Type != fract.TypeBrace && token.Type != fract.TypeComma {
-			fract.Error(token, "Invalid value!")
+			fract.Error(token, "Invalid syntax!")
 		}
 	}
 	if tokens[len(tokens)-1].Type == fract.TypeOperator {

@@ -18,7 +18,7 @@
 + Memory consumption is low, does not overload
 + Efficient and performance, powerfull Go backend
 + Unicode support
-+ Macros like C
++ Macros and pragmas
 
 ## Interactive Shell
 <img src="https://github.com/fract-lang/resources/blob/main/preview/fract_cli.gif?raw=true">

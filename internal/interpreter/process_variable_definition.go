@@ -75,6 +75,7 @@ func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protecte
 	} else if pre.Type == fract.TypeBrace && pre.Value == "(" {
 		tokens = tokens[2 : len(tokens)-1]
 		last := 0
+		line := tokens[0].Line
 		bracket := 0
 		for index, token := range tokens {
 			if token.Type == fract.TypeBrace {
@@ -82,14 +83,16 @@ func (i *Interpreter) processVariableDefinition(tokens []objects.Token, protecte
 					bracket++
 				} else {
 					bracket--
+					line = token.Line
 				}
 			}
 			if bracket > 0 {
 				continue
 			}
-			if token.Type == fract.TypeComma {
+			if line < token.Line {
 				i.appendVariable(md, tokens[last:index])
-				last = index + 1
+				last = index
+				line = token.Line
 			}
 		}
 		if len(tokens) != last {

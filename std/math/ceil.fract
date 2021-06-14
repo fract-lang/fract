@@ -11,7 +11,7 @@
 #
 
 protected func Ceil(x)
-	if	x - int(x) == 0
+	if x - int(x) == 0
 		ret x
 	elif x - int(x) > 0
 		ret int(x + 1)

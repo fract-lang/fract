@@ -103,8 +103,8 @@ const Pi = 3.14
 ```
 ```
 var (
-  FibonacciFirst = 1,
-  Ln2Hi          = 6.93147180369123816490e-01,
+  FibonacciFirst = 1
+  Ln2Hi          = 6.93147180369123816490e-01
   Hex            = 0x07EDD5E59A4E28C2
 )
 ```
@@ -120,9 +120,9 @@ var a = 45      # Value is 45
 a = 1           # Value is 1
 
 var (
-  c = 3,        # Value is 3
-  d = 5,        # Value is 5
-  e = 9         # Value is 9
+  c = 3        # Value is 3
+  d = 5        # Value is 5
+  e = 9        # Value is 9
 )
 ```
 
@@ -148,8 +148,8 @@ var a = 5        # No error, a is 5
 ```
 ```
 var (
-  a = 0,
-  b = 0,
+  a = 0
+  b = 0
 )
 del a, b         # Remove 'a' and 'b' variables from memory
                  # No defined variables
