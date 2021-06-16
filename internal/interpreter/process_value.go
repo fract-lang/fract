@@ -301,39 +301,78 @@ func solveProcess(process valueProcess) objects.Value {
 			value.Content = process.FirstV.Content
 			return value
 		}
-
 		if len(process.FirstV.Content) != len(process.SecondV.Content) &&
 			(len(process.FirstV.Content) != 1 && len(process.SecondV.Content) != 1) {
 			fract.Error(process.Second, "Array element count is not one or equals to first array!")
 		}
-		if len(process.FirstV.Content) == 1 {
-			first := arithmetic.ToArithmetic(arith(process.Operator, process.FirstV.Content[0]))
-			for index, current := range process.SecondV.Content {
-				process.SecondV.Content[index] = readyData(process,
-					objects.Data{
-						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, first, arithmetic.ToArithmetic(arith(process.Operator, current)))),
-					})
+		if len(process.FirstV.Content) == 1 || len(process.SecondV.Content) == 1 {
+			first, second := process.FirstV, process.SecondV
+			if len(first.Content) != 1 {
+				first, second = second, first
 			}
-			value.Content = process.SecondV.Content
-		} else if len(process.SecondV.Content) == 1 {
-			second := arithmetic.ToArithmetic(arith(process.Operator, process.SecondV.Content[0]))
-			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = readyData(process,
-					objects.Data{
-						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(arith(process.Operator, current)), second)),
+			ar := arithmetic.ToArithmetic(arith(process.Operator, first.Content[0]))
+			for index, current := range second.Content {
+				if current.Type == objects.VALArray {
+					second.Content[index] = readyData(process, objects.Data{
+						Data: solveProcess(valueProcess{
+							First:  process.First,
+							FirstV: second,
+							Second: process.Second,
+							SecondV: objects.Value{
+								Content: current.Data.([]objects.Data),
+								Array:   true,
+							},
+							Operator: process.Operator,
+						}).Content,
+						Type: objects.VALArray,
 					})
+				} else {
+					second.Content[index] = readyData(process,
+						objects.Data{
+							Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, ar, arithmetic.ToArithmetic(arith(process.Operator, current)))),
+						})
+				}
 			}
-			value.Content = process.FirstV.Content
+			value.Content = second.Content
 		} else {
-			for index, current := range process.FirstV.Content {
-				process.FirstV.Content[index] = readyData(process,
-					objects.Data{
-						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(arith(process.Operator, current)), arithmetic.ToArithmetic(process.SecondV.Content[index].String()))),
+			for index, first := range process.FirstV.Content {
+				second := process.SecondV.Content[index]
+				if first.Type == objects.VALArray || second.Type == objects.VALArray {
+					proc := valueProcess{
+						First:    process.First,
+						Second:   process.Second,
+						Operator: process.Operator,
+					}
+					if first.Type == objects.VALArray {
+						proc.FirstV = objects.Value{
+							Content: first.Data.([]objects.Data),
+							Array:   true,
+						}
+					} else {
+						proc.FirstV = objects.Value{Content: []objects.Data{first}}
+					}
+					if second.Type == objects.VALArray {
+						proc.SecondV = objects.Value{
+							Content: second.Data.([]objects.Data),
+							Array:   true,
+						}
+					} else {
+						proc.SecondV = objects.Value{Content: []objects.Data{second}}
+					}
+					process.FirstV.Content[index] = readyData(process, objects.Data{
+						Data: solveProcess(proc).Content,
+						Type: objects.VALArray,
 					})
+				} else {
+					process.FirstV.Content[index] = readyData(process,
+						objects.Data{
+							Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(arith(process.Operator, first)), arithmetic.ToArithmetic(second.String()))),
+						})
+				}
 			}
 			value.Content = process.FirstV.Content
 		}
-	} else if process.FirstV.Array {
+	} else if process.FirstV.Array || process.SecondV.Array {
 		value.Array = true
 		if len(process.FirstV.Content) == 0 {
 			value.Content = process.SecondV.Content
@@ -342,33 +381,34 @@ func solveProcess(process valueProcess) objects.Value {
 			value.Content = process.FirstV.Content
 			return value
 		}
-
-		second := arithmetic.ToArithmetic(arith(process.Operator, process.SecondV.Content[0]))
-		for index, current := range process.FirstV.Content {
-			process.FirstV.Content[index] = readyData(process,
-				objects.Data{
-					Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(arith(process.Operator, current)), second)),
+		first, second := process.FirstV, process.SecondV
+		if !first.Array {
+			first, second = second, first
+		}
+		ar := arithmetic.ToArithmetic(arith(process.Operator, second.Content[0]))
+		for index, current := range first.Content {
+			if current.Type == objects.VALArray {
+				first.Content[index] = readyData(process, objects.Data{
+					Data: solveProcess(valueProcess{
+						First:  process.First,
+						FirstV: second,
+						Second: process.Second,
+						SecondV: objects.Value{
+							Content: current.Data.([]objects.Data),
+							Array:   true,
+						},
+						Operator: process.Operator,
+					}).Content,
+					Type: objects.VALArray,
 				})
+			} else {
+				first.Content[index] = readyData(process,
+					objects.Data{
+						Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(arith(process.Operator, current)), ar)),
+					})
+			}
 		}
-		value.Content = process.FirstV.Content
-	} else if process.SecondV.Array {
-		value.Array = true
-		if len(process.FirstV.Content) == 0 {
-			value.Content = process.SecondV.Content
-			return value
-		} else if len(process.SecondV.Content) == 0 {
-			value.Content = process.FirstV.Content
-			return value
-		}
-
-		first := arithmetic.ToArithmetic(arith(process.Operator, process.FirstV.Content[0]))
-		for index, current := range process.SecondV.Content {
-			process.SecondV.Content[index] = readyData(process,
-				objects.Data{
-					Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator, arithmetic.ToArithmetic(arith(process.Operator, current)), first)),
-				})
-		}
-		value.Content = process.SecondV.Content
+		value.Content = first.Content
 	} else {
 		if len(process.FirstV.Content) == 0 {
 			process.FirstV.Content = []objects.Data{{Data: "0"}}
@@ -389,7 +429,6 @@ func applyMinus(minussed bool, value objects.Value) objects.Value {
 	if !minussed {
 		return value
 	}
-
 	val := objects.Value{
 		Array:   value.Array,
 		Content: append([]objects.Data{}, value.Content...),
@@ -406,8 +445,7 @@ func applyMinus(minussed bool, value objects.Value) objects.Value {
 		return val
 	}
 	if data := val.Content[0]; data.Type == objects.VALBoolean ||
-		data.Type == objects.VALFloat ||
-		data.Type == objects.VALInteger {
+		data.Type == objects.VALFloat || data.Type == objects.VALInteger {
 		data.Data = fmt.Sprintf(fract.FloatFormat, -arithmetic.ToArithmetic(data.String()))
 		val.Content[0].Data = data.Format()
 	}
@@ -492,8 +530,12 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 							data = objects.Data{Data: fmt.Sprint(variable.Value.Content[0].String()[position])}
 						}
 					}
-					result.Content = []objects.Data{data}
-					result.Array = false
+					result.Array = data.Type == objects.VALArray
+					if result.Array {
+						result.Content = data.Data.([]objects.Data)
+					} else {
+						result.Content = []objects.Data{data}
+					}
 					*result = applyMinus(minussed, *result)
 					return 0
 				case "(":
@@ -715,8 +757,12 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 					data = objects.Data{Data: fmt.Sprint(variable.Value.Content[0].String()[position])}
 				}
 			}
-			result.Content = []objects.Data{data}
-			result.Array = false
+			result.Array = data.Type == objects.VALArray
+			if result.Array {
+				result.Content = data.Data.([]objects.Data)
+			} else {
+				result.Content = []objects.Data{data}
+			}
 			*result = applyMinus(minussed, *result)
 			return index - oindex + 1
 		case ")":
@@ -798,7 +844,8 @@ func (i *Interpreter) processArrayValue(tokens []objects.Token) objects.Value {
 	comma := 1
 	brace := 0
 	for index := 1; index < len(tokens)-1; index++ {
-		if current := tokens[index]; current.Type == fract.TypeBrace {
+		current := tokens[index]
+		if current.Type == fract.TypeBrace {
 			if current.Value == "[" || current.Value == "{" || current.Value == "(" {
 				brace++
 			} else {
@@ -810,7 +857,14 @@ func (i *Interpreter) processArrayValue(tokens []objects.Token) objects.Value {
 				fract.Error(first, "Value is not defined!")
 			}
 			val := i.processValue(*lst)
-			value.Content = append(value.Content, val.Content...)
+			if val.Array {
+				value.Content = append(value.Content, objects.Data{
+					Data: val.Content,
+					Type: objects.VALArray,
+				})
+			} else {
+				value.Content = append(value.Content, val.Content...)
+			}
 			comma = index + 1
 		}
 	}
@@ -820,7 +874,14 @@ func (i *Interpreter) processArrayValue(tokens []objects.Token) objects.Value {
 			fract.Error(first, "Value is not defined!")
 		}
 		val := i.processValue(*lst)
-		value.Content = append(value.Content, val.Content...)
+		if val.Array {
+			value.Content = append(value.Content, objects.Data{
+				Data: val.Content,
+				Type: objects.VALArray,
+			})
+		} else {
+			value.Content = append(value.Content, val.Content...)
+		}
 	}
 	return value
 }

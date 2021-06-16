@@ -133,18 +133,33 @@ func (i *Interpreter) getParamsArgumentValues(tokens []objects.Token, index, bra
 				*index -= 4
 				return returnValue
 			}
-			returnValue.Content = append(returnValue.Content, i.processValue(*valueList).Content...)
+			val := i.processValue(*valueList)
+			if val.Array {
+				returnValue.Content = append(returnValue.Content, objects.Data{
+					Data: val.Content,
+					Type: objects.VALArray,
+				})
+			} else {
+				returnValue.Content = append(returnValue.Content, val.Content...)
+			}
 			*lastComma = *index + 1
 		}
 	}
-
 	if *lastComma < len(tokens) {
 		valueSlice := tokens[*lastComma:]
 		if isParamSet(valueSlice) {
 			*index -= 4
 			return returnValue
 		}
-		returnValue.Content = append(returnValue.Content, i.processValue(valueSlice).Content...)
+		val := i.processValue(valueSlice)
+		if val.Array {
+			returnValue.Content = append(returnValue.Content, objects.Data{
+				Data: val.Content,
+				Type: objects.VALArray,
+			})
+		} else {
+			returnValue.Content = append(returnValue.Content, val.Content...)
+		}
 	}
 	return returnValue
 }

@@ -13,6 +13,7 @@ const (
 	VALString   uint8 = 2
 	VALBoolean  uint8 = 3
 	VALFunction uint8 = 4
+	VALArray    uint8 = 5
 )
 
 // Data instance.
@@ -26,6 +27,17 @@ func (d Data) String() string {
 	switch d.Type {
 	case VALFunction:
 		return "object.function"
+	case VALArray:
+		if len(d.Data.([]Data)) == 0 {
+			return "[]"
+		} else {
+			var sb strings.Builder
+			sb.WriteByte('[')
+			for _, data := range d.Data.([]Data) {
+				sb.WriteString(data.Format() + " ")
+			}
+			return sb.String()[:sb.Len()-1] + "]"
+		}
 	default:
 		if d.Data == nil {
 			return "0"
@@ -36,7 +48,7 @@ func (d Data) String() string {
 
 func (d Data) Format() string {
 	data := d.String()
-	if d.Type == VALString || d.Type == VALBoolean || d.Type == VALFunction {
+	if d.Type == VALString || d.Type == VALBoolean || d.Type == VALFunction || d.Type == VALArray {
 		return data
 	}
 	if data != grammar.KwNaN {
