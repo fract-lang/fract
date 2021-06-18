@@ -8,3 +8,20 @@ type Block struct {
 	Catch     func(*objects.Exception)
 	Exception *objects.Exception
 }
+
+func (block *Block) catch() {
+	if r := recover(); r != nil {
+		block.Exception = &objects.Exception{
+			Message: r.(error).Error(),
+		}
+		if block.Catch != nil {
+			block.Catch(block.Exception)
+		}
+	}
+}
+
+// Do execute block.
+func (block *Block) Do() {
+	defer block.catch()
+	block.Try()
+}

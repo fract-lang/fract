@@ -1,5 +1,7 @@
 package lexer
 
+// TODO: Add dotted floating point values. Smiliar to: 9. 4. 84.
+
 import (
 	"math/big"
 	"regexp"
@@ -9,8 +11,6 @@ import (
 	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 )
-
-// TODO: Add a title(~) operator.
 
 var (
 	numericPattern = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)

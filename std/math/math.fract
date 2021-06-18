@@ -1,0 +1,143 @@
+# Copyright 2021, MIT License.
+#
+# Authors
+# ----------------
+# Mertcan Davulcu
+#
+#
+# Description
+# ----------------
+# Math utilities.
+#
+
+# Returns absolute of value.
+protected func Abs(x)
+	if x < 0
+		ret -x
+	end
+	ret x
+end
+
+# Returns the smallest (closest to negative infinity).
+protected func Ceil(x)
+	if x - int(x) == 0
+		ret x
+	elif x - int(x) > 0
+		ret int(x + 1)
+	end
+	ret int(x)
+end
+
+# Returns radians to degrees.
+protected func Degrees(radians)
+	ret radians * 57.295780
+end
+
+# Returns factorial of number.
+protected func Fact(x)
+	if x < 0
+		ret NaN
+	elif x == 0
+		ret 1
+	end
+	ret x * Fact(x - 1)
+end
+
+# Returns the floor of x as an integral.
+protected func Floor(n)
+	var intN = int(n)
+	if n - intN >= 0
+		ret intN
+	end
+	ret intN - 1
+end
+
+# Returns true if number is NaN, false if not.
+protected func IsNaN(x)
+	ret x <> x
+end
+
+# Returns true if object is numeric, returns false if not.
+protected func IsNumeric(object)
+	var result = float(object)
+	ret result <> 0 || result == 0 && (object == 0 || object == "0")
+end
+
+# Returns maximum number.
+protected func Max(x, y)
+	if x > y
+		ret x
+	end
+	ret y
+end
+
+# Returns minimum number.
+protected func Min(x, y)
+	if x < y
+		ret x
+	end
+	ret y
+end
+
+# Returns power of number.
+protected func Pow(x, y, z=NaN)
+	var n = 1
+	for _, a in range(1, y)
+		n *= x
+	end
+	if IsNaN(z) == false
+		ret n % z
+	end
+	ret n
+end
+
+# Returns degrees to radians.
+protected func Radians(degrees)
+	ret degrees * 0.0174532925199444
+end
+
+# Returns balue rounded to the nearest integer.
+protected func Round(x)
+	if x < 0
+		ret int(x - 0.5)
+	end
+	ret int(x + 0.5)
+end
+
+# Returns the square root.
+protected func Sqrt(x)
+	if x <= 0
+		ret NaN
+	end
+	var z = 1.0
+	try
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+		z -= (z * z - x) / (2 * z)
+	end
+	ret z
+end
+
+# Reverse positive number to negative number.
+protected func ToNegative(x)
+	if x < 0
+		ret x
+	end
+	ret -x
+end
+
+# Reverse negative number to positive number.
+protected func ToPositive(x)
+	if x > 0
+		ret x
+	end
+	ret -x
+end
+

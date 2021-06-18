@@ -374,6 +374,7 @@ print(runtime.ARCH)
 
 #>
 
+#pragma enofi
 #define PRINT_AS_FLOAT true
 #define PRINT_AS_OBJECTSTR
 
@@ -440,4 +441,3 @@ func Print(...args)
 end
 
 Print(1, 2, 3, 4, [1, 2, 3, [4]])
-

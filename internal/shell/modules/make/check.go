@@ -1,10 +1,10 @@
 package make
 
 import (
+	"os"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/fs"
 )
 
 // Check invalid state of value.
@@ -13,5 +13,6 @@ func Check(value string) bool {
 		return true
 	}
 	value += ".fract"
-	return fs.ExistsFile(value)
+	info, err := os.Stat(value)
+	return err == nil && !info.IsDir()
 }

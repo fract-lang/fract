@@ -8,7 +8,6 @@ import (
 	"github.com/fract-lang/fract/internal/interpreter"
 	"github.com/fract-lang/fract/pkg/except"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/fs"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -20,7 +19,7 @@ func Process(command string) {
 	} else if !strings.HasSuffix(command, fract.FractExtension) {
 		command += fract.FractExtension
 	}
-	if !fs.ExistsFile(command) {
+	if info, err := os.Stat(command); err != nil || info.IsDir() {
 		fmt.Println("The Fract file is not exists: " + command)
 		return
 	}
