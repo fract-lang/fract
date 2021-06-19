@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 )
 
@@ -153,9 +152,9 @@ func (l *Lexer) Generate() objects.Token {
 	// ************
 
 	if l.RangeComment { // Range comment.
-		if strings.HasPrefix(ln, grammar.RangeCommentClose) { // Range comment close.
+		if strings.HasPrefix(ln, "<#") { // Range comment close.
 			l.RangeComment = false
-			l.Column += len(grammar.RangeCommentClose)
+			l.Column += 2 // len("<#")
 			token.Type = fract.TypeIgnore
 			return token
 		}
@@ -169,9 +168,9 @@ func (l *Lexer) Generate() objects.Token {
 			l.lastToken.Type == fract.TypeComma || l.lastToken.Type == fract.TypeIn ||
 			l.lastToken.Type == fract.TypeIf || l.lastToken.Type == fract.TypeElseIf ||
 			l.lastToken.Type == fract.TypeElse || l.lastToken.Type == fract.TypeReturn)) ||
-		isKeyword(ln, grammar.KwNaN): // Numeric value.
+		isKeyword(ln, "NaN"): // Numeric value.
 		if check == "" {
-			check = grammar.KwNaN
+			check = "NaN"
 			l.Column += 3
 		} else {
 			// Remove punct.
@@ -202,44 +201,44 @@ func (l *Lexer) Generate() objects.Token {
 		token.Value = ";"
 		token.Type = fract.TypeStatementTerminator
 		l.Line--
-	case strings.HasPrefix(ln, grammar.AdditionAssignment): // Addition assignment.
-		token.Value = grammar.AdditionAssignment
+	case strings.HasPrefix(ln, "+="): // Addition assignment.
+		token.Value = "+="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.ExponentiationAssignment): // Exponentiation assignment.
-		token.Value = grammar.ExponentiationAssignment
+	case strings.HasPrefix(ln, "**="): // Exponentiation assignment.
+		token.Value = "**="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.MultiplicationAssignment): // Multiplication assignment.
-		token.Value = grammar.MultiplicationAssignment
+	case strings.HasPrefix(ln, "*="): // Multiplication assignment.
+		token.Value = "*="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.DivisionAssignment): // Division assignment.
-		token.Value = grammar.DivisionAssignment
+	case strings.HasPrefix(ln, "/="): // Division assignment.
+		token.Value = "/="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.ModulusAssignment): // Modulus assignment.
-		token.Value = grammar.ModulusAssignment
+	case strings.HasPrefix(ln, "%="): // Modulus assignment.
+		token.Value = "%="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.SubtractionAssignment): // Subtraction assignment.
-		token.Value = grammar.SubtractionAssignment
+	case strings.HasPrefix(ln, "-="): // Subtraction assignment.
+		token.Value = "-="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.LeftBinaryShiftAssignment): // Left binary shift assignment.
-		token.Value = grammar.LeftBinaryShiftAssignment
+	case strings.HasPrefix(ln, "<<="): // Left binary shift assignment.
+		token.Value = "<<="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.RightBinaryShiftAssignment): // Right binary shift assignment.
-		token.Value = grammar.RightBinaryShiftAssignment
+	case strings.HasPrefix(ln, ">>="): // Right binary shift assignment.
+		token.Value = ">>="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.InclusiveOrAssignment): // Bitwise Inclusive or assignment.
-		token.Value = grammar.InclusiveOrAssignment
+	case strings.HasPrefix(ln, "|="): // Bitwise Inclusive or assignment.
+		token.Value = "|="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.XOrAssignment): // Bitwise exclusive or assignment.
-		token.Value = grammar.XOrAssignment
+	case strings.HasPrefix(ln, "^="): // Bitwise exclusive or assignment.
+		token.Value = "^="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.AndAssignment): // And assignment.
-		token.Value = grammar.AndAssignment
+	case strings.HasPrefix(ln, "&="): // And assignment.
+		token.Value = "&="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.IntegerDivision): // Integer division.
-		token.Value = grammar.IntegerDivision
+	case strings.HasPrefix(ln, "//"): // Integer division.
+		token.Value = "//"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.IntegerDivideWithBigger): // Integer divide with bigger.
-		token.Value = grammar.IntegerDivideWithBigger
+	case strings.HasPrefix(ln, "\\\\"): // Integer divide with bigger.
+		token.Value = "\\\\"
 		token.Type = fract.TypeOperator
 	case ln[0] == '+': // Addition.
 		token.Value = "+"
@@ -254,8 +253,8 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = "-"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.Exponentiation): // Exponentiation.
-		token.Value = grammar.Exponentiation
+	case strings.HasPrefix(ln, "**"): // Exponentiation.
+		token.Value = "**"
 		token.Type = fract.TypeOperator
 	case ln[0] == '*': // Multiplication.
 		token.Value = "*"
@@ -302,20 +301,20 @@ func (l *Lexer) Generate() objects.Token {
 		}
 		token.Value = "]"
 		token.Type = fract.TypeBrace
-	case strings.HasPrefix(ln, grammar.LeftBinaryShift): // Left shift.
-		token.Value = grammar.LeftBinaryShift
+	case strings.HasPrefix(ln, "<<"): // Left shift.
+		token.Value = "<<"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.RightBinaryShift): // Right shift.
-		token.Value = grammar.RightBinaryShift
+	case strings.HasPrefix(ln, ">>"): // Right shift.
+		token.Value = ">>"
 		token.Type = fract.TypeOperator
 	case ln[0] == ',': // Comma.
 		token.Value = ","
 		token.Type = fract.TypeComma
-	case strings.HasPrefix(ln, grammar.LogicalAnd): // Logical and (&&).
-		token.Value = grammar.LogicalAnd
+	case strings.HasPrefix(ln, "&&"): // Logical and (&&).
+		token.Value = "&&"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.LogicalOr): // Logical or (||).
-		token.Value = grammar.LogicalOr
+	case strings.HasPrefix(ln, "||"): // Logical or (||).
+		token.Value = "||"
 		token.Type = fract.TypeOperator
 	case ln[0] == '|': // Vertical bar.
 		token.Value = "|"
@@ -326,17 +325,17 @@ func (l *Lexer) Generate() objects.Token {
 	case ln[0] == '^': // Bitwise exclusive or(^).
 		token.Value = "^"
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.GreaterEquals): // Greater than or equals to (>=).
-		token.Value = grammar.GreaterEquals
+	case strings.HasPrefix(ln, ">="): // Greater than or equals to (>=).
+		token.Value = ">="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.LessEquals): // Less than or equals to (<=).
-		token.Value = grammar.LessEquals
+	case strings.HasPrefix(ln, "<="): // Less than or equals to (<=).
+		token.Value = "<="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.Equals): // Equals to (==).
-		token.Value = grammar.Equals
+	case strings.HasPrefix(ln, "=="): // Equals to (==).
+		token.Value = "=="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.NotEquals): // Not equals to (<>).
-		token.Value = grammar.NotEquals
+	case strings.HasPrefix(ln, "<>"): // Not equals to (<>).
+		token.Value = "<>"
 		token.Type = fract.TypeOperator
 	case ln[0] == '>': // Greater than (>).
 		token.Value = ">"
@@ -347,75 +346,75 @@ func (l *Lexer) Generate() objects.Token {
 	case ln[0] == '=': // Equals(=).
 		token.Value = "="
 		token.Type = fract.TypeOperator
-	case strings.HasPrefix(ln, grammar.Params): // Params.
-		token.Value = grammar.Params
+	case strings.HasPrefix(ln, "..."): // Params.
+		token.Value = "..."
 		token.Type = fract.TypeParams
-	case isKeyword(ln, grammar.KwBlockEnd): // End of block.
-		token.Value = grammar.KwBlockEnd
+	case isKeyword(ln, "end"): // End of block.
+		token.Value = "end"
 		token.Type = fract.TypeBlockEnd
-	case isKeyword(ln, grammar.KwVariable): // Variable.
-		token.Value = grammar.KwVariable
+	case isKeyword(ln, "var"): // Variable.
+		token.Value = "var"
 		token.Type = fract.TypeVariable
-	case isKeyword(ln, grammar.KwMut): // Mutable variable.
-		token.Value = grammar.KwMut
+	case isKeyword(ln, "mut"): // Mutable variable.
+		token.Value = "mut"
 		token.Type = fract.TypeVariable
-	case isKeyword(ln, grammar.KwConstant): // Constant.
-		token.Value = grammar.KwConstant
+	case isKeyword(ln, "const"): // Constant.
+		token.Value = "const"
 		token.Type = fract.TypeVariable
-	case isKeyword(ln, grammar.KwProtected): // Protected.
-		token.Value = grammar.KwProtected
+	case isKeyword(ln, "protected"): // Protected.
+		token.Value = "protected"
 		token.Type = fract.TypeProtected
-	case isKeyword(ln, grammar.KwDelete): // Delete.
-		token.Value = grammar.KwDelete
+	case isKeyword(ln, "del"): // Delete.
+		token.Value = "del"
 		token.Type = fract.TypeDelete
-	case isKeyword(ln, grammar.KwDefer): // Defer.
-		token.Value = grammar.KwDefer
+	case isKeyword(ln, "defer"): // Defer.
+		token.Value = "defer"
 		token.Type = fract.TypeDefer
-	case isKeyword(ln, grammar.KwIf): // If.
-		token.Value = grammar.KwIf
+	case isKeyword(ln, "if"): // If.
+		token.Value = "if"
 		token.Type = fract.TypeIf
-	case isKeyword(ln, grammar.KwElseIf): // Else if.
-		token.Value = grammar.KwElseIf
+	case isKeyword(ln, "elif"): // Else if.
+		token.Value = "elif"
 		token.Type = fract.TypeElseIf
-	case isKeyword(ln, grammar.KwElse): // Else.
-		token.Value = grammar.KwElse
+	case isKeyword(ln, "else"): // Else.
+		token.Value = "else"
 		token.Type = fract.TypeElse
-	case isKeyword(ln, grammar.KwForWhileLoop): // For and while loop.
-		token.Value = grammar.KwForWhileLoop
+	case isKeyword(ln, "for"): // Foreach and while loop.
+		token.Value = "for"
 		token.Type = fract.TypeLoop
-	case isKeyword(ln, grammar.KwIn): // In.
-		token.Value = grammar.KwIn
+	case isKeyword(ln, "in"): // In.
+		token.Value = "in"
 		token.Type = fract.TypeIn
-	case isKeyword(ln, grammar.KwBreak): // Break.
-		token.Value = grammar.KwBreak
+	case isKeyword(ln, "break"): // Break.
+		token.Value = "break"
 		token.Type = fract.TypeBreak
-	case isKeyword(ln, grammar.KwContinue): // Continue.
-		token.Value = grammar.KwContinue
+	case isKeyword(ln, "continue"): // Continue.
+		token.Value = "continue"
 		token.Type = fract.TypeContinue
-	case isKeyword(ln, grammar.KwFunction): // Function.
-		token.Value = grammar.KwFunction
+	case isKeyword(ln, "func"): // Function.
+		token.Value = "func"
 		token.Type = fract.TypeFunction
-	case isKeyword(ln, grammar.KwReturn): // Return.
-		token.Value = grammar.KwReturn
+	case isKeyword(ln, "ret"): // Return.
+		token.Value = "ret"
 		token.Type = fract.TypeReturn
-	case isKeyword(ln, grammar.KwTry): // Try.
-		token.Value = grammar.KwTry
+	case isKeyword(ln, "try"): // Try.
+		token.Value = "try"
 		token.Type = fract.TypeTry
-	case isKeyword(ln, grammar.KwCatch): // Catch.
-		token.Value = grammar.KwCatch
+	case isKeyword(ln, "catch"): // Catch.
+		token.Value = "catch"
 		token.Type = fract.TypeCatch
-	case isKeyword(ln, grammar.KwImport): // Open.
-		token.Value = grammar.KwImport
+	case isKeyword(ln, "open"): // Open.
+		token.Value = "open"
 		token.Type = fract.TypeImport
-	case isKeyword(ln, grammar.KwTrue): // True.
-		token.Value = grammar.KwTrue
+	case isKeyword(ln, "true"): // True.
+		token.Value = "true"
 		token.Type = fract.TypeValue
-	case isKeyword(ln, grammar.KwFalse): // False.
-		token.Value = grammar.KwFalse
+	case isKeyword(ln, "false"): // False.
+		token.Value = "false"
 		token.Type = fract.TypeValue
-	case strings.HasPrefix(ln, grammar.RangeCommentOpen): // Range comment open.
+	case strings.HasPrefix(ln, "#>"): // Range comment open.
 		l.RangeComment = true
-		token.Value = grammar.RangeCommentOpen
+		token.Value = "#>"
 		token.Type = fract.TypeIgnore
 	case ln[0] == '#': // Singleline comment or macro.
 		if isMacro(ln) {

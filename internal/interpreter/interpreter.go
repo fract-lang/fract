@@ -12,7 +12,6 @@ import (
 
 	"github.com/fract-lang/fract/internal/lexer"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 )
@@ -500,17 +499,12 @@ func (i *Interpreter) processTokens(tokens []objects.Token) uint8 {
 					continue
 				}
 				if current.Type == fract.TypeOperator &&
-					(current.Value == "=" ||
-						current.Value == grammar.AdditionAssignment ||
-						current.Value == grammar.SubtractionAssignment ||
-						current.Value == grammar.MultiplicationAssignment ||
-						current.Value == grammar.DivisionAssignment ||
-						current.Value == grammar.ModulusAssignment ||
-						current.Value == grammar.XOrAssignment ||
-						current.Value == grammar.LeftBinaryShiftAssignment ||
-						current.Value == grammar.RightBinaryShiftAssignment ||
-						current.Value == grammar.InclusiveOrAssignment ||
-						current.Value == grammar.AndAssignment) { // Variable setting.
+					(current.Value == "=" || current.Value == "+=" ||
+						current.Value == "-=" || current.Value == "*=" ||
+						current.Value == "/=" || current.Value == "%=" ||
+						current.Value == "^=" || current.Value == "<<=" ||
+						current.Value == ">>=" || current.Value == "|=" ||
+						current.Value == "&=") { // Variable setting.
 					i.processVariableSet(tokens)
 					return fract.TypeNone
 				}

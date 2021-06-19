@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
@@ -74,7 +73,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			/* Interpret/skip block. */
 			conditionList := tokens
 			condition := i.processCondition(conditionList)
-			_else := condition == grammar.KwFalse
+			_else := condition == "false"
 			for {
 				i.index++
 				tokens := i.Tokens[i.index]
@@ -85,7 +84,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 					// Remove temporary functions.
 					i.functions = i.functions[:functionLen]
 					condition = i.processCondition(conditionList)
-					if _break || condition != grammar.KwTrue {
+					if _break || condition != "true" {
 						return processKwState(kwstate)
 					}
 					i.index = iindex
@@ -94,7 +93,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 					if len(tokens) > 1 {
 						fract.Error(tokens[0], "Else block is not take any arguments!")
 					}
-					if condition == grammar.KwTrue {
+					if condition == "true" {
 						i.skipBlock(false)
 						i.index--
 						continue
@@ -130,7 +129,7 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 				}
 
 				// Condition is true?
-				if condition == grammar.KwTrue {
+				if condition == "true" {
 					kwstate = i.processTokens(tokens)
 					if kwstate == fract.LOOPBreak || kwstate == fract.FUNCReturn { // Break loop or return?
 						_break = true

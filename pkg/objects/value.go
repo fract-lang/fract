@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
-
-	"github.com/fract-lang/fract/pkg/grammar"
 )
 
+// TODO: Minimize here.
 // TODO: Add []Datas to array string function.
 
 const (
@@ -54,7 +53,7 @@ func (d Data) Format() string {
 	if d.Type == VALString || d.Type == VALBoolean || d.Type == VALFunction || d.Type == VALArray {
 		return data
 	}
-	if data != grammar.KwNaN {
+	if data != "NaN" {
 		if d.Type == VALInteger {
 			bigfloat, _ := new(big.Float).SetString(data)
 			data = bigfloat.String()

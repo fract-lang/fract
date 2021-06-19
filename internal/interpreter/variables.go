@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
@@ -67,8 +66,8 @@ func (i *Interpreter) processVariableDeclaration(tokens []objects.Token, protect
 		fract.ErrorCustom(first.File, first.Line, first.Column+len(first.Value), "Name is not found!")
 	}
 	md := variableMetadata{
-		constant:  tokens[0].Value == grammar.KwConstant,
-		mutable:   tokens[0].Value == grammar.KwMut,
+		constant:  tokens[0].Value == "const",
+		mutable:   tokens[0].Value == "mut",
 		protected: protected,
 	}
 	pre := tokens[1]

@@ -2,7 +2,6 @@ package parser
 
 import (
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/vector"
 )
@@ -160,14 +159,13 @@ func IndexProcessPriority(tokens []objects.Token) int {
 			continue
 		}
 		// Exponentiation or shifts.
-		if token.Value == grammar.LeftBinaryShift || token.Value == grammar.RightBinaryShift ||
-			token.Value == grammar.Exponentiation {
+		if token.Value == "<<" || token.Value == ">>" || token.Value == "**" {
 			return index
 		}
 		switch token.Value {
 		case "%": // Modulus.
 			return index
-		case "*", "/", "\\", grammar.IntegerDivision, grammar.IntegerDivideWithBigger: // Multiply or division.
+		case "*", "/", "\\", "//", "\\\\": // Multiply or division.
 			if multiplyOrDivive == -1 {
 				multiplyOrDivive = index
 			}
@@ -195,9 +193,8 @@ func IndexProcessPriority(tokens []objects.Token) int {
 // FindConditionOperator return next condition operator.
 func FindConditionOperator(tokens []objects.Token) (int, objects.Token) {
 	for index, current := range tokens {
-		if (current.Type == fract.TypeOperator && (current.Value == grammar.Equals ||
-			current.Value == grammar.NotEquals || current.Value == ">" || current.Value == "<" ||
-			current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals)) ||
+		if (current.Type == fract.TypeOperator && (current.Value == "==" || current.Value == "<>" ||
+			current.Value == ">" || current.Value == "<" || current.Value == ">=" || current.Value == "<=")) ||
 			current.Type == fract.TypeIn {
 			return index, current
 		}

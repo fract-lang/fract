@@ -9,7 +9,6 @@ import (
 
 	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/grammar"
 	"github.com/fract-lang/fract/pkg/objects"
 	"github.com/fract-lang/fract/pkg/parser"
 	"github.com/fract-lang/fract/pkg/vector"
@@ -21,12 +20,12 @@ func compareValues(operator string, data0, data1 objects.Data) bool {
 	}
 
 	switch operator {
-	case grammar.Equals: // Equals.
+	case "==": // Equals.
 		if (data0.Type == objects.VALString && data0.Data != data1.Data) ||
 			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) != arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
-	case grammar.NotEquals: // Not equals.
+	case "<>": // Not equals.
 		if (data0.Type == objects.VALString && data0.Data == data1.Data) ||
 			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) == arithmetic.ToArithmetic(data1.String())) {
 			return false
@@ -41,12 +40,12 @@ func compareValues(operator string, data0, data1 objects.Data) bool {
 			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) >= arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
-	case grammar.GreaterEquals: // Greater or equals.
+	case ">=": // Greater or equals.
 		if (data0.Type == objects.VALString && data0.String() < data1.String()) ||
 			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) < arithmetic.ToArithmetic(data1.String())) {
 			return false
 		}
-	case grammar.LessEquals: // Less or equals.
+	case "<=": // Less or equals.
 		if (data0.Type == objects.VALString && data0.String() > data1.String()) ||
 			(data0.Type != objects.VALString && arithmetic.ToArithmetic(data0.String()) > arithmetic.ToArithmetic(data1.String())) {
 			return false
@@ -57,7 +56,8 @@ func compareValues(operator string, data0, data1 objects.Data) bool {
 
 func compare(value0, value1 objects.Value, operator objects.Token) bool {
 	// In.
-	if operator.Value == grammar.KwIn {
+	// TODO: Add support to new arrays.
+	if operator.Value == "in" {
 		if !value1.Array && value1.Content[0].Type != objects.VALString {
 			fract.Error(operator, "Value is not enumerable!")
 		}
@@ -65,7 +65,7 @@ func compare(value0, value1 objects.Value, operator objects.Token) bool {
 			if value0.Array {
 				for _, d := range value1.Content {
 					for _, cd := range value0.Content {
-						if compareValues(grammar.Equals, d, cd) {
+						if compareValues("==", d, cd) {
 							return true
 						}
 					}
@@ -116,7 +116,7 @@ func compare(value0, value1 objects.Value, operator objects.Token) bool {
 			return false
 		}
 		if len(value0.Content) != len(value1.Content) {
-			return operator.Value == grammar.NotEquals
+			return operator.Value == "<>"
 		}
 		for index, val0Content := range value0.Content {
 			if !compareValues(operator.Value, val0Content, value1.Content[index]) {
@@ -132,21 +132,21 @@ func compare(value0, value1 objects.Value, operator objects.Token) bool {
 // processCondition returns condition result.
 func (i *Interpreter) processCondition(tokens []objects.Token) string {
 	i.processRange(&tokens)
-	TRUE := objects.Value{Content: []objects.Data{{Data: grammar.KwTrue}}}
+	TRUE := objects.Value{Content: []objects.Data{{Data: "true"}}}
 	// Process condition.
-	ors := parser.DecomposeConditionalProcess(tokens, grammar.LogicalOr)
+	ors := parser.DecomposeConditionalProcess(tokens, "||")
 	for _, or := range *ors {
 		// Decompose and conditions.
-		ands := parser.DecomposeConditionalProcess(or, grammar.LogicalAnd)
+		ands := parser.DecomposeConditionalProcess(or, "&&")
 		// Is and long statement?
 		if len(*ands) > 1 {
 			for _, and := range *ands {
 				operatorIndex, operator := parser.FindConditionOperator(and)
 				// Operator is not found?
 				if operatorIndex == -1 {
-					operator.Value = grammar.Equals
+					operator.Value = "=="
 					if compare(i.processValue(and), TRUE, operator) {
-						return grammar.KwTrue
+						return "true"
 					}
 					continue
 				}
@@ -160,17 +160,17 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 					i.processValue(*vector.Sublist(and, 0, operatorIndex)),
 					i.processValue(*vector.Sublist(and, operatorIndex+1, len(and)-operatorIndex-1)),
 					operator) {
-					return grammar.KwFalse
+					return "false"
 				}
 			}
-			return grammar.KwTrue
+			return "true"
 		}
 		operatorIndex, operator := parser.FindConditionOperator(or)
 		// Operator is not found?
 		if operatorIndex == -1 {
-			operator.Value = grammar.Equals
+			operator.Value = "=="
 			if compare(i.processValue(or), TRUE, operator) {
-				return grammar.KwTrue
+				return "true"
 			}
 			continue
 		}
@@ -184,10 +184,10 @@ func (i *Interpreter) processCondition(tokens []objects.Token) string {
 			i.processValue(*vector.Sublist(or, 0, operatorIndex)),
 			i.processValue(*vector.Sublist(or, operatorIndex+1, len(or)-operatorIndex-1)),
 			operator) {
-			return grammar.KwTrue
+			return "true"
 		}
 	}
-	return grammar.KwFalse
+	return "false"
 }
 
 // Get string arithmetic compatible data.
@@ -263,12 +263,11 @@ func (i *Interpreter) processRange(tokens *[]objects.Token) {
 // solve process.
 func solve(operator objects.Token, first, second float64) float64 {
 	var result float64
-	if operator.Value == "\\" ||
-		operator.Value == grammar.IntegerDivideWithBigger { // Divide with bigger.
+	if operator.Value == "\\" || operator.Value == "\\\\" { // Divide with bigger.
 		if operator.Value == "\\" {
 			operator.Value = "/"
 		} else {
-			operator.Value = grammar.IntegerDivision
+			operator.Value = "//"
 		}
 		if first < second {
 			cache := first
@@ -283,12 +282,12 @@ func solve(operator objects.Token, first, second float64) float64 {
 		result = first - second
 	case "*": // Multiply.
 		result = first * second
-	case "/", grammar.IntegerDivision: // Division.
+	case "/", "//": // Division.
 		if first == 0 || second == 0 {
 			fract.Error(operator, "Divide by zero!")
 		}
 		result = first / second
-		if operator.Value == grammar.IntegerDivision {
+		if operator.Value == "//" {
 			result = math.RoundToEven(result)
 		}
 	case "|": // Binary or.
@@ -297,16 +296,16 @@ func solve(operator objects.Token, first, second float64) float64 {
 		result = float64(int(first) & int(second))
 	case "^": // Bitwise exclusive or.
 		result = float64(int(first) ^ int(second))
-	case grammar.Exponentiation: // Exponentiation.
+	case "**": // Exponentiation.
 		result = math.Pow(first, second)
 	case "%": // Mod.
 		result = math.Mod(first, second)
-	case grammar.LeftBinaryShift: // Left shift.
+	case "<<": // Left shift.
 		if second < 0 {
 			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
 		result = float64(int(first) << int(second))
-	case grammar.RightBinaryShift:
+	case ">>": // Right shift.
 		if second < 0 {
 			fract.Error(operator, "Shifter is cannot should be negative!")
 		}
@@ -974,14 +973,13 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 	if strings.HasPrefix(token.Value, "object.") {
 		fract.Error(token, "\""+token.Value+"\" is not compatible with arithmetic processes!")
 	}
-	if (token.Type == fract.TypeValue && token.Value != grammar.KwTrue && token.Value != grammar.KwFalse) &&
-		token.Value[0] != '\'' && token.Value[0] != '"' {
+	if (token.Type == fract.TypeValue && token.Value != "true" && token.Value != "false") && token.Value[0] != '\'' && token.Value[0] != '"' {
 		if strings.Contains(token.Value, ".") || strings.ContainsAny(token.Value, "eE") {
 			token.Type = objects.VALFloat
 		} else {
 			token.Type = objects.VALInteger
 		}
-		if token.Value != grammar.KwNaN {
+		if token.Value != "NaN" {
 			prs, _ := new(big.Float).SetString(token.Value)
 			val, _ := prs.Float64()
 			token.Value = fmt.Sprint(val)
@@ -999,7 +997,7 @@ func (i *Interpreter) processOperationValue(first bool, operation *valueProcess,
 	}
 	//* Type check.
 	if token.Type != fract.TypeNone {
-		if token.Value == grammar.KwTrue || token.Value == grammar.KwFalse {
+		if token.Value == "true" || token.Value == "false" {
 			result.Content[0].Type = objects.VALBoolean
 			*result = applyMinus(minussed, *result)
 		} else if token.Type == objects.VALFloat { // Float?
@@ -1077,9 +1075,9 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 				brace--
 			}
 		} else if brace == 0 &&
-			(current.Type == fract.TypeOperator && (current.Value == grammar.LogicalAnd || current.Value == grammar.LogicalOr ||
-				current.Value == grammar.Equals || current.Value == grammar.NotEquals || current.Value == ">" || current.Value == "<" ||
-				current.Value == grammar.GreaterEquals || current.Value == grammar.LessEquals)) || current.Type == fract.TypeIn {
+			(current.Type == fract.TypeOperator && (current.Value == "&&" || current.Value == "||" ||
+				current.Value == "==" || current.Value == "<>" || current.Value == ">" || current.Value == "<" ||
+				current.Value == ">=" || current.Value == "<=")) || current.Type == fract.TypeIn {
 			value.Content = []objects.Data{{
 				Data: i.processCondition(tokens),
 				Type: objects.VALBoolean,
