@@ -21,98 +21,176 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 
-	"github.com/fract-lang/fract/internal/interpreter"
-	"github.com/fract-lang/fract/internal/shell/commands"
-	ModuleHelp "github.com/fract-lang/fract/internal/shell/modules/help"
-	ModuleMake "github.com/fract-lang/fract/internal/shell/modules/make"
-	ModuleVersion "github.com/fract-lang/fract/internal/shell/modules/version"
-	"github.com/fract-lang/fract/pkg/cli"
-	"github.com/fract-lang/fract/pkg/except"
+	"github.com/fract-lang/fract/internal/parser"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/objects"
-	"github.com/fract-lang/fract/pkg/parser"
+	"github.com/fract-lang/fract/pkg/obj"
+	"github.com/fract-lang/fract/pkg/str"
 )
 
-var preter *interpreter.Interpreter
+// Returns namespace of command.
+func namespace(cmd string) string {
+	i := strings.Index(cmd, " ")
+	if i == -1 {
+		return cmd
+	}
+	return cmd[0:i]
+}
+
+// Remove namespace from command.
+func removeNamespace(cmd string) string {
+	i := strings.Index(cmd, " ")
+	if i == -1 {
+		return ""
+	}
+	return cmd[i+1:]
+}
+
+func input(msg string) string {
+	fmt.Print(msg)
+	//! Don't use fmt.Scanln
+	s := bufio.NewScanner(os.Stdin)
+	s.Scan()
+	return s.Text()
+}
+
+var p *parser.Parser
 
 func interpret() {
 	for {
-		input := cli.Input(">> ")
-		preter.Lexer.File.Lines = interpreter.ReadyLines([]string{input})
+		p.L.F.Lns = parser.ReadyLines([]string{input(">> ")})
 	reTokenize:
-		preter.Tokens = nil
+		p.Tks = nil
 	reTokenizeUnNil:
-		preter.Lexer.Finished = false
-		preter.Lexer.Line = 1
-		preter.Lexer.Column = 1
+		p.L.Fin = false
+		p.L.Ln = 1
+		p.L.Col = 1
 		/* Tokenize all lines. */
-		for !preter.Lexer.Finished {
-			cacheTokens := preter.Lexer.Next()
+		for !p.L.Fin {
+			tks := p.L.Next()
 			// Check multiline comment.
-			if preter.Lexer.RangeComment {
-				input := cli.Input(" | ")
-				preter.Lexer.File.Lines = append(preter.Lexer.File.Lines, interpreter.ReadyLines([]string{input})...)
+			if p.L.RangeComment {
+				p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
 				goto reTokenizeUnNil
 			}
 			// cacheTokens are empty?
-			if cacheTokens == nil {
+			if tks == nil {
 				continue
 			}
 			// Check parentheses.
-			if preter.Lexer.BraceCount > 0 ||
-				preter.Lexer.BracketCount > 0 ||
-				preter.Lexer.ParenthesCount > 0 {
-				input := cli.Input(" | ")
-				preter.Lexer.File.Lines = append(preter.Lexer.File.Lines, interpreter.ReadyLines([]string{input})...)
+			if p.L.Braces > 0 ||
+				p.L.Brackets > 0 ||
+				p.L.Parentheses > 0 {
+				p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
 				goto reTokenize
 			}
-			preter.Tokens = append(preter.Tokens, cacheTokens)
+			p.Tks = append(p.Tks, tks)
 		}
 		// Change blocks.
-		count := 0
-		for _, tokens := range preter.Tokens {
-			if first := tokens[0]; first.Type == fract.TypeBlockEnd {
-				count--
-				if count < 0 {
+		c := 0
+		for _, tokens := range p.Tks {
+			if first := tokens[0]; first.T == fract.End {
+				c--
+				if c < 0 {
 					fract.Error(first, "The extra block end defined!")
 				}
-			} else if parser.IsBlockStatement(tokens) {
-				count++
+			} else if parser.IsBlock(tokens) {
+				c++
 			}
 		}
-		if count > 0 { // Check blocks.
-			input := cli.Input(" | ")
-			preter.Lexer.File.Lines = append(preter.Lexer.File.Lines, interpreter.ReadyLines([]string{input})...)
+		if c > 0 { // Check blocks.
+			p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
 			goto reTokenize
 		}
-		preter.Interpret()
+		p.Interpret()
 	}
 }
 
-func catch(e *objects.Exception) {
-	if e.Message != "" {
+func catch(e *obj.Exception) {
+	if e.Msg != "" {
 		fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
-		fmt.Println(e.Message)
+		fmt.Println(e.Msg)
 	}
+}
+
+func help(cmd string) {
+	if cmd != "" {
+		fmt.Println("This module can only be used!")
+		return
+	}
+	d := map[string]string{
+		"make":    "Interprete Fract code.",
+		"version": "Show version.",
+		"help":    "Show help.",
+		"exit":    "Exit.",
+	}
+	mlen := 0
+	for k := range d {
+		if mlen < len(k) {
+			mlen = len(k)
+		}
+	}
+	mlen += 5
+	for k := range d {
+		fmt.Println(k + " " + str.Whitespace(mlen-len(k)) + d[k])
+	}
+}
+
+func version(cmd string) {
+	if cmd != "" {
+		fmt.Println("This module can only be used!")
+		return
+	}
+	fmt.Println("Fract Version [" + fract.Ver + "]")
+}
+
+func make(cmd string) {
+	if cmd == "" {
+		fmt.Println("This module cannot only be used!")
+		return
+	} else if !strings.HasSuffix(cmd, fract.Ext) {
+		cmd += fract.Ext
+	}
+	if info, err := os.Stat(cmd); err != nil || info.IsDir() {
+		fmt.Println("The Fract file is not exists: " + cmd)
+		return
+	}
+
+	p := parser.New(".", cmd)
+	p.ApplyEmbedFunctions()
+	(&obj.Block{
+		Try: p.Interpret,
+		Catch: func(e *obj.Exception) {
+			os.Exit(0)
+		},
+	}).Do()
+}
+
+func makechk(p string) bool {
+	if strings.HasSuffix(p, fract.Ext) {
+		return true
+	}
+	info, err := os.Stat(p + fract.Ext)
+	return err == nil && !info.IsDir()
 }
 
 func processCommand(ns, cmd string) {
 	switch ns {
 	case "help":
-		ModuleHelp.Process(cmd)
+		help(cmd)
 	case "version":
-		ModuleVersion.Process(cmd)
+		version(cmd)
 	case "make":
-		ModuleMake.Process(cmd)
+		make(cmd)
 	default:
-		if ModuleMake.Check(ns) {
-			ModuleMake.Process(ns)
+		if makechk(ns) {
+			make(ns)
 		} else {
 			fmt.Println("There is no such command!")
 		}
@@ -120,11 +198,11 @@ func processCommand(ns, cmd string) {
 }
 
 func init() {
-	fract.ExecutablePath = filepath.Dir(os.Args[0])
+	fract.ExecPath = filepath.Dir(os.Args[0])
 	// Check standard library.
-	if info, err := os.Stat(path.Join(fract.ExecutablePath, "std")); err != nil || !info.IsDir() {
+	if info, err := os.Stat(path.Join(fract.ExecPath, "std")); err != nil || !info.IsDir() {
 		fmt.Println("Standard library not found!")
-		cli.Input("\nPress enter for exit...")
+		input("\nPress enter for exit...")
 		os.Exit(1)
 	}
 	// Not started with arguments.
@@ -134,22 +212,23 @@ func init() {
 
 	defer os.Exit(0)
 	var sb strings.Builder
-	for _, current := range os.Args[1:] {
-		sb.WriteString(" " + current)
+	for _, arg := range os.Args[1:] {
+		sb.WriteString(" " + arg)
 	}
 	os.Args[0] = sb.String()[1:]
-	processCommand(commands.GetNamespace(os.Args[0]), commands.RemoveNamespace(os.Args[0]))
+	processCommand(namespace(os.Args[0]), removeNamespace(os.Args[0]))
 }
 
 func main() {
-	fmt.Println("Fract " + fract.FractVersion + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
-	fract.InteractiveShell = true
-	preter = interpreter.NewStdin(".")
-	preter.ApplyEmbedFunctions()
-	block := new(except.Block)
-	block.Try = interpret
-	block.Catch = catch
+	fmt.Println("Fract " + fract.Ver + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
+	fract.InteractiveSh = true
+	p = parser.NewStdin()
+	p.ApplyEmbedFunctions()
+	b := &obj.Block{
+		Try:   interpret,
+		Catch: catch,
+	}
 	for {
-		block.Do()
+		b.Do()
 	}
 }

@@ -1,242 +1,195 @@
 package embed
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/arithmetic"
-	"github.com/fract-lang/fract/pkg/cli"
 	"github.com/fract-lang/fract/pkg/fract"
-	"github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/obj"
 )
 
 // Exit from application with code.
-func Exit(f objects.Function, parameters []objects.Variable) {
-	code := parameters[0].Value
-	if code.Array {
-		fract.Error(f.Tokens[0][0], "Array is not a valid value!")
-	} else if code.Content[0].Type != objects.VALInteger {
-		fract.Error(f.Tokens[0][0], "Exit code is only be integer!")
+func Exit(f obj.Func, args []obj.Var) {
+	c := args[0].Val
+	if c.Arr {
+		fract.Error(f.Tks[0][0], "Array is not a valid value!")
+	} else if c.D[0].T != obj.VInteger {
+		fract.Error(f.Tks[0][0], "Exit code is only be integer!")
 	}
-	exit_code, _ := strconv.ParseInt(code.Content[0].String(), 10, 64)
-	os.Exit(int(exit_code))
+	ec, _ := strconv.ParseInt(c.D[0].String(), 10, 64)
+	os.Exit(int(ec))
 }
 
 // Float convert object to float.
-func Float(f objects.Function, parameters []objects.Variable) objects.Value {
-	return objects.Value{
-		Content: []objects.Data{
-			{
-				Data: fmt.Sprintf(fract.FloatFormat, arithmetic.ToArithmetic(parameters[0].Value.Content[0].String())),
-				Type: objects.VALFloat,
-			},
-		},
-	}
+func Float(f obj.Func, parameters []obj.Var) obj.Value {
+	return obj.Value{D: []obj.Data{
+		{D: fmt.Sprintf(fract.FloatFormat, arithmetic.Arithmetic(parameters[0].Val.D[0].String())), T: obj.VFloat},
+	}}
 }
 
 // Input returns input from command-line.
-func Input(f objects.Function, parameters []objects.Variable) objects.Value {
-	parameters[0].Value.Print()
-	return objects.Value{
-		Content: []objects.Data{
-			{
-				Data: cli.Input(""),
-				Type: objects.VALString,
-			},
-		},
+func Input(f obj.Func, args []obj.Var) obj.Value {
+	args[0].Val.Print()
+	//! Don't use fmt.Scanln
+	s := bufio.NewScanner(os.Stdin)
+	s.Scan()
+	return obj.Value{
+		D: []obj.Data{{D: s.Text(), T: obj.VString}},
 	}
 }
 
 // Int convert object to integer.
-func Int(f objects.Function, parameters []objects.Variable) objects.Value {
-	switch parameters[1].Value.Content[0].Data { // Cast type.
+func Int(f obj.Func, args []obj.Var) obj.Value {
+	switch args[1].Val.D[0].D { // Cast type.
 	case "strcode":
-		var value objects.Value
-		for _, byt := range []byte(parameters[0].Value.Content[0].String()) {
-			value.Content = append(value.Content,
-				objects.Data{
-					Data: fmt.Sprint(byt),
-					Type: objects.VALInteger,
-				})
+		var v obj.Value
+		for _, byt := range []byte(args[0].Val.D[0].String()) {
+			v.D = append(v.D, obj.Data{D: fmt.Sprint(byt), T: obj.VInteger})
 		}
-		value.Array = len(value.Content) > 1
-		return value
+		v.Arr = len(v.D) > 1
+		return v
 	default: // Object.
-		return objects.Value{
-			Content: []objects.Data{
-				{
-					Data: fmt.Sprint(int(arithmetic.ToArithmetic(parameters[0].Value.Content[0].String()))),
-					Type: objects.VALInteger,
-				},
-			},
+		return obj.Value{
+			D: []obj.Data{{D: fmt.Sprint(int(arithmetic.Arithmetic(args[0].Val.D[0].String()))), T: obj.VInteger}},
 		}
 	}
 }
 
 // Len returns length of object.
-func Len(f objects.Function, parameters []objects.Variable) objects.Value {
-	parameter := parameters[0].Value
-	if parameter.Array {
-		return objects.Value{
-			Content: []objects.Data{{Data: fmt.Sprint(len(parameter.Content))}},
-		}
-	} else if parameter.Content[0].Type == objects.VALString {
-		return objects.Value{
-			Content: []objects.Data{{Data: fmt.Sprint(len(parameter.Content[0].String()))}},
-		}
+func Len(f obj.Func, args []obj.Var) obj.Value {
+	arg := args[0].Val
+	if arg.Arr {
+		return obj.Value{D: []obj.Data{{D: fmt.Sprint(len(arg.D))}}}
+	} else if arg.D[0].T == obj.VString {
+		return obj.Value{D: []obj.Data{{D: fmt.Sprint(len(arg.D[0].String()))}}}
 	}
-	return objects.Value{Content: []objects.Data{{Data: "0"}}}
+	return obj.Value{D: []obj.Data{{D: "0"}}}
 }
 
 // Make array by size.
-func Make(f objects.Function, parameters []objects.Variable) objects.Value {
-	size := parameters[0].Value
-	if size.Array {
-		fract.Error(f.Tokens[0][0], "Array is not a valid value!")
-	} else if size.Content[0].Type != objects.VALInteger {
-		fract.Error(f.Tokens[0][0], "Exit code is only be integer!")
+func Make(f obj.Func, args []obj.Var) obj.Value {
+	sz := args[0].Val
+	if sz.Arr {
+		fract.Error(f.Tks[0][0], "Array is not a valid value!")
+	} else if sz.D[0].T != obj.VInteger {
+		fract.Error(f.Tks[0][0], "Exit code is only be integer!")
 	}
-
-	sizev, _ := strconv.Atoi(size.Content[0].String())
-	if sizev < 0 {
-		fract.Error(f.Tokens[0][0], "Size should be minimum zero!")
+	szv, _ := strconv.Atoi(sz.D[0].String())
+	if szv < 0 {
+		fract.Error(f.Tks[0][0], "Size should be minimum zero!")
 	}
-
-	value := objects.Value{Array: true}
-	if sizev > 0 {
+	v := obj.Value{Arr: true}
+	if szv > 0 {
 		var index int
-		for ; index < sizev; index++ {
-			value.Content = append(value.Content, objects.Data{Data: "0"})
+		for ; index < szv; index++ {
+			v.D = append(v.D, obj.Data{D: "0"})
 		}
 	} else {
-		value.Content = []objects.Data{}
+		v.D = []obj.Data{}
 	}
-	return value
+	return v
 }
 
 // Print values to cli.
-func Print(f objects.Function, parameters []objects.Variable) {
-	if parameters[0].Value.Content == nil {
-		fract.Error(f.Tokens[0][0], "Invalid value!")
+func Print(f obj.Func, args []obj.Var) {
+	if args[0].Val.D == nil {
+		fract.Error(f.Tks[0][0], "Invalid value!")
 	}
-	parameters[0].Value.Print()
-	parameters[1].Value.Print()
+	args[0].Val.Print()
+	args[1].Val.Print()
 }
 
 // Range returns array by parameters.
-func Range(f objects.Function, parameters []objects.Variable) objects.Value {
-	start := parameters[0].Value
-	to := parameters[1].Value
-	step := parameters[2].Value
-	if start.Array {
-		fract.Error(f.Tokens[0][0], "'start' argument should be numeric!")
-	} else if to.Array {
-		fract.Error(f.Tokens[0][0], "'to' argument should be numeric!")
-	} else if step.Array {
-		fract.Error(f.Tokens[0][0], "'step' argument should be numeric!")
+func Range(f obj.Func, args []obj.Var) obj.Value {
+	start := args[0].Val
+	to := args[1].Val
+	step := args[2].Val
+	if start.Arr {
+		fract.Error(f.Tks[0][0], "'start' argument should be numeric!")
+	} else if to.Arr {
+		fract.Error(f.Tks[0][0], "'to' argument should be numeric!")
+	} else if step.Arr {
+		fract.Error(f.Tks[0][0], "'step' argument should be numeric!")
 	}
-	if start.Content[0].Type != objects.VALInteger &&
-		start.Content[0].Type != objects.VALFloat || to.Content[0].Type != objects.VALInteger &&
-		to.Content[0].Type != objects.VALFloat || step.Content[0].Type != objects.VALInteger &&
-		step.Content[0].Type != objects.VALFloat {
-		fract.Error(f.Tokens[0][0], "Values should be integer or float!")
+	if start.D[0].T != obj.VInteger && start.D[0].T != obj.VFloat || to.D[0].T != obj.VInteger &&
+		to.D[0].T != obj.VFloat || step.D[0].T != obj.VInteger && step.D[0].T != obj.VFloat {
+		fract.Error(f.Tks[0][0], "Values should be integer or float!")
 	}
-
-	startV, _ := strconv.ParseFloat(start.Content[0].String(), 64)
-	toV, _ := strconv.ParseFloat(to.Content[0].String(), 64)
-	stepV, _ := strconv.ParseFloat(step.Content[0].String(), 64)
+	startV, _ := strconv.ParseFloat(start.D[0].String(), 64)
+	toV, _ := strconv.ParseFloat(to.D[0].String(), 64)
+	stepV, _ := strconv.ParseFloat(step.D[0].String(), 64)
 	if stepV <= 0 {
-		return objects.Value{
-			Content: nil,
-			Array:   true,
+		return obj.Value{
+			D:   nil,
+			Arr: true,
 		}
 	}
-
-	var dtype uint8
-	if start.Content[0].Type == objects.VALFloat || to.Content[0].Type == objects.VALFloat || step.Content[0].Type == objects.VALFloat {
-		dtype = objects.VALFloat
+	var t uint8
+	if start.D[0].T == obj.VFloat || to.D[0].T == obj.VFloat || step.D[0].T == obj.VFloat {
+		t = obj.VFloat
 	}
-	returnValue := objects.Value{
-		Content: []objects.Data{},
-		Array:   true,
+	rv := obj.Value{
+		D:   []obj.Data{},
+		Arr: true,
 	}
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			data := objects.Data{
-				Data: fmt.Sprintf(fract.FloatFormat, startV),
-				Type: dtype,
-			}
-			data.Data = data.Format()
-			returnValue.Content = append(returnValue.Content, data)
+			d := obj.Data{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
+			d.D = d.Format()
+			rv.D = append(rv.D, d)
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			data := objects.Data{
-				Data: fmt.Sprintf(fract.FloatFormat, startV),
-				Type: dtype,
-			}
-			data.Data = data.Format()
-			returnValue.Content = append(returnValue.Content, data)
+			d := obj.Data{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
+			d.D = d.Format()
+			rv.D = append(rv.D, d)
 		}
 	}
-	return returnValue
+	return rv
 }
 
 // String convert object to string.
-func String(f objects.Function, parameters []objects.Variable) objects.Value {
-	switch parameters[1].Value.Content[0].Data {
+func String(f obj.Func, args []obj.Var) obj.Value {
+	switch args[1].Val.D[0].D {
 	case "parse":
 		str := ""
-		if value := parameters[0].Value; value.Array {
-			if len(value.Content) == 0 {
+		if value := args[0].Val; value.Arr {
+			if len(value.D) == 0 {
 				str = "[]"
 			} else {
 				var sb strings.Builder
 				sb.WriteByte('[')
-				for _, data := range value.Content {
+				for _, data := range value.D {
 					sb.WriteString(data.String() + " ")
 				}
 				str = sb.String()[:sb.Len()-1] + "]"
 			}
 		} else {
-			str = parameters[0].Value.Content[0].String()
+			str = args[0].Val.D[0].String()
 		}
-		return objects.Value{
-			Content: []objects.Data{
-				{
-					Data: str,
-					Type: objects.VALString,
-				},
-			},
+		return obj.Value{
+			D: []obj.Data{{D: str, T: obj.VString}},
 		}
 	case "bytecode":
-		value := parameters[0].Value
+		v := args[0].Val
 		var sb strings.Builder
-		for _, data := range value.Content {
-			if data.Type != objects.VALInteger {
+		for _, d := range v.D {
+			if d.T != obj.VInteger {
 				sb.WriteByte(' ')
 			}
-			result, _ := strconv.ParseInt(data.String(), 10, 32)
-			sb.WriteByte(byte(result))
+			r, _ := strconv.ParseInt(d.String(), 10, 32)
+			sb.WriteByte(byte(r))
 		}
-		return objects.Value{
-			Content: []objects.Data{
-				{
-					Data: sb.String(),
-					Type: objects.VALString,
-				},
-			},
+		return obj.Value{
+			D: []obj.Data{{D: sb.String(), T: obj.VString}},
 		}
 	default: // Object.
-		return objects.Value{
-			Content: []objects.Data{
-				{
-					Data: fmt.Sprint(parameters[0].Value),
-					Type: objects.VALString,
-				},
-			},
+		return obj.Value{
+			D: []obj.Data{{D: fmt.Sprint(args[0].Val), T: obj.VString}},
 		}
 	}
 }

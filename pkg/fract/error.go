@@ -4,25 +4,23 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fract-lang/fract/pkg/objects"
+	"github.com/fract-lang/fract/pkg/obj"
 	"github.com/fract-lang/fract/pkg/str"
 )
 
-// ErrorCustom thrown new exception.
-func ErrorCustom(file *objects.SourceFile, line, column int, message string) {
-	e := objects.Exception{
-		Message: fmt.Sprintf("File: %s\nPosition: %d:%d\n    %s\n%s^\n%s",
-			file.Path, line, column, strings.ReplaceAll(file.Lines[line-1], "\t", " "),
-			str.Whitespace(4+column-2), message),
+// Errorc thrown new exception.
+func Errorc(f *obj.File, ln, col int, msg string) {
+	e := obj.Exception{
+		Msg: fmt.Sprintf("File: %s\nPosition: %d:%d\n    %s\n%s^\n%s",
+			f.P, ln, col, strings.ReplaceAll(f.Lns[ln-1], "\t", " "),
+			str.Whitespace(4+col-2), msg),
 	}
 	if TryCount > 0 {
-		panic(fmt.Errorf(e.Message))
+		panic(fmt.Errorf(e.Msg))
 	}
-	fmt.Println(e.Message)
+	fmt.Println(e.Msg)
 	panic(fmt.Errorf(""))
 }
 
 // Error thrown exception.
-func Error(token objects.Token, message string) {
-	ErrorCustom(token.File, token.Line, token.Column, message)
-}
+func Error(tk obj.Token, msg string) { Errorc(tk.F, tk.Ln, tk.Col, msg) }

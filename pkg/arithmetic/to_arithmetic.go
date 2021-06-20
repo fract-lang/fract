@@ -1,18 +1,16 @@
 package arithmetic
 
-import (
-	"strconv"
-)
+import "strconv"
 
-// ToArithmetic parse value to arithmetic value.
-func ToArithmetic(value string) float64 {
-	switch value {
+// Arithmetic parse value to arithmetic value.
+func Arithmetic(v string) float64 {
+	switch v {
 	case "true":
 		return 1
 	case "false":
 		return 0
 	default:
-		flt, _ := strconv.ParseFloat(value, 64)
-		return flt
+		f, _ := strconv.ParseFloat(v, 64)
+		return f
 	}
 }

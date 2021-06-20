@@ -3,11 +3,11 @@ package str
 import "strings"
 
 // Whitespace returns whitespace string by length.
-func Whitespace(length int) string {
+func Whitespace(len int) string {
 	var sb strings.Builder
-	for length >= 0 {
+	for len >= 0 {
 		sb.WriteByte(' ')
-		length--
+		len--
 	}
 	return sb.String()
 }
