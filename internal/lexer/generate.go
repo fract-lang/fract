@@ -1,7 +1,5 @@
 package lexer
 
-// TODO: Add dotted floating point values. Smiliar to: 9. 4. 84.
-
 import (
 	"math/big"
 	"regexp"
@@ -12,7 +10,7 @@ import (
 )
 
 var (
-	numericPattern = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
+	numericPattern = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]?)|(\.[0-9]?)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
 	namePattern    = *regexp.MustCompile(`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`)
 	macroPattern   = *regexp.MustCompile(`^#(\s+|$)`)
 )
