@@ -1053,27 +1053,14 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 	value := objects.Value{Content: []objects.Data{{}}}
 
 	// Is conditional expression?
-	//! If when add new conditional operator, must append here.
-	// TODO: Check optimizations here.
-	brace := 0
-	for _, current := range tokens {
-		if current.Type == fract.TypeBrace {
-			if current.Value == "{" || current.Value == "[" || current.Value == "(" {
-				brace++
-			} else {
-				brace--
-			}
-		} else if brace == 0 &&
-			(current.Type == fract.TypeOperator && (current.Value == "&&" || current.Value == "||" ||
-				current.Value == "==" || current.Value == "<>" || current.Value == ">" || current.Value == "<" ||
-				current.Value == ">=" || current.Value == "<=")) || current.Type == fract.TypeIn {
-			value.Content = []objects.Data{{
-				Data: i.processCondition(tokens),
-				Type: objects.VALBoolean,
-			}}
-			return value
-		}
+	if index, _ := parser.FindConditionOperator(tokens); index != -1 {
+		value.Content = []objects.Data{{
+			Data: i.processCondition(tokens),
+			Type: objects.VALBoolean,
+		}}
+		return value
 	}
+
 	parser.CheckArithmeticProcesses(tokens)
 	if priorityIndex := parser.IndexProcessPriority(tokens); priorityIndex != -1 {
 		// Decompose arithmetic operations.
@@ -1092,7 +1079,6 @@ func (i *Interpreter) processValue(tokens []objects.Token) objects.Value {
 			value = solveProcess(operation)
 			// Remove processed processes.
 			vector.RemoveRange(&tokens, priorityIndex-1, 3)
-			// TODO: Check optimizations here.
 			vector.Insert(&tokens, priorityIndex-1, objects.Token{Value: "0"})
 			// Find next operator.
 			priorityIndex = parser.IndexProcessPriority(tokens)

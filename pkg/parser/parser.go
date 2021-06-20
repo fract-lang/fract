@@ -192,15 +192,23 @@ func IndexProcessPriority(tokens []objects.Token) int {
 
 // FindConditionOperator return next condition operator.
 func FindConditionOperator(tokens []objects.Token) (int, objects.Token) {
+	brace := 0
 	for index, current := range tokens {
-		if (current.Type == fract.TypeOperator && (current.Value == "==" || current.Value == "<>" ||
-			current.Value == ">" || current.Value == "<" || current.Value == ">=" || current.Value == "<=")) ||
-			current.Type == fract.TypeIn {
+		if current.Type == fract.TypeBrace {
+			if current.Value == "{" || current.Value == "[" || current.Value == "(" {
+				brace++
+			} else {
+				brace--
+			}
+		} else if brace == 0 &&
+			(current.Type == fract.TypeOperator && (current.Value == "&&" || current.Value == "||" ||
+				current.Value == "==" || current.Value == "<>" || current.Value == ">" || current.Value == "<" ||
+				current.Value == ">=" || current.Value == "<=")) || current.Type == fract.TypeIn {
 			return index, current
 		}
 	}
-	var token objects.Token
-	return -1, token
+	var tk objects.Token
+	return -1, tk
 }
 
 // findNextOrOperator find next or condition operator index and return if find, return -1 if not.
