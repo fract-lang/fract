@@ -49,10 +49,10 @@ func (d Data) String() string {
 }
 
 func (d Data) Format() string {
-	data := d.String()
 	if d.Type == VALString || d.Type == VALBoolean || d.Type == VALFunction || d.Type == VALArray {
-		return data
+		return d.String()
 	}
+	data := d.String()
 	if data != "NaN" {
 		if d.Type == VALInteger {
 			bigfloat, _ := new(big.Float).SetString(data)

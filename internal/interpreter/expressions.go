@@ -305,12 +305,13 @@ func solve(operator objects.Token, first, second float64) float64 {
 	return result
 }
 
-// readyData to data.
+// Check data and set ready.
 func readyData(process valueProcess, data objects.Data) objects.Data {
 	if process.FirstV.Content[0].Type == objects.VALString || process.SecondV.Content[0].Type == objects.VALString {
 		data.Type = objects.VALString
 	} else if process.Operator.Value == "/" || process.Operator.Value == "\\" ||
 		process.FirstV.Content[0].Type == objects.VALFloat || process.SecondV.Content[0].Type == objects.VALFloat {
+		data.Type = objects.VALFloat
 		data.Data = data.Format()
 		return data
 	}
@@ -578,10 +579,9 @@ func solveProcess(process valueProcess) objects.Value {
 		}
 		value.Content[0] = readyData(process,
 			objects.Data{
-				Data: fmt.Sprintf(fract.FloatFormat,
-					solve(process.Operator,
-						arithmetic.ToArithmetic(arith(process.Operator, process.FirstV.Content[0])),
-						arithmetic.ToArithmetic(arith(process.Operator, process.SecondV.Content[0])))),
+				Data: fmt.Sprintf(fract.FloatFormat, solve(process.Operator,
+					arithmetic.ToArithmetic(arith(process.Operator, process.FirstV.Content[0])),
+					arithmetic.ToArithmetic(arith(process.Operator, process.SecondV.Content[0])))),
 			})
 	}
 	return value
