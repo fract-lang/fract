@@ -74,6 +74,25 @@ type Value struct {
 	Array   bool
 }
 
+func (v Value) String() string {
+	if v.Content == nil {
+		return ""
+	}
+
+	if v.Array {
+		if len(v.Content) == 0 {
+			return "[]"
+		}
+		var sb strings.Builder
+		sb.WriteByte('[')
+		for _, data := range v.Content {
+			sb.WriteString(data.Format() + " ")
+		}
+		return sb.String()[:sb.Len()-1] + "]"
+	}
+	return v.Content[0].Format()
+}
+
 func (v *Value) Print() bool {
 	if v.Content == nil {
 		return false

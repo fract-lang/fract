@@ -56,29 +56,18 @@ func compareValues(operator string, data0, data1 objects.Data) bool {
 
 func compare(value0, value1 objects.Value, operator objects.Token) bool {
 	// In.
-	// TODO: Add support to new arrays.
 	if operator.Value == "in" {
 		if !value1.Array && value1.Content[0].Type != objects.VALString {
 			fract.Error(operator, "Value is not enumerable!")
 		}
 		if value1.Array {
-			if value0.Array {
-				for _, d := range value1.Content {
-					for _, cd := range value0.Content {
-						if compareValues("==", d, cd) {
-							return true
-						}
-					}
-				}
-			} else {
-				data := value0.Content[0].String()
-				for _, d := range value1.Content {
-					if strings.Contains(data, d.String()) {
-						return true
-					}
+			data := value0.String()
+			for _, d := range value1.Content {
+				if strings.Contains(d.String(), data) {
+					return true
 				}
 			}
-		} else {
+		} else { // String.
 			if value0.Array {
 				data := value1.Content[0].String()
 				for _, d := range value0.Content {

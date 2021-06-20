@@ -590,10 +590,19 @@ else
 	print("No!")
 end
 
-# OUTPUT: Yes!
+# OUTPUT: No!
 ```
 ```
 if 4 in [4, 2, 7]
+	print("Yes!")
+else
+	print("No!")
+end
+
+# OUTPUT: Yes!
+```
+```
+if [4, 2] in [4, 2, [4, 2], 7]
 	print("Yes!")
 else
 	print("No!")
