@@ -176,7 +176,7 @@ func (i *Interpreter) processMacroDefine(tokens []objects.Token) objects.Variabl
 	// Exists name.
 	for _, macro := range i.macroDefines {
 		if macro.Name == name.Value {
-			fract.Error(name, "This macro define is already defined in this name at line: "+fmt.Sprint(macro.Line))
+			fract.Error(name, "This macro is already defined in this name at line: "+fmt.Sprint(macro.Line))
 		}
 	}
 	macro := objects.Variable{

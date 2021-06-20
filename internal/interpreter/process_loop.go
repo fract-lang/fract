@@ -160,6 +160,9 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 	if nameToken.Type != fract.TypeName {
 		fract.Error(nameToken, "This is not a valid name!")
 	}
+	if ln := i.definedName(nameToken); ln != -1 {
+		fract.Error(nameToken, "\""+nameToken.Value+"\" is already defined at line: "+fmt.Sprint(ln))
+	}
 	// Element name?
 	elementName := ""
 	if tokens[1].Type == fract.TypeComma {
@@ -168,6 +171,9 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 		}
 		if tokens[2].Value != "_" {
 			elementName = tokens[2].Value
+			if ln := i.definedName(tokens[2]); ln != -1 {
+				fract.Error(tokens[2], "\""+elementName+"\" is already defined at line: "+fmt.Sprint(ln))
+			}
 		}
 		if len(tokens)-3 == 0 {
 			tokens[2].Column += len(tokens[2].Value)
@@ -222,25 +228,23 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 			i.skipBlock(true)
 		}
 	}
-
-	i.variables = append(
-		[]objects.Variable{
-			{ // Index.
-				Name: nameToken.Value,
-				Value: objects.Value{
-					Content: []objects.Data{{
-						Data: "0",
-						Type: objects.VALInteger,
-					}},
-				},
+	i.variables = append(i.variables,
+		objects.Variable{
+			Name: nameToken.Value,
+			Value: objects.Value{
+				Content: []objects.Data{{
+					Data: "0",
+					Type: objects.VALInteger,
+				}},
 			},
-			{ // Element.
-				Name:  elementName,
-				Value: objects.Value{},
-			}}, i.variables...)
-	vars := i.variables
-	index := &i.variables[0]
-	element := &i.variables[1]
+		},
+		objects.Variable{
+			Name:  elementName,
+			Value: objects.Value{},
+		})
+	varlen := len(i.variables)
+	index := &i.variables[varlen-2]
+	element := &i.variables[varlen-1]
 	if index.Name == "_" {
 		index.Name = ""
 	}
@@ -266,13 +270,11 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 		tokens := i.Tokens[i.index]
 		if tokens[0].Type == fract.TypeBlockEnd { // Block is ended.
 			// Remove temporary variables.
-			i.variables = vars
+			i.variables = i.variables[:varlen]
 			// Remove temporary functions.
 			i.functions = i.functions[:functionLen]
 			vindex++
-			if _break ||
-				(value.Array && vindex == len(value.Content) ||
-					!value.Array && vindex == len(value.Content[0].String())) {
+			if _break || (value.Array && vindex == len(value.Content) || !value.Array && vindex == len(value.Content[0].String())) {
 				break
 			}
 			i.index = iindex
@@ -312,6 +314,6 @@ func (i *Interpreter) processLoop(tokens []objects.Token) uint8 {
 		}
 	}
 	// Remove loop variables.
-	i.variables = vars[2:]
+	i.variables = i.variables[:varlen-2]
 	return processKwState(kwstate)
 }
