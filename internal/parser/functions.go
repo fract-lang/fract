@@ -11,16 +11,15 @@ import (
 )
 
 // Instance for function calls.
-type functionCall struct {
+type funcCall struct {
 	f    obj.Func
 	name obj.Token
 	src  *Parser
 	args []obj.Var
 }
 
-// TODO: Optimize.
-func (c functionCall) call() obj.Value {
-	retv := obj.Value{}
+func (c funcCall) call() obj.Value {
+	var retv obj.Value
 	// Is embed function?
 	if c.f.Tks == nil {
 		// Add name token for exceptions.
@@ -29,21 +28,21 @@ func (c functionCall) call() obj.Value {
 		case "print":
 			embed.Print(c.f, c.args)
 		case "input":
-			retv = embed.Input(c.f, c.args)
+			return embed.Input(c.f, c.args)
 		case "len":
-			retv = embed.Len(c.f, c.args)
+			return embed.Len(c.f, c.args)
 		case "range":
-			retv = embed.Range(c.f, c.args)
+			return embed.Range(c.f, c.args)
 		case "make":
-			retv = embed.Make(c.f, c.args)
+			return embed.Make(c.f, c.args)
 		case "string":
-			retv = embed.String(c.f, c.args)
+			return embed.String(c.f, c.args)
 		case "int":
-			retv = embed.Int(c.f, c.args)
+			return embed.Int(c.f, c.args)
 		case "float":
-			retv = embed.Float(c.f, c.args)
+			return embed.Float(c.f, c.args)
 		case "append":
-			retv = embed.Append(c.f, c.args)
+			return embed.Append(c.f, c.args)
 		default:
 			embed.Exit(c.f, c.args)
 		}
@@ -212,7 +211,7 @@ func (p *Parser) processArgument(f obj.Func, names *[]string, tks obj.Tokens, tk
 }
 
 // Process function call model and initialize moden instance.
-func (p *Parser) processFunctionCallModel(tks obj.Tokens) functionCall {
+func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 	name := tks[0]
 	// Name is not defined?
 	namei, src := p.functionIndexByName(name)
@@ -307,7 +306,7 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) functionCall {
 				})
 		}
 	}
-	return functionCall{
+	return funcCall{
 		f:    f,
 		name: name,
 		src:  src,

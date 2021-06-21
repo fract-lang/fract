@@ -36,7 +36,7 @@ func ReadyLines(lns []string) []string {
 }
 
 var (
-	defers []functionCall
+	defers []funcCall
 )
 
 // Parser of Fract.
@@ -90,12 +90,14 @@ func (p *Parser) ready() {
 		}
 	}
 	// Change blocks.
-	// TODO: Check "end" keyword alonity.
 	bc := 0
 	mbc := 0
 	lst := -1
 	for i, tks := range p.Tks {
 		if fst := tks[0]; fst.T == fract.End {
+			if len(tks) > 1 {
+				fract.Error(tks[1], "Invalid syntax!")
+			}
 			bc--
 			if bc < 0 {
 				fract.Error(fst, "The extra block end defined!")
@@ -107,6 +109,9 @@ func (p *Parser) ready() {
 					lst = i
 				}
 			} else if tks[1].T == fract.End {
+				if len(tks) > 2 {
+					fract.Error(tks[2], "Invalid syntax!")
+				}
 				mbc--
 				if mbc < 0 {
 					fract.Error(fst, "The extra block end defined!")
@@ -552,8 +557,6 @@ func decomposeConditionalProcess(tks obj.Tokens, opr string) *[]obj.Tokens {
 }
 
 //! Embed functions should have a lowercase names.
-// TODO: Add copy function.
-
 // ApplyEmbedFunctions to interpreter source.
 func (p *Parser) ApplyEmbedFunctions() {
 	p.funcs = append(p.funcs,
@@ -716,8 +719,8 @@ func (p *Parser) ApplyEmbedFunctions() {
 }
 
 // TODO: Add "match" keyword.
-//! A change added here(especially added a code block) must also be compatible with "import.go" and
-//! add to "isBlockStatement.go" of parser.
+//! A change added here(especially added a code block) must also be compatible with "imports.go" and
+//! add to "isBlock" function of parser.
 
 // processTokens returns true if block end, returns false if not and returns keyword state.
 func (p *Parser) processTokens(tks []obj.Token) uint8 {
