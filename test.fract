@@ -440,6 +440,14 @@ print(2. + 4)
 
 <#
 
+#>
+
+const binary = [0, 1]
+var decimal = append(binary, 2, 3, 4, 5, 6, 7, 8, 9)
+print(decimal)
+
+<#
+
 var a = [1, 2, 3, 4, 5, [90, 91, 92, 93, 94, [95, 4, 3, 1]]]
 print([1, 2, 3, 4] + [1, 1, 1, [2, [1]]])
 

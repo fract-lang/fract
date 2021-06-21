@@ -18,6 +18,7 @@ type functionCall struct {
 	args []obj.Var
 }
 
+// TODO: Optimize.
 func (c functionCall) call() obj.Value {
 	retv := obj.Value{}
 	// Is embed function?
@@ -41,6 +42,8 @@ func (c functionCall) call() obj.Value {
 			retv = embed.Int(c.f, c.args)
 		case "float":
 			retv = embed.Float(c.f, c.args)
+		case "append":
+			retv = embed.Append(c.f, c.args)
 		default:
 			embed.Exit(c.f, c.args)
 		}

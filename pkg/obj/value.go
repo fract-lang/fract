@@ -49,7 +49,7 @@ func (d Data) String() string {
 }
 
 func (d Data) Format() string {
-	if d.T == VString || d.T == VBoolean || d.T == VFunction || d.T == VArray {
+	if d.T != VInteger && d.T != VFloat {
 		return d.String()
 	}
 	dt := d.String()

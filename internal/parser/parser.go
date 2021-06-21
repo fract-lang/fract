@@ -529,7 +529,6 @@ func nextOperator(tks []obj.Token, pos int, opr string) int {
 
 // decomposeConditionalProcess returns conditional expressions by operators.
 func decomposeConditionalProcess(tks obj.Tokens, opr string) *[]obj.Tokens {
-	// TODO: Optimize here.
 	var exps []obj.Tokens
 	last := 0
 	i := nextOperator(tks, last, opr)
@@ -551,7 +550,6 @@ func decomposeConditionalProcess(tks obj.Tokens, opr string) *[]obj.Tokens {
 }
 
 //! Embed functions should have a lowercase names.
-// TODO: Add append function.
 // TODO: Add copy function.
 
 // ApplyEmbedFunctions to interpreter source.
@@ -625,9 +623,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Tks:               nil,
 			DefaultParamCount: 0,
 			Params: []obj.Param{
-				{
-					Name: "object",
-				},
+				{Name: "object"},
 			},
 		},
 		obj.Func{ // range function.
@@ -636,12 +632,8 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Tks:               nil,
 			DefaultParamCount: 1,
 			Params: []obj.Param{
-				{
-					Name: "start",
-				},
-				{
-					Name: "to",
-				},
+				{Name: "start"},
+				{Name: "to"},
 				{
 					Name: "step",
 					Default: obj.Value{
@@ -656,9 +648,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Tks:               nil,
 			DefaultParamCount: 0,
 			Params: []obj.Param{
-				{
-					Name: "size",
-				},
+				{Name: "size"},
 			},
 		},
 		obj.Func{ // string function.
@@ -667,9 +657,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Tks:               nil,
 			DefaultParamCount: 1,
 			Params: []obj.Param{
-				{
-					Name: "object",
-				},
+				{Name: "object"},
 				{
 					Name: "type",
 					Default: obj.Value{
@@ -689,9 +677,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Tks:               nil,
 			DefaultParamCount: 1,
 			Params: []obj.Param{
-				{
-					Name: "object",
-				},
+				{Name: "object"},
 				{
 					Name: "type",
 					Default: obj.Value{
@@ -711,9 +697,17 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Tks:               nil,
 			DefaultParamCount: 0,
 			Params: []obj.Param{
-				{
-					Name: "object",
-				},
+				{Name: "object"},
+			},
+		},
+		obj.Func{ // append function.
+			Name:              "append",
+			Protected:         true,
+			Tks:               nil,
+			DefaultParamCount: 0,
+			Params: []obj.Param{
+				{Name: "dest"},
+				{Name: "src", Params: true},
 			},
 		},
 	)

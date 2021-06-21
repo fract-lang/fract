@@ -109,11 +109,11 @@ func Range(f obj.Func, args []obj.Var) obj.Value {
 	to := args[1].Val
 	step := args[2].Val
 	if start.Arr {
-		fract.Error(f.Tks[0][0], "'start' argument should be numeric!")
+		fract.Error(f.Tks[0][0], "\"start\" argument should be numeric!")
 	} else if to.Arr {
-		fract.Error(f.Tks[0][0], "'to' argument should be numeric!")
+		fract.Error(f.Tks[0][0], "\"to\" argument should be numeric!")
 	} else if step.Arr {
-		fract.Error(f.Tks[0][0], "'step' argument should be numeric!")
+		fract.Error(f.Tks[0][0], "\"step\" argument should be numeric!")
 	}
 	if start.D[0].T != obj.VInteger && start.D[0].T != obj.VFloat || to.D[0].T != obj.VInteger &&
 		to.D[0].T != obj.VFloat || step.D[0].T != obj.VInteger && step.D[0].T != obj.VFloat {
@@ -192,4 +192,16 @@ func String(f obj.Func, args []obj.Var) obj.Value {
 			D: []obj.Data{{D: fmt.Sprint(args[0].Val), T: obj.VString}},
 		}
 	}
+}
+
+// Append source values to destination array.
+func Append(f obj.Func, args []obj.Var) obj.Value {
+	src := args[0].Val
+	if !src.Arr {
+		fract.Error(f.Tks[0][0], "\"src\" must be array!")
+	}
+	for _, d := range args[1].Val.D {
+		src.D = append(src.D, obj.Data{D: d.D, T: d.T})
+	}
+	return src
 }

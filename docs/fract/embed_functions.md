@@ -204,3 +204,26 @@ string(3435)                  # {[{3435 0}] false}
 string(3435, type="parse")    # 3435
 string(65, type="bytecode")   # A
 ```
+
+## append
+Append source values to destination array.
+
+### Define
+```
+protected func append(dest, ...src)
+```
+
+### Parameters
++ ``dest`` <br>
+Destination array.
++ ``src`` <br>
+Source values.
+
+### Examples
+```
+const binary = [0, 1]
+var decimal = append(binary, 2, 3, 4, 5, 6, 7, 8, 9)
+print(decimal)
+
+# [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
