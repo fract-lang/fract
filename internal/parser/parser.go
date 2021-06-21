@@ -58,6 +58,7 @@ type Parser struct {
 // New returns instance of parser related to file.
 func New(p, fp string) *Parser {
 	return &Parser{
+		funcTempVars: -1,
 		L: &lex.Lex{
 			F:  ReadyFile(fp),
 			Ln: 1,
@@ -68,6 +69,7 @@ func New(p, fp string) *Parser {
 // NewStdin returns new instance of parser from standard input.
 func NewStdin() *Parser {
 	return &Parser{
+		funcTempVars: -1,
 		L: &lex.Lex{
 			F: &obj.File{
 				P:   "<stdin>",

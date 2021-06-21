@@ -51,12 +51,16 @@ func (c functionCall) call() obj.Value {
 		// Process block.
 		vars := c.src.vars
 		dlen := len(defers)
-		if c.src.funcTempVars == 0 {
-			c.src.funcTempVars = len(c.src.vars)
-		}
-		c.src.vars = append(c.args, c.src.vars[:c.src.funcTempVars]...)
-		c.src.funcCount++
 		old := c.src.funcTempVars
+		if c.src.funcTempVars != -1 {
+			if c.src.funcTempVars == 0 {
+				c.src.funcTempVars = len(c.src.vars)
+			}
+			c.src.vars = append(c.args, c.src.vars[:c.src.funcTempVars]...)
+		} else {
+			c.src.funcTempVars++
+		}
+		c.src.funcCount++
 		c.src.funcTempVars = len(c.args)
 		flen := len(c.src.funcs)
 		namei := c.src.i
@@ -69,7 +73,6 @@ func (c functionCall) call() obj.Value {
 				for {
 					c.src.i++
 					tks := c.src.Tks[c.src.i]
-					c.src.funcTempVars = len(c.src.vars) - c.src.funcTempVars
 					/*for _, t := range tokens {
 						fmt.Print(t.Value)
 					}

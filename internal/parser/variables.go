@@ -46,6 +46,9 @@ func (p *Parser) appendVariable(md varinfo, tks obj.Tokens) {
 	if v.D == nil {
 		fract.Error(tks[2], "Invalid value!")
 	}
+	if p.funcTempVars != -1 {
+		p.funcTempVars++
+	}
 	p.vars = append(p.vars,
 		obj.Var{
 			Name:      name.Val,
