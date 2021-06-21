@@ -52,12 +52,12 @@ func (c funcCall) call() obj.Value {
 		dlen := len(defers)
 		old := c.src.funcTempVars
 		if c.src.funcTempVars == -1 {
-			c.src.funcTempVars++
+			c.src.funcTempVars = 0
 		}
 		if c.src.funcTempVars == 0 {
 			c.src.vars = append(c.args, c.src.vars...)
 		} else {
-			c.src.vars = append(c.args, c.src.vars[:c.src.funcTempVars]...)
+			c.src.vars = append(c.args, c.src.vars[:len(c.src.vars)-c.src.funcTempVars]...)
 		}
 		c.src.funcCount++
 		c.src.funcTempVars = len(c.args)
