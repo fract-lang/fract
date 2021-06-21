@@ -42,7 +42,7 @@ func (d Data) String() string {
 		return stringArray(d.D.([]Data))
 	default:
 		if d.D == nil {
-			return "0"
+			return ""
 		}
 		return d.D.(string)
 	}
@@ -74,7 +74,7 @@ type Value struct {
 	Arr bool
 }
 
-func (v Value) String() string {
+func (v *Value) String() string {
 	if v.D == nil {
 		return ""
 	}
@@ -88,6 +88,6 @@ func (v *Value) Print() bool {
 	if v.D == nil {
 		return false
 	}
-	fmt.Print(v)
+	fmt.Print(v.String())
 	return true
 }
