@@ -10,8 +10,6 @@
 # Array utilities.
 #
 
-# TODO: Update compatibility to new arrays.
-
 # Returns true if element is contained in array, returns false if not.
 protected func Contains(array, element, start=0)
 	if start < 0 || start >= len(array)
@@ -122,7 +120,7 @@ protected func Sub(array, start, length)
 	end
 	var newArray = []
 	for _, index in range(start, length + start - 1)
-		newArray = [newArray, array[index]]
+		newArray = append(newArray, array[index])
 	end
 	ret newArray
 end
