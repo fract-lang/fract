@@ -51,13 +51,13 @@ func (c funcCall) call() obj.Value {
 		vars := c.src.vars
 		dlen := len(defers)
 		old := c.src.funcTempVars
-		if c.src.funcTempVars != -1 {
-			if c.src.funcTempVars == 0 {
-				c.src.funcTempVars = len(c.src.vars)
-			}
-			c.src.vars = append(c.args, c.src.vars[:c.src.funcTempVars]...)
-		} else {
+		if c.src.funcTempVars == -1 {
 			c.src.funcTempVars++
+		}
+		if c.src.funcTempVars == 0 {
+			c.src.vars = append(c.args, c.src.vars...)
+		} else {
+			c.src.vars = append(c.args, c.src.vars[:c.src.funcTempVars]...)
 		}
 		c.src.funcCount++
 		c.src.funcTempVars = len(c.args)
@@ -72,10 +72,6 @@ func (c funcCall) call() obj.Value {
 				for {
 					c.src.i++
 					tks := c.src.Tks[c.src.i]
-					/*for _, t := range tokens {
-						fmt.Print(t.Value)
-					}
-					fmt.Println()*/
 					if tks[0].T == fract.End { // Block is ended.
 						break
 					} else if c.src.processTokens(tks) == fract.FUNCReturn {
