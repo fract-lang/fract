@@ -15,11 +15,10 @@ import (
 type Lex struct {
 	lastTk obj.Token
 
-	F   *obj.File
-	Col int // Last column.
-	Ln  int // Last line.
-	Fin bool
-	// TODO: Optimize.
+	F            *obj.File
+	Col          int // Last column.
+	Ln           int // Last line.
+	Fin          bool
 	RangeComment bool
 	Braces       int
 	Brackets     int

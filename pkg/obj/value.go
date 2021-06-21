@@ -6,9 +6,6 @@ import (
 	"strings"
 )
 
-// TODO: Minimize here.
-// TODO: Add []Datas to array string function.
-
 const (
 	VInteger  uint8 = 0
 	VFloat    uint8 = 1
@@ -17,6 +14,18 @@ const (
 	VFunction uint8 = 4
 	VArray    uint8 = 5
 )
+
+func stringArray(src []Data) string {
+	if len(src) == 0 {
+		return "[]"
+	}
+	var sb strings.Builder
+	sb.WriteByte('[')
+	for _, data := range src {
+		sb.WriteString(data.Format() + " ")
+	}
+	return sb.String()[:sb.Len()-1] + "]"
+}
 
 // Data instance.
 type Data struct {
@@ -30,16 +39,7 @@ func (d Data) String() string {
 	case VFunction:
 		return "object.function"
 	case VArray:
-		if len(d.D.([]Data)) == 0 {
-			return "[]"
-		} else {
-			var sb strings.Builder
-			sb.WriteByte('[')
-			for _, data := range d.D.([]Data) {
-				sb.WriteString(data.Format() + " ")
-			}
-			return sb.String()[:sb.Len()-1] + "]"
-		}
+		return stringArray(d.D.([]Data))
 	default:
 		if d.D == nil {
 			return "0"
@@ -78,17 +78,8 @@ func (v Value) String() string {
 	if v.D == nil {
 		return ""
 	}
-
 	if v.Arr {
-		if len(v.D) == 0 {
-			return "[]"
-		}
-		var sb strings.Builder
-		sb.WriteByte('[')
-		for _, data := range v.D {
-			sb.WriteString(data.Format() + " ")
-		}
-		return sb.String()[:sb.Len()-1] + "]"
+		return stringArray(v.D)
 	}
 	return v.D[0].Format()
 }
@@ -97,20 +88,6 @@ func (v *Value) Print() bool {
 	if v.D == nil {
 		return false
 	}
-
-	if v.Arr {
-		if len(v.D) == 0 {
-			fmt.Print("[]")
-		} else {
-			var sb strings.Builder
-			sb.WriteByte('[')
-			for _, data := range v.D {
-				sb.WriteString(data.Format() + " ")
-			}
-			fmt.Print(sb.String()[:sb.Len()-1] + "]")
-		}
-	} else {
-		fmt.Print(v.D[0].Format())
-	}
+	fmt.Print(v)
 	return true
 }
