@@ -11,6 +11,6 @@ N/A
   * - Must
 --->
 ### Checks
-- [ ] I accept that the contributions be published under this [license](https://github.com/fract-lang/fract/blob/main/LICENSE)
+- [ ] I accept that the contributions be published under this [license](https://fract-lang.github.io/website/pages/license.html)
 - [ ] Tested code
 - [ ] Added documentations for code.
