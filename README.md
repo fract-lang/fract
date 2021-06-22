@@ -6,7 +6,7 @@
 
 [Docs](https://github.com/fract-lang/fract/tree/master/docs) |
 [A Tour of Fract](https://github.com/fract-lang/fract/blob/master/docs/fract/a_tour_of_fract.md) |
-[Samples](https://github.com/fract-lang/fract/tree/master/samples) |
+[Samples](https://fract-lang.github.io/website/pages/samples.html) |
 [Contributing](#contributing)
 
 </div>
@@ -36,6 +36,6 @@ Thanks for you want ontributing to Fract!
 <br>
 The Fract project use issues for only bug reports and proposals.
 <br><br>
-To contribute, please read the contribution guidelines from <a href="https://github.com/fract-lang/fract/blob/master/CONTRIBUTING.md">here</a>.
+To contribute, please read the contribution guidelines from <a href="https://fract-lang.github.io/website/pages/contributor_guide.html">here</a>.
 <br><br>
 To discussions and questions, please use <a href="https://github.com/fract-lang/fract/discussions">discussions</a>.
