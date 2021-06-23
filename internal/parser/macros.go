@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"runtime"
 
 	"github.com/fract-lang/fract/pkg/fract"
@@ -18,7 +17,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 	}
 	vars := p.vars
 	funcs := p.funcs
-	p.vars = append([]obj.Var{
+	p.vars = []obj.Var{
 		{
 			Name: "OS",
 			Val:  obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VString}}},
@@ -29,7 +28,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 				D: []obj.Data{{D: runtime.GOARCH, T: obj.VString}},
 			},
 		},
-	}, p.macroDefs...)
+	}
 	state := p.processCondition(*ctks)
 	kws := fract.None
 	/* Interpret/skip block. */
@@ -151,37 +150,6 @@ ret:
 	return kws
 }
 
-func (p *Parser) processMacroDefine(tks []obj.Token) obj.Var {
-	if len(tks) < 2 {
-		fract.Error(tks[0], "Define name is not defined!")
-	}
-	name := tks[1]
-	if name.T != fract.Name {
-		fract.Error(name, "Invalid name!")
-	}
-	// Exists name.
-	for _, macro := range p.macroDefs {
-		if macro.Name == name.Val {
-			fract.Error(name, "This macro is already defined in this name at line: "+fmt.Sprint(macro.Ln))
-		}
-	}
-	macro := obj.Var{
-		Name: name.Val,
-		Ln:   name.Ln,
-	}
-	if len(tks) > 2 {
-		vars := p.vars
-		macro.Val = p.processValue(tks[2:])
-		p.vars = vars
-	} else {
-		macro.Val.D = []obj.Data{{
-			D: "false",
-			T: obj.VBoolean,
-		}}
-	}
-	return macro
-}
-
 // processMacro process macros and returns keyword state.
 func (p *Parser) processMacro(tks []obj.Token) uint8 {
 	tks = tks[1:]
@@ -190,8 +158,6 @@ func (p *Parser) processMacro(tks []obj.Token) uint8 {
 		return p.processMacroIf(tks)
 	case fract.Name:
 		switch tks[0].Val {
-		case "define": // Macro variable.
-			p.macroDefs = append(p.macroDefs, p.processMacroDefine(tks))
 		case "pragma":
 			if len(tks) != 2 || tks[1].T != fract.Name {
 				fract.Error(tks[0], "Invalid pragma syntax!")

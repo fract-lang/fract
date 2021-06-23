@@ -43,7 +43,6 @@ var (
 type Parser struct {
 	vars         []obj.Var
 	funcs        []obj.Func
-	macroDefs    []obj.Var
 	funcTempVars int // Count of function temporary variables.
 	loopCount    int
 	funcCount    int
@@ -163,7 +162,6 @@ func (p *Parser) Interpret() {
 				src.Import()
 				p.funcs = append(p.funcs, src.funcs...)
 				p.vars = append(p.vars, src.vars...)
-				p.macroDefs = append(p.macroDefs, src.macroDefs...)
 			}
 		}
 	}

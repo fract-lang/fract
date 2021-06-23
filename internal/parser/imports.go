@@ -124,7 +124,6 @@ func (p *Parser) processImport(tks []obj.Token) {
 		isrc.Import()
 		src.funcs = append(src.funcs, isrc.funcs...)
 		src.vars = append(src.vars, isrc.vars...)
-		src.macroDefs = append(src.macroDefs, isrc.macroDefs...)
 		src.Imports = append(src.Imports, isrc.Imports...)
 	}
 	p.Imports = append(p.Imports,
