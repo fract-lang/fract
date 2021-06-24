@@ -102,7 +102,7 @@ tokenize:
 }
 
 var (
-	numericRegexp = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]?)|(\.[0-9]?)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
+	numericRegexp = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
 	nameRegexp    = *regexp.MustCompile(`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`)
 	macroRegexp   = *regexp.MustCompile(`^#(\s+|$)`)
 )
