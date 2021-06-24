@@ -20,12 +20,12 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 	p.vars = []obj.Var{
 		{
 			Name: "OS",
-			Val:  obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VString}}},
+			Val:  obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VStr}}},
 		},
 		{
 			Name: "ARCH",
 			Val: obj.Value{
-				D: []obj.Data{{D: runtime.GOARCH, T: obj.VString}},
+				D: []obj.Data{{D: runtime.GOARCH, T: obj.VStr}},
 			},
 		},
 	}

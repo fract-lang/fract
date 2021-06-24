@@ -569,7 +569,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					Default: obj.Value{
 						D: []obj.Data{
 							{
-								T: obj.VString,
+								T: obj.VStr,
 							},
 						},
 					},
@@ -580,7 +580,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 						D: []obj.Data{
 							{
 								D: "\n",
-								T: obj.VString,
+								T: obj.VStr,
 							},
 						},
 					},
@@ -599,7 +599,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 						D: []obj.Data{
 							{
 								D: "",
-								T: obj.VString,
+								T: obj.VStr,
 							},
 						},
 					},
@@ -667,7 +667,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 						D: []obj.Data{
 							{
 								D: "parse",
-								T: obj.VString,
+								T: obj.VStr,
 							},
 						},
 					},
@@ -687,7 +687,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 						D: []obj.Data{
 							{
 								D: "parse",
-								T: obj.VString,
+								T: obj.VStr,
 							},
 						},
 					},

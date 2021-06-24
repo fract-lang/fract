@@ -221,7 +221,7 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 			src = p.Imports[p.importIndexByName(name.Val[:j])].Src
 			name.Val = name.Val[j+1:]
 			for _, current := range src.vars {
-				if unicode.IsUpper(rune(current.Name[0])) && current.Name == name.Val && !current.Val.Arr && current.Val.D[0].T == obj.VFunction {
+				if unicode.IsUpper(rune(current.Name[0])) && current.Name == name.Val && !current.Val.Arr && current.Val.D[0].T == obj.VFunc {
 					name.F = nil
 					f = current.Val.D[0].D.(obj.Func)
 					break
@@ -229,7 +229,7 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 			}
 		} else {
 			for _, current := range p.vars {
-				if current.Name == name.Val && !current.Val.Arr && current.Val.D[0].T == obj.VFunction {
+				if current.Name == name.Val && !current.Val.Arr && current.Val.D[0].T == obj.VFunc {
 					name.F = nil
 					f = current.Val.D[0].D.(obj.Func)
 					src = p

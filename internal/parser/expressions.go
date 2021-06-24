@@ -13,38 +13,38 @@ import (
 )
 
 func compareValues(opr string, d0, d1 obj.Data) bool {
-	if d0.T != d1.T && (d0.T == obj.VString || d1.T == obj.VString) {
+	if d0.T != d1.T && (d0.T == obj.VStr || d1.T == obj.VStr) {
 		return false
 	}
 	switch opr {
 	case "==": // Equals.
-		if (d0.T == obj.VString && d0.D != d1.D) ||
-			(d0.T != obj.VString && arithmetic.Arithmetic(d0.String()) != arithmetic.Arithmetic(d1.String())) {
+		if (d0.T == obj.VStr && d0.D != d1.D) ||
+			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) != arithmetic.Arithmetic(d1.String())) {
 			return false
 		}
 	case "<>": // Not equals.
-		if (d0.T == obj.VString && d0.D == d1.D) ||
-			(d0.T != obj.VString && arithmetic.Arithmetic(d0.String()) == arithmetic.Arithmetic(d1.String())) {
+		if (d0.T == obj.VStr && d0.D == d1.D) ||
+			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) == arithmetic.Arithmetic(d1.String())) {
 			return false
 		}
 	case ">": // Greater.
-		if (d0.T == obj.VString && d0.String() <= d1.String()) ||
-			(d0.T != obj.VString && arithmetic.Arithmetic(d0.String()) <= arithmetic.Arithmetic(d1.String())) {
+		if (d0.T == obj.VStr && d0.String() <= d1.String()) ||
+			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) <= arithmetic.Arithmetic(d1.String())) {
 			return false
 		}
 	case "<": // Less.
-		if (d0.T == obj.VString && d0.String() >= d1.String()) ||
-			(d0.T != obj.VString && arithmetic.Arithmetic(d0.String()) >= arithmetic.Arithmetic(d1.String())) {
+		if (d0.T == obj.VStr && d0.String() >= d1.String()) ||
+			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) >= arithmetic.Arithmetic(d1.String())) {
 			return false
 		}
 	case ">=": // Greater or equals.
-		if (d0.T == obj.VString && d0.String() < d1.String()) ||
-			(d0.T != obj.VString && arithmetic.Arithmetic(d0.String()) < arithmetic.Arithmetic(d1.String())) {
+		if (d0.T == obj.VStr && d0.String() < d1.String()) ||
+			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) < arithmetic.Arithmetic(d1.String())) {
 			return false
 		}
 	case "<=": // Less or equals.
-		if (d0.T == obj.VString && d0.String() > d1.String()) ||
-			(d0.T != obj.VString && arithmetic.Arithmetic(d0.String()) > arithmetic.Arithmetic(d1.String())) {
+		if (d0.T == obj.VStr && d0.String() > d1.String()) ||
+			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) > arithmetic.Arithmetic(d1.String())) {
 			return false
 		}
 	}
@@ -54,7 +54,7 @@ func compareValues(opr string, d0, d1 obj.Data) bool {
 func compare(v0, v1 obj.Value, opr obj.Token) bool {
 	// In.
 	if opr.Val == "in" {
-		if !v1.Arr && v1.D[0].T != obj.VString {
+		if !v1.Arr && v1.D[0].T != obj.VStr {
 			fract.Error(opr, "Value is not enumerable!")
 		}
 		if v1.Arr {
@@ -68,7 +68,7 @@ func compare(v0, v1 obj.Value, opr obj.Token) bool {
 			if v0.Arr {
 				dt := v1.D[0].String()
 				for _, d := range v0.D {
-					if d.T != obj.VString {
+					if d.T != obj.VStr {
 						fract.Error(opr, "All datas is not string!")
 					}
 					if strings.Contains(dt, d.String()) {
@@ -76,7 +76,7 @@ func compare(v0, v1 obj.Value, opr obj.Token) bool {
 					}
 				}
 			} else {
-				if v1.D[0].T != obj.VString {
+				if v1.D[0].T != obj.VStr {
 					fract.Error(opr, "All datas is not string!")
 				}
 				if strings.Contains(v1.D[0].String(), v1.D[0].String()) {
@@ -90,7 +90,7 @@ func compare(v0, v1 obj.Value, opr obj.Token) bool {
 	if !v0.Arr || !v1.Arr {
 		d0 := v0.D[0]
 		d1 := v1.D[0]
-		if (d0.T == obj.VString && d1.T != obj.VString) || (d0.T != obj.VString && d1.T == obj.VString) {
+		if (d0.T == obj.VStr && d1.T != obj.VStr) || (d0.T != obj.VStr && d1.T == obj.VStr) {
 			fract.Error(opr, "The in keyword should use with string or enumerable data types!")
 		}
 		return compareValues(opr.Val, d0, d1)
@@ -174,7 +174,7 @@ func (p *Parser) processCondition(tks obj.Tokens) string {
 func arith(tks obj.Token, d obj.Data) string {
 	ret := d.String()
 	switch d.T {
-	case obj.VFunction:
+	case obj.VFunc:
 		fract.Error(tks, "\""+ret+"\" is not compatible with arithmetic processes!")
 	}
 	return ret
@@ -209,7 +209,7 @@ func (p *Parser) processRange(tks *obj.Tokens) {
 			pos++
 			tks.Insert(pos, obj.Token{Val: "]", T: fract.Brace})
 		} else {
-			if val.D[0].T == obj.VString {
+			if val.D[0].T == obj.VStr {
 				tks.Insert(pos, obj.Token{Val: "\"" + val.D[0].String() + "\"", T: fract.Value})
 			} else {
 				tks.Insert(pos, obj.Token{
@@ -226,7 +226,7 @@ func (p *Parser) processRange(tks *obj.Tokens) {
 }
 
 // solve process.
-func solve(opr obj.Token, f, s float64) float64 {
+func solve(opr obj.Token, a, b float64) float64 {
 	var r float64
 	if opr.Val == "\\" || opr.Val == "\\\\" { // Divide with bigger.
 		if opr.Val == "\\" {
@@ -234,47 +234,47 @@ func solve(opr obj.Token, f, s float64) float64 {
 		} else {
 			opr.Val = "//"
 		}
-		if f < s {
-			cache := f
-			f = s
-			s = cache
+		if a < b {
+			cache := a
+			a = b
+			b = cache
 		}
 	}
 	switch opr.Val {
 	case "+": // Addition.
-		r = f + s
+		r = a + b
 	case "-": // Subtraction.
-		r = f - s
+		r = a - b
 	case "*": // Multiply.
-		r = f * s
+		r = a * b
 	case "/", "//": // Division.
-		if f == 0 || s == 0 {
+		if a == 0 || b == 0 {
 			fract.Error(opr, "Divide by zero!")
 		}
-		r = f / s
+		r = a / b
 		if opr.Val == "//" {
 			r = math.RoundToEven(r)
 		}
 	case "|": // Binary or.
-		r = float64(int(f) | int(s))
+		r = float64(int(a) | int(b))
 	case "&": // Binary and.
-		r = float64(int(f) & int(s))
+		r = float64(int(a) & int(b))
 	case "^": // Bitwise exclusive or.
-		r = float64(int(f) ^ int(s))
+		r = float64(int(a) ^ int(b))
 	case "**": // Exponentiation.
-		r = math.Pow(f, s)
+		r = math.Pow(a, b)
 	case "%": // Mod.
-		r = math.Mod(f, s)
+		r = math.Mod(a, b)
 	case "<<": // Left shift.
-		if s < 0 {
+		if b < 0 {
 			fract.Error(opr, "Shifter is cannot should be negative!")
 		}
-		r = float64(int(f) << int(s))
+		r = float64(int(a) << int(b))
 	case ">>": // Right shift.
-		if s < 0 {
+		if b < 0 {
 			fract.Error(opr, "Shifter is cannot should be negative!")
 		}
-		r = float64(int(f) >> int(s))
+		r = float64(int(a) >> int(b))
 	default:
 		fract.Error(opr, "Operator is invalid!")
 	}
@@ -283,8 +283,8 @@ func solve(opr obj.Token, f, s float64) float64 {
 
 // Check data and set ready.
 func readyData(p process, d obj.Data) obj.Data {
-	if p.fv.D[0].T == obj.VString || p.sv.D[0].T == obj.VString {
-		d.T = obj.VString
+	if p.fv.D[0].T == obj.VStr || p.sv.D[0].T == obj.VStr {
+		d.T = obj.VStr
 	} else if p.opr.Val == "/" || p.opr.Val == "\\" ||
 		p.fv.D[0].T == obj.VFloat || p.sv.D[0].T == obj.VFloat {
 		d.T = obj.VFloat
@@ -298,9 +298,9 @@ func readyData(p process, d obj.Data) obj.Data {
 func solveProcess(p process) obj.Value {
 	v := obj.Value{D: []obj.Data{{}}}
 	// String?
-	if (len(p.fv.D) != 0 && p.fv.D[0].T == obj.VString) || (len(p.sv.D) != 0 && p.sv.D[0].T == obj.VString) {
+	if (len(p.fv.D) != 0 && p.fv.D[0].T == obj.VStr) || (len(p.sv.D) != 0 && p.sv.D[0].T == obj.VStr) {
 		if p.fv.D[0].T == p.sv.D[0].T { // Both string?
-			v.D[0].T = obj.VString
+			v.D[0].T = obj.VStr
 			switch p.opr.Val {
 			case "+":
 				v.D[0].D = p.fv.D[0].String() + p.sv.D[0].String()
@@ -334,8 +334,8 @@ func solveProcess(p process) obj.Value {
 			return v
 		}
 
-		v.D[0].T = obj.VString
-		if p.fv.D[0].T == obj.VString {
+		v.D[0].T = obj.VStr
+		if p.fv.D[0].T == obj.VStr {
 			if p.sv.Arr {
 				if len(p.sv.D) == 0 {
 					v.D = p.fv.D
@@ -362,7 +362,7 @@ func solveProcess(p process) obj.Value {
 				}
 				v.D[0].D = sb.String()
 			} else {
-				if p.sv.D[0].T != obj.VInteger {
+				if p.sv.D[0].T != obj.VInt {
 					fract.Error(p.s, "Only string and integer values cannot concatenate string values!")
 				}
 				var sb strings.Builder
@@ -407,7 +407,7 @@ func solveProcess(p process) obj.Value {
 				}
 				v.D[0].D = sb.String()
 			} else {
-				if p.fv.D[0].T != obj.VInteger {
+				if p.fv.D[0].T != obj.VInt {
 					fract.Error(p.f, "Only string and integer values cannot concatenate string values!")
 				}
 				var sb strings.Builder
@@ -553,14 +553,14 @@ func applyMinus(minus bool, v obj.Value) obj.Value {
 	}
 	if val.Arr {
 		for i, d := range val.D {
-			if d.T == obj.VBoolean || d.T == obj.VFloat || d.T == obj.VInteger {
+			if d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
 				d.D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
 				val.D[i].D = d.Format()
 			}
 		}
 		return val
 	}
-	if d := val.D[0]; d.T == obj.VBoolean || d.T == obj.VFloat || d.T == obj.VInteger {
+	if d := val.D[0]; d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
 		d.D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
 		val.D[0].D = d.Format()
 	}
@@ -612,7 +612,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 					val := p.processValue(*vtks)
 					if val.Arr {
 						fract.Error((*tks)[pos], "Arrays is not used in index access!")
-					} else if val.D[0].T != obj.VInteger {
+					} else if val.D[0].T != obj.VInt {
 						fract.Error((*tks)[pos], "Only integer values can used in index access!")
 					}
 					vp, err := strconv.Atoi(arith((*vtks)[0], val.D[0]))
@@ -620,7 +620,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 						fract.Error((*tks)[pos], "Invalid value!")
 					}
 					v := src.vars[vi]
-					if !v.Val.Arr && v.Val.D[0].T != obj.VString {
+					if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 						fract.Error((*tks)[pos], "Index accessor is cannot used with non-array variables!")
 					}
 					if v.Val.Arr {
@@ -636,8 +636,8 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 					if v.Val.Arr {
 						d = v.Val.D[vp]
 					} else {
-						if v.Val.D[0].T == obj.VString {
-							d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VString}
+						if v.Val.D[0].T == obj.VStr {
+							d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VStr}
 						} else {
 							d = obj.Data{D: fmt.Sprint(v.Val.D[0].String()[vp])}
 						}
@@ -685,7 +685,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 		switch t {
 		case 'f':
 			*r = obj.Value{
-				D: []obj.Data{{D: src.funcs[vi], T: obj.VFunction}},
+				D: []obj.Data{{D: src.funcs[vi], T: obj.VFunc}},
 			}
 		case 'v':
 			v := src.vars[vi]
@@ -736,7 +736,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			val := p.processValue(*vtks)
 			if val.Arr {
 				fract.Error((*tks)[pos], "Arrays is not used in index access!")
-			} else if val.D[0].T != obj.VInteger {
+			} else if val.D[0].T != obj.VInt {
 				fract.Error((*tks)[pos], "Only integer values can used in index access!")
 			}
 			vp, err := strconv.Atoi(arith((*vtks)[0], val.D[0]))
@@ -744,7 +744,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 				fract.Error((*tks)[oi], "Invalid value!")
 			}
 			v := src.vars[vi]
-			if !v.Val.Arr && v.Val.D[0].T != obj.VString {
+			if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 				fract.Error((*tks)[oi], "Index accessor is cannot used with non-array variables!")
 			}
 			if v.Val.Arr {
@@ -760,8 +760,8 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if v.Val.Arr {
 				d = v.Val.D[vp]
 			} else {
-				if v.Val.D[0].T == obj.VString {
-					d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VString}
+				if v.Val.D[0].T == obj.VStr {
+					d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VStr}
 				} else {
 					d = obj.Data{D: fmt.Sprint(v.Val.D[0].String()[vp])}
 				}
@@ -830,7 +830,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			val := p.processValue(*vtks)
 			if val.Arr {
 				fract.Error((*tks)[pos], "Arrays is not used in index access!")
-			} else if val.D[0].T != obj.VInteger {
+			} else if val.D[0].T != obj.VInt {
 				fract.Error((*tks)[pos], "Only integer values can used in index access!")
 			}
 			vp, err := strconv.Atoi(arith(tk, val.D[0]))
@@ -838,7 +838,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 				fract.Error((*tks)[oi], "Invalid value!")
 			}
 			v := source.vars[vi]
-			if !v.Val.Arr && v.Val.D[0].T != obj.VString {
+			if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 				fract.Error((*tks)[oi], "Index accessor is cannot used with non-array variables!")
 			}
 			if v.Val.Arr {
@@ -854,8 +854,8 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if v.Val.Arr {
 				d = v.Val.D[vp]
 			} else {
-				if v.Val.D[0].T == obj.VString {
-					d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VString}
+				if v.Val.D[0].T == obj.VStr {
+					d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VStr}
 				} else {
 					d = obj.Data{D: fmt.Sprint(v.Val.D[0].String()[vp])}
 				}
@@ -900,13 +900,15 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 
 	//* Single value.
 	if strings.HasPrefix(tk.Val, "object.") {
-		fract.Error(tk, "\""+tk.Val+"\" is not compatible with arithmetic processes!")
+		r.Arr = false
+		r.D = []obj.Data{{D: tk.Val, T: obj.VFunc}}
+		goto end
 	}
 	if (tk.T == fract.Value && tk.Val != "true" && tk.Val != "false") && tk.Val[0] != '\'' && tk.Val[0] != '"' {
 		if strings.Contains(tk.Val, ".") || strings.ContainsAny(tk.Val, "eE") {
 			tk.T = obj.VFloat
 		} else {
-			tk.T = obj.VInteger
+			tk.T = obj.VInt
 		}
 		if tk.Val != "NaN" {
 			prs, _ := new(big.Float).SetString(tk.Val)
@@ -916,7 +918,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 	}
 	r.Arr = false
 	if tk.Val[0] == '\'' || tk.Val[0] == '"' { // String?
-		r.D = []obj.Data{{D: tk.Val[1 : len(tk.Val)-1], T: obj.VString}}
+		r.D = []obj.Data{{D: tk.Val[1 : len(tk.Val)-1], T: obj.VStr}}
 		tk.T = fract.None // Skip type check.
 	} else {
 		r.D = []obj.Data{{D: tk.Val}}
@@ -924,13 +926,14 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 	//* Type check.
 	if tk.T != fract.None {
 		if tk.Val == "true" || tk.Val == "false" {
-			r.D[0].T = obj.VBoolean
+			r.D[0].T = obj.VBool
 			*r = applyMinus(minus, *r)
 		} else if tk.T == obj.VFloat { // Float?
 			r.D[0].T = obj.VFloat
 			*r = applyMinus(minus, *r)
 		}
 	}
+end:
 	return 0
 }
 
@@ -984,7 +987,7 @@ func (p *Parser) processValue(tks obj.Tokens) obj.Value {
 	v := obj.Value{D: []obj.Data{{}}}
 	// Is conditional expression?
 	if j, _ := findConditionOperator(tks); j != -1 {
-		v.D = []obj.Data{{D: p.processCondition(tks), T: obj.VBoolean}}
+		v.D = []obj.Data{{D: p.processCondition(tks), T: obj.VBool}}
 		return v
 	}
 	checkArithmeticProcesses(tks)

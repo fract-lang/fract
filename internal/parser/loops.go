@@ -187,11 +187,11 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 	}
 	v := p.processValue(tks)
 	// Type is not array?
-	if !v.Arr && v.D[0].T != obj.VString {
+	if !v.Arr && v.D[0].T != obj.VStr {
 		fract.Error(tks[0], "Foreach loop must defined array value!")
 	}
 	// Empty array?
-	if v.Arr && len(v.D) == 0 || v.D[0].T == obj.VString && v.D[0].D == "" {
+	if v.Arr && len(v.D) == 0 || v.D[0].T == obj.VStr && v.D[0].D == "" {
 		vlen := len(p.vars)
 		for {
 			p.i++
@@ -227,7 +227,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 		}
 	}
 	p.vars = append(p.vars,
-		obj.Var{Name: nametk.Val, Val: obj.Value{D: []obj.Data{{D: "0", T: obj.VInteger}}}},
+		obj.Var{Name: nametk.Val, Val: obj.Value{D: []obj.Data{{D: "0", T: obj.VInt}}}},
 		obj.Var{Name: ename, Val: obj.Value{}},
 	)
 	vlen := len(p.vars)
@@ -246,7 +246,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 		if v.Arr {
 			element.Val.D = []obj.Data{v.D[0]}
 		} else {
-			element.Val.D = []obj.Data{{D: string(v.D[0].String()[0]), T: obj.VString}}
+			element.Val.D = []obj.Data{{D: string(v.D[0].String()[0]), T: obj.VStr}}
 		}
 	}
 	//? Interpret block.
@@ -264,13 +264,13 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 			}
 			p.i = iindex
 			if index.Name != "" {
-				index.Val.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInteger}}
+				index.Val.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInt}}
 			}
 			if element.Name != "" {
 				if v.Arr {
 					element.Val.D = []obj.Data{v.D[j]}
 				} else {
-					element.Val.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VString}}
+					element.Val.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VStr}}
 				}
 			}
 			continue

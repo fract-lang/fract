@@ -128,7 +128,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 	// Array setter?
 	if setter.T == fract.Brace && setter.Val == "[" {
 		// Variable is not array?
-		if !v.Val.Arr && v.Val.D[0].T != obj.VString {
+		if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 			fract.Error(setter, "Variable is not array!")
 		}
 		// Find close bracket.
@@ -177,7 +177,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 			if v.Val.Arr {
 				v.Val.D[setpos] = val.D[0]
 			} else {
-				if val.D[0].T != obj.VString {
+				if val.D[0].T != obj.VStr {
 					fract.Error(setter, "Value type is not string!")
 				} else if len(val.D[0].String()) > 1 {
 					fract.Error(setter, "Value length is should be maximum one!")
@@ -209,7 +209,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 						s:   setter,
 						sv:  val,
 					})
-				if val.D[0].T != obj.VString {
+				if val.D[0].T != obj.VStr {
 					fract.Error(setter, "Value type is not string!")
 				} else if len(val.D[0].String()) > 1 {
 					fract.Error(setter, "Value length is should be maximum one!")

@@ -7,12 +7,12 @@ import (
 )
 
 const (
-	VInteger  uint8 = 0
-	VFloat    uint8 = 1
-	VString   uint8 = 2
-	VBoolean  uint8 = 3
-	VFunction uint8 = 4
-	VArray    uint8 = 5
+	VInt   uint8 = 0
+	VFloat uint8 = 1
+	VStr   uint8 = 2
+	VBool  uint8 = 3
+	VFunc  uint8 = 4
+	VArray uint8 = 5
 )
 
 func stringArray(src []Data) string {
@@ -36,7 +36,7 @@ type Data struct {
 // Get data as string.
 func (d Data) String() string {
 	switch d.T {
-	case VFunction:
+	case VFunc:
 		return "object.function"
 	case VArray:
 		return stringArray(d.D.([]Data))
@@ -49,12 +49,12 @@ func (d Data) String() string {
 }
 
 func (d Data) Format() string {
-	if d.T != VInteger && d.T != VFloat {
+	if d.T != VInt && d.T != VFloat {
 		return d.String()
 	}
 	dt := d.String()
 	if dt != "NaN" {
-		if d.T == VInteger {
+		if d.T == VInt {
 			bf, _ := new(big.Float).SetString(dt)
 			dt = bf.String()
 			return dt

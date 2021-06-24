@@ -17,7 +17,7 @@ func Exit(f obj.Func, args []obj.Var) {
 	c := args[0].Val
 	if c.Arr {
 		fract.Error(f.Tks[0][0], "Array is not a valid value!")
-	} else if c.D[0].T != obj.VInteger {
+	} else if c.D[0].T != obj.VInt {
 		fract.Error(f.Tks[0][0], "Exit code is only be integer!")
 	}
 	ec, _ := strconv.ParseInt(c.D[0].String(), 10, 64)
@@ -38,7 +38,7 @@ func Input(f obj.Func, args []obj.Var) obj.Value {
 	s := bufio.NewScanner(os.Stdin)
 	s.Scan()
 	return obj.Value{
-		D: []obj.Data{{D: s.Text(), T: obj.VString}},
+		D: []obj.Data{{D: s.Text(), T: obj.VStr}},
 	}
 }
 
@@ -48,13 +48,13 @@ func Int(f obj.Func, args []obj.Var) obj.Value {
 	case "strcode":
 		var v obj.Value
 		for _, byt := range []byte(args[0].Val.D[0].String()) {
-			v.D = append(v.D, obj.Data{D: fmt.Sprint(byt), T: obj.VInteger})
+			v.D = append(v.D, obj.Data{D: fmt.Sprint(byt), T: obj.VInt})
 		}
 		v.Arr = len(v.D) > 1
 		return v
 	default: // Object.
 		return obj.Value{
-			D: []obj.Data{{D: fmt.Sprint(int(arithmetic.Arithmetic(args[0].Val.D[0].String()))), T: obj.VInteger}},
+			D: []obj.Data{{D: fmt.Sprint(int(arithmetic.Arithmetic(args[0].Val.D[0].String()))), T: obj.VInt}},
 		}
 	}
 }
@@ -64,7 +64,7 @@ func Len(f obj.Func, args []obj.Var) obj.Value {
 	arg := args[0].Val
 	if arg.Arr {
 		return obj.Value{D: []obj.Data{{D: fmt.Sprint(len(arg.D))}}}
-	} else if arg.D[0].T == obj.VString {
+	} else if arg.D[0].T == obj.VStr {
 		return obj.Value{D: []obj.Data{{D: fmt.Sprint(len(arg.D[0].String()))}}}
 	}
 	return obj.Value{D: []obj.Data{{D: "0"}}}
@@ -75,7 +75,7 @@ func Make(f obj.Func, args []obj.Var) obj.Value {
 	sz := args[0].Val
 	if sz.Arr {
 		fract.Error(f.Tks[0][0], "Array is not a valid value!")
-	} else if sz.D[0].T != obj.VInteger {
+	} else if sz.D[0].T != obj.VInt {
 		fract.Error(f.Tks[0][0], "Exit code is only be integer!")
 	}
 	szv, _ := strconv.Atoi(sz.D[0].String())
@@ -115,8 +115,8 @@ func Range(f obj.Func, args []obj.Var) obj.Value {
 	} else if step.Arr {
 		fract.Error(f.Tks[0][0], "\"step\" argument should be numeric!")
 	}
-	if start.D[0].T != obj.VInteger && start.D[0].T != obj.VFloat || to.D[0].T != obj.VInteger &&
-		to.D[0].T != obj.VFloat || step.D[0].T != obj.VInteger && step.D[0].T != obj.VFloat {
+	if start.D[0].T != obj.VInt && start.D[0].T != obj.VFloat || to.D[0].T != obj.VInt &&
+		to.D[0].T != obj.VFloat || step.D[0].T != obj.VInt && step.D[0].T != obj.VFloat {
 		fract.Error(f.Tks[0][0], "Values should be integer or float!")
 	}
 	startV, _ := strconv.ParseFloat(start.D[0].String(), 64)
@@ -172,24 +172,24 @@ func String(f obj.Func, args []obj.Var) obj.Value {
 			str = args[0].Val.D[0].String()
 		}
 		return obj.Value{
-			D: []obj.Data{{D: str, T: obj.VString}},
+			D: []obj.Data{{D: str, T: obj.VStr}},
 		}
 	case "bytecode":
 		v := args[0].Val
 		var sb strings.Builder
 		for _, d := range v.D {
-			if d.T != obj.VInteger {
+			if d.T != obj.VInt {
 				sb.WriteByte(' ')
 			}
 			r, _ := strconv.ParseInt(d.String(), 10, 32)
 			sb.WriteByte(byte(r))
 		}
 		return obj.Value{
-			D: []obj.Data{{D: sb.String(), T: obj.VString}},
+			D: []obj.Data{{D: sb.String(), T: obj.VStr}},
 		}
 	default: // Object.
 		return obj.Value{
-			D: []obj.Data{{D: fmt.Sprint(args[0].Val), T: obj.VString}},
+			D: []obj.Data{{D: fmt.Sprint(args[0].Val), T: obj.VStr}},
 		}
 	}
 }
