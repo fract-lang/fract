@@ -202,7 +202,7 @@ func (p *Parser) processRange(tks *obj.Tokens) {
 			tks.Insert(pos, obj.Token{Val: "[", T: fract.Brace})
 			for _, current := range val.D {
 				pos++
-				tks.Insert(pos, obj.Token{Val: current.Format(), T: fract.Value})
+				tks.Insert(pos, obj.Token{Val: current.String(), T: fract.Value})
 				pos++
 				tks.Insert(pos, obj.Token{Val: ",", T: fract.Comma})
 			}
@@ -213,7 +213,7 @@ func (p *Parser) processRange(tks *obj.Tokens) {
 				tks.Insert(pos, obj.Token{Val: "\"" + val.D[0].String() + "\"", T: fract.Value})
 			} else {
 				tks.Insert(pos, obj.Token{
-					Val: val.D[0].Format(),
+					Val: val.D[0].String(),
 					T:   fract.Value,
 					//! Add another fields for panic.
 					Ln:  rg[0].Ln,
@@ -288,7 +288,6 @@ func readyData(p process, d obj.Data) obj.Data {
 	} else if p.opr.Val == "/" || p.opr.Val == "\\" ||
 		p.fv.D[0].T == obj.VFloat || p.sv.D[0].T == obj.VFloat {
 		d.T = obj.VFloat
-		d.D = d.Format()
 		return d
 	}
 	return d
@@ -554,15 +553,13 @@ func applyMinus(minus bool, v obj.Value) obj.Value {
 	if val.Arr {
 		for i, d := range val.D {
 			if d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
-				d.D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
-				val.D[i].D = d.Format()
+				val.D[i].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
 			}
 		}
 		return val
 	}
 	if d := val.D[0]; d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
-		d.D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
-		val.D[0].D = d.Format()
+		val.D[0].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
 	}
 	return val
 }
