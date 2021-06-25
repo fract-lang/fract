@@ -997,17 +997,30 @@ func (p *Parser) processValue(tks obj.Tokens) obj.Value {
 			opr.opr = tks[j]
 			opr.s = tks[j+1]
 			j -= p.processOperationValue(false, &opr, &tks, j+1)
-			resultValue := solveProcess(opr)
+			rv := solveProcess(opr)
 			opr.opr.Val = "+"
 			opr.s = tks[j+1]
 			opr.fv = v
-			opr.sv = resultValue
+			opr.sv = rv
 			v = solveProcess(opr)
 			// Remove processed processes.
 			tks.Remove(j-1, 3)
-			tks.Insert(j-1, obj.Token{Val: "0"})
 			// Find next operator.
 			j = indexProcess(tks)
+			// Finished?
+			if j == 0 || j == len(tks)-1 {
+				opr.fv = v
+				opr.opr = tks[j]
+				if j == 0 {
+					opr.s = tks[j+1]
+					p.processOperationValue(false, &opr, &tks, j+1)
+				} else {
+					opr.s = tks[j-1]
+					p.processOperationValue(false, &opr, &tks, j-1)
+				}
+				v = solveProcess(opr)
+				break
+			}
 		}
 	} else {
 		var opr process
