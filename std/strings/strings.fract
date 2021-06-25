@@ -12,7 +12,7 @@
 
 # Converts the first character to uppercase.
 protected func Capitalize(str)
-	if str == ""
+	if str == ''
 		ret str
 	end
 	if IsLetter(str[0]) && IsLower(str[0])
@@ -24,28 +24,28 @@ end
 # A string is considered a valid identifier if it only contains alphanumeric letters (a-z) and (0-9),
 # or underscores (_). A valid identifier cannot start with a number, or contain any spaces.
 protected func IsIdentifier(str)
-	if str == ""
+	if str == ''
 		ret false
 	end
 	func isNumericChar(char)
 		ret (
-			char == "0" ||
-			char == "1" ||
-			char == "2" ||
-			char == "3" ||
-			char == "4" ||
-			char == "5" ||
-			char == "6" ||
-			char == "7" ||
-			char == "8" ||
-			char == "9"
+			char == '0' ||
+			char == '1' ||
+			char == '2' ||
+			char == '3' ||
+			char == '4' ||
+			char == '5' ||
+			char == '6' ||
+			char == '7' ||
+			char == '8' ||
+			char == '9'
 		)
 	end
 	if isNumericChar(str[0])
 		ret false
 	end
 	for _, char in str
-		if char <> "_" && IsLetter(char) == false && isNumericChar(char) == false
+		if char <> '_' && IsLetter(char) == false && isNumericChar(char) == false
 			ret false
 		end
 	end
@@ -54,7 +54,7 @@ end
 
 # Returns true if char is letter, false if not.
 protected func IsLetter(char)
-	ret (char >= "a" && char <= "z") || (char >= "A" && char <= "Z")
+	ret (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')
 end
 
 # Returns true if string is lowercase, false if not.
@@ -63,7 +63,7 @@ protected func IsLower(str)
 		if IsLetter(char) == false
 			ret false
 		end
-		const code = int(char, type="strcode")
+		const code = int(char, type='strcode')
 		if code < 97 || code > 122
 			ret false
 		end
@@ -76,7 +76,7 @@ end
 # Check if all the characters in the text are whitespaces.
 protected func IsSpace(str)
 	for _, char in str
-		if char <> "\t" && char <> " " && char <> "\v" && char <> "\n" && char <> "\r" && char <> "\f"
+		if char <> '\t' && char <> ' ' && char <> '\v' && char <> '\n' && char <> '\r' && char <> '\f'
 			ret false
 		end
 	else
@@ -91,7 +91,7 @@ protected func IsUpper(str)
 		if IsLetter(char) == false
 			ret false
 		end
-		const code = int(char, type="strcode")
+		const code = int(char, type='strcode')
 		if code < 65 || code > 90
 			ret false
 		end
@@ -111,7 +111,7 @@ protected func Lower(str)
 			str[index] = char + 32
   	end
 	else
-		ret ""
+		ret ''
 	end
 	ret str
 end
@@ -119,15 +119,15 @@ end
 # Returns subbed string.
 protected func Substring(str, start, length)
 	if start < 0 || length < 0
-		ret ""
+		ret ''
 	end
 	const strlen = len(str)
 	if start >= strlen
-		ret ""
+		ret ''
 	elif start + length > strlen
 		length = strlen - start
 	end
-	var newStr = ""
+	var newStr = ''
 	for _, index in range(start, length + start - 1)
 		newStr += str[index]
 	end
@@ -146,7 +146,7 @@ protected func SwapCase(str)
 			str[index] = char + 32
 		end
 	else
-		ret ""
+		ret ''
 	end
 	ret str
 end
@@ -161,7 +161,7 @@ protected func Upper(str)
 			str[index] = char - 32
 		end
 	else
-		ret ""
+		ret ''
 	end
 	ret str
 end

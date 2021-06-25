@@ -127,9 +127,9 @@ end
 
 # Returns sum of all array elements.
 protected func Sum(array)
- var total = 0
- for _, element in array
-  total += element
- end
+	var total = 0
+	for _, element in array
+		total += element
+	end
 	ret total
 end
