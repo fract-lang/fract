@@ -69,6 +69,10 @@ func interpret() {
 		p.Tks = nil
 	reTokenizeUnNil:
 		p.L.Fin = false
+		p.L.Braces = 0
+		p.L.Brackets = 0
+		p.L.Parentheses = 0
+		p.L.RangeComment = false
 		p.L.Ln = 1
 		p.L.Col = 1
 		/* Tokenize all lines. */
@@ -84,9 +88,7 @@ func interpret() {
 				continue
 			}
 			// Check parentheses.
-			if p.L.Braces > 0 ||
-				p.L.Brackets > 0 ||
-				p.L.Parentheses > 0 {
+			if p.L.Braces > 0 || p.L.Brackets > 0 || p.L.Parentheses > 0 {
 				p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
 				goto reTokenize
 			}
