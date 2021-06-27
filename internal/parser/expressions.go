@@ -88,8 +88,7 @@ func compare(v0, v1 obj.Value, opr obj.Token) bool {
 	}
 	// String comparison.
 	if !v0.Arr || !v1.Arr {
-		d0 := v0.D[0]
-		d1 := v1.D[0]
+		d0, d1 := v0.D[0], v1.D[0]
 		if (d0.T == obj.VStr && d1.T != obj.VStr) || (d0.T != obj.VStr && d1.T == obj.VStr) {
 			fract.Error(opr, "The in keyword should use with string or enumerable data types!")
 		}
@@ -470,11 +469,7 @@ func solveProcess(p process) obj.Value {
 			for i, f := range p.fv.D {
 				s := p.sv.D[i]
 				if f.T == obj.VArray || s.T == obj.VArray {
-					proc := process{
-						f:   p.f,
-						s:   p.s,
-						opr: p.opr,
-					}
+					proc := process{f: p.f, s: p.s, opr: p.opr}
 					if f.T == obj.VArray {
 						proc.fv = obj.Value{D: f.D.([]obj.Data), Arr: true}
 					} else {
@@ -981,12 +976,11 @@ func (p *Parser) processArrayValue(tks obj.Tokens) obj.Value {
 
 func (p *Parser) processValue(tks obj.Tokens) obj.Value {
 	p.processRange(&tks)
-	v := obj.Value{D: []obj.Data{{}}}
 	// Is conditional expression?
 	if j, _ := findConditionOperator(tks); j != -1 {
-		v.D = []obj.Data{{D: p.processCondition(tks), T: obj.VBool}}
-		return v
+		return obj.Value{D: []obj.Data{{D: p.processCondition(tks), T: obj.VBool}}}
 	}
+	v := obj.Value{D: []obj.Data{{}}}
 	checkArithmeticProcesses(tks)
 	if j := indexProcess(tks); j != -1 {
 		// Decompose arithmetic operations.
@@ -1008,7 +1002,7 @@ func (p *Parser) processValue(tks obj.Tokens) obj.Value {
 			// Find next operator.
 			j = indexProcess(tks)
 			// Finished?
-			if j == 0 || j == len(tks)-1 {
+			if j != -1 && (j == 0 || j == len(tks)-1) {
 				opr.fv = v
 				opr.opr = tks[j]
 				if j == 0 {

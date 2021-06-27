@@ -66,14 +66,14 @@ tokenize:
 		l.lastTk.Val = ""
 	}
 	// Tokenize line.
-	tk := l.Generate()
+	tk := l.Token()
 	for tk.T != fract.None &&
 		tk.T != fract.StatementTerminator {
 		if !l.RangeComment && tk.T != fract.Ignore {
 			tks = append(tks, tk)
 			l.lastTk = tk
 		}
-		tk = l.Generate()
+		tk = l.Token()
 	}
 	l.lastTk = tk
 	// Go next line.
@@ -102,9 +102,9 @@ tokenize:
 }
 
 var (
-	numericRegexp = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
-	nameRegexp    = *regexp.MustCompile(`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`)
-	macroRegexp   = *regexp.MustCompile(`^#(\s+|$)`)
+	numericRgx = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
+	nameRgx    = *regexp.MustCompile(`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`)
+	macroRgx   = *regexp.MustCompile(`^#(\s+|$)`)
 )
 
 // isKeyword returns true if part is keyword, false if not.
@@ -113,16 +113,16 @@ func isKeyword(ln, kw string) bool {
 }
 
 // isMacro returns true if part is macro, false if not.
-func isMacro(ln string) bool { return !macroRegexp.MatchString(ln) }
+func isMacro(ln string) bool { return !macroRgx.MatchString(ln) }
 
 // getName returns name if next token is name, returns empty string if not.
-func getName(ln string) string { return nameRegexp.FindString(ln) }
+func getName(ln string) string { return nameRgx.FindString(ln) }
 
 // getNumeric returns numeric if next token is numeric, returns empty string if not.
-func getNumeric(ln string) string { return numericRegexp.FindString(ln) }
+func getNumeric(ln string) string { return numericRgx.FindString(ln) }
 
-// processEsacepeSequence process char literal espace sequence.
-func (l *Lex) processEscapeSequence(sb *strings.Builder, fln string) bool {
+// Process string espace sequence.
+func (l *Lex) strseq(sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
 	if fln[l.Col-1] != '\\' {
 		return false
@@ -131,7 +131,6 @@ func (l *Lex) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	if l.Col >= len(fln)+1 {
 		l.Error("Charray literal is not defined full!")
 	}
-
 	switch fln[l.Col-1] {
 	case '\\':
 		sb.WriteByte('\\')
@@ -159,8 +158,7 @@ func (l *Lex) processEscapeSequence(sb *strings.Builder, fln string) bool {
 	return true
 }
 
-// lexString lex string literal.
-func (l *Lex) lexString(tk *obj.Token, quote byte, fln string) {
+func (l *Lex) lexstr(tk *obj.Token, quote byte, fln string) {
 	sb := new(strings.Builder)
 	sb.WriteByte(quote)
 	l.Col++
@@ -169,7 +167,7 @@ func (l *Lex) lexString(tk *obj.Token, quote byte, fln string) {
 		if c == quote { // Finish?
 			sb.WriteByte(c)
 			break
-		} else if !l.processEscapeSequence(sb, fln) {
+		} else if !l.strseq(sb, fln) {
 			sb.WriteByte(c)
 		}
 	}
@@ -181,7 +179,7 @@ func (l *Lex) lexString(tk *obj.Token, quote byte, fln string) {
 	l.Col -= sb.Len() - 1
 }
 
-func (l *Lex) processName(tk *obj.Token, chk string) bool {
+func (l *Lex) lexname(tk *obj.Token, chk string) bool {
 	// Remove punct.
 	if chk[len(chk)-1] != '_' && chk[len(chk)-1] != '.' {
 		r, _ := regexp.MatchString(`(\s|[[:punct:]])$`, chk)
@@ -204,7 +202,7 @@ func (l *Lex) processName(tk *obj.Token, chk string) bool {
 }
 
 // Generate next token.
-func (l *Lex) Generate() obj.Token {
+func (l *Lex) Token() obj.Token {
 	tk := obj.Token{
 		T: fract.None,
 		F: l.F,
@@ -336,7 +334,7 @@ func (l *Lex) Generate() obj.Token {
 	case ln[0] == '-': // Subtraction.
 		/* Check variable name. */
 		if check := getName(ln); check != "" { // Name.
-			if !l.processName(&tk, check) {
+			if !l.lexname(&tk, check) {
 				return tk
 			}
 			break
@@ -515,13 +513,13 @@ func (l *Lex) Generate() obj.Token {
 			return tk
 		}
 	case ln[0] == '\'': // String.
-		l.lexString(&tk, '\'', fln)
+		l.lexstr(&tk, '\'', fln)
 	case ln[0] == '"': // String.
-		l.lexString(&tk, '"', fln)
+		l.lexstr(&tk, '"', fln)
 	default: // Alternates
 		/* Check variable name. */
 		if chk := getName(ln); chk != "" { // Name.
-			if !l.processName(&tk, chk) {
+			if !l.lexname(&tk, chk) {
 				return tk
 			}
 		} else { // Error exactly
