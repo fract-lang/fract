@@ -6,7 +6,7 @@
 
 [Website](https://fract-lang.github.io/website/) |
 [Docs](https://github.com/fract-lang/fract/tree/master/docs) |
-[A Tour of Fract](https://github.com/fract-lang/fract/blob/master/docs/fract/a_tour_of_fract.md) |
+[A Tour of Fract](https://fract-lang.github.io/website/pages/tour.html) |
 [Samples](https://fract-lang.github.io/website/pages/samples.html) |
 [Contributing](#contributing)
 
