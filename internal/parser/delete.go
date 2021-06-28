@@ -5,7 +5,7 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-func (p *Parser) processDelete(tks []obj.Token) {
+func (p *Parser) procDel(tks []obj.Token) {
 	tkslen := len(tks)
 	// Value is not defined?
 	if tkslen < 2 {
@@ -26,10 +26,10 @@ func (p *Parser) processDelete(tks []obj.Token) {
 		if t.T != fract.Name {
 			fract.Error(t, "This is not deletable object!")
 		}
-		pos, src := p.variableIndexByName(t)
+		pos, src := p.varIndexByName(t)
 		// Name is not defined?
 		if pos == -1 {
-			pos, src := p.functionIndexByName(t)
+			pos, src := p.funcIndexByName(t)
 			if pos == -1 {
 				fract.Error(t, "\""+t.Val+"\" is not defined!")
 			}

@@ -2,6 +2,7 @@ package obj
 
 type Tokens []Token
 
+// Sub slice.
 func (t Tokens) Sub(pos, len int) *Tokens {
 	if len == 0 {
 		return nil
@@ -10,12 +11,14 @@ func (t Tokens) Sub(pos, len int) *Tokens {
 	return &t
 }
 
-func (t *Tokens) Remove(pos, len int) {
+// Remove range.
+func (t *Tokens) Rem(pos, len int) {
 	if len > 0 {
 		*t = append((*t)[:pos], (*t)[pos+len:]...)
 	}
 }
 
-func (t *Tokens) Insert(pos int, vals ...Token) {
+// Insert at.
+func (t *Tokens) Ins(pos int, vals ...Token) {
 	*t = append((*t)[:pos], append(vals, (*t)[pos:]...)...)
 }

@@ -74,7 +74,7 @@ func (c funcCall) call() obj.Value {
 					tks := c.src.Tks[c.src.i]
 					if tks[0].T == fract.End { // Block is ended.
 						break
-					} else if c.src.processTokens(tks) == fract.FUNCReturn {
+					} else if c.src.process(tks) == fract.FUNCReturn {
 						if c.src.retVal == nil {
 							break
 						}
@@ -109,24 +109,25 @@ func (c funcCall) call() obj.Value {
 // isParamSet Argument type is param set?
 func isParamSet(tks obj.Tokens) bool { return tks[0].T == fract.Name && tks[1].Val == "=" }
 
-// getParamsArgumentValues decompose and returns params values.
-func (p *Parser) getParamsArgumentValues(tks obj.Tokens, pos, bc, lstComma *int) obj.Value {
+// paramsArgtVals decompose and returns params values.
+func (p *Parser) paramsArgtVals(tks obj.Tokens, pos, lstComma *int) obj.Value {
 	retv := obj.Value{D: []obj.Data{}, Arr: true}
+	bc := 0
 	for ; *pos < len(tks); *pos++ {
 		tk := tks[*pos]
 		if tk.T == fract.Brace {
 			if tk.Val == "(" || tk.Val == "{" || tk.Val == "[" {
-				*bc++
+				bc++
 			} else {
-				*bc--
+				bc--
 			}
-		} else if tk.T == fract.Comma && *bc == 0 {
+		} else if tk.T == fract.Comma && bc == 0 {
 			vtks := tks.Sub(*lstComma, *pos-*lstComma)
 			if isParamSet(*vtks) {
 				*pos -= 4
 				return retv
 			}
-			v := p.processValue(*vtks)
+			v := p.procVal(*vtks)
 			if v.Arr {
 				retv.D = append(retv.D, obj.Data{D: v.D, T: obj.VArray})
 			} else {
@@ -141,7 +142,7 @@ func (p *Parser) getParamsArgumentValues(tks obj.Tokens, pos, bc, lstComma *int)
 			*pos -= 4
 			return retv
 		}
-		v := p.processValue(vtks)
+		v := p.procVal(vtks)
 		if v.Arr {
 			retv.D = append(retv.D, obj.Data{D: v.D, T: obj.VArray})
 		} else {
@@ -151,66 +152,77 @@ func (p *Parser) getParamsArgumentValues(tks obj.Tokens, pos, bc, lstComma *int)
 	return retv
 }
 
-func (p *Parser) processArgument(f obj.Func, names *[]string, tks obj.Tokens, tk obj.Token, index, count, bc, lstComma *int) obj.Var {
+type funcArgInfo struct {
+	f        obj.Func
+	names    *[]string
+	tks      obj.Tokens
+	tk       obj.Token
+	index    *int
+	count    *int
+	lstComma *int
+}
+
+// Process function argument.
+func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	var paramSet bool
-	l := *index - *lstComma
+	l := *i.index - *i.lstComma
 	if l < 1 {
-		fract.Error(tk, "Value is not defined!")
-	} else if *count >= len(f.Params) {
-		fract.Error(tk, "Argument overflow!")
+		fract.Error(i.tk, "Value is not defined!")
+	} else if *i.count >= len(i.f.Params) {
+		fract.Error(i.tk, "Argument overflow!")
 	}
-	param := f.Params[*count]
+	param := i.f.Params[*i.count]
 	v := obj.Var{Name: param.Name}
-	vtks := *tks.Sub(*lstComma, l)
-	tk = vtks[0]
+	vtks := *i.tks.Sub(*i.lstComma, l)
+	i.tk = vtks[0]
 	// Check param set.
 	if l >= 2 && isParamSet(vtks) {
 		l -= 2
 		if l < 1 {
-			fract.Error(tk, "Value is not defined!")
+			fract.Error(i.tk, "Value is not defined!")
 		}
-		for _, pr := range f.Params {
-			if pr.Name == tk.Val {
-				for _, name := range *names {
-					if name == tk.Val {
-						fract.Error(tk, "Keyword argument repeated!")
+		for _, pr := range i.f.Params {
+			if pr.Name == i.tk.Val {
+				for _, name := range *i.names {
+					if name == i.tk.Val {
+						fract.Error(i.tk, "Keyword argument repeated!")
 					}
 				}
-				*count++
+				*i.count++
 				paramSet = true
-				*names = append(*names, tk.Val)
-				retv := obj.Var{Name: tk.Val}
+				*i.names = append(*i.names, i.tk.Val)
+				retv := obj.Var{Name: i.tk.Val}
 				//Parameter is params typed?
 				if pr.Params {
-					*lstComma += 2
-					retv.Val = p.getParamsArgumentValues(tks, index, bc, lstComma)
+					*i.lstComma += 2
+					retv.Val = p.paramsArgtVals(i.tks, i.index, i.lstComma)
 				} else {
-					retv.Val = p.processValue(vtks[2:])
+					retv.Val = p.procVal(vtks[2:])
 				}
 				return retv
 			}
 		}
-		fract.Error(tk, "Parameter is not defined in this name: "+tk.Val)
+		fract.Error(i.tk, "Parameter is not defined in this name: "+i.tk.Val)
 	}
 	if paramSet {
-		fract.Error(tk, "After the parameter has been given a special value, all parameters must be shown privately!")
+		fract.Error(i.tk, "After the parameter has been given a special value, all parameters must be shown privately!")
 	}
-	*count++
-	*names = append(*names, v.Name)
+	*i.count++
+	*i.names = append(*i.names, v.Name)
 	// Parameter is params typed?
 	if param.Params {
-		v.Val = p.getParamsArgumentValues(tks, index, bc, lstComma)
+		v.Val = p.paramsArgtVals(i.tks, i.index, i.lstComma)
 	} else {
-		v.Val = p.processValue(vtks)
+		v.Val = p.procVal(vtks)
 	}
 	return v
 }
 
-// Process function call model and initialize moden instance.
-func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
+// Process function call model and initialize model instance.
+func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 	name := tks[0]
 	// Name is not defined?
-	namei, src := p.functionIndexByName(name)
+	namei, src := p.funcIndexByName(name)
 	var f obj.Func
 	if namei == -1 {
 		name := name
@@ -220,10 +232,10 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 			}
 			src = p.Imports[p.importIndexByName(name.Val[:j])].Src
 			name.Val = name.Val[j+1:]
-			for _, current := range src.vars {
-				if unicode.IsUpper(rune(current.Name[0])) && current.Name == name.Val && !current.Val.Arr && current.Val.D[0].T == obj.VFunc {
+			for _, v := range src.vars {
+				if unicode.IsUpper(rune(v.Name[0])) && v.Name == name.Val && !v.Val.Arr && v.Val.D[0].T == obj.VFunc {
 					name.F = nil
-					f = current.Val.D[0].D.(obj.Func)
+					f = v.Val.D[0].D.(obj.Func)
 					break
 				}
 			}
@@ -244,36 +256,45 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 		f = src.funcs[namei]
 	}
 	var (
-		names = new([]string)
-		count = new(int)
+		names []string
 		args  []obj.Var
+		count = 0
 	)
 	// Decompose arguments.
 	if tks, _ = decomposeBrace(&tks, "(", ")", false); tks != nil {
 		var (
-			bc       = new(int)
-			lstComma = new(int)
+			inf = funcArgInfo{
+				f:        f,
+				names:    &names,
+				tks:      tks,
+				count:    &count,
+				index:    new(int),
+				lstComma: new(int),
+			}
+			bc = 0
 		)
-		for i := 0; i < len(tks); i++ {
-			tk := tks[i]
-			if tk.T == fract.Brace {
-				if tk.Val == "(" || tk.Val == "{" || tk.Val == "[" {
-					*bc++
+		for *inf.index = 0; *inf.index < len(tks); *inf.index++ {
+			inf.tk = tks[*inf.index]
+			if inf.tk.T == fract.Brace {
+				if inf.tk.Val == "(" || inf.tk.Val == "{" || inf.tk.Val == "[" {
+					bc++
 				} else {
-					*bc--
+					bc--
 				}
-			} else if tk.T == fract.Comma && *bc == 0 {
-				args = append(args, p.processArgument(f, names, tks, tk, &i, count, bc, lstComma))
-				*lstComma = i + 1
+			} else if inf.tk.T == fract.Comma && bc == 0 {
+				args = append(args, p.procFuncArg(inf))
+				*inf.lstComma = *inf.index + 1
 			}
 		}
-		if *lstComma < len(tks) {
+		if *inf.lstComma < len(tks) {
+			inf.tk = tks[*inf.lstComma]
 			tkslen := len(tks)
-			args = append(args, p.processArgument(f, names, tks, tks[*lstComma], &tkslen, count, bc, lstComma))
+			inf.index = &tkslen
+			args = append(args, p.procFuncArg(inf))
 		}
 	}
 	// All parameters is not defined?
-	if *count < len(f.Params)-f.DefaultParamCount {
+	if count < len(f.Params)-f.DefaultParamCount {
 		var sb strings.Builder
 		sb.WriteString("All required positional parameters is not defined:")
 		for _, p := range f.Params {
@@ -281,7 +302,7 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 				break
 			}
 			msg := " '" + p.Name + "',"
-			for _, name := range *names {
+			for _, name := range names {
 				if p.Name == name {
 					msg = ""
 					break
@@ -292,8 +313,8 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 		fract.Error(name, sb.String()[:sb.Len()-1])
 	}
 	// Check default values.
-	for ; *count < len(f.Params); *count++ {
-		p := f.Params[*count]
+	for ; count < len(f.Params); count++ {
+		p := f.Params[count]
 		if p.Default.D != nil {
 			args = append(args,
 				obj.Var{
@@ -310,12 +331,13 @@ func (p *Parser) processFunctionCallModel(tks obj.Tokens) funcCall {
 	}
 }
 
-// processFunctionCall call function and returns returned value.
-func (p *Parser) processFunctionCall(tks obj.Tokens) obj.Value {
-	return p.processFunctionCallModel(tks).call()
+// funcCall call function and returns returned value.
+func (p *Parser) funcCall(tks obj.Tokens) obj.Value {
+	return p.funcCallModel(tks).call()
 }
 
-func (p *Parser) processFunctionDeclaration(tks obj.Tokens, protected bool) {
+// Process function declaration.
+func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	tkslen := len(tks)
 	name := tks[1]
 	// Name is not name?
@@ -385,7 +407,7 @@ func (p *Parser) processFunctionDeclaration(tks obj.Tokens, protected bool) {
 					if i-start < 1 {
 						fract.Error(ptks[start-1], "Value is not defined!")
 					}
-					lstp.Default = p.processValue(*ptks.Sub(start, i-start))
+					lstp.Default = p.procVal(*ptks.Sub(start, i-start))
 					if lstp.Params && !lstp.Default.Arr {
 						fract.Error(pr, "Params parameter is can only take array values!")
 					}

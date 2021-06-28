@@ -15,19 +15,20 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-// ReadyFile returns instance of source file by path.
-func ReadyFile(fp string) *obj.File {
+// File returns instance of source file by path.
+func File(fp string) *obj.File {
 	f, _ := os.Open(fp)
 	bytes, _ := os.ReadFile(fp)
 	return &obj.File{
-		Lns: ReadyLines(strings.Split(string(bytes), "\n")),
+		Lns: Lines(strings.Split(string(bytes), "\n")),
 		P:   fp,
 		F:   f,
 	}
 }
 
-// ReadyLines returns lines processed to lexing.
-func ReadyLines(lns []string) []string {
+// TODO: Optimize.
+// Lines returns ready lines processed to lexing.
+func Lines(lns []string) []string {
 	rlns := make([]string, len(lns))
 	for i, ln := range lns {
 		rlns[i] = strings.TrimRight(ln, " \t\n\r")
@@ -59,7 +60,7 @@ func New(p, fp string) *Parser {
 	return &Parser{
 		funcTempVars: -1,
 		L: &lex.Lex{
-			F:  ReadyFile(fp),
+			F:  File(fp),
 			Ln: 1,
 		},
 	}
@@ -132,7 +133,7 @@ func (p *Parser) Interpret() {
 	if p.L.F.P == "<stdin>" {
 		// Interpret all lines.
 		for p.i = 0; p.i < len(p.Tks); p.i++ {
-			p.processTokens(p.Tks[p.i])
+			p.process(p.Tks[p.i])
 			runtime.GC()
 		}
 		goto end
@@ -168,7 +169,7 @@ func (p *Parser) Interpret() {
 
 	// Interpret all lines.
 	for p.i = 0; p.i < len(p.Tks); p.i++ {
-		p.processTokens(p.Tks[p.i])
+		p.process(p.Tks[p.i])
 		runtime.GC()
 	}
 
@@ -212,18 +213,20 @@ func (p *Parser) skipBlock(blk bool) {
 // TYPES
 // 'f' -> Function.
 // 'v' -> Variable.
-func (p *Parser) defineByName(name obj.Token) (int, rune, *Parser) {
-	pos, src := p.functionIndexByName(name)
+// Returns define by name.
+func (p *Parser) defByName(name obj.Token) (int, rune, *Parser) {
+	pos, src := p.funcIndexByName(name)
 	if pos != -1 {
 		return pos, 'f', src
 	}
-	pos, src = p.variableIndexByName(name)
+	pos, src = p.varIndexByName(name)
 	if pos != -1 {
 		return pos, 'v', src
 	}
 	return -1, '-', nil
 }
 
+// Returns index of name is exist name, returns -1 if not.
 func (p *Parser) definedName(name obj.Token) int {
 	if name.Val[0] == '-' { // Ignore minus.
 		name.Val = name.Val[1:]
@@ -243,8 +246,8 @@ func (p *Parser) definedName(name obj.Token) int {
 
 //! This code block very like to variableIndexByName function. If you change here, probably you must change there too.
 
-// functionIndexByName returns index of function by name.
-func (p *Parser) functionIndexByName(name obj.Token) (int, *Parser) {
+// funcIndexByName returns index of function by name.
+func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
 	if name.Val[0] == '-' { // Ignore minus.
 		name.Val = name.Val[1:]
 	}
@@ -271,8 +274,8 @@ func (p *Parser) functionIndexByName(name obj.Token) (int, *Parser) {
 
 //! This code block very like to functionIndexByName function. If you change here, probably you must change there too.
 
-// variableIndexByName returns index of variable by name.
-func (p *Parser) variableIndexByName(name obj.Token) (int, *Parser) {
+// varIndexByName returns index of variable by name.
+func (p *Parser) varIndexByName(name obj.Token) (int, *Parser) {
 	if name.Val[0] == '-' { // Ignore minus.
 		name.Val = name.Val[1:]
 	}
@@ -397,7 +400,7 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) ([]obj.Token, in
 		fract.Error((*tks)[fst], "Brackets content are empty!")
 	}
 	/* Remove range from original tokens. */
-	tks.Remove(fst, (fst+l+1)-fst+1)
+	tks.Rem(fst, (fst+l+1)-fst+1)
 	if rg == nil {
 		return nil, fst
 	}
@@ -440,8 +443,8 @@ func IsBlock(tks []obj.Token) bool {
 	return false
 }
 
-// indexProcess find index of priority operator and returns index of operator if found, returns -1 if not.
-func indexProcess(tks []obj.Token) int {
+// nextopr find index of priority operator and returns index of operator if found, returns -1 if not.
+func nextopr(tks []obj.Token) int {
 	bc := 0
 	high := -1
 	mid := -1
@@ -478,7 +481,6 @@ func indexProcess(tks []obj.Token) int {
 			}
 		}
 	}
-
 	if high != -1 {
 		return high
 	} else if mid != -1 {
@@ -489,8 +491,8 @@ func indexProcess(tks []obj.Token) int {
 	return -1
 }
 
-// findConditionOperator return next condition operator.
-func findConditionOperator(tks []obj.Token) (int, obj.Token) {
+// findConditionOpr return next condition operator.
+func findConditionOpr(tks []obj.Token) (int, obj.Token) {
 	bc := 0
 	for i, t := range tks {
 		if t.T == fract.Brace {
@@ -510,8 +512,8 @@ func findConditionOperator(tks []obj.Token) (int, obj.Token) {
 	return -1, tk
 }
 
-// nextOrOperator find next or condition operator index and return if find, return -1 if not.
-func nextOperator(tks []obj.Token, pos int, opr string) int {
+// Find next or condition operator index and return if find, return -1 if not.
+func nextConditionOpr(tks []obj.Token, pos int, opr string) int {
 	bc := 0
 	for ; pos < len(tks); pos++ {
 		t := tks[pos]
@@ -532,18 +534,18 @@ func nextOperator(tks []obj.Token, pos int, opr string) int {
 	return -1
 }
 
-// decomposeConditionalProcess returns conditional expressions by operators.
-func decomposeConditionalProcess(tks obj.Tokens, opr string) *[]obj.Tokens {
+// conditionalProcesses returns conditional expressions by operators.
+func conditionalProcesses(tks obj.Tokens, opr string) *[]obj.Tokens {
 	var exps []obj.Tokens
 	last := 0
-	i := nextOperator(tks, last, opr)
+	i := nextConditionOpr(tks, last, opr)
 	for i != -1 {
 		if i-last == 0 {
 			fract.Error(tks[last], "Where is the condition?")
 		}
 		exps = append(exps, *tks.Sub(last, i-last))
 		last = i + 1
-		i = nextOperator(tks, last, opr) // Find next.
+		i = nextConditionOpr(tks, last, opr) // Find next.
 		if i == len(tks)-1 {
 			fract.Error(tks[len(tks)-1], "Operator defined, but for what?")
 		}
@@ -555,7 +557,7 @@ func decomposeConditionalProcess(tks obj.Tokens, opr string) *[]obj.Tokens {
 }
 
 //! Embed functions should have a lowercase names.
-// ApplyEmbedFunctions to interpreter source.
+// ApplyEmbedFunctions to parser source.
 func (p *Parser) ApplyEmbedFunctions() {
 	p.funcs = append(p.funcs,
 		obj.Func{ // print function.
@@ -720,8 +722,8 @@ func (p *Parser) ApplyEmbedFunctions() {
 //! A change added here(especially added a code block) must also be compatible with "imports.go" and
 //! add to "isBlock" function of parser.
 
-// processTokens returns true if block end, returns false if not and returns keyword state.
-func (p *Parser) processTokens(tks []obj.Token) uint8 {
+// process tokens and returns true if block end, returns false if not and returns keyword state.
+func (p *Parser) process(tks []obj.Token) uint8 {
 	tks = append([]obj.Token{}, tks...)
 	switch fst := tks[0]; fst.T {
 	case
@@ -744,13 +746,13 @@ func (p *Parser) processTokens(tks []obj.Token) uint8 {
 				if t.T == fract.Operator &&
 					(t.Val == "=" || t.Val == "+=" || t.Val == "-=" || t.Val == "*=" || t.Val == "/=" || t.Val == "%=" ||
 						t.Val == "^=" || t.Val == "<<=" || t.Val == ">>=" || t.Val == "|=" || t.Val == "&=") { // Variable setting.
-					p.processVariableSet(tks)
+					p.varset(tks)
 					return fract.None
 				}
 			}
 		}
 		// Print value if live interpreting.
-		if v := p.processValue(tks); fract.InteractiveSh {
+		if v := p.procVal(tks); fract.InteractiveSh {
 			if v.Print() {
 				fmt.Println()
 			}
@@ -762,21 +764,21 @@ func (p *Parser) processTokens(tks []obj.Token) uint8 {
 		second := tks[1]
 		tks = tks[1:]
 		if second.T == fract.Var { // Variable definition.
-			p.processVariableDeclaration(tks, true)
+			p.vardec(tks, true)
 		} else if second.T == fract.Func { // Function definition.
-			p.processFunctionDeclaration(tks, true)
+			p.funcdec(tks, true)
 		} else {
 			fract.Error(second, "Syntax error, you can protect only deletable objects!")
 		}
 	case fract.Var: // Variable definition.
-		p.processVariableDeclaration(tks, false)
+		p.vardec(tks, false)
 	case fract.Delete: // Delete from memory.
-		p.processDelete(tks)
+		p.procDel(tks)
 	case fract.If: // if-elif-else.
-		return p.processIf(tks)
+		return p.procIf(tks)
 	case fract.Loop: // Loop definition.
 		p.loopCount++
-		state := p.processLoop(tks)
+		state := p.procLoop(tks)
 		p.loopCount--
 		return state
 	case fract.Break: // Break loop.
@@ -794,20 +796,20 @@ func (p *Parser) processTokens(tks []obj.Token) uint8 {
 			fract.Error(fst, "Return keyword only used in functions!")
 		}
 		if len(tks) > 1 {
-			value := p.processValue(tks[1:])
+			value := p.procVal(tks[1:])
 			p.retVal = &value
 		} else {
 			p.retVal = nil
 		}
 		return fract.FUNCReturn
 	case fract.Func: // Function definiton.
-		p.processFunctionDeclaration(tks, false)
+		p.funcdec(tks, false)
 	case fract.Try: // Try-Catch.
-		return p.processTryCatch(tks)
+		return p.procTryCatch(tks)
 	case fract.Import: // Import.
-		p.processImport(tks)
+		p.procImport(tks)
 	case fract.Macro: // Macro.
-		return p.processMacro(tks)
+		return p.procMacro(tks)
 	case fract.Defer: // Defer.
 		if l := len(tks); l < 2 {
 			fract.Error(tks[0], "Function is not defined!")
@@ -818,7 +820,7 @@ func (p *Parser) processTokens(tks []obj.Token) uint8 {
 		} else if tks[2].T != fract.Brace || tks[2].Val != "(" {
 			fract.Error(tks[2], "Invalid syntax!")
 		}
-		defers = append(defers, p.processFunctionCallModel(tks[1:]))
+		defers = append(defers, p.funcCallModel(tks[1:]))
 	default:
 		fract.Error(fst, "Invalid syntax!")
 	}

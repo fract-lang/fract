@@ -7,16 +7,16 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-// processKws returns return value of kwstate.
-func processKws(kws uint8) uint8 {
+// prockws returns return value of kwstate.
+func prockws(kws uint8) uint8 {
 	if kws != fract.FUNCReturn {
 		return fract.None
 	}
 	return kws
 }
 
-// processLoop process loop blocks and returns keyword state.
-func (p *Parser) processLoop(tks obj.Tokens) uint8 {
+// procLoop process loops and returns keyword state.
+func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	// Content is empty?
 	if vtokens := tks.Sub(1, len(tks)-1); vtokens == nil {
 		tks = nil
@@ -45,7 +45,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 						// Remove temporary functions.
 						p.funcs = p.funcs[:flen]
 						if brk {
-							return processKws(kws)
+							return prockws(kws)
 						}
 						p.i = iindex
 						continue
@@ -57,7 +57,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 						p.i--
 						continue
 					}
-					kws = p.processTokens(tks)
+					kws = p.process(tks)
 					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
 						brk = true
 						p.skipBlock(false)
@@ -71,7 +71,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 
 			/* Interpret/skip block. */
 			ctks := tks
-			c := p.processCondition(ctks)
+			c := p.procCondition(ctks)
 			_else := c == "false"
 			for {
 				p.i++
@@ -82,9 +82,9 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 					p.vars = p.vars[:vlen]
 					// Remove temporary functions.
 					p.funcs = p.funcs[:flen]
-					c = p.processCondition(ctks)
+					c = p.procCondition(ctks)
 					if brk || c != "true" {
-						return processKws(kws)
+						return prockws(kws)
 					}
 					p.i = iindex
 					continue
@@ -103,7 +103,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 					p.funcs = p.funcs[:flen]
 					if !_else {
 						p.skipBlock(false)
-						return processKws(kws)
+						return prockws(kws)
 					}
 					for {
 						p.i++
@@ -113,9 +113,9 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 							p.vars = p.vars[:vlen]
 							// Remove temporary functions.
 							p.funcs = p.funcs[:flen]
-							return processKws(kws)
+							return prockws(kws)
 						}
-						kws = p.processTokens(tks)
+						kws = p.process(tks)
 						if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
 							brk = true
 							p.skipBlock(false)
@@ -129,7 +129,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 
 				// Condition is true?
 				if c == "true" {
-					kws = p.processTokens(tks)
+					kws = p.process(tks)
 					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
 						brk = true
 						p.skipBlock(false)
@@ -185,7 +185,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 	} else {
 		fract.Error(inTk, "Value is not defined!")
 	}
-	v := p.processValue(tks)
+	v := p.procVal(tks)
 	// Type is not array?
 	if !v.Arr && v.D[0].T != obj.VStr {
 		fract.Error(tks[0], "Foreach loop must defined array value!")
@@ -210,9 +210,9 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 						p.vars = p.vars[:vlen]
 						// Remove temporary functions.
 						p.funcs = p.funcs[:flen]
-						return processKws(kws)
+						return prockws(kws)
 					}
-					kws = p.processTokens(tks)
+					kws = p.process(tks)
 					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
 						brk = true
 						p.skipBlock(false)
@@ -282,7 +282,7 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 			p.i--
 			continue
 		}
-		kws = p.processTokens(tks)
+		kws = p.process(tks)
 		if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
 			brk = true
 			p.skipBlock(false)
@@ -294,5 +294,5 @@ func (p *Parser) processLoop(tks obj.Tokens) uint8 {
 	}
 	// Remove loop variables.
 	p.vars = p.vars[:vlen-2]
-	return processKws(kws)
+	return prockws(kws)
 }

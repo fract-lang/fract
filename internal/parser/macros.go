@@ -7,7 +7,7 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
+func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 	tlen := len(tks)
 	ctks := tks.Sub(1, tlen-1)
 	// Condition is empty?
@@ -29,7 +29,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 			},
 		},
 	}
-	state := p.processCondition(*ctks)
+	state := p.procCondition(*ctks)
 	kws := fract.None
 	/* Interpret/skip block. */
 	for {
@@ -53,7 +53,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 					p.skipBlock(false)
 					goto ret
 				}
-				state = p.processCondition(*ctks)
+				state = p.procCondition(*ctks)
 				// Interpret/skip block.
 				for {
 					p.i++
@@ -66,7 +66,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 							goto ret
 						} else if first.T == fract.If { // If block.
 							if state == "true" && kws == fract.None {
-								p.processMacroIf(tks)
+								p.procMacroIf(tks)
 							} else {
 								p.skipBlock(true)
 							}
@@ -79,7 +79,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 					// Condition is true?
 					if state == "true" && kws == fract.None {
 						p.vars, vars = vars, p.vars
-						kws = p.processTokens(tks)
+						kws = p.process(tks)
 						p.vars, vars = vars, p.vars
 						if kws != fract.None {
 							p.skipBlock(false)
@@ -113,7 +113,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 							goto ret
 						} else if first.T == fract.If { // If block.
 							if kws == fract.None {
-								p.processMacroIf(tks)
+								p.procMacroIf(tks)
 							} else {
 								p.skipBlock(true)
 							}
@@ -123,7 +123,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 					// Condition is true?
 					if kws == fract.None {
 						p.vars, vars = vars, p.vars
-						kws = p.processTokens(tks)
+						kws = p.process(tks)
 						p.vars, vars = vars, p.vars
 						if kws != fract.None {
 							p.skipBlock(false)
@@ -135,7 +135,7 @@ func (p *Parser) processMacroIf(tks obj.Tokens) uint8 {
 		// Condition is true?
 		if state == "true" && kws == fract.None {
 			p.vars, vars = vars, p.vars
-			kws = p.processTokens(tks)
+			kws = p.process(tks)
 			p.vars, vars = vars, p.vars
 			if kws != fract.None {
 				p.skipBlock(false)
@@ -150,12 +150,12 @@ ret:
 	return kws
 }
 
-// processMacro process macros and returns keyword state.
-func (p *Parser) processMacro(tks []obj.Token) uint8 {
+// procMacro process macros and returns keyword state.
+func (p *Parser) procMacro(tks []obj.Token) uint8 {
 	tks = tks[1:]
 	switch tks[0].T {
 	case fract.If:
-		return p.processMacroIf(tks)
+		return p.procMacroIf(tks)
 	case fract.Name:
 		switch tks[0].Val {
 		case "pragma":

@@ -5,8 +5,8 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-// processTryCatch process try-catch blocks and returns keyword state.
-func (p *Parser) processTryCatch(tks []obj.Token) uint8 {
+// procTryCatch process try-catch blocks and returns keyword state.
+func (p *Parser) procTryCatch(tks []obj.Token) uint8 {
 	if len(tks) > 1 {
 		fract.Error(tks[1], "Invalid syntax!")
 	}
@@ -26,7 +26,7 @@ func (p *Parser) processTryCatch(tks []obj.Token) uint8 {
 					p.skipBlock(false)
 					break
 				}
-				if kwstate = p.processTokens(tks); kwstate != fract.None {
+				if kwstate = p.process(tks); kwstate != fract.None {
 					p.skipBlock(false)
 				}
 			}
@@ -77,7 +77,7 @@ func (p *Parser) processTryCatch(tks []obj.Token) uint8 {
 				if tks[0].T == fract.End { // Block is ended.
 					break
 				}
-				if kwstate = p.processTokens(tks); kwstate != fract.None {
+				if kwstate = p.process(tks); kwstate != fract.None {
 					p.skipBlock(false)
 				}
 			}

@@ -12,46 +12,48 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-func compareValues(opr string, d0, d1 obj.Data) bool {
+// Compare arithmetic values.
+func compVals(opr string, d0, d1 obj.Data) bool {
 	if d0.T != d1.T && (d0.T == obj.VStr || d1.T == obj.VStr) {
 		return false
 	}
 	switch opr {
 	case "==": // Equals.
 		if (d0.T == obj.VStr && d0.D != d1.D) ||
-			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) != arithmetic.Arithmetic(d1.String())) {
+			(d0.T != obj.VStr && arithmetic.Value(d0.String()) != arithmetic.Value(d1.String())) {
 			return false
 		}
 	case "<>": // Not equals.
 		if (d0.T == obj.VStr && d0.D == d1.D) ||
-			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) == arithmetic.Arithmetic(d1.String())) {
+			(d0.T != obj.VStr && arithmetic.Value(d0.String()) == arithmetic.Value(d1.String())) {
 			return false
 		}
 	case ">": // Greater.
 		if (d0.T == obj.VStr && d0.String() <= d1.String()) ||
-			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) <= arithmetic.Arithmetic(d1.String())) {
+			(d0.T != obj.VStr && arithmetic.Value(d0.String()) <= arithmetic.Value(d1.String())) {
 			return false
 		}
 	case "<": // Less.
 		if (d0.T == obj.VStr && d0.String() >= d1.String()) ||
-			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) >= arithmetic.Arithmetic(d1.String())) {
+			(d0.T != obj.VStr && arithmetic.Value(d0.String()) >= arithmetic.Value(d1.String())) {
 			return false
 		}
 	case ">=": // Greater or equals.
 		if (d0.T == obj.VStr && d0.String() < d1.String()) ||
-			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) < arithmetic.Arithmetic(d1.String())) {
+			(d0.T != obj.VStr && arithmetic.Value(d0.String()) < arithmetic.Value(d1.String())) {
 			return false
 		}
 	case "<=": // Less or equals.
 		if (d0.T == obj.VStr && d0.String() > d1.String()) ||
-			(d0.T != obj.VStr && arithmetic.Arithmetic(d0.String()) > arithmetic.Arithmetic(d1.String())) {
+			(d0.T != obj.VStr && arithmetic.Value(d0.String()) > arithmetic.Value(d1.String())) {
 			return false
 		}
 	}
 	return true
 }
 
-func compare(v0, v1 obj.Value, opr obj.Token) bool {
+// Compare values.
+func comp(v0, v1 obj.Value, opr obj.Token) bool {
 	// In.
 	if opr.Val == "in" {
 		if !v1.Arr && v1.D[0].T != obj.VStr {
@@ -92,7 +94,7 @@ func compare(v0, v1 obj.Value, opr obj.Token) bool {
 		if (d0.T == obj.VStr && d1.T != obj.VStr) || (d0.T != obj.VStr && d1.T == obj.VStr) {
 			fract.Error(opr, "The in keyword should use with string or enumerable data types!")
 		}
-		return compareValues(opr.Val, d0, d1)
+		return compVals(opr.Val, d0, d1)
 	}
 	// Array comparison.
 	if v0.Arr || v1.Arr {
@@ -103,33 +105,33 @@ func compare(v0, v1 obj.Value, opr obj.Token) bool {
 			return opr.Val == "<>"
 		}
 		for i, d := range v0.D {
-			if !compareValues(opr.Val, d, v1.D[i]) {
+			if !compVals(opr.Val, d, v1.D[i]) {
 				return false
 			}
 		}
 		return true
 	}
 	// Single value comparison.
-	return compareValues(opr.Val, v0.D[0], v1.D[0])
+	return compVals(opr.Val, v0.D[0], v1.D[0])
 }
 
-// processCondition returns condition result.
-func (p *Parser) processCondition(tks obj.Tokens) string {
-	p.processRange(&tks)
+// procCondition returns condition result.
+func (p *Parser) procCondition(tks obj.Tokens) string {
+	p.procRange(&tks)
 	T := obj.Value{D: []obj.Data{{D: "true"}}}
 	// Process condition.
-	ors := decomposeConditionalProcess(tks, "||")
+	ors := conditionalProcesses(tks, "||")
 	for _, or := range *ors {
 		// Decompose and conditions.
-		ands := decomposeConditionalProcess(or, "&&")
+		ands := conditionalProcesses(or, "&&")
 		// Is and long statement?
 		if len(*ands) > 1 {
 			for _, and := range *ands {
-				opri, opr := findConditionOperator(and)
+				opri, opr := findConditionOpr(and)
 				// Operator is not found?
 				if opri == -1 {
 					opr.Val = "=="
-					if compare(p.processValue(and), T, opr) {
+					if comp(p.procVal(and), T, opr) {
 						return "true"
 					}
 					continue
@@ -140,18 +142,18 @@ func (p *Parser) processCondition(tks obj.Tokens) string {
 				} else if opri == len(and)-1 {
 					fract.Error(and[len(and)-1], "Comparison values are missing!")
 				}
-				if !compare(
-					p.processValue(*and.Sub(0, opri)), p.processValue(*and.Sub(opri+1, len(and)-opri-1)), opr) {
+				if !comp(
+					p.procVal(*and.Sub(0, opri)), p.procVal(*and.Sub(opri+1, len(and)-opri-1)), opr) {
 					return "false"
 				}
 			}
 			return "true"
 		}
-		opri, opr := findConditionOperator(or)
+		opri, opr := findConditionOpr(or)
 		// Operator is not found?
 		if opri == -1 {
 			opr.Val = "=="
-			if compare(p.processValue(or), T, opr) {
+			if comp(p.procVal(or), T, opr) {
 				return "true"
 			}
 			continue
@@ -162,7 +164,7 @@ func (p *Parser) processCondition(tks obj.Tokens) string {
 		} else if opri == len(or)-1 {
 			fract.Error(or[len(or)-1], "Comparison values are missing!")
 		}
-		if compare(p.processValue(*or.Sub(0, opri)), p.processValue(*or.Sub(opri+1, len(or)-opri-1)), opr) {
+		if comp(p.procVal(*or.Sub(0, opri)), p.procVal(*or.Sub(opri+1, len(or)-opri-1)), opr) {
 			return "true"
 		}
 	}
@@ -188,30 +190,30 @@ type process struct {
 	opr obj.Token // Operator of process.
 }
 
-// processRange by value processor principles.
-func (p *Parser) processRange(tks *obj.Tokens) {
+// procRange by value processor principles.
+func (p *Parser) procRange(tks *obj.Tokens) {
 	for {
 		rg, pos := decomposeBrace(tks, "(", ")", true)
 		/* Parentheses are not found! */
 		if pos == -1 {
 			return
 		}
-		val := p.processValue(rg)
+		val := p.procVal(rg)
 		if val.Arr {
-			tks.Insert(pos, obj.Token{Val: "[", T: fract.Brace})
+			tks.Ins(pos, obj.Token{Val: "[", T: fract.Brace})
 			for _, current := range val.D {
 				pos++
-				tks.Insert(pos, obj.Token{Val: current.String(), T: fract.Value})
+				tks.Ins(pos, obj.Token{Val: current.String(), T: fract.Value})
 				pos++
-				tks.Insert(pos, obj.Token{Val: ",", T: fract.Comma})
+				tks.Ins(pos, obj.Token{Val: ",", T: fract.Comma})
 			}
 			pos++
-			tks.Insert(pos, obj.Token{Val: "]", T: fract.Brace})
+			tks.Ins(pos, obj.Token{Val: "]", T: fract.Brace})
 		} else {
 			if val.D[0].T == obj.VStr {
-				tks.Insert(pos, obj.Token{Val: "\"" + val.D[0].String() + "\"", T: fract.Value})
+				tks.Ins(pos, obj.Token{Val: "\"" + val.D[0].String() + "\"", T: fract.Value})
 			} else {
-				tks.Insert(pos, obj.Token{
+				tks.Ins(pos, obj.Token{
 					Val: val.D[0].String(),
 					T:   fract.Value,
 					//! Add another fields for panic.
@@ -292,8 +294,8 @@ func readyData(p process, d obj.Data) obj.Data {
 	return d
 }
 
-// solveProcess solve arithmetic process.
-func solveProcess(p process) obj.Value {
+// solveProc solve arithmetic process.
+func solveProc(p process) obj.Value {
 	v := obj.Value{D: []obj.Data{{}}}
 	// String?
 	if (len(p.fv.D) != 0 && p.fv.D[0].T == obj.VStr) || (len(p.sv.D) != 0 && p.sv.D[0].T == obj.VStr) {
@@ -444,11 +446,11 @@ func solveProcess(p process) obj.Value {
 			if len(f.D) != 1 {
 				f, s = s, f
 			}
-			ar := arithmetic.Arithmetic(arith(p.opr, f.D[0]))
+			ar := arithmetic.Value(arith(p.opr, f.D[0]))
 			for i, d := range s.D {
 				if d.T == obj.VArray {
 					s.D[i] = readyData(p, obj.Data{
-						D: solveProcess(process{
+						D: solveProc(process{
 							f:  p.f,
 							fv: s,
 							s:  p.s,
@@ -461,7 +463,7 @@ func solveProcess(p process) obj.Value {
 						T: obj.VArray,
 					})
 				} else {
-					s.D[i] = readyData(p, obj.Data{D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, ar, arithmetic.Arithmetic(arith(p.opr, d))))})
+					s.D[i] = readyData(p, obj.Data{D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, ar, arithmetic.Value(arith(p.opr, d))))})
 				}
 			}
 			v.D = s.D
@@ -480,11 +482,11 @@ func solveProcess(p process) obj.Value {
 					} else {
 						proc.sv = obj.Value{D: []obj.Data{s}}
 					}
-					p.fv.D[i] = readyData(p, obj.Data{D: solveProcess(proc).D, T: obj.VArray})
+					p.fv.D[i] = readyData(p, obj.Data{D: solveProc(proc).D, T: obj.VArray})
 				} else {
 					p.fv.D[i] = readyData(p,
 						obj.Data{
-							D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, arithmetic.Arithmetic(arith(p.opr, f)), arithmetic.Arithmetic(s.String()))),
+							D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, arithmetic.Value(arith(p.opr, f)), arithmetic.Value(s.String()))),
 						})
 				}
 			}
@@ -503,11 +505,11 @@ func solveProcess(p process) obj.Value {
 		if !f.Arr {
 			f, s = s, f
 		}
-		ar := arithmetic.Arithmetic(arith(p.opr, s.D[0]))
+		ar := arithmetic.Value(arith(p.opr, s.D[0]))
 		for i, d := range f.D {
 			if d.T == obj.VArray {
 				f.D[i] = readyData(p, obj.Data{
-					D: solveProcess(process{
+					D: solveProc(process{
 						f:   p.f,
 						fv:  s,
 						s:   p.s,
@@ -519,7 +521,7 @@ func solveProcess(p process) obj.Value {
 			} else {
 				f.D[i] = readyData(p,
 					obj.Data{
-						D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, arithmetic.Arithmetic(arith(p.opr, d)), ar)),
+						D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, arithmetic.Value(arith(p.opr, d)), ar)),
 					})
 			}
 		}
@@ -530,7 +532,7 @@ func solveProcess(p process) obj.Value {
 		}
 		v.D[0] = readyData(p,
 			obj.Data{
-				D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, arithmetic.Arithmetic(arith(p.opr, p.fv.D[0])), arithmetic.Arithmetic(arith(p.opr, p.sv.D[0])))),
+				D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, arithmetic.Value(arith(p.opr, p.fv.D[0])), arithmetic.Value(arith(p.opr, p.sv.D[0])))),
 			})
 	}
 	return v
@@ -548,18 +550,19 @@ func applyMinus(minus bool, v obj.Value) obj.Value {
 	if val.Arr {
 		for i, d := range val.D {
 			if d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
-				val.D[i].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
+				val.D[i].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Value(d.String()))
 			}
 		}
 		return val
 	}
 	if d := val.D[0]; d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
-		val.D[0].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Arithmetic(d.String()))
+		val.D[0].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Value(d.String()))
 	}
 	return val
 }
 
-func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, pos int) int {
+// Process value part.
+func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) int {
 	var (
 		tk = opr.f
 		r  = &opr.fv
@@ -576,7 +579,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if next.T == fract.Brace {
 				switch next.Val {
 				case "[":
-					vi, t, src := p.defineByName(tk)
+					vi, t, src := p.defByName(tk)
 					if vi == -1 || t != 'v' {
 						fract.Error(tk, "Variable is not defined in this name: "+tk.Val)
 					}
@@ -601,7 +604,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 					if vtks == nil {
 						fract.Error(tk, "Index is not defined!")
 					}
-					val := p.processValue(*vtks)
+					val := p.procVal(*vtks)
 					if val.Arr {
 						fract.Error((*tks)[pos], "Arrays is not used in index access!")
 					} else if val.D[0].T != obj.VInt {
@@ -623,7 +626,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 					if vp == -1 {
 						fract.Error((*tks)[pos], "Index is out of range!")
 					}
-					tks.Remove(pos+1, ci-pos)
+					tks.Rem(pos+1, ci-pos)
 					var d obj.Data
 					if v.Val.Arr {
 						d = v.Val.D[vp]
@@ -660,17 +663,17 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 						}
 					}
 					ci++
-					v := p.processFunctionCall((*tks)[pos:ci])
+					v := p.funcCall((*tks)[pos:ci])
 					if !opr.fv.Arr && v.D == nil {
 						fract.Error(tk, "Function is not return any value!")
 					}
-					tks.Remove(pos+1, ci-pos-1)
+					tks.Rem(pos+1, ci-pos-1)
 					*r = applyMinus(minus, v)
 					return 0
 				}
 			}
 		}
-		vi, t, src := p.defineByName(tk)
+		vi, t, src := p.defByName(tk)
 		if vi == -1 {
 			fract.Error(tk, "Variable is not defined in this name: "+tk.Val)
 		}
@@ -710,13 +713,13 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			// Finished?
 			if oi == 0 || (*tks)[oi-1].T != fract.Name {
 				r.Arr = true
-				r.D = p.processArrayValue(*tks.Sub(oi, pos-oi+1)).D
+				r.D = p.procArrayVal(*tks.Sub(oi, pos-oi+1)).D
 				*r = applyMinus(minus, *r)
-				tks.Remove(oi, pos-oi)
+				tks.Rem(oi, pos-oi)
 				return pos - oi
 			}
 			endtk := (*tks)[oi-1]
-			vi, t, src := p.defineByName(tk)
+			vi, t, src := p.defByName(tk)
 			if vi == -1 || t != 'v' {
 				fract.Error(endtk, "Variable is not defined in this name: "+endtk.Val)
 			}
@@ -725,7 +728,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if vtks == nil {
 				fract.Error(endtk, "Index is not defined!")
 			}
-			val := p.processValue(*vtks)
+			val := p.procVal(*vtks)
 			if val.Arr {
 				fract.Error((*tks)[pos], "Arrays is not used in index access!")
 			} else if val.D[0].T != obj.VInt {
@@ -747,7 +750,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if vp == -1 {
 				fract.Error((*tks)[oi], "Index is out of range!")
 			}
-			tks.Remove(oi-1, pos-oi+1)
+			tks.Rem(oi-1, pos-oi+1)
 			var d obj.Data
 			if v.Val.Arr {
 				d = v.Val.D[vp]
@@ -781,8 +784,8 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 					}
 				}
 			}
-			*r = applyMinus(minus, p.processArrayValue((*tks)[pos:ci+1]))
-			tks.Remove(pos+1, ci-pos)
+			*r = applyMinus(minus, p.procArrayVal((*tks)[pos:ci+1]))
+			tks.Rem(pos+1, ci-pos)
 			return 0
 		case "]":
 			// Find open bracket.
@@ -804,13 +807,13 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			// Finished?
 			if oi == 0 {
 				r.Arr = true
-				r.D = p.processArrayValue((*tks)[oi : pos+1]).D
+				r.D = p.procArrayVal((*tks)[oi : pos+1]).D
 				*r = applyMinus(minus, *r)
-				tks.Remove(oi, pos-oi)
+				tks.Rem(oi, pos-oi)
 				return pos - oi
 			}
 			endtk := (*tks)[oi-1]
-			vi, t, source := p.defineByName(endtk)
+			vi, t, source := p.defByName(endtk)
 			if vi == -1 || t != 'v' {
 				fract.Error(endtk, "Variable is not defined in this name!: "+endtk.Val)
 			}
@@ -819,7 +822,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if vtks == nil {
 				fract.Error(endtk, "Index is not defined!")
 			}
-			val := p.processValue(*vtks)
+			val := p.procVal(*vtks)
 			if val.Arr {
 				fract.Error((*tks)[pos], "Arrays is not used in index access!")
 			} else if val.D[0].T != obj.VInt {
@@ -841,7 +844,7 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 			if vp == -1 {
 				fract.Error((*tks)[oi], "Index is out of range!")
 			}
-			tks.Remove(oi-1, pos-oi+1)
+			tks.Rem(oi-1, pos-oi+1)
 			var d obj.Data
 			if v.Val.Arr {
 				d = v.Val.D[vp]
@@ -880,12 +883,12 @@ func (p *Parser) processOperationValue(fst bool, opr *process, tks *obj.Tokens, 
 				}
 			}
 			oi--
-			v := p.processFunctionCall((*tks)[oi : pos+1])
+			v := p.funcCall((*tks)[oi : pos+1])
 			if v.D == nil {
 				fract.Error((*tks)[oi], "Function is not return any value!")
 			}
 			*r = applyMinus(minus, v)
-			tks.Remove(oi, pos-oi)
+			tks.Rem(oi, pos-oi)
 			return pos - oi
 		}
 	}
@@ -929,7 +932,8 @@ end:
 	return 0
 }
 
-func (p *Parser) processArrayValue(tks obj.Tokens) obj.Value {
+// Process array value.
+func (p *Parser) procArrayVal(tks obj.Tokens) obj.Value {
 	v := obj.Value{
 		Arr: true,
 		D:   []obj.Data{},
@@ -950,7 +954,7 @@ func (p *Parser) processArrayValue(tks obj.Tokens) obj.Value {
 			if lst == nil {
 				fract.Error(fst, "Value is not defined!")
 			}
-			val := p.processValue(*lst)
+			val := p.procVal(*lst)
 			if val.Arr {
 				v.D = append(v.D, obj.Data{D: val.D, T: obj.VArray})
 			} else {
@@ -964,7 +968,7 @@ func (p *Parser) processArrayValue(tks obj.Tokens) obj.Value {
 		if lst == nil {
 			fract.Error(fst, "Value is not defined!")
 		}
-		val := p.processValue(*lst)
+		val := p.procVal(*lst)
 		if val.Arr {
 			v.D = append(v.D, obj.Data{D: val.D, T: obj.VArray})
 		} else {
@@ -974,45 +978,46 @@ func (p *Parser) processArrayValue(tks obj.Tokens) obj.Value {
 	return v
 }
 
-func (p *Parser) processValue(tks obj.Tokens) obj.Value {
-	p.processRange(&tks)
+// Process value.
+func (p *Parser) procVal(tks obj.Tokens) obj.Value {
+	p.procRange(&tks)
 	// Is conditional expression?
-	if j, _ := findConditionOperator(tks); j != -1 {
-		return obj.Value{D: []obj.Data{{D: p.processCondition(tks), T: obj.VBool}}}
+	if j, _ := findConditionOpr(tks); j != -1 {
+		return obj.Value{D: []obj.Data{{D: p.procCondition(tks), T: obj.VBool}}}
 	}
 	v := obj.Value{D: []obj.Data{{}}}
 	checkArithmeticProcesses(tks)
-	if j := indexProcess(tks); j != -1 {
+	if j := nextopr(tks); j != -1 {
 		// Decompose arithmetic operations.
 		var opr process
 		for j != -1 {
 			opr.f = tks[j-1]
-			j -= p.processOperationValue(true, &opr, &tks, j-1)
+			j -= p.procValPart(true, &opr, &tks, j-1)
 			opr.opr = tks[j]
 			opr.s = tks[j+1]
-			j -= p.processOperationValue(false, &opr, &tks, j+1)
-			rv := solveProcess(opr)
+			j -= p.procValPart(false, &opr, &tks, j+1)
+			rv := solveProc(opr)
 			opr.opr.Val = "+"
 			opr.s = tks[j+1]
 			opr.fv = v
 			opr.sv = rv
-			v = solveProcess(opr)
+			v = solveProc(opr)
 			// Remove processed processes.
-			tks.Remove(j-1, 3)
+			tks.Rem(j-1, 3)
 			// Find next operator.
-			j = indexProcess(tks)
+			j = nextopr(tks)
 			// Finished?
 			if j != -1 && (j == 0 || j == len(tks)-1) {
 				opr.fv = v
 				opr.opr = tks[j]
 				if j == 0 {
 					opr.s = tks[j+1]
-					p.processOperationValue(false, &opr, &tks, j+1)
+					p.procValPart(false, &opr, &tks, j+1)
 				} else {
 					opr.s = tks[j-1]
-					p.processOperationValue(false, &opr, &tks, j-1)
+					p.procValPart(false, &opr, &tks, j-1)
 				}
-				v = solveProcess(opr)
+				v = solveProc(opr)
 				break
 			}
 		}
@@ -1020,7 +1025,7 @@ func (p *Parser) processValue(tks obj.Tokens) obj.Value {
 		var opr process
 		opr.f = tks[0]
 		opr.fv.Arr = true //* Ignore nil control if function call.
-		p.processOperationValue(true, &opr, &tks, 0)
+		p.procValPart(true, &opr, &tks, 0)
 		v = opr.fv
 	}
 	return v

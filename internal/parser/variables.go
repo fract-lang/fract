@@ -16,8 +16,8 @@ type varinfo struct {
 	protected bool
 }
 
-// appendVariable to source from tokens.
-func (p *Parser) appendVariable(md varinfo, tks obj.Tokens) {
+// Append variable to source.
+func (p *Parser) varadd(md varinfo, tks obj.Tokens) {
 	name := tks[0]
 	if strings.Contains(name.Val, ".") {
 		fract.Error(name, "Names is cannot include dot!")
@@ -42,7 +42,7 @@ func (p *Parser) appendVariable(md varinfo, tks obj.Tokens) {
 	if tksLen < 3 {
 		fract.Errorc(setter.F, setter.Ln, setter.Col+len(setter.Val), "Value is not defined!")
 	}
-	v := p.processValue(*tks.Sub(2, tksLen-2))
+	v := p.procVal(*tks.Sub(2, tksLen-2))
 	if v.D == nil {
 		fract.Error(tks[2], "Invalid value!")
 	}
@@ -60,7 +60,8 @@ func (p *Parser) appendVariable(md varinfo, tks obj.Tokens) {
 		})
 }
 
-func (p *Parser) processVariableDeclaration(tks []obj.Token, protected bool) {
+// Process variable declaration.
+func (p *Parser) vardec(tks []obj.Token, protected bool) {
 	// Name is not defined?
 	if len(tks) < 2 {
 		first := tks[0]
@@ -73,7 +74,7 @@ func (p *Parser) processVariableDeclaration(tks []obj.Token, protected bool) {
 	}
 	pre := tks[1]
 	if pre.T == fract.Name {
-		p.appendVariable(md, tks[1:])
+		p.varadd(md, tks[1:])
 	} else if pre.T == fract.Brace && pre.Val == "(" {
 		tks = tks[2 : len(tks)-1]
 		lst := 0
@@ -92,13 +93,13 @@ func (p *Parser) processVariableDeclaration(tks []obj.Token, protected bool) {
 				continue
 			}
 			if ln < t.Ln {
-				p.appendVariable(md, tks[lst:j])
+				p.varadd(md, tks[lst:j])
 				lst = j
 				ln = t.Ln
 			}
 		}
 		if len(tks) != lst {
-			p.appendVariable(md, tks[lst:])
+			p.varadd(md, tks[lst:])
 		}
 	} else {
 		fract.Error(pre, "Invalid syntax!")
@@ -106,7 +107,7 @@ func (p *Parser) processVariableDeclaration(tks []obj.Token, protected bool) {
 }
 
 // Process variable set statement.
-func (p *Parser) processVariableSet(tks obj.Tokens) {
+func (p *Parser) varset(tks obj.Tokens) {
 	name := tks[0]
 	// Name is not name?
 	if name.T != fract.Name {
@@ -114,7 +115,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 	} else if name.Val == "_" {
 		fract.Error(name, "Ignore operator is cannot set!")
 	}
-	j, _ := p.variableIndexByName(name)
+	j, _ := p.varIndexByName(name)
 	if j == -1 {
 		fract.Error(name, "Variable is not defined in this name: "+name.Val)
 	}
@@ -142,7 +143,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 			if vtks == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			pos, err := strconv.Atoi(p.processValue(*vtks).D[0].String())
+			pos, err := strconv.Atoi(p.procVal(*vtks).D[0].String())
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}
@@ -155,7 +156,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 				fract.Error(setter, "Index is out of range!")
 			}
 			setpos = pos
-			tks.Remove(1, j)
+			tks.Rem(1, j)
 			setter = tks[1]
 			break
 		}
@@ -164,7 +165,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 	if len(tks) < 3 {
 		fract.Errorc(setter.F, setter.Ln, setter.Col+len(setter.Val), "Value is not defined!")
 	}
-	val := p.processValue(*tks.Sub(2, len(tks)-2))
+	val := p.procVal(*tks.Sub(2, len(tks)-2))
 	if val.D == nil {
 		fract.Error(tks[2], "Invalid value!")
 	}
@@ -192,7 +193,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 			}
 		default: // Other assignments.
 			if v.Val.Arr {
-				v.Val.D[setpos] = solveProcess(
+				v.Val.D[setpos] = solveProc(
 					process{
 						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
 						f:   tks[0],
@@ -201,7 +202,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 						sv:  val,
 					}).D[0]
 			} else {
-				val = solveProcess(
+				val = solveProc(
 					process{
 						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
 						f:   tks[0],
@@ -228,7 +229,7 @@ func (p *Parser) processVariableSet(tks obj.Tokens) {
 		case "=": // =
 			v.Val = val
 		default: // Other assignments.
-			v.Val = solveProcess(
+			v.Val = solveProc(
 				process{
 					opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
 					f:   tks[0],

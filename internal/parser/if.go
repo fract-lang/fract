@@ -5,8 +5,8 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-// processIf process if-elif-else blocks and returns keyword state.
-func (p *Parser) processIf(tks obj.Tokens) uint8 {
+// procIf process if-elif-else returns keyword state.
+func (p *Parser) procIf(tks obj.Tokens) uint8 {
 	tkslen := len(tks)
 	ctks := tks.Sub(1, tkslen-1)
 	// Condition is empty?
@@ -14,7 +14,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 		first := tks[0]
 		fract.Errorc(first.F, first.Ln, first.Col+len(first.Val), "Condition is empty!")
 	}
-	s := p.processCondition(*ctks)
+	s := p.procCondition(*ctks)
 	vlen := len(p.vars)
 	flen := len(p.funcs)
 	kws := fract.None
@@ -37,7 +37,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 				p.skipBlock(false)
 				goto ret
 			}
-			s = p.processCondition(*ctks)
+			s = p.procCondition(*ctks)
 			// Interpret/skip block.
 			for {
 				p.i++
@@ -47,7 +47,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 					goto ret
 				} else if first.T == fract.If { // If block.
 					if s == "true" && kws == fract.None {
-						p.processIf(tks)
+						p.procIf(tks)
 					} else {
 						p.skipBlock(true)
 					}
@@ -58,7 +58,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 				}
 				// Condition is true?
 				if s == "true" && kws == fract.None {
-					if kws = p.processTokens(tks); kws != fract.None {
+					if kws = p.process(tks); kws != fract.None {
 						p.skipBlock(false)
 					}
 				} else {
@@ -87,7 +87,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 					goto ret
 				} else if first.T == fract.If { // If block.
 					if kws == fract.None {
-						p.processIf(tks)
+						p.procIf(tks)
 					} else {
 						p.skipBlock(true)
 					}
@@ -95,7 +95,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 				}
 				// Condition is true?
 				if kws == fract.None {
-					if kws = p.processTokens(tks); kws != fract.None {
+					if kws = p.process(tks); kws != fract.None {
 						p.skipBlock(false)
 					}
 				}
@@ -103,7 +103,7 @@ func (p *Parser) processIf(tks obj.Tokens) uint8 {
 		}
 		// Condition is true?
 		if s == "true" && kws == fract.None {
-			if kws = p.processTokens(tks); kws != fract.None {
+			if kws = p.process(tks); kws != fract.None {
 				p.skipBlock(false)
 			}
 		} else {

@@ -2,8 +2,8 @@ package arithmetic
 
 import "strconv"
 
-// Arithmetic parse value to arithmetic value.
-func Arithmetic(v string) float64 {
+// Value parse to arithmetic value.
+func Value(v string) float64 {
 	switch v {
 	case "true":
 		return 1

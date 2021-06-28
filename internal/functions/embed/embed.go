@@ -27,7 +27,7 @@ func Exit(f obj.Func, args []obj.Var) {
 // Float convert object to float.
 func Float(f obj.Func, parameters []obj.Var) obj.Value {
 	return obj.Value{D: []obj.Data{
-		{D: fmt.Sprintf(fract.FloatFormat, arithmetic.Arithmetic(parameters[0].Val.D[0].String())), T: obj.VFloat},
+		{D: fmt.Sprintf(fract.FloatFormat, arithmetic.Value(parameters[0].Val.D[0].String())), T: obj.VFloat},
 	}}
 }
 
@@ -54,7 +54,7 @@ func Int(f obj.Func, args []obj.Var) obj.Value {
 		return v
 	default: // Object.
 		return obj.Value{
-			D: []obj.Data{{D: fmt.Sprint(int(arithmetic.Arithmetic(args[0].Val.D[0].String()))), T: obj.VInt}},
+			D: []obj.Data{{D: fmt.Sprint(int(arithmetic.Value(args[0].Val.D[0].String()))), T: obj.VInt}},
 		}
 	}
 }

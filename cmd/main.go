@@ -34,8 +34,8 @@ import (
 	"github.com/fract-lang/fract/pkg/str"
 )
 
-// Returns namespace of command.
-func namespace(cmd string) string {
+// Returns ns of command.
+func ns(cmd string) string {
 	i := strings.Index(cmd, " ")
 	if i == -1 {
 		return cmd
@@ -44,7 +44,7 @@ func namespace(cmd string) string {
 }
 
 // Remove namespace from command.
-func removeNamespace(cmd string) string {
+func remns(cmd string) string {
 	i := strings.Index(cmd, " ")
 	if i == -1 {
 		return ""
@@ -64,7 +64,7 @@ var p *parser.Parser
 
 func interpret() {
 	for {
-		p.L.F.Lns = parser.ReadyLines([]string{input(">> ")})
+		p.L.F.Lns = parser.Lines([]string{input(">> ")})
 	reTokenize:
 		p.Tks = nil
 	reTokenizeUnNil:
@@ -80,7 +80,7 @@ func interpret() {
 			tks := p.L.Next()
 			// Check multiline comment.
 			if p.L.RangeComment {
-				p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
+				p.L.F.Lns = append(p.L.F.Lns, parser.Lines([]string{input(" | ")})...)
 				goto reTokenizeUnNil
 			}
 			// cacheTokens are empty?
@@ -89,7 +89,7 @@ func interpret() {
 			}
 			// Check parentheses.
 			if p.L.Braces > 0 || p.L.Brackets > 0 || p.L.Parentheses > 0 {
-				p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
+				p.L.F.Lns = append(p.L.F.Lns, parser.Lines([]string{input(" | ")})...)
 				goto reTokenize
 			}
 			p.Tks = append(p.Tks, tks)
@@ -107,7 +107,7 @@ func interpret() {
 			}
 		}
 		if c > 0 { // Check blocks.
-			p.L.F.Lns = append(p.L.F.Lns, parser.ReadyLines([]string{input(" | ")})...)
+			p.L.F.Lns = append(p.L.F.Lns, parser.Lines([]string{input(" | ")})...)
 			goto reTokenize
 		}
 		p.Interpret()
@@ -181,7 +181,7 @@ func makechk(p string) bool {
 	return err == nil && !info.IsDir()
 }
 
-func processCommand(ns, cmd string) {
+func proccmd(ns, cmd string) {
 	switch ns {
 	case "help":
 		help(cmd)
@@ -217,7 +217,7 @@ func init() {
 		sb.WriteString(" " + arg)
 	}
 	os.Args[0] = sb.String()[1:]
-	processCommand(namespace(os.Args[0]), removeNamespace(os.Args[0]))
+	proccmd(ns(os.Args[0]), remns(os.Args[0]))
 }
 
 func main() {

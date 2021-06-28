@@ -23,25 +23,25 @@ func (p *Parser) Import() {
 			second := tks[1]
 			tks = tks[1:]
 			if second.T == fract.Var { // Variable definition.
-				p.processVariableDeclaration(tks, true)
+				p.vardec(tks, true)
 			} else if second.T == fract.Func { // Function definition.
-				p.processFunctionDeclaration(tks, true)
+				p.funcdec(tks, true)
 			} else {
 				fract.Error(second, "Syntax error, you can protect only deletable objects!")
 			}
 		case fract.Var: // Variable definition.
-			p.processVariableDeclaration(tks, false)
+			p.vardec(tks, false)
 		case fract.Func: // Function definiton.
-			p.processFunctionDeclaration(tks, false)
+			p.funcdec(tks, false)
 		case fract.Import: // Import.
 			src := new(Parser)
 			src.ApplyEmbedFunctions()
-			src.processImport(tks)
+			src.procImport(tks)
 			p.vars = append(p.vars, src.vars...)
 			p.funcs = append(p.funcs, src.funcs[:]...)
 			p.Imports = append(p.Imports, src.Imports...)
 		case fract.Macro: // Macro.
-			p.processMacro(tks)
+			p.procMacro(tks)
 			if p.loopCount != -1 { // Breaked import.
 				return
 			}
@@ -57,7 +57,7 @@ type importInfo struct {
 	Src  *Parser // Source of package.
 }
 
-func (p *Parser) processImport(tks []obj.Token) {
+func (p *Parser) procImport(tks []obj.Token) {
 	if len(tks) == 1 {
 		fract.Error(tks[0], "Imported but what?")
 	}
@@ -89,7 +89,7 @@ func (p *Parser) processImport(tks []obj.Token) {
 			imppath = strings.ReplaceAll(tks[j].Val, ".", string(os.PathSeparator))
 		}
 	} else {
-		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.processValue([]obj.Token{tks[j]}).D[0].String()
+		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.procVal([]obj.Token{tks[j]}).D[0].String()
 	}
 	imppath = path.Join(fract.ExecPath, imppath)
 	info, err := os.Stat(imppath)
