@@ -26,14 +26,12 @@ func File(fp string) *obj.File {
 	}
 }
 
-// TODO: Optimize.
 // Lines returns ready lines processed to lexing.
 func Lines(lns []string) []string {
-	rlns := make([]string, len(lns))
 	for i, ln := range lns {
-		rlns[i] = strings.TrimRight(ln, " \t\n\r")
+		lns[i] = strings.TrimRightFunc(ln, func(r rune) bool { return r == '\r' })
 	}
-	return rlns
+	return lns
 }
 
 var (
