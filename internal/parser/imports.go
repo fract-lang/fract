@@ -119,7 +119,7 @@ func (p *Parser) procImport(tks []obj.Token) {
 		if info.IsDir() || !strings.HasSuffix(info.Name(), fract.Ext) {
 			continue
 		}
-		isrc := New(imppath, imppath+string(os.PathSeparator)+info.Name())
+		isrc := New(imppath + string(os.PathSeparator) + info.Name())
 		isrc.loopCount = -1 //! Tag as import source.
 		isrc.Import()
 		src.funcs = append(src.funcs, isrc.funcs...)

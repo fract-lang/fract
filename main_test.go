@@ -1,0 +1,15 @@
+package main
+
+import (
+	"testing"
+
+	"github.com/fract-lang/fract/internal/parser"
+)
+
+func BenchmarkInterpret(b *testing.B) {
+	p := parser.New("test.fract")
+	p.ApplyEmbedFunctions()
+	for i := 0; i < b.N; i++ {
+		p.Interpret()
+	}
+}

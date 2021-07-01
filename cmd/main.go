@@ -163,7 +163,7 @@ func make(cmd string) {
 		fmt.Println("The Fract file is not exists: " + cmd)
 		return
 	}
-	p := parser.New(".", cmd)
+	p := parser.New(cmd)
 	p.ApplyEmbedFunctions()
 	(&obj.Block{
 		Try: p.Interpret,

@@ -54,7 +54,7 @@ type Parser struct {
 }
 
 // New returns instance of parser related to file.
-func New(p, fp string) *Parser {
+func New(fp string) *Parser {
 	return &Parser{
 		funcTempVars: -1,
 		L: &lex.Lex{
@@ -156,7 +156,7 @@ func (p *Parser) Interpret() {
 				if info.IsDir() || !strings.HasSuffix(info.Name(), fract.Ext) || info.Name() == mainName {
 					continue
 				}
-				src := New(dir, path.Join(dir, info.Name()))
+				src := New(path.Join(dir, info.Name()))
 				src.ApplyEmbedFunctions()
 				src.Import()
 				p.funcs = append(p.funcs, src.funcs...)
