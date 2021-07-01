@@ -143,7 +143,11 @@ func (p *Parser) varset(tks obj.Tokens) {
 			if vtks == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			pos, err := strconv.Atoi(p.procVal(*vtks).D[0].String())
+			val := p.procVal(*vtks).D[0]
+			if val.T != obj.VInt {
+				fract.Error(tks[0], "Only integer values can used in index access!")
+			}
+			pos, err := strconv.Atoi(val.String())
 			if err != nil {
 				fract.Error(setter, "Value out of range!")
 			}
