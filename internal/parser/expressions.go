@@ -190,30 +190,38 @@ type process struct {
 	opr obj.Token // Operator of process.
 }
 
+// Tokenize array.
+func tokenizeArray(dts []obj.Data) obj.Tokens {
+	tks := obj.Tokens{obj.Token{Val: "[", T: fract.Brace}}
+	for _, d := range dts {
+		switch d.T {
+		case obj.VArray:
+			tks = append(tks, tokenizeArray(d.D.([]obj.Data))...)
+		default:
+			tks = append(tks, obj.Token{Val: d.String(), T: fract.Value})
+		}
+		tks = append(tks, obj.Token{Val: ",", T: fract.Comma})
+	}
+	tks[len(tks)-1] = obj.Token{Val: "]", T: fract.Brace}
+	return tks
+}
+
 // procRange by value processor principles.
 func (p *Parser) procRange(tks *obj.Tokens) {
 	for {
-		rg, pos := decomposeBrace(tks, "(", ")", true)
+		rg, i := decomposeBrace(tks, "(", ")", true)
 		/* Parentheses are not found! */
-		if pos == -1 {
+		if i == -1 {
 			return
 		}
 		val := p.procVal(rg)
 		if val.Arr {
-			tks.Ins(pos, obj.Token{Val: "[", T: fract.Brace})
-			for _, current := range val.D {
-				pos++
-				tks.Ins(pos, obj.Token{Val: current.String(), T: fract.Value})
-				pos++
-				tks.Ins(pos, obj.Token{Val: ",", T: fract.Comma})
-			}
-			pos++
-			tks.Ins(pos, obj.Token{Val: "]", T: fract.Brace})
+			tks.Ins(i, tokenizeArray(val.D)...)
 		} else {
 			if val.D[0].T == obj.VStr {
-				tks.Ins(pos, obj.Token{Val: "\"" + val.D[0].String() + "\"", T: fract.Value})
+				tks.Ins(i, obj.Token{Val: "'" + val.D[0].String() + "'", T: fract.Value})
 			} else {
-				tks.Ins(pos, obj.Token{
+				tks.Ins(i, obj.Token{
 					Val: val.D[0].String(),
 					T:   fract.Value,
 					//! Add another fields for panic.

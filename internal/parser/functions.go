@@ -109,12 +109,12 @@ func (c funcCall) call() obj.Value {
 // isParamSet Argument type is param set?
 func isParamSet(tks obj.Tokens) bool { return tks[0].T == fract.Name && tks[1].Val == "=" }
 
-// paramsArgtVals decompose and returns params values.
-func (p *Parser) paramsArgtVals(tks obj.Tokens, pos, lstComma *int) obj.Value {
+// paramsArgVals decompose and returns params values.
+func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
 	retv := obj.Value{D: []obj.Data{}, Arr: true}
 	bc := 0
-	for ; *pos < len(tks); *pos++ {
-		tk := tks[*pos]
+	for ; *i < len(tks); *i++ {
+		tk := tks[*i]
 		if tk.T == fract.Brace {
 			if tk.Val == "(" || tk.Val == "{" || tk.Val == "[" {
 				bc++
@@ -122,9 +122,9 @@ func (p *Parser) paramsArgtVals(tks obj.Tokens, pos, lstComma *int) obj.Value {
 				bc--
 			}
 		} else if tk.T == fract.Comma && bc == 0 {
-			vtks := tks.Sub(*lstComma, *pos-*lstComma)
+			vtks := tks.Sub(*lstComma, *i-*lstComma)
 			if isParamSet(*vtks) {
-				*pos -= 4
+				*i -= 4
 				return retv
 			}
 			v := p.procVal(*vtks)
@@ -133,13 +133,13 @@ func (p *Parser) paramsArgtVals(tks obj.Tokens, pos, lstComma *int) obj.Value {
 			} else {
 				retv.D = append(retv.D, v.D...)
 			}
-			*lstComma = *pos + 1
+			*lstComma = *i + 1
 		}
 	}
 	if *lstComma < len(tks) {
 		vtks := tks[*lstComma:]
 		if isParamSet(vtks) {
-			*pos -= 4
+			*i -= 4
 			return retv
 		}
 		v := p.procVal(vtks)
@@ -195,7 +195,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 				//Parameter is params typed?
 				if pr.Params {
 					*i.lstComma += 2
-					retv.Val = p.paramsArgtVals(i.tks, i.index, i.lstComma)
+					retv.Val = p.paramsArgVals(i.tks, i.index, i.lstComma)
 				} else {
 					retv.Val = p.procVal(vtks[2:])
 				}
@@ -211,7 +211,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	*i.names = append(*i.names, v.Name)
 	// Parameter is params typed?
 	if param.Params {
-		v.Val = p.paramsArgtVals(i.tks, i.index, i.lstComma)
+		v.Val = p.paramsArgVals(i.tks, i.index, i.lstComma)
 	} else {
 		v.Val = p.procVal(vtks)
 	}

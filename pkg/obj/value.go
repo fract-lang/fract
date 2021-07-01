@@ -21,8 +21,8 @@ func stringArray(src []Data) string {
 	}
 	var sb strings.Builder
 	sb.WriteByte('[')
-	for _, data := range src {
-		sb.WriteString(data.Format() + " ")
+	for _, d := range src {
+		sb.WriteString(d.Format() + " ")
 	}
 	return sb.String()[:sb.Len()-1] + "]"
 }
