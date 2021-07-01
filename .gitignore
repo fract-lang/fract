@@ -1,10 +1,13 @@
 # Binaries for programs and plugins
 *.exe
 *.exe~
-main
 *.dll
 *.so
 *.dylib
+main
+
+# Should ignore.
+_*
 
 # Test binary, built with `go test -c`
 *.test

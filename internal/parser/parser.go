@@ -140,7 +140,6 @@ func (p *Parser) Interpret() {
 	if p.L.Fin {
 		return
 	}
-
 	p.ready()
 	{
 		//* Import local directory.
@@ -157,10 +156,11 @@ func (p *Parser) Interpret() {
 					continue
 				}
 				src := New(path.Join(dir, info.Name()))
-				src.ApplyEmbedFunctions()
+				src.loopCount = -1 //! Tag as import source.
 				src.Import()
 				p.funcs = append(p.funcs, src.funcs...)
 				p.vars = append(p.vars, src.vars...)
+				p.Imports = append(p.Imports, src.Imports...)
 			}
 		}
 	}

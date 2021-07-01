@@ -38,7 +38,7 @@ func (p *Parser) Import() {
 			src.ApplyEmbedFunctions()
 			src.procImport(tks)
 			p.vars = append(p.vars, src.vars...)
-			p.funcs = append(p.funcs, src.funcs[:]...)
+			p.funcs = append(p.funcs, src.funcs...)
 			p.Imports = append(p.Imports, src.Imports...)
 		case fract.Macro: // Macro.
 			p.procMacro(tks)
@@ -114,12 +114,12 @@ func (p *Parser) procImport(tks []obj.Token) {
 			fract.Error(tks[1], "\""+name+"\" is already defined!")
 		}
 	}
-	for _, info := range infos {
+	for _, i := range infos {
 		// Skip directories.
-		if info.IsDir() || !strings.HasSuffix(info.Name(), fract.Ext) {
+		if i.IsDir() || !strings.HasSuffix(i.Name(), fract.Ext) {
 			continue
 		}
-		isrc := New(imppath + string(os.PathSeparator) + info.Name())
+		isrc := New(imppath + string(os.PathSeparator) + i.Name())
 		isrc.loopCount = -1 //! Tag as import source.
 		isrc.Import()
 		src.funcs = append(src.funcs, isrc.funcs...)
