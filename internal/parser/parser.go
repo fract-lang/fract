@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -164,7 +165,6 @@ func (p *Parser) Interpret() {
 			}
 		}
 	}
-
 	// Interpret all lines.
 	for p.i = 0; p.i < len(p.Tks); p.i++ {
 		p.process(p.Tks[p.i])
@@ -175,6 +175,48 @@ end:
 	for i := len(defers) - 1; i >= 0; i-- {
 		defers[i].call()
 	}
+}
+
+// Process array indexes for access to elements.
+func indexes(arr, val obj.Value, tk obj.Token) []int {
+	if val.Arr {
+		var i []int
+		for _, d := range val.D {
+			if d.T != obj.VInt {
+				fract.Error(tk, "Only integer values can used in index access!")
+			}
+			pos, err := strconv.Atoi(d.String())
+			if err != nil {
+				fract.Error(tk, "Value out of range!")
+			}
+			if arr.Arr {
+				pos = procIndex(len(arr.D), pos)
+			} else {
+				pos = procIndex(len(arr.D[0].String()), pos)
+			}
+			if pos == -1 {
+				fract.Error(tk, "Index is out of range!")
+			}
+			i = append(i, pos)
+		}
+		return i
+	}
+	if val.D[0].T != obj.VInt {
+		fract.Error(tk, "Only integer values can used in index access!")
+	}
+	pos, err := strconv.Atoi(val.String())
+	if err != nil {
+		fract.Error(tk, "Value out of range!")
+	}
+	if arr.Arr {
+		pos = procIndex(len(arr.D), pos)
+	} else {
+		pos = procIndex(len(arr.D[0].String()), pos)
+	}
+	if pos == -1 {
+		fract.Error(tk, "Index is out of range!")
+	}
+	return []int{pos}
 }
 
 // skipBlock skip to block end.
@@ -405,8 +447,8 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) ([]obj.Token, in
 	return *rg, fst
 }
 
-// processIndex process array index by length.
-func processIndex(len, i int) int {
+// procIndex process array index by length.
+func procIndex(len, i int) int {
 	if i >= 0 {
 		if i >= len {
 			return -1

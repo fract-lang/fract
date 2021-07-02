@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/fract-lang/fract/pkg/fract"
@@ -124,18 +123,28 @@ func (p *Parser) varset(tks obj.Tokens) {
 	if v.Const {
 		fract.Error(tks[1], "Values is cannot changed of constant defines!")
 	}
-	setter := tks[1]
-	setpos := -1
+	var (
+		setpos []int
+		setter = tks[1]
+	)
 	// Array setter?
 	if setter.T == fract.Brace && setter.Val == "[" {
 		// Variable is not array?
 		if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 			fract.Error(setter, "Variable is not array!")
 		}
+		bc := 1
 		// Find close bracket.
 		for j := 2; j < len(tks); j++ {
 			t := tks[j]
-			if t.T != fract.Brace || t.Val != "]" {
+			if t.T == fract.Brace {
+				if t.Val == "[" {
+					bc++
+				} else if t.Val == "]" {
+					bc--
+				}
+			}
+			if bc > 0 {
 				continue
 			}
 			vtks := tks.Sub(2, j-2)
@@ -143,28 +152,12 @@ func (p *Parser) varset(tks obj.Tokens) {
 			if vtks == nil {
 				fract.Error(setter, "Index is not defined!")
 			}
-			val := p.procVal(*vtks).D[0]
-			if val.T != obj.VInt {
-				fract.Error(tks[0], "Only integer values can used in index access!")
-			}
-			pos, err := strconv.Atoi(val.String())
-			if err != nil {
-				fract.Error(setter, "Value out of range!")
-			}
-			if v.Val.Arr {
-				pos = processIndex(len(v.Val.D), pos)
-			} else {
-				pos = processIndex(len(v.Val.D[0].String()), pos)
-			}
-			if pos == -1 {
-				fract.Error(setter, "Index is out of range!")
-			}
-			setpos = pos
 			tks.Rem(1, j)
-			setter = tks[1]
+			setpos = indexes(v.Val, p.procVal(*vtks), tks[0])
 			break
 		}
 	}
+	setter = tks[1]
 	// Value are not defined?
 	if len(tks) < 3 {
 		fract.Errorc(setter.F, setter.Ln, setter.Col+len(setter.Val), "Value is not defined!")
@@ -173,59 +166,83 @@ func (p *Parser) varset(tks obj.Tokens) {
 	if val.D == nil {
 		fract.Error(tks[2], "Invalid value!")
 	}
-	if setpos != -1 {
-		if val.Arr {
-			fract.Error(setter, "Array is cannot set as indexed value!")
-		}
-		switch setter.Val {
-		case "=": // =
-			if v.Val.Arr {
-				v.Val.D[setpos] = val.D[0]
-			} else {
-				if val.D[0].T != obj.VStr {
-					fract.Error(setter, "Value type is not string!")
-				} else if len(val.D[0].String()) > 1 {
-					fract.Error(setter, "Value length is should be maximum one!")
-				}
-				bytes := []byte(v.Val.D[0].String())
-				if val.D[0].D == "" {
-					bytes[setpos] = 0
+	if setpos != nil {
+		for _, pos := range setpos {
+			switch setter.Val {
+			case "=": // =
+				if v.Val.Arr {
+					d := obj.Data{D: val.D}
+					if val.Arr {
+						d.T = obj.VArray
+					} else {
+						d.T = val.D[0].T
+					}
+					v.Val.D[pos] = d
 				} else {
-					bytes[setpos] = val.D[0].String()[0]
+					if val.D[0].T != obj.VStr {
+						fract.Error(setter, "Value type is not string!")
+					} else if len(val.D[0].String()) > 1 {
+						fract.Error(setter, "Value length is should be maximum one!")
+					}
+					bytes := []byte(v.Val.D[0].String())
+					if val.D[0].D == "" {
+						bytes[pos] = 0
+					} else {
+						bytes[pos] = val.D[0].String()[0]
+					}
+					v.Val.D[0].D = string(bytes)
 				}
-				v.Val.D[0].D = string(bytes)
-			}
-		default: // Other assignments.
-			if v.Val.Arr {
-				v.Val.D[setpos] = solveProc(
-					process{
-						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
-						f:   tks[0],
-						fv:  obj.Value{D: []obj.Data{v.Val.D[setpos]}},
-						s:   setter,
-						sv:  val,
-					}).D[0]
-			} else {
-				val = solveProc(
-					process{
-						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
-						f:   tks[0],
-						fv:  obj.Value{D: []obj.Data{v.Val.D[setpos]}},
-						s:   setter,
-						sv:  val,
-					})
-				if val.D[0].T != obj.VStr {
-					fract.Error(setter, "Value type is not string!")
-				} else if len(val.D[0].String()) > 1 {
-					fract.Error(setter, "Value length is should be maximum one!")
-				}
-				bytes := []byte(v.Val.D[0].String())
-				if val.D[0].D == "" {
-					bytes[setpos] = 0
+			default: // Other assignments.
+				if v.Val.Arr {
+					var (
+						pv = v.Val.D[pos]
+						fv = obj.Value{}
+					)
+					if pv.T == obj.VArray {
+						fv.Arr = true
+						fv.D = pv.D.([]obj.Data)
+					} else {
+						fv.D = []obj.Data{pv}
+					}
+					val := solveProc(
+						process{
+							opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
+							f:   tks[0],
+							fv:  fv,
+							s:   setter,
+							sv:  val,
+						})
+					d := obj.Data{}
+					if val.Arr {
+						d.D = val.D
+						d.T = obj.VArray
+					} else {
+						d.D = val.D[0].D
+						d.T = val.D[0].T
+					}
+					v.Val.D[pos] = d
 				} else {
-					bytes[setpos] = val.D[0].String()[0]
+					val = solveProc(
+						process{
+							opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
+							f:   tks[0],
+							fv:  obj.Value{D: []obj.Data{v.Val.D[pos]}},
+							s:   setter,
+							sv:  val,
+						})
+					if val.D[0].T != obj.VStr {
+						fract.Error(setter, "Value type is not string!")
+					} else if len(val.D[0].String()) > 1 {
+						fract.Error(setter, "Value length is should be maximum one!")
+					}
+					bytes := []byte(v.Val.D[0].String())
+					if val.D[0].D == "" {
+						bytes[pos] = 0
+					} else {
+						bytes[pos] = val.D[0].String()[0]
+					}
+					v.Val.D[0].D = string(bytes)
 				}
-				v.Val.D[0].D = string(bytes)
 			}
 		}
 	} else {

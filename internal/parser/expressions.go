@@ -127,9 +127,9 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 		// Is and long statement?
 		if len(*ands) > 1 {
 			for _, and := range *ands {
-				opri, opr := findConditionOpr(and)
+				i, opr := findConditionOpr(and)
 				// Operator is not found?
-				if opri == -1 {
+				if i == -1 {
 					opr.Val = "=="
 					if comp(p.procVal(and), T, opr) {
 						return "true"
@@ -137,21 +137,21 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 					continue
 				}
 				// Operator is first or last?
-				if opri == 0 {
+				if i == 0 {
 					fract.Error(and[0], "Comparison values are missing!")
-				} else if opri == len(and)-1 {
+				} else if i == len(and)-1 {
 					fract.Error(and[len(and)-1], "Comparison values are missing!")
 				}
 				if !comp(
-					p.procVal(*and.Sub(0, opri)), p.procVal(*and.Sub(opri+1, len(and)-opri-1)), opr) {
+					p.procVal(*and.Sub(0, i)), p.procVal(*and.Sub(i+1, len(and)-i-1)), opr) {
 					return "false"
 				}
 			}
 			return "true"
 		}
-		opri, opr := findConditionOpr(or)
+		i, opr := findConditionOpr(or)
 		// Operator is not found?
-		if opri == -1 {
+		if i == -1 {
 			opr.Val = "=="
 			if comp(p.procVal(or), T, opr) {
 				return "true"
@@ -159,12 +159,12 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 			continue
 		}
 		// Operator is first or last?
-		if opri == 0 {
+		if i == 0 {
 			fract.Error(or[0], "Comparison values are missing!")
-		} else if opri == len(or)-1 {
+		} else if i == len(or)-1 {
 			fract.Error(or[len(or)-1], "Comparison values are missing!")
 		}
-		if comp(p.procVal(*or.Sub(0, opri)), p.procVal(*or.Sub(opri+1, len(or)-opri-1)), opr) {
+		if comp(p.procVal(*or.Sub(0, i)), p.procVal(*or.Sub(i+1, len(or)-i-1)), opr) {
 			return "true"
 		}
 	}
@@ -612,45 +612,30 @@ func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) i
 					if vtks == nil {
 						fract.Error(tk, "Index is not defined!")
 					}
-					val := p.procVal(*vtks)
-					if val.Arr {
-						fract.Error((*tks)[pos], "Arrays is not used in index access!")
-					} else if val.D[0].T != obj.VInt {
-						fract.Error((*tks)[pos], "Only integer values can used in index access!")
-					}
-					vp, err := strconv.Atoi(arith((*vtks)[0], val.D[0]))
-					if err != nil {
-						fract.Error((*tks)[pos], "Invalid value!")
-					}
 					v := src.vars[vi]
 					if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 						fract.Error((*tks)[pos], "Index accessor is cannot used with non-array variables!")
 					}
-					if v.Val.Arr {
-						vp = processIndex(len(v.Val.D), vp)
-					} else {
-						vp = processIndex(len(v.Val.D[0].String()), vp)
-					}
-					if vp == -1 {
-						fract.Error((*tks)[pos], "Index is out of range!")
-					}
+					val := p.procVal(*vtks)
+					i := indexes(v.Val, val, tk)
 					tks.Rem(pos+1, ci-pos)
-					var d obj.Data
-					if v.Val.Arr {
-						d = v.Val.D[vp]
-					} else {
-						if v.Val.D[0].T == obj.VStr {
-							d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VStr}
+					var d []obj.Data
+					if !v.Val.Arr {
+						d = append(d, obj.Data{D: "", T: obj.VStr})
+					}
+					for _, pos := range i {
+						if v.Val.Arr {
+							d = append(d, v.Val.D[pos])
 						} else {
-							d = obj.Data{D: fmt.Sprint(v.Val.D[0].String()[vp])}
+							if v.Val.D[0].T == obj.VStr {
+								d[0].D = d[0].String() + string(v.Val.D[0].String()[pos])
+							} else {
+								d[0].D = d[0].String() + fmt.Sprint(v.Val.D[0].String()[pos])
+							}
 						}
 					}
-					r.Arr = d.T == obj.VArray
-					if r.Arr {
-						r.D = d.D.([]obj.Data)
-					} else {
-						r.D = []obj.Data{d}
-					}
+					r.Arr = len(i) > 1 && d[0].T != obj.VStr || d[0].T == obj.VArray
+					r.D = d
 					*r = applyMinus(minus, *r)
 					return 0
 				case "(":
@@ -736,41 +721,29 @@ func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) i
 			if vtks == nil {
 				fract.Error(endtk, "Index is not defined!")
 			}
-			val := p.procVal(*vtks)
-			if val.Arr {
-				fract.Error((*tks)[pos], "Arrays is not used in index access!")
-			} else if val.D[0].T != obj.VInt {
-				fract.Error((*tks)[pos], "Only integer values can used in index access!")
-			}
-			vp, err := strconv.Atoi(arith((*vtks)[0], val.D[0]))
-			if err != nil {
-				fract.Error((*tks)[oi], "Invalid value!")
-			}
 			v := src.vars[vi]
 			if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 				fract.Error((*tks)[oi], "Index accessor is cannot used with non-array variables!")
 			}
-			if v.Val.Arr {
-				vp = processIndex(len(v.Val.D), vp)
-			} else {
-				vp = processIndex(len(v.Val.D[0].String()), vp)
+			val := p.procVal(*vtks)
+			i := indexes(v.Val, val, tk)
+			var d []obj.Data
+			if !v.Val.Arr {
+				d = append(d, obj.Data{D: "", T: obj.VStr})
 			}
-			if vp == -1 {
-				fract.Error((*tks)[oi], "Index is out of range!")
-			}
-			tks.Rem(oi-1, pos-oi+1)
-			var d obj.Data
-			if v.Val.Arr {
-				d = v.Val.D[vp]
-			} else {
-				if v.Val.D[0].T == obj.VStr {
-					d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VStr}
+			for _, pos := range i {
+				if v.Val.Arr {
+					d = append(d, v.Val.D[pos])
 				} else {
-					d = obj.Data{D: fmt.Sprint(v.Val.D[0].String()[vp])}
+					if v.Val.D[0].T == obj.VStr {
+						d[0].D = d[0].String() + string(v.Val.D[0].String()[pos])
+					} else {
+						d[0].D = d[0].String() + fmt.Sprint(v.Val.D[0].String()[pos])
+					}
 				}
 			}
-			r.D = []obj.Data{d}
 			r.Arr = false
+			r.D = d
 			*r = applyMinus(minus, *r)
 			return pos - oi + 1
 		case "[":
@@ -830,45 +803,30 @@ func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) i
 			if vtks == nil {
 				fract.Error(endtk, "Index is not defined!")
 			}
-			val := p.procVal(*vtks)
-			if val.Arr {
-				fract.Error((*tks)[pos], "Arrays is not used in index access!")
-			} else if val.D[0].T != obj.VInt {
-				fract.Error((*tks)[pos], "Only integer values can used in index access!")
-			}
-			vp, err := strconv.Atoi(arith(tk, val.D[0]))
-			if err != nil {
-				fract.Error((*tks)[oi], "Invalid value!")
-			}
 			v := source.vars[vi]
 			if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
 				fract.Error((*tks)[oi], "Index accessor is cannot used with non-array variables!")
 			}
-			if v.Val.Arr {
-				vp = processIndex(len(v.Val.D), vp)
-			} else {
-				vp = processIndex(len(v.Val.D[0].String()), vp)
-			}
-			if vp == -1 {
-				fract.Error((*tks)[oi], "Index is out of range!")
-			}
+			val := p.procVal(*vtks)
+			i := indexes(v.Val, val, tk)
 			tks.Rem(oi-1, pos-oi+1)
-			var d obj.Data
-			if v.Val.Arr {
-				d = v.Val.D[vp]
-			} else {
-				if v.Val.D[0].T == obj.VStr {
-					d = obj.Data{D: string(v.Val.D[0].String()[vp]), T: obj.VStr}
+			var d []obj.Data
+			if !v.Val.Arr {
+				d = append(d, obj.Data{D: "", T: obj.VStr})
+			}
+			for _, pos := range i {
+				if v.Val.Arr {
+					d = append(d, v.Val.D[pos])
 				} else {
-					d = obj.Data{D: fmt.Sprint(v.Val.D[0].String()[vp])}
+					if v.Val.D[0].T == obj.VStr {
+						d[0].D = d[0].String() + string(v.Val.D[0].String()[pos])
+					} else {
+						d[0].D = d[0].String() + fmt.Sprint(v.Val.D[0].String()[pos])
+					}
 				}
 			}
-			r.Arr = d.T == obj.VArray
-			if r.Arr {
-				r.D = d.D.([]obj.Data)
-			} else {
-				r.D = []obj.Data{d}
-			}
+			r.Arr = len(i) > 1 && d[0].T != obj.VStr || d[0].T == obj.VArray
+			r.D = d
 			*r = applyMinus(minus, *r)
 			return pos - oi + 1
 		case ")":
