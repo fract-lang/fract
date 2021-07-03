@@ -470,6 +470,17 @@ print(a)
 
 <#
 
+#>
+
+var a = calloc(4)
+for i in a
+	a[i] = i + 1
+end
+a = realloc(a, len(a))
+print(a)
+
+<#
+
 var e9 = [89, 189, 289, 389, 489, 589]
 e9[0] = [90, 19, 20]
 print(e9)

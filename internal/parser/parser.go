@@ -628,8 +628,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					},
 				},
 			},
-		},
-		obj.Func{ // input function.
+		}, obj.Func{ // input function.
 			Name:              "input",
 			Protected:         true,
 			Tks:               nil,
@@ -647,8 +646,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					},
 				},
 			},
-		},
-		obj.Func{ // exit function.
+		}, obj.Func{ // exit function.
 			Name:              "exit",
 			Protected:         true,
 			Tks:               nil,
@@ -661,8 +659,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					},
 				},
 			},
-		},
-		obj.Func{ // len function.
+		}, obj.Func{ // len function.
 			Name:              "len",
 			Protected:         true,
 			Tks:               nil,
@@ -670,8 +667,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Params: []obj.Param{
 				{Name: "object"},
 			},
-		},
-		obj.Func{ // range function.
+		}, obj.Func{ // range function.
 			Name:              "range",
 			Protected:         true,
 			Tks:               nil,
@@ -686,17 +682,33 @@ func (p *Parser) ApplyEmbedFunctions() {
 					},
 				},
 			},
-		},
-		obj.Func{ // make function.
-			Name:              "make",
+		}, obj.Func{ // calloc function.
+			Name:              "calloc",
 			Protected:         true,
 			Tks:               nil,
 			DefaultParamCount: 0,
 			Params: []obj.Param{
 				{Name: "size"},
 			},
-		},
-		obj.Func{ // string function.
+		}, obj.Func{ // realloc function.
+			Name:              "realloc",
+			Protected:         true,
+			Tks:               nil,
+			DefaultParamCount: 0,
+			Params: []obj.Param{
+				{Name: "base"},
+				{Name: "size"},
+			},
+		}, obj.Func{ // memset function.
+			Name:              "memset",
+			Protected:         true,
+			Tks:               nil,
+			DefaultParamCount: 0,
+			Params: []obj.Param{
+				{Name: "mem"},
+				{Name: "val"},
+			},
+		}, obj.Func{ // string function.
 			Name:              "string",
 			Protected:         true,
 			Tks:               nil,
@@ -715,8 +727,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					},
 				},
 			},
-		},
-		obj.Func{ // int function.
+		}, obj.Func{ // int function.
 			Name:              "int",
 			Protected:         true,
 			Tks:               nil,
@@ -735,8 +746,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					},
 				},
 			},
-		},
-		obj.Func{ // float function.
+		}, obj.Func{ // float function.
 			Name:              "float",
 			Protected:         true,
 			Tks:               nil,
@@ -744,8 +754,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 			Params: []obj.Param{
 				{Name: "object"},
 			},
-		},
-		obj.Func{ // append function.
+		}, obj.Func{ // append function.
 			Name:              "append",
 			Protected:         true,
 			Tks:               nil,

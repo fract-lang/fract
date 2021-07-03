@@ -171,10 +171,12 @@ func (p *Parser) varset(tks obj.Tokens) {
 			switch setter.Val {
 			case "=": // =
 				if v.Val.Arr {
-					d := obj.Data{D: val.D}
+					d := obj.Data{}
 					if val.Arr {
+						d.D = val.D
 						d.T = obj.VArray
 					} else {
+						d.D = val.D[0].D
 						d.T = val.D[0].T
 					}
 					v.Val.D[pos] = d

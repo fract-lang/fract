@@ -33,8 +33,10 @@ func (c funcCall) call() obj.Value {
 			return embed.Len(c.f, c.args)
 		case "range":
 			return embed.Range(c.f, c.args)
-		case "make":
-			return embed.Make(c.f, c.args)
+		case "calloc":
+			return embed.Calloc(c.f, c.args)
+		case "realloc":
+			return embed.Realloc(c.f, c.args)
 		case "string":
 			return embed.String(c.f, c.args)
 		case "int":

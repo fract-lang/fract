@@ -70,13 +70,13 @@ func Len(f obj.Func, args []obj.Var) obj.Value {
 	return obj.Value{D: []obj.Data{{D: "0"}}}
 }
 
-// Make array by size.
-func Make(f obj.Func, args []obj.Var) obj.Value {
+// Calloc array by size.
+func Calloc(f obj.Func, args []obj.Var) obj.Value {
 	sz := args[0].Val
 	if sz.Arr {
 		fract.Error(f.Tks[0][0], "Array is not a valid value!")
 	} else if sz.D[0].T != obj.VInt {
-		fract.Error(f.Tks[0][0], "Exit code is only be integer!")
+		fract.Error(f.Tks[0][0], "Size is only be integer!")
 	}
 	szv, _ := strconv.Atoi(sz.D[0].String())
 	if szv < 0 {
@@ -86,10 +86,34 @@ func Make(f obj.Func, args []obj.Var) obj.Value {
 	if szv > 0 {
 		var index int
 		for ; index < szv; index++ {
-			v.D = append(v.D, obj.Data{D: "0"})
+			v.D = append(v.D, obj.Data{D: "0", T: obj.VInt})
 		}
 	} else {
 		v.D = []obj.Data{}
+	}
+	return v
+}
+
+// Realloc array by size.
+func Realloc(f obj.Func, args []obj.Var) obj.Value {
+	szv, _ := strconv.Atoi(args[1].Val.D[0].String())
+	if szv < 0 {
+		fract.Error(f.Tks[0][0], "Size should be minimum zero!")
+	}
+	var (
+		b = args[0].Val.D
+		v = obj.Value{Arr: true}
+		c = 0
+	)
+	if len(b) <= szv {
+		v.D = b
+		c = len(b)
+	} else {
+		v.D = b[:szv]
+		return v
+	}
+	for ; c <= szv; c++ {
+		v.D = append(v.D, obj.Data{D: "0", T: obj.VInt})
 	}
 	return v
 }
