@@ -364,7 +364,7 @@ func checkArithmeticProcesses(tks []obj.Token) {
 				fract.Error(t, "Operator spam!")
 			}
 			opr = false
-		case fract.Value, fract.Name, fract.Comma, fract.Brace:
+		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In:
 			switch t.T {
 			case fract.Brace:
 				if t.Val == "(" || t.Val == "[" || t.Val == "{" {
@@ -541,10 +541,13 @@ func findConditionOpr(tks []obj.Token) (int, obj.Token) {
 			} else {
 				bc--
 			}
-		} else if bc == 0 &&
-			(t.T == fract.Operator && (t.Val == "&&" || t.Val == "||" ||
-				t.Val == "==" || t.Val == "<>" || t.Val == ">" || t.Val == "<" ||
-				t.Val == ">=" || t.Val == "<=")) || t.T == fract.In {
+		}
+		if bc > 0 {
+			continue
+		}
+		if (t.T == fract.Operator && (t.Val == "&&" || t.Val == "||" ||
+			t.Val == "==" || t.Val == "<>" || t.Val == ">" || t.Val == "<" ||
+			t.Val == ">=" || t.Val == "<=")) || t.T == fract.In {
 			return i, t
 		}
 	}

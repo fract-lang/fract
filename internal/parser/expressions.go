@@ -706,7 +706,7 @@ func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) i
 			// Finished?
 			if oi == 0 || (*tks)[oi-1].T != fract.Name {
 				r.Arr = true
-				r.D = p.procArrayVal(*tks.Sub(oi, pos-oi+1)).D
+				r.D = p.procEnumerableVal(*tks.Sub(oi, pos-oi+1)).D
 				*r = applyMinus(minus, *r)
 				tks.Rem(oi, pos-oi)
 				return pos - oi
@@ -765,7 +765,7 @@ func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) i
 					}
 				}
 			}
-			*r = applyMinus(minus, p.procArrayVal((*tks)[pos:ci+1]))
+			*r = applyMinus(minus, p.procEnumerableVal((*tks)[pos:ci+1]))
 			tks.Rem(pos+1, ci-pos)
 			return 0
 		case "]":
@@ -788,7 +788,7 @@ func (p *Parser) procValPart(fst bool, opr *process, tks *obj.Tokens, pos int) i
 			// Finished?
 			if oi == 0 {
 				r.Arr = true
-				r.D = p.procArrayVal((*tks)[oi : pos+1]).D
+				r.D = p.procEnumerableVal((*tks)[oi : pos+1]).D
 				*r = applyMinus(minus, *r)
 				tks.Rem(oi, pos-oi)
 				return pos - oi
@@ -942,6 +942,131 @@ func (p *Parser) procArrayVal(tks obj.Tokens) obj.Value {
 		}
 	}
 	return v
+}
+
+// Process list comprehension.
+func (p *Parser) procListComprehension(tks obj.Tokens) obj.Value {
+	v := obj.Value{
+		Arr: true,
+		D:   []obj.Data{},
+	}
+	var (
+		stks obj.Tokens // Select tokens.
+		ltks obj.Tokens // Loop tokens.
+		ftks obj.Tokens // Filter tokens.
+		bc   int
+	)
+	for i, t := range tks {
+		if t.T == fract.Brace {
+			if t.Val == "(" || t.Val == "[" || t.Val == "{" {
+				bc++
+			} else {
+				bc--
+			}
+		}
+		if bc > 1 {
+			continue
+		}
+		if t.T == fract.Loop {
+			stks = tks[1:i]
+		} else if t.T == fract.Comma {
+			ltks = tks[len(stks)+1 : i]
+			ftks = tks[i+1 : len(tks)-1]
+			if len(ftks) == 0 {
+				ftks = nil
+			}
+			break
+		}
+	}
+	if ltks == nil {
+		ltks = tks[len(stks)+1 : len(tks)-1]
+	}
+	if len(ltks) < 2 {
+		fract.Error(ltks[0], "Variable name is not defined!")
+	}
+	nametk := ltks[1]
+	// Name is not name?
+	if nametk.T != fract.Name {
+		fract.Error(nametk, "This is not a valid name!")
+	}
+	if ln := p.definedName(nametk); ln != -1 {
+		fract.Error(nametk, "\""+nametk.Val+"\" is already defined at line: "+fmt.Sprint(ln))
+	}
+	if len(ltks) < 3 {
+		fract.Errorc(ltks[0].F, ltks[0].Ln, ltks[1].Col+len(ltks[1].Val), "Value is not defined!")
+	}
+	if vtks, inTk := ltks.Sub(3, len(ltks)-3), ltks[2]; vtks != nil {
+		ltks = *vtks
+	} else {
+		fract.Error(inTk, "Value is not defined!")
+	}
+	varr := p.procVal(ltks)
+	// Type is not array?
+	if !varr.Arr && varr.D[0].T != obj.VStr {
+		fract.Error(ltks[0], "Foreach loop must defined array value!")
+	}
+	p.vars = append(p.vars, obj.Var{Name: nametk.Val, Val: obj.Value{}})
+	vlen := len(p.vars)
+	element := &p.vars[vlen-1]
+	if element.Name == "_" {
+		element.Name = ""
+	}
+	var length int
+	if varr.Arr {
+		length = len(varr.D)
+	} else {
+		length = len(varr.D[0].String())
+	}
+	// Interpret block.
+	for j := 0; j < length; j++ {
+		if element.Name != "" {
+			if v.Arr {
+				element.Val.D = []obj.Data{varr.D[j]}
+			} else {
+				element.Val.D = []obj.Data{{D: string(varr.D[0].String()[j]), T: obj.VStr}}
+			}
+		}
+		if ftks == nil || p.procCondition(ftks) == "true" {
+			val := p.procVal(stks)
+			if !val.Arr {
+				v.D = append(v.D, val.D...)
+			} else {
+				v.D = append(v.D, obj.Data{D: val.D, T: obj.VArray})
+			}
+		}
+	}
+	p.vars = p.vars[:vlen-1] // Remove variables.
+	return v
+}
+
+// Process enumerable value.
+func (p *Parser) procEnumerableVal(tks obj.Tokens) obj.Value {
+	var (
+		lc bool
+		bc int
+	)
+	for _, t := range tks {
+		if t.T == fract.Brace {
+			if t.Val == "(" || t.Val == "[" || t.Val == "{" {
+				bc++
+			} else {
+				bc--
+			}
+		}
+		if bc > 1 {
+			continue
+		}
+		if t.T == fract.Comma {
+			break
+		} else if !lc && t.T == fract.Loop {
+			lc = true
+			break
+		}
+	}
+	if lc {
+		return p.procListComprehension(tks)
+	}
+	return p.procArrayVal(tks)
 }
 
 // Process value.
