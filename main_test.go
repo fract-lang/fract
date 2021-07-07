@@ -8,7 +8,7 @@ import (
 
 func BenchmarkInterpret(b *testing.B) {
 	p := parser.New("test.fract")
-	p.ApplyEmbedFunctions()
+	p.ApplyBuiltInFunctions()
 	for i := 0; i < b.N; i++ {
 		p.Interpret()
 	}

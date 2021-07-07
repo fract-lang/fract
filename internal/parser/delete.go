@@ -5,7 +5,7 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-func (p *Parser) procDel(tks []obj.Token) {
+func (p *Parser) procDel(tks obj.Tokens) {
 	tkslen := len(tks)
 	// Value is not defined?
 	if tkslen < 2 {

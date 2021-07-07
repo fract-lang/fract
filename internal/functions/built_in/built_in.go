@@ -1,4 +1,4 @@
-package embed
+package built_in
 
 import (
 	"bufio"

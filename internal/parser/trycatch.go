@@ -6,15 +6,17 @@ import (
 )
 
 // procTryCatch process try-catch blocks and returns keyword state.
-func (p *Parser) procTryCatch(tks []obj.Token) uint8 {
+func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 	if len(tks) > 1 {
 		fract.Error(tks[1], "Invalid syntax!")
 	}
 	fract.TryCount++
-	vlen := len(p.vars)
-	flen := len(p.funcs)
-	dlen := len(defers)
-	kwstate := fract.None
+	var (
+		vlen = len(p.vars)
+		flen = len(p.funcs)
+		dlen = len(defers)
+		kws  = fract.None
+	)
 	(&obj.Block{
 		Try: func() {
 			for {
@@ -26,7 +28,7 @@ func (p *Parser) procTryCatch(tks []obj.Token) uint8 {
 					p.skipBlock(false)
 					break
 				}
-				if kwstate = p.process(tks); kwstate != fract.None {
+				if kws = p.process(tks); kws != fract.None {
 					p.skipBlock(false)
 				}
 			}
@@ -77,7 +79,7 @@ func (p *Parser) procTryCatch(tks []obj.Token) uint8 {
 				if tks[0].T == fract.End { // Block is ended.
 					break
 				}
-				if kwstate = p.process(tks); kwstate != fract.None {
+				if kws = p.process(tks); kws != fract.None {
 					p.skipBlock(false)
 				}
 			}
@@ -89,5 +91,5 @@ func (p *Parser) procTryCatch(tks []obj.Token) uint8 {
 			defers = defers[:dlen]
 		},
 	}).Do()
-	return kwstate
+	return kws
 }

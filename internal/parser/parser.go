@@ -284,7 +284,8 @@ func (p *Parser) definedName(name obj.Token) int {
 	return -1
 }
 
-//! This code block very like to variableIndexByName function. If you change here, probably you must change there too.
+//! This code block very like to varIndexByName function.
+//! If you change here, probably you must change there too.
 
 // funcIndexByName returns index of function by name.
 func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
@@ -312,7 +313,8 @@ func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
 	return -1, nil
 }
 
-//! This code block very like to functionIndexByName function. If you change here, probably you must change there too.
+//! This code block very like to funcIndexByName function.
+//! If you change here, probably you must change there too.
 
 // varIndexByName returns index of variable by name.
 func (p *Parser) varIndexByName(name obj.Token) (int, *Parser) {
@@ -352,10 +354,15 @@ func (p *Parser) importIndexByName(name string) int {
 }
 
 // Check arithmetic processes validity.
-func checkArithmeticProcesses(tks []obj.Token) {
+func arithmeticProcesses(tks obj.Tokens) *[]obj.Tokens {
+	if tks[len(tks)-1].T == fract.Operator {
+		fract.Error(tks[len(tks)-1], "Operator overflow!")
+	}
 	var (
-		opr bool
-		b   int
+		procs []obj.Tokens
+		part  obj.Tokens
+		opr   bool
+		b     int
 	)
 	for i := 0; i < len(tks); i++ {
 		switch t := tks[i]; t.T {
@@ -364,32 +371,44 @@ func checkArithmeticProcesses(tks []obj.Token) {
 				fract.Error(t, "Operator spam!")
 			}
 			opr = false
+			if b > 0 {
+				part = append(part, t)
+			} else {
+				procs = append(procs, part)
+				procs = append(procs, obj.Tokens{t})
+				part = obj.Tokens{}
+			}
 		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In:
-			switch t.T {
-			case fract.Brace:
+			if t.T == fract.Brace {
 				if t.Val == "(" || t.Val == "[" || t.Val == "{" {
 					b++
 				} else {
 					b--
 				}
-			case fract.Comma:
-				if b == 0 {
+			}
+			if b == 0 && t.T == fract.Comma {
+				fract.Error(t, "Invalid syntax!")
+			}
+			if i > 0 {
+				if lt := tks[i-1]; (lt.T == fract.Name || lt.T == fract.Value) && (t.T == fract.Name || t.T == fract.Value) {
 					fract.Error(t, "Invalid syntax!")
 				}
 			}
-			opr = i < len(tks)-1
+			part = append(part, t)
+			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.Val != "[" && t.Val != "(" && t.Val != "{") && i < len(tks)-1
 		default:
 			fract.Error(t, "Invalid syntax!")
 		}
 	}
-	if tks[len(tks)-1].T == fract.Operator {
-		fract.Error(tks[len(tks)-1], "Operator overflow!")
+	if len(part) != 0 {
+		procs = append(procs, part)
 	}
+	return &procs
 }
 
 // decomposeBrace returns range tokens and index of first parentheses.
 // Remove range tokens from original tokens.
-func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) ([]obj.Token, int) {
+func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int) {
 	fst := -1
 	/* Find open parentheses. */
 	if noChk {
@@ -463,55 +482,38 @@ func procIndex(len, i int) int {
 }
 
 // IsBlock returns true if tokens is block start, return false if not.
-func IsBlock(tks []obj.Token) bool {
+func IsBlock(tks obj.Tokens) bool {
 	if tks[0].T == fract.Macro { // Remove macro token.
 		tks = tks[1:]
 	}
 	switch tks[0].T {
-	case fract.If,
-		fract.Loop,
-		fract.Func,
-		fract.Try:
+	case fract.If, fract.Loop, fract.Func, fract.Try:
 		return true
 	case fract.Protected:
-		if len(tks) > 1 {
-			if tks[1].T == fract.Func {
-				return true
-			}
+		if len(tks) > 1 && tks[1].T == fract.Func {
+			return true
 		}
 	}
 	return false
 }
 
-// nextopr find index of priority operator and returns index of operator if found, returns -1 if not.
-func nextopr(tks []obj.Token) int {
-	bc := 0
-	high := -1
-	mid := -1
-	low := -1
-	for i, t := range tks {
-		if t.T == fract.Brace {
-			if t.Val == "[" || t.Val == "{" || t.Val == "(" {
-				bc++
-			} else {
-				bc--
-			}
-		}
-		if bc > 0 {
-			continue
-		}
-		// Exponentiation or shifts.
-		if t.Val == "<<" || t.Val == ">>" || t.Val == "**" {
+// nextopr find index of priority operator and returns index of operator
+// if found, returns -1 if not.
+func nextopr(tks *[]obj.Tokens) int {
+	high, mid, low := -1, -1, -1
+	for i, tslc := range *tks {
+		switch tslc[0].Val {
+		case "<<", ">>":
 			return i
-		}
-		switch t.Val {
-		case "%": // Modulus.
+		case "**":
 			return i
-		case "*", "/", "\\", "//", "\\\\": // Multiply or division.
+		case "%":
+			return i
+		case "*", "/", "\\", "//", "\\\\":
 			if high == -1 {
 				high = i
 			}
-		case "+", "-": // Addition or subtraction.
+		case "+", "-":
 			if low == -1 {
 				low = i
 			}
@@ -532,7 +534,7 @@ func nextopr(tks []obj.Token) int {
 }
 
 // findConditionOpr return next condition operator.
-func findConditionOpr(tks []obj.Token) (int, obj.Token) {
+func findConditionOpr(tks obj.Tokens) (int, obj.Token) {
 	bc := 0
 	for i, t := range tks {
 		if t.T == fract.Brace {
@@ -556,7 +558,7 @@ func findConditionOpr(tks []obj.Token) (int, obj.Token) {
 }
 
 // Find next or condition operator index and return if find, return -1 if not.
-func nextConditionOpr(tks []obj.Token, pos int, opr string) int {
+func nextConditionOpr(tks obj.Tokens, pos int, opr string) int {
 	bc := 0
 	for ; pos < len(tks); pos++ {
 		t := tks[pos]
@@ -599,69 +601,55 @@ func conditionalProcesses(tks obj.Tokens, opr string) *[]obj.Tokens {
 	return &exps
 }
 
-//! Embed functions should have a lowercase names.
-// ApplyEmbedFunctions to parser source.
-func (p *Parser) ApplyEmbedFunctions() {
+//! Built-in functions should have a lowercase names.
+
+// ApplyBuildInFunctions to parser source.
+func (p *Parser) ApplyBuiltInFunctions() {
 	p.funcs = append(p.funcs,
 		obj.Func{ // print function.
 			Name:              "print",
 			Protected:         true,
 			Tks:               nil,
 			DefaultParamCount: 2,
-			Params: []obj.Param{
-				{
-					Name: "value",
-					Default: obj.Value{
-						D: []obj.Data{
-							{
-								T: obj.VStr,
-							},
-						},
+			Params: []obj.Param{{
+				Name: "value",
+				Default: obj.Value{
+					D: []obj.Data{
+						{D: "", T: obj.VStr},
 					},
 				},
-				{
-					Name: "fin",
-					Default: obj.Value{
-						D: []obj.Data{
-							{
-								D: "\n",
-								T: obj.VStr,
-							},
-						},
+			}, {
+				Name: "fin",
+				Default: obj.Value{
+					D: []obj.Data{
+						{D: "\n", T: obj.VStr},
 					},
 				},
-			},
+			}},
 		}, obj.Func{ // input function.
 			Name:              "input",
 			Protected:         true,
 			Tks:               nil,
 			DefaultParamCount: 1,
-			Params: []obj.Param{
-				{
-					Name: "message",
-					Default: obj.Value{
-						D: []obj.Data{
-							{
-								D: "",
-								T: obj.VStr,
-							},
-						},
+			Params: []obj.Param{{
+				Name: "message",
+				Default: obj.Value{
+					D: []obj.Data{
+						{D: "", T: obj.VStr},
 					},
 				},
-			},
+			}},
 		}, obj.Func{ // exit function.
 			Name:              "exit",
 			Protected:         true,
 			Tks:               nil,
 			DefaultParamCount: 1,
-			Params: []obj.Param{
-				{
-					Name: "code",
-					Default: obj.Value{
-						D: []obj.Data{{D: "0"}},
-					},
+			Params: []obj.Param{{
+				Name: "code",
+				Default: obj.Value{
+					D: []obj.Data{{D: "0"}},
 				},
-			},
+			}},
 		}, obj.Func{ // len function.
 			Name:              "len",
 			Protected:         true,
@@ -681,7 +669,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 				{
 					Name: "step",
 					Default: obj.Value{
-						D: []obj.Data{{D: "1"}},
+						D: []obj.Data{{D: "1", T: obj.VInt}},
 					},
 				},
 			},
@@ -722,10 +710,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					Name: "type",
 					Default: obj.Value{
 						D: []obj.Data{
-							{
-								D: "parse",
-								T: obj.VStr,
-							},
+							{D: "parse", T: obj.VStr},
 						},
 					},
 				},
@@ -741,10 +726,7 @@ func (p *Parser) ApplyEmbedFunctions() {
 					Name: "type",
 					Default: obj.Value{
 						D: []obj.Data{
-							{
-								D: "parse",
-								T: obj.VStr,
-							},
+							{D: "parse", T: obj.VStr},
 						},
 					},
 				},
@@ -775,13 +757,10 @@ func (p *Parser) ApplyEmbedFunctions() {
 //! add to "isBlock" function of parser.
 
 // process tokens and returns true if block end, returns false if not and returns keyword state.
-func (p *Parser) process(tks []obj.Token) uint8 {
-	tks = append([]obj.Token{}, tks...)
+func (p *Parser) process(tks obj.Tokens) uint8 {
+	//tks = append(obj.Tokens{}, tks...)
 	switch fst := tks[0]; fst.T {
-	case
-		fract.Value,
-		fract.Brace,
-		fract.Name:
+	case fract.Value, fract.Brace, fract.Name:
 		if fst.T == fract.Name {
 			bc := 0
 			for _, t := range tks {
@@ -815,11 +794,12 @@ func (p *Parser) process(tks []obj.Token) uint8 {
 		}
 		second := tks[1]
 		tks = tks[1:]
-		if second.T == fract.Var { // Variable definition.
+		switch second.T {
+		case fract.Var: // Variable definition.
 			p.vardec(tks, true)
-		} else if second.T == fract.Func { // Function definition.
+		case fract.Func: // Function definition.
 			p.funcdec(tks, true)
-		} else {
+		default:
 			fract.Error(second, "Syntax error, you can protect only deletable objects!")
 		}
 	case fract.Var: // Variable definition.

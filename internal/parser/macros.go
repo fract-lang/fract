@@ -17,18 +17,15 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 	}
 	vars := p.vars
 	funcs := p.funcs
-	p.vars = []obj.Var{
-		{
-			Name: "OS",
-			Val:  obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VStr}}},
+	p.vars = []obj.Var{{
+		Name: "OS",
+		Val:  obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VStr}}},
+	}, {
+		Name: "ARCH",
+		Val: obj.Value{
+			D: []obj.Data{{D: runtime.GOARCH, T: obj.VStr}},
 		},
-		{
-			Name: "ARCH",
-			Val: obj.Value{
-				D: []obj.Data{{D: runtime.GOARCH, T: obj.VStr}},
-			},
-		},
-	}
+	}}
 	state := p.procCondition(*ctks)
 	kws := fract.None
 	/* Interpret/skip block. */

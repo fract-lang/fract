@@ -164,7 +164,7 @@ func make(cmd string) {
 		return
 	}
 	p := parser.New(cmd)
-	p.ApplyEmbedFunctions()
+	p.ApplyBuiltInFunctions()
 	(&obj.Block{
 		Try: p.Interpret,
 		Catch: func(e *obj.Exception) {
@@ -224,7 +224,7 @@ func main() {
 	fmt.Println("Fract " + fract.Ver + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
 	fract.InteractiveSh = true
 	p = parser.NewStdin()
-	p.ApplyEmbedFunctions()
+	p.ApplyBuiltInFunctions()
 	b := &obj.Block{
 		Try:   interpret,
 		Catch: catch,

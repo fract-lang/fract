@@ -179,7 +179,6 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		}
 		tks = tks[2:]
 	}
-	// TODO: Check inTk is corrent in all possible situations.
 	if vtks, inTk := tks.Sub(2, len(tks)-2), tks[1]; vtks != nil {
 		tks = *vtks
 	} else {

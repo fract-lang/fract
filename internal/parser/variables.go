@@ -60,7 +60,7 @@ func (p *Parser) varadd(md varinfo, tks obj.Tokens) {
 }
 
 // Process variable declaration.
-func (p *Parser) vardec(tks []obj.Token, protected bool) {
+func (p *Parser) vardec(tks obj.Tokens, protected bool) {
 	// Name is not defined?
 	if len(tks) < 2 {
 		first := tks[0]
@@ -206,14 +206,13 @@ func (p *Parser) varset(tks obj.Tokens) {
 					} else {
 						fv.D = []obj.Data{pv}
 					}
-					val := solveProc(
-						process{
-							opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
-							f:   tks[0],
-							fv:  fv,
-							s:   setter,
-							sv:  val,
-						})
+					val := solveProc(&process{
+						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
+						f:   tks,
+						fv:  fv,
+						s:   obj.Tokens{setter},
+						sv:  val,
+					})
 					d := obj.Data{}
 					if val.Arr {
 						d.D = val.D
@@ -224,14 +223,13 @@ func (p *Parser) varset(tks obj.Tokens) {
 					}
 					v.Val.D[pos] = d
 				} else {
-					val = solveProc(
-						process{
-							opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
-							f:   tks[0],
-							fv:  obj.Value{D: []obj.Data{v.Val.D[pos]}},
-							s:   setter,
-							sv:  val,
-						})
+					val = solveProc(&process{
+						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
+						f:   tks,
+						fv:  obj.Value{D: []obj.Data{v.Val.D[pos]}},
+						s:   obj.Tokens{setter},
+						sv:  val,
+					})
 					if val.D[0].T != obj.VStr {
 						fract.Error(setter, "Value type is not string!")
 					} else if len(val.D[0].String()) > 1 {
@@ -252,14 +250,13 @@ func (p *Parser) varset(tks obj.Tokens) {
 		case "=": // =
 			v.Val = val
 		default: // Other assignments.
-			v.Val = solveProc(
-				process{
-					opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
-					f:   tks[0],
-					fv:  v.Val,
-					s:   setter,
-					sv:  val,
-				})
+			v.Val = solveProc(&process{
+				opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
+				f:   tks,
+				fv:  v.Val,
+				s:   obj.Tokens{setter},
+				sv:  val,
+			})
 		}
 	}
 	p.vars[j] = v

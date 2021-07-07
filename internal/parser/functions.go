@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/fract-lang/fract/internal/functions/embed"
+	"github.com/fract-lang/fract/internal/functions/built_in"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
 )
@@ -20,33 +20,33 @@ type funcCall struct {
 
 func (c funcCall) call() obj.Value {
 	var retv obj.Value
-	// Is embed function?
+	// Is built-in function?
 	if c.f.Tks == nil {
 		// Add name token for exceptions.
 		c.f.Tks = []obj.Tokens{{c.name}}
 		switch c.f.Name {
 		case "print":
-			embed.Print(c.f, c.args)
+			built_in.Print(c.f, c.args)
 		case "input":
-			return embed.Input(c.f, c.args)
+			return built_in.Input(c.f, c.args)
 		case "len":
-			return embed.Len(c.f, c.args)
+			return built_in.Len(c.f, c.args)
 		case "range":
-			return embed.Range(c.f, c.args)
+			return built_in.Range(c.f, c.args)
 		case "calloc":
-			return embed.Calloc(c.f, c.args)
+			return built_in.Calloc(c.f, c.args)
 		case "realloc":
-			return embed.Realloc(c.f, c.args)
+			return built_in.Realloc(c.f, c.args)
 		case "string":
-			return embed.String(c.f, c.args)
+			return built_in.String(c.f, c.args)
 		case "int":
-			return embed.Int(c.f, c.args)
+			return built_in.Int(c.f, c.args)
 		case "float":
-			return embed.Float(c.f, c.args)
+			return built_in.Float(c.f, c.args)
 		case "append":
-			return embed.Append(c.f, c.args)
+			return built_in.Append(c.f, c.args)
 		default:
-			embed.Exit(c.f, c.args)
+			built_in.Exit(c.f, c.args)
 		}
 	} else {
 		// Process block.

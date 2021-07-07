@@ -35,7 +35,7 @@ func (p *Parser) Import() {
 			p.funcdec(tks, false)
 		case fract.Import: // Import.
 			src := new(Parser)
-			src.ApplyEmbedFunctions()
+			src.ApplyBuiltInFunctions()
 			src.procImport(tks)
 			p.vars = append(p.vars, src.vars...)
 			p.funcs = append(p.funcs, src.funcs...)
@@ -57,7 +57,7 @@ type importInfo struct {
 	Src  *Parser // Source of package.
 }
 
-func (p *Parser) procImport(tks []obj.Token) {
+func (p *Parser) procImport(tks obj.Tokens) {
 	if len(tks) == 1 {
 		fract.Error(tks[0], "Imported but what?")
 	}
@@ -78,7 +78,7 @@ func (p *Parser) procImport(tks []obj.Token) {
 		fract.Error(tks[3], "Invalid syntax!")
 	}
 	src := new(Parser)
-	src.ApplyEmbedFunctions()
+	src.ApplyBuiltInFunctions()
 	var imppath string
 	if tks[j].T == fract.Name {
 		if !strings.HasPrefix(tks[j].Val, "std") {
@@ -89,7 +89,7 @@ func (p *Parser) procImport(tks []obj.Token) {
 			imppath = strings.ReplaceAll(tks[j].Val, ".", string(os.PathSeparator))
 		}
 	} else {
-		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.procVal([]obj.Token{tks[j]}).D[0].String()
+		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.procVal(obj.Tokens{tks[j]}).D[0].String()
 	}
 	imppath = path.Join(fract.ExecPath, imppath)
 	info, err := os.Stat(imppath)
