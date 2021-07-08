@@ -230,6 +230,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	vlen := len(p.vars)
 	index := &p.vars[vlen-2]
 	element := &p.vars[vlen-1]
+	vars := p.vars
 	if index.Name == "_" {
 		index.Name = ""
 	}
@@ -252,7 +253,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		tks := p.Tks[p.i]
 		if tks[0].T == fract.End { // Block is ended.
 			// Remove temporary variables.
-			p.vars = p.vars[:vlen]
+			p.vars = vars
 			// Remove temporary functions.
 			p.funcs = p.funcs[:flen]
 			j++
@@ -290,6 +291,6 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		}
 	}
 	// Remove loop variables.
-	p.vars = p.vars[:vlen-2]
+	p.vars = vars[:len(vars)-2]
 	return prockws(kws)
 }
