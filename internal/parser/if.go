@@ -24,7 +24,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 		tks := p.Tks[p.i]
 		first := tks[0]
 		if first.T == fract.End { // Block is ended.
-			goto ret
+			goto end
 		} else if first.T == fract.ElseIf { // Else if block.
 			tkslen = len(tks)
 			ctks := tks.Sub(1, tkslen-1)
@@ -35,7 +35,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			}
 			if s == "true" {
 				p.skipBlock(false)
-				goto ret
+				goto end
 			}
 			s = p.procCondition(*ctks)
 			// Interpret/skip block.
@@ -44,7 +44,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 				tks := p.Tks[p.i]
 				first := tks[0]
 				if first.T == fract.End { // Block is ended.
-					goto ret
+					goto end
 				} else if first.T == fract.If { // If block.
 					if s == "true" && kws == fract.None {
 						p.procIf(tks)
@@ -67,7 +67,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			}
 			if s == "true" {
 				p.skipBlock(false)
-				goto ret
+				goto end
 			}
 			continue
 		} else if first.T == fract.Else { // Else block.
@@ -76,7 +76,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			}
 			if s == "true" {
 				p.skipBlock(false)
-				goto ret
+				goto end
 			}
 			/* Interpret/skip block. */
 			for {
@@ -84,7 +84,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 				tks := p.Tks[p.i]
 				first := tks[0]
 				if first.T == fract.End { // Block is ended.
-					goto ret
+					goto end
 				} else if first.T == fract.If { // If block.
 					if kws == fract.None {
 						p.procIf(tks)
@@ -110,7 +110,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			p.skipBlock(true)
 		}
 	}
-ret:
+end:
 	p.vars = p.vars[:vlen]
 	p.funcs = p.funcs[:flen]
 	return kws

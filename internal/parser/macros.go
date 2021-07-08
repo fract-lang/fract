@@ -37,7 +37,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 			tks := tks[1:]
 			first = tks[0]
 			if first.T == fract.End { // Block is ended.
-				goto ret
+				goto end
 			} else if first.T == fract.ElseIf { // Else if block.
 				tlen = len(tks)
 				ctks := tks.Sub(1, tlen-1)
@@ -48,7 +48,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 				}
 				if state == "true" {
 					p.skipBlock(false)
-					goto ret
+					goto end
 				}
 				state = p.procCondition(*ctks)
 				// Interpret/skip block.
@@ -60,7 +60,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 						tks := tks[1:]
 						first = tks[0]
 						if first.T == fract.End { // Block is ended.
-							goto ret
+							goto end
 						} else if first.T == fract.If { // If block.
 							if state == "true" && kws == fract.None {
 								p.procMacroIf(tks)
@@ -87,7 +87,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 				}
 				if state == "true" {
 					p.skipBlock(false)
-					goto ret
+					goto end
 				}
 				continue
 			} else if first.T == fract.Else { // Else block.
@@ -96,7 +96,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 				}
 				if state == "true" {
 					p.skipBlock(false)
-					goto ret
+					goto end
 				}
 				/* Interpret/skip block. */
 				for {
@@ -107,7 +107,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 						tks = tks[1:]
 						first = tks[0]
 						if first.T == fract.End { // Block is ended.
-							goto ret
+							goto end
 						} else if first.T == fract.If { // If block.
 							if kws == fract.None {
 								p.procMacroIf(tks)
@@ -141,7 +141,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 			p.skipBlock(true)
 		}
 	}
-ret:
+end:
 	p.vars = vars
 	p.funcs = funcs
 	return kws

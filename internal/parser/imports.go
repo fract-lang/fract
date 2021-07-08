@@ -35,7 +35,7 @@ func (p *Parser) Import() {
 			p.funcdec(tks, false)
 		case fract.Import: // Import.
 			src := new(Parser)
-			src.ApplyBuiltInFunctions()
+			src.AddBuiltInFuncs()
 			src.procImport(tks)
 			p.vars = append(p.vars, src.vars...)
 			p.funcs = append(p.funcs, src.funcs...)
@@ -78,7 +78,7 @@ func (p *Parser) procImport(tks obj.Tokens) {
 		fract.Error(tks[3], "Invalid syntax!")
 	}
 	src := new(Parser)
-	src.ApplyBuiltInFunctions()
+	src.AddBuiltInFuncs()
 	var imppath string
 	if tks[j].T == fract.Name {
 		if !strings.HasPrefix(tks[j].Val, "std") {

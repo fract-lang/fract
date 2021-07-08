@@ -40,7 +40,7 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			}
 			defers = defers[:dlen]
 		},
-		Catch: func(e *obj.Exception) {
+		Catch: func(e obj.Exception) {
 			p.loopCount = 0
 			fract.TryCount--
 			p.vars = p.vars[:vlen]

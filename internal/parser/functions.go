@@ -48,68 +48,70 @@ func (c funcCall) call() obj.Value {
 		default:
 			built_in.Exit(c.f, c.args)
 		}
+		return retv
+	}
+	// Process block.
+	vars := c.src.vars
+	dlen := len(defers)
+	old := c.src.funcTempVars
+	if c.src.funcTempVars == -1 {
+		c.src.funcTempVars = 0
+	}
+	if c.src.funcTempVars == 0 {
+		c.src.vars = append(c.args, c.src.vars...)
 	} else {
-		// Process block.
-		vars := c.src.vars
-		dlen := len(defers)
-		old := c.src.funcTempVars
-		if c.src.funcTempVars == -1 {
-			c.src.funcTempVars = 0
-		}
-		if c.src.funcTempVars == 0 {
-			c.src.vars = append(c.args, c.src.vars...)
-		} else {
-			c.src.vars = append(c.args, c.src.vars[:len(c.src.vars)-c.src.funcTempVars]...)
-		}
-		c.src.funcCount++
-		c.src.funcTempVars = len(c.args)
-		flen := len(c.src.funcs)
-		namei := c.src.i
-		itks := c.src.Tks
-		c.src.Tks = c.f.Tks
-		c.src.i = -1
-		// Interpret block.
-		b := obj.Block{
-			Try: func() {
-				for {
-					c.src.i++
-					tks := c.src.Tks[c.src.i]
-					if tks[0].T == fract.End { // Block is ended.
-						break
-					} else if c.src.process(tks) == fract.FUNCReturn {
-						if c.src.retVal == nil {
-							break
-						}
-						retv = *c.src.retVal
-						c.src.retVal = nil
+		c.src.vars = append(c.args, c.src.vars[:len(c.src.vars)-c.src.funcTempVars]...)
+	}
+	c.src.funcCount++
+	c.src.funcTempVars = len(c.args)
+	flen := len(c.src.funcs)
+	namei := c.src.i
+	itks := c.src.Tks
+	c.src.Tks = c.f.Tks
+	c.src.i = -1
+	// Interpret block.
+	b := obj.Block{
+		Try: func() {
+			for {
+				c.src.i++
+				tks := c.src.Tks[c.src.i]
+				if tks[0].T == fract.End { // Block is ended.
+					break
+				} else if c.src.process(tks) == fract.FUNCReturn {
+					if c.src.retVal == nil {
 						break
 					}
+					retv = *c.src.retVal
+					c.src.retVal = nil
+					break
 				}
-			},
-		}
-		b.Do()
-		c.src.Tks = itks
-		// Remove temporary functions.
-		c.src.funcs = c.src.funcs[:flen]
-		// Remove temporary variables.
-		c.src.vars = vars
-		c.src.funcCount--
-		c.src.funcTempVars = old
-		c.src.i = namei
-		if b.E != nil {
-			defers = defers[:dlen]
-			panic(fmt.Errorf(b.E.Msg))
-		}
-		for i := len(defers) - 1; i >= dlen; i-- {
-			defers[i].call()
-		}
-		defers = defers[:dlen]
+			}
+		},
 	}
+	b.Do()
+	c.src.Tks = itks
+	// Remove temporary functions.
+	c.src.funcs = c.src.funcs[:flen]
+	// Remove temporary variables.
+	c.src.vars = vars
+	c.src.funcCount--
+	c.src.funcTempVars = old
+	c.src.i = namei
+	if b.E.Msg != "" {
+		defers = defers[:dlen]
+		panic(fmt.Errorf(b.E.Msg))
+	}
+	for i := len(defers) - 1; i >= dlen; i-- {
+		defers[i].call()
+	}
+	defers = defers[:dlen]
 	return retv
 }
 
 // isParamSet Argument type is param set?
-func isParamSet(tks obj.Tokens) bool { return tks[0].T == fract.Name && tks[1].Val == "=" }
+func isParamSet(tks obj.Tokens) bool {
+	return tks[0].T == fract.Name && tks[1].Val == "="
+}
 
 // paramsArgVals decompose and returns params values.
 func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
@@ -318,11 +320,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 	for ; count < len(f.Params); count++ {
 		p := f.Params[count]
 		if p.Default.D != nil {
-			args = append(args,
-				obj.Var{
-					Name: p.Name,
-					Val:  p.Default,
-				})
+			args = append(args, obj.Var{Name: p.Name, Val: p.Default})
 		}
 	}
 	return funcCall{

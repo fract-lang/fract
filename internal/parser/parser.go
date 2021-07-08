@@ -128,6 +128,30 @@ func (p *Parser) ready() {
 	}
 }
 
+func (p *Parser) importLocal() {
+	dir, _ := os.Getwd()
+	if pdir := path.Dir(p.L.F.P); pdir != "." {
+		dir = path.Join(dir, pdir)
+	}
+	infos, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return
+	}
+	_, mainName := filepath.Split(p.L.F.P)
+	for _, info := range infos {
+		// Skip directories.
+		if info.IsDir() || !strings.HasSuffix(info.Name(), fract.Ext) || info.Name() == mainName {
+			continue
+		}
+		src := New(path.Join(dir, info.Name()))
+		src.loopCount = -1 //! Tag as import source.
+		src.Import()
+		p.funcs = append(p.funcs, src.funcs...)
+		p.vars = append(p.vars, src.vars...)
+		p.Imports = append(p.Imports, src.Imports...)
+	}
+}
+
 func (p *Parser) Interpret() {
 	if p.L.F.P == "<stdin>" {
 		// Interpret all lines.
@@ -142,35 +166,12 @@ func (p *Parser) Interpret() {
 		return
 	}
 	p.ready()
-	{
-		//* Import local directory.
-		dir, _ := os.Getwd()
-		if pdir := path.Dir(p.L.F.P); pdir != "." {
-			dir = path.Join(dir, pdir)
-		}
-		infos, err := ioutil.ReadDir(dir)
-		if err == nil {
-			_, mainName := filepath.Split(p.L.F.P)
-			for _, info := range infos {
-				// Skip directories.
-				if info.IsDir() || !strings.HasSuffix(info.Name(), fract.Ext) || info.Name() == mainName {
-					continue
-				}
-				src := New(path.Join(dir, info.Name()))
-				src.loopCount = -1 //! Tag as import source.
-				src.Import()
-				p.funcs = append(p.funcs, src.funcs...)
-				p.vars = append(p.vars, src.vars...)
-				p.Imports = append(p.Imports, src.Imports...)
-			}
-		}
-	}
+	p.importLocal()
 	// Interpret all lines.
 	for p.i = 0; p.i < len(p.Tks); p.i++ {
 		p.process(p.Tks[p.i])
 		runtime.GC()
 	}
-
 end:
 	for i := len(defers) - 1; i >= 0; i-- {
 		defers[i].call()
@@ -354,7 +355,7 @@ func (p *Parser) importIndexByName(name string) int {
 }
 
 // Check arithmetic processes validity.
-func arithmeticProcesses(tks obj.Tokens) *[]obj.Tokens {
+func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 	if tks[len(tks)-1].T == fract.Operator {
 		fract.Error(tks[len(tks)-1], "Operator overflow!")
 	}
@@ -403,7 +404,7 @@ func arithmeticProcesses(tks obj.Tokens) *[]obj.Tokens {
 	if len(part) != 0 {
 		procs = append(procs, part)
 	}
-	return &procs
+	return procs
 }
 
 // decomposeBrace returns range tokens and index of first parentheses.
@@ -499,9 +500,9 @@ func IsBlock(tks obj.Tokens) bool {
 
 // nextopr find index of priority operator and returns index of operator
 // if found, returns -1 if not.
-func nextopr(tks *[]obj.Tokens) int {
+func nextopr(tks []obj.Tokens) int {
 	high, mid, low := -1, -1, -1
-	for i, tslc := range *tks {
+	for i, tslc := range tks {
 		switch tslc[0].Val {
 		case "<<", ">>":
 			return i
@@ -580,7 +581,7 @@ func nextConditionOpr(tks obj.Tokens, pos int, opr string) int {
 }
 
 // conditionalProcesses returns conditional expressions by operators.
-func conditionalProcesses(tks obj.Tokens, opr string) *[]obj.Tokens {
+func conditionalProcesses(tks obj.Tokens, opr string) []obj.Tokens {
 	var exps []obj.Tokens
 	last := 0
 	i := nextConditionOpr(tks, last, opr)
@@ -598,13 +599,13 @@ func conditionalProcesses(tks obj.Tokens, opr string) *[]obj.Tokens {
 	if last != len(tks) {
 		exps = append(exps, *tks.Sub(last, len(tks)-last))
 	}
-	return &exps
+	return exps
 }
 
 //! Built-in functions should have a lowercase names.
 
 // ApplyBuildInFunctions to parser source.
-func (p *Parser) ApplyBuiltInFunctions() {
+func (p *Parser) AddBuiltInFuncs() {
 	p.funcs = append(p.funcs,
 		obj.Func{ // print function.
 			Name:              "print",

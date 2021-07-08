@@ -206,7 +206,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 					} else {
 						fv.D = []obj.Data{pv}
 					}
-					val := solveProc(&process{
+					val := solveProc(process{
 						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
 						f:   tks,
 						fv:  fv,
@@ -223,7 +223,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 					}
 					v.Val.D[pos] = d
 				} else {
-					val = solveProc(&process{
+					val = solveProc(process{
 						opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
 						f:   tks,
 						fv:  obj.Value{D: []obj.Data{v.Val.D[pos]}},
@@ -250,7 +250,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 		case "=": // =
 			v.Val = val
 		default: // Other assignments.
-			v.Val = solveProc(&process{
+			v.Val = solveProc(process{
 				opr: obj.Token{Val: string(setter.Val[:len(setter.Val)-1])},
 				f:   tks,
 				fv:  v.Val,

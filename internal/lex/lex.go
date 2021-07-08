@@ -203,10 +203,7 @@ func (l *Lex) lexname(tk *obj.Token, chk string) bool {
 
 // Generate next token.
 func (l *Lex) Token() obj.Token {
-	tk := obj.Token{
-		T: fract.None,
-		F: l.F,
-	}
+	tk := obj.Token{T: fract.None, F: l.F}
 
 	fln := l.F.Lns[l.Ln-1] // Full line.
 	// Line is finished.

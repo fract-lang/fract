@@ -60,7 +60,7 @@ func input(msg string) string {
 	return s.Text()
 }
 
-var p *parser.Parser
+var p *parser.Parser = nil
 
 func interpret() {
 	for {
@@ -114,11 +114,12 @@ func interpret() {
 	}
 }
 
-func catch(e *obj.Exception) {
-	if e.Msg != "" {
-		fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
-		fmt.Println(e.Msg)
+func catch(e obj.Exception) {
+	if e.Msg == "" {
+		return
 	}
+	fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
+	fmt.Println(e.Msg)
 }
 
 func help(cmd string) {
@@ -164,10 +165,10 @@ func make(cmd string) {
 		return
 	}
 	p := parser.New(cmd)
-	p.ApplyBuiltInFunctions()
+	p.AddBuiltInFuncs()
 	(&obj.Block{
 		Try: p.Interpret,
-		Catch: func(e *obj.Exception) {
+		Catch: func(e obj.Exception) {
 			os.Exit(0)
 		},
 	}).Do()
@@ -224,7 +225,7 @@ func main() {
 	fmt.Println("Fract " + fract.Ver + " (c) MIT License.\n" + "Developed by Fract Developer Team.\n")
 	fract.InteractiveSh = true
 	p = parser.NewStdin()
-	p.ApplyBuiltInFunctions()
+	p.AddBuiltInFuncs()
 	b := &obj.Block{
 		Try:   interpret,
 		Catch: catch,

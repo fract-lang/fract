@@ -27,7 +27,6 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	brk := false
 	kws := fract.None
 	iindex := p.i
-
 	//*************
 	//    WHILE
 	//*************
@@ -68,7 +67,6 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 					}
 				}
 			}
-
 			/* Interpret/skip block. */
 			ctks := tks
 			c := p.procCondition(ctks)
