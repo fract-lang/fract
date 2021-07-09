@@ -4,16 +4,6 @@ import (
 	"os"
 )
 
-// Func instance.
-type Func struct {
-	Name              string
-	Ln                int      // Line of define.
-	Tks               []Tokens // Block content of function.
-	Params            []Param
-	DefaultParamCount int
-	Protected         bool
-}
-
 // Var instance.
 type Var struct {
 	Name      string

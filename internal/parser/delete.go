@@ -34,7 +34,7 @@ func (p *Parser) procDel(tks obj.Tokens) {
 				fract.IPanic(t, obj.NamePanic, "\""+t.V+"\" is not defined!")
 			}
 			// Protected?
-			if src.funcs[pos].Protected {
+			if src.funcs[pos].protected {
 				fract.IPanic(t, obj.MemoryPanic, "Protected objects cannot be deleted manually from memory!")
 			}
 			src.funcs = append(src.funcs[:pos], src.funcs[pos+1:]...)

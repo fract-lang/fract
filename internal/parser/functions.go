@@ -3,100 +3,107 @@ package parser
 import (
 	"fmt"
 	"strings"
-	"unicode"
 
 	"github.com/fract-lang/fract/internal/functions/built_in"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
+// Func instance.
+type Func struct {
+	name              string
+	src               *Parser
+	ln                int          // Line of define.
+	tks               []obj.Tokens // Block content of function.
+	params            []obj.Param
+	defaultParamCount int
+	protected         bool
+}
+
 // Instance for function calls.
 type funcCall struct {
-	f    obj.Func
-	name obj.Token
-	src  *Parser
-	args []obj.Var
+	f     Func
+	errTk obj.Token
+	args  []obj.Var
 }
 
 func (c funcCall) call() obj.Value {
 	var retv obj.Value
 	// Is built-in function?
-	if c.f.Tks == nil {
-		// Add name token for exceptions.
-		c.f.Tks = []obj.Tokens{{c.name}}
-		switch c.f.Name {
+	if c.f.tks == nil {
+		switch c.f.name {
 		case "print":
-			built_in.Print(c.f, c.args)
+			built_in.Print(c.errTk, c.args)
 		case "input":
-			return built_in.Input(c.f, c.args)
+			return built_in.Input(c.args)
 		case "len":
-			return built_in.Len(c.f, c.args)
+			return built_in.Len(c.args)
 		case "range":
-			return built_in.Range(c.f, c.args)
+			return built_in.Range(c.errTk, c.args)
 		case "calloc":
-			return built_in.Calloc(c.f, c.args)
+			return built_in.Calloc(c.errTk, c.args)
 		case "realloc":
-			return built_in.Realloc(c.f, c.args)
+			return built_in.Realloc(c.errTk, c.args)
 		case "string":
-			return built_in.String(c.f, c.args)
+			return built_in.String(c.args)
 		case "int":
-			return built_in.Int(c.f, c.args)
+			return built_in.Int(c.args)
 		case "float":
-			return built_in.Float(c.f, c.args)
+			return built_in.Float(c.args)
 		case "append":
-			return built_in.Append(c.f, c.args)
+			return built_in.Append(c.errTk, c.args)
 		default:
-			built_in.Exit(c.f, c.args)
+			built_in.Exit(c.errTk, c.args)
 		}
 		return retv
 	}
 	// Process block.
-	vars := c.src.vars
+	vars := c.f.src.vars
 	dlen := len(defers)
-	old := c.src.funcTempVars
-	if c.src.funcTempVars == -1 {
-		c.src.funcTempVars = 0
+	old := c.f.src.funcTempVars
+	if c.f.src.funcTempVars == -1 {
+		c.f.src.funcTempVars = 0
 	}
-	if c.src.funcTempVars == 0 {
-		c.src.vars = append(c.args, c.src.vars...)
+	if c.f.src.funcTempVars == 0 {
+		c.f.src.vars = append(c.args, c.f.src.vars...)
 	} else {
-		c.src.vars = append(c.args, c.src.vars[:len(c.src.vars)-c.src.funcTempVars]...)
+		c.f.src.vars = append(c.args, c.f.src.vars[:len(c.f.src.vars)-c.f.src.funcTempVars]...)
 	}
-	c.src.funcCount++
-	c.src.funcTempVars = len(c.args)
-	flen := len(c.src.funcs)
-	namei := c.src.i
-	itks := c.src.Tks
-	c.src.Tks = c.f.Tks
-	c.src.i = -1
+	c.f.src.funcCount++
+	c.f.src.funcTempVars = len(c.args)
+	flen := len(c.f.src.funcs)
+	namei := c.f.src.i
+	itks := c.f.src.Tks
+	c.f.src.Tks = c.f.tks
+	c.f.src.i = -1
 	// Interpret block.
 	b := obj.Block{
 		Try: func() {
 			for {
-				c.src.i++
-				tks := c.src.Tks[c.src.i]
+				c.f.src.i++
+				tks := c.f.src.Tks[c.f.src.i]
 				if tks[0].T == fract.End { // Block is ended.
 					break
-				} else if c.src.process(tks) == fract.FUNCReturn {
-					if c.src.retVal == nil {
+				} else if c.f.src.process(tks) == fract.FUNCReturn {
+					if c.f.src.retVal == nil {
 						break
 					}
-					retv = *c.src.retVal
-					c.src.retVal = nil
+					retv = *c.f.src.retVal
+					c.f.src.retVal = nil
 					break
 				}
 			}
 		},
 	}
 	b.Do()
-	c.src.Tks = itks
+	c.f.src.Tks = itks
 	// Remove temporary functions.
-	c.src.funcs = c.src.funcs[:flen]
+	c.f.src.funcs = c.f.src.funcs[:flen]
 	// Remove temporary variables.
-	c.src.vars = vars
-	c.src.funcCount--
-	c.src.funcTempVars = old
-	c.src.i = namei
+	c.f.src.vars = vars
+	c.f.src.funcCount--
+	c.f.src.funcTempVars = old
+	c.f.src.i = namei
 	if b.P.M != "" {
 		defers = defers[:dlen]
 		panic(b.P.M)
@@ -161,7 +168,7 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
 }
 
 type funcArgInfo struct {
-	f        obj.Func
+	f        Func
 	names    *[]string
 	tks      obj.Tokens
 	tk       obj.Token
@@ -176,10 +183,10 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	l := *i.index - *i.lstComma
 	if l < 1 {
 		fract.IPanic(i.tk, obj.SyntaxPanic, "Value is not given!")
-	} else if *i.count >= len(i.f.Params) {
+	} else if *i.count >= len(i.f.params) {
 		fract.IPanic(i.tk, obj.SyntaxPanic, "Argument overflow!")
 	}
-	param := i.f.Params[*i.count]
+	param := i.f.params[*i.count]
 	v := obj.Var{Name: param.Name}
 	vtks := *i.tks.Sub(*i.lstComma, l)
 	i.tk = vtks[0]
@@ -189,7 +196,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 		if l < 1 {
 			fract.IPanic(i.tk, obj.SyntaxPanic, "Value is not given!")
 		}
-		for _, pr := range i.f.Params {
+		for _, pr := range i.f.params {
 			if pr.Name == i.tk.V {
 				for _, name := range *i.names {
 					if name == i.tk.V {
@@ -227,53 +234,20 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 }
 
 // Process function call model and initialize model instance.
-func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
-	name := tks[0]
-	// Name is not defined?
-	namei, src := p.funcIndexByName(name)
-	var f obj.Func
-	if namei == -1 {
-		name := name
-		if j := strings.IndexByte(name.V, '.'); j != -1 {
-			if p.importIndexByName(name.V[:j]) == -1 {
-				fract.IPanic(name, obj.NamePanic, "'"+name.V[:j]+"' is not defined!")
-			}
-			src = p.Imports[p.importIndexByName(name.V[:j])].Src
-			name.V = name.V[j+1:]
-			for _, v := range src.vars {
-				if unicode.IsUpper(rune(v.Name[0])) && v.Name == name.V && !v.V.Arr && v.V.D[0].T == obj.VFunc {
-					name.F = nil
-					f = v.V.D[0].D.(obj.Func)
-					break
-				}
-			}
-		} else {
-			for _, current := range p.vars {
-				if current.Name == name.V && !current.V.Arr && current.V.D[0].T == obj.VFunc {
-					name.F = nil
-					f = current.V.D[0].D.(obj.Func)
-					src = p
-					break
-				}
-			}
-		}
-		if name.F != nil {
-			fract.IPanic(name, obj.NamePanic, "Function is not defined in this name: "+name.V)
-		}
-	} else {
-		f = src.funcs[namei]
-	}
+func (p *Parser) funcCallModel(f Func, tks obj.Tokens) funcCall {
 	var (
 		names []string
 		args  []obj.Var
 		count = 0
+		tk    = tks[0]
 	)
 	// Decompose arguments.
-	if tks, _ = decomposeBrace(&tks, "(", ")", false); tks != nil {
+	if tks, _ = decomposeBrace(&tks, "(", ")"); tks != nil {
 		var (
 			inf = funcArgInfo{
 				f:        f,
 				names:    &names,
+				tk:       tk,
 				tks:      tks,
 				count:    &count,
 				index:    new(int),
@@ -306,10 +280,10 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 		}
 	}
 	// All parameters is not defined?
-	if count < len(f.Params)-f.DefaultParamCount {
+	if count < len(f.params)-f.defaultParamCount {
 		var sb strings.Builder
 		sb.WriteString("All required positional arguments is not given:")
-		for _, p := range f.Params {
+		for _, p := range f.params {
 			if p.Default.D != nil {
 				break
 			}
@@ -322,26 +296,25 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 			}
 			sb.WriteString(msg)
 		}
-		fract.IPanic(name, obj.PlainPanic, sb.String()[:sb.Len()-1])
+		fract.IPanic(tk, obj.PlainPanic, sb.String()[:sb.Len()-1])
 	}
 	// Check default values.
-	for ; count < len(f.Params); count++ {
-		p := f.Params[count]
+	for ; count < len(f.params); count++ {
+		p := f.params[count]
 		if p.Default.D != nil {
 			args = append(args, obj.Var{Name: p.Name, V: p.Default})
 		}
 	}
 	return funcCall{
-		f:    f,
-		name: name,
-		src:  src,
-		args: args,
+		f:     f,
+		errTk: tk,
+		args:  args,
 	}
 }
 
 // funcCall call function and returns returned value.
-func (p *Parser) funcCall(tks obj.Tokens) obj.Value {
-	return p.funcCallModel(tks).call()
+func (p *Parser) funcCall(f Func, tks obj.Tokens) obj.Value {
+	return p.funcCallModel(f, tks).call()
 }
 
 // Process function declaration.
@@ -363,11 +336,12 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		fract.IPanic(name, obj.SyntaxPanic, "Function parentheses is not found!")
 	}
 	p.i++
-	f := obj.Func{
-		Name:      name.V,
-		Ln:        p.i,
-		Params:    []obj.Param{},
-		Protected: protected,
+	f := Func{
+		name:      name.V,
+		ln:        p.i,
+		params:    []obj.Param{},
+		protected: protected,
+		src:       p,
 	}
 	dtToken := tks[tkslen-1]
 	if dtToken.T != fract.Brace || dtToken.V != ")" {
@@ -388,7 +362,7 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 					fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 				}
 				lstp = obj.Param{Name: pr.V, Params: i > 0 && ptks[i-1].T == fract.Params}
-				f.Params = append(f.Params, lstp)
+				f.params = append(f.params, lstp)
 				pname = false
 				continue
 			} else {
@@ -418,8 +392,8 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 					if lstp.Params && !lstp.Default.Arr {
 						fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
 					}
-					f.Params[len(f.Params)-1] = lstp
-					f.DefaultParamCount++
+					f.params[len(f.params)-1] = lstp
+					f.defaultParamCount++
 					defaultDef = true
 					continue
 				}
@@ -435,7 +409,7 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		}
 	}
 	p.skipBlock(false)
-	f.Tks = p.Tks[f.Ln : p.i+1]
-	f.Ln = name.Ln
+	f.tks = p.Tks[f.ln : p.i+1]
+	f.ln = name.Ln
 	p.funcs = append(p.funcs, f)
 }

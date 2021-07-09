@@ -82,14 +82,6 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 		}
 		return false
 	}
-	// String comparison.
-	if !v0.Arr || !v1.Arr {
-		d0, d1 := v0.D[0], v1.D[0]
-		if (d0.T == obj.VStr && d1.T != obj.VStr) || (d0.T != obj.VStr && d1.T == obj.VStr) {
-			fract.IPanic(opr, obj.ValuePanic, "The in keyword should use with string or enumerable data types!")
-		}
-		return compVals(opr.V, d0, d1)
-	}
 	// Array comparison.
 	if v0.Arr || v1.Arr {
 		if (v0.Arr && !v1.Arr) || (!v0.Arr && v1.Arr) {
@@ -106,12 +98,15 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 		return true
 	}
 	// Single value comparison.
-	return compVals(opr.V, v0.D[0], v1.D[0])
+	d0, d1 := v0.D[0], v1.D[0]
+	if (d0.T == obj.VStr && d1.T != obj.VStr) || (d0.T != obj.VStr && d1.T == obj.VStr) {
+		fract.IPanic(opr, obj.ValuePanic, "The in keyword should use with string or enumerable data types!")
+	}
+	return compVals(opr.V, d0, d1)
 }
 
 // procCondition returns condition result.
 func (p *Parser) procCondition(tks obj.Tokens) string {
-	p.procRange(&tks)
 	T := obj.Value{D: []obj.Data{{D: "true"}}}
 	// Process condition.
 	ors := conditionalProcesses(tks, "||")
@@ -136,12 +131,11 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 				} else if i == len(and)-1 {
 					fract.IPanic(and[len(and)-1], obj.SyntaxPanic, "Comparison values are missing!")
 				}
-				if !comp(
-					p.procVal(*and.Sub(0, i)), p.procVal(*and.Sub(i+1, len(and)-i-1)), opr) {
+				if !comp(p.procVal(*and.Sub(0, i)), p.procVal(*and.Sub(i+1, len(and)-i-1)), opr) {
 					return "false"
 				}
 			}
-			return "true"
+			continue
 		}
 		i, opr := findConditionOpr(or)
 		// Operator is not found?
@@ -182,50 +176,6 @@ type process struct {
 	s   obj.Tokens // Tokens of second value.
 	sv  obj.Value  // Value instance of second value.
 	opr obj.Token  // Operator of process.
-}
-
-// Tokenize array.
-func tokenizeArray(dts []obj.Data) obj.Tokens {
-	tks := obj.Tokens{obj.Token{V: "[", T: fract.Brace}}
-	for _, d := range dts {
-		switch d.T {
-		case obj.VArray:
-			tks = append(tks, tokenizeArray(d.D.([]obj.Data))...)
-		default:
-			tks = append(tks, obj.Token{V: d.String(), T: fract.Value})
-		}
-		tks = append(tks, obj.Token{V: ",", T: fract.Comma})
-	}
-	tks[len(tks)-1] = obj.Token{V: "]", T: fract.Brace}
-	return tks
-}
-
-// procRange by value processor principles.
-func (p *Parser) procRange(tks *obj.Tokens) {
-	for {
-		rg, i := decomposeBrace(tks, "(", ")", true)
-		/* Parentheses are not found! */
-		if i == -1 {
-			return
-		}
-		val := p.procVal(rg)
-		if val.Arr {
-			tks.Ins(i, tokenizeArray(val.D)...)
-		} else {
-			if val.D[0].T == obj.VStr {
-				tks.Ins(i, obj.Token{V: "'" + val.D[0].String() + "'", T: fract.Value})
-			} else {
-				tks.Ins(i, obj.Token{
-					V: val.D[0].String(),
-					T: fract.Value,
-					//! Add another fields for panic.
-					Ln:  rg[0].Ln,
-					Col: rg[0].Col,
-					F:   rg[0].F,
-				})
-			}
-		}
-	}
 }
 
 // solve process.
@@ -558,6 +508,36 @@ func applyMinus(minus bool, v obj.Value) obj.Value {
 	return val
 }
 
+func (p *Parser) selectArrayElems(v obj.Value, indexes []int) obj.Value {
+	var r obj.Value
+	if !v.Arr {
+		r.D = append(r.D, obj.Data{D: "", T: obj.VStr})
+	}
+	if len(indexes) == 1 {
+		d := v.D[indexes[0]]
+		if d.T == obj.VArray {
+			r.D = d.D.([]obj.Data)
+			r.Arr = true
+		} else {
+			r.D = []obj.Data{d}
+		}
+	} else {
+		for _, pos := range indexes {
+			if v.Arr {
+				r.D = append(r.D, v.D[pos])
+			} else {
+				if v.D[0].T == obj.VStr {
+					r.D[0].D = r.D[0].String() + string(v.D[0].String()[pos])
+				} else {
+					r.D[0].D = r.D[0].String() + fmt.Sprint(v.D[0].String()[pos])
+				}
+			}
+		}
+		r.Arr = len(indexes) > 1 && r.D[0].T != obj.VStr || r.D[0].T == obj.VArray
+	}
+	return r
+}
+
 // Process value part.
 func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 	var (
@@ -566,6 +546,8 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		minus = tk.T == fract.Name && tk.V[0] == '-'
 	)
 	if len(tks) == 1 {
+		tk := tks[0]
+		minus := tk.T == fract.Name && tk.V[0] == '-'
 		if tk.T == fract.Name {
 			vi, t, src := p.defByName(tk)
 			if vi == -1 {
@@ -621,56 +603,69 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		}
 		return r
 	}
-	if next := tks[1]; tk.T == fract.Name && next.T == fract.Brace {
-		switch next.V {
-		case "[":
-			vi, t, src := p.defByName(tk)
-			if vi == -1 || t != 'v' {
-				fract.IPanic(tk, obj.NamePanic, "Variable is not defined in this name: "+tk.V)
+	if i, tk := len(tks)-1, tks[len(tks)-1]; tk.T == fract.Brace {
+		bc := 0
+		switch tk.V {
+		case ")":
+			var vtks obj.Tokens
+			for ; i >= 0; i-- {
+				t := tks[i]
+				if t.T != fract.Brace {
+					continue
+				}
+				switch t.V {
+				case ")":
+					bc++
+				case "(":
+					bc--
+				}
+				if bc > 0 {
+					continue
+				}
+				vtks = tks[:i]
+				break
 			}
-			vtks := tks[2:]
-			// Index value is empty?
-			if vtks == nil {
-				fract.IPanic(tk, obj.SyntaxPanic, "Index is not given!")
+			if len(vtks) == 0 && bc == 0 {
+				tk, tks = tks[0], tks[1:len(tks)-1]
+				if len(tks) == 0 {
+					fract.IPanic(tk, obj.SyntaxPanic, "Invalid syntax!")
+				}
+				return applyMinus(minus, p.procVal(tks))
 			}
-			v := src.vars[vi]
-			if !v.V.Arr && v.V.D[0].T != obj.VStr {
+			// Function call.
+			v := p.procValPart(nilch, vtks)
+			if v.Arr || v.D[0].T != obj.VFunc {
+				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
+			}
+			r = applyMinus(minus, p.funcCall(v.D[0].D.(Func), tks[len(vtks):]))
+		case "]":
+			var vtks obj.Tokens
+			for ; i >= 0; i-- {
+				t := tks[i]
+				if t.T != fract.Brace {
+					continue
+				}
+				switch t.V {
+				case "]":
+					bc++
+				case "[":
+					bc--
+				}
+				if bc > 0 {
+					continue
+				}
+				vtks = tks[:i]
+				break
+			}
+			if len(vtks) == 0 && bc == 0 {
+				return applyMinus(minus, p.procEnumerableVal(tks))
+			}
+			v := p.procValPart(nilch, vtks)
+			if !v.Arr && v.D[0].T != obj.VStr {
 				fract.IPanic(tk, obj.ValuePanic, "Index accessor is cannot used with non-array variables!")
 			}
-			val := p.procVal(vtks)
-			i := indexes(v.V, val, tk)
-			var d []obj.Data
-			if !v.V.Arr {
-				d = append(d, obj.Data{D: "", T: obj.VStr})
-			}
-			for _, pos := range i {
-				if v.V.Arr {
-					d = append(d, v.V.D[pos])
-				} else {
-					if v.V.D[0].T == obj.VStr {
-						d[0].D = d[0].String() + string(v.V.D[0].String()[pos])
-					} else {
-						d[0].D = d[0].String() + fmt.Sprint(v.V.D[0].String()[pos])
-					}
-				}
-			}
-			r.Arr = len(i) > 1 && d[0].T != obj.VStr || d[0].T == obj.VArray
-			r.D = d
-			r = applyMinus(minus, r)
-		case "(":
-			v := p.funcCall(tks)
-			if nilch && v.D == nil {
-				fract.IPanic(tk, obj.ValuePanic, "Function is not return any value!")
-			}
-			r = applyMinus(minus, v)
+			r = applyMinus(minus, p.selectArrayElems(v, indexes(v, p.procVal(tks[len(vtks):]), tk)))
 		}
-		return r
-	} else if tk.T == fract.Brace {
-		switch tk.V {
-		case "[":
-			r = applyMinus(minus, p.procEnumerableVal(tks))
-		}
-		return r
 	}
 	return r
 }
@@ -851,7 +846,6 @@ func (p *Parser) procEnumerableVal(tks obj.Tokens) obj.Value {
 
 // Process value.
 func (p *Parser) procVal(tks obj.Tokens) obj.Value {
-	p.procRange(&tks)
 	// Is conditional expression?
 	if j, _ := findConditionOpr(tks); j != -1 {
 		return obj.Value{D: []obj.Data{{D: p.procCondition(tks), T: obj.VBool}}}

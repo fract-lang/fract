@@ -42,7 +42,7 @@ var (
 // Parser of Fract.
 type Parser struct {
 	vars         []obj.Var
-	funcs        []obj.Func
+	funcs        []Func
 	funcTempVars int // Count of function temporary variables.
 	loopCount    int
 	funcCount    int
@@ -273,8 +273,8 @@ func (p *Parser) definedName(name obj.Token) int {
 		name.V = name.V[1:]
 	}
 	for _, f := range p.funcs {
-		if f.Name == name.V {
-			return f.Ln
+		if f.name == name.V {
+			return f.ln
 		}
 	}
 	for _, v := range p.vars {
@@ -300,14 +300,14 @@ func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
 		p = p.Imports[p.importIndexByName(name.V[:i])].Src
 		name.V = name.V[i+1:]
 		for i, current := range p.funcs {
-			if (current.Tks == nil || unicode.IsUpper(rune(current.Name[0]))) && current.Name == name.V {
+			if (current.tks == nil || unicode.IsUpper(rune(current.name[0]))) && current.name == name.V {
 				return i, p
 			}
 		}
 		return -1, nil
 	}
 	for j, f := range p.funcs {
-		if f.Name == name.V {
+		if f.name == name.V {
 			return j, p
 		}
 	}
@@ -410,27 +410,12 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 
 // decomposeBrace returns range tokens and index of first parentheses.
 // Remove range tokens from original tokens.
-func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int) {
+func decomposeBrace(tks *obj.Tokens, ob, cb string) (obj.Tokens, int) {
 	fst := -1
-	/* Find open parentheses. */
-	if noChk {
-		n := false
-		for i, t := range *tks {
-			if t.T == fract.Name {
-				n = true
-			} else if !n && t.T == fract.Brace && t.V == ob {
-				fst = i
-				break
-			} else {
-				n = false
-			}
-		}
-	} else {
-		for i, t := range *tks {
-			if t.T == fract.Brace && t.V == ob {
-				fst = i
-				break
-			}
+	for i, t := range *tks {
+		if t.T == fract.Brace && t.V == ob {
+			fst = i
+			break
 		}
 	}
 	// Skip find close parentheses and result ready steps
@@ -439,8 +424,7 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int
 		return nil, -1
 	}
 	// Find close parentheses.
-	c := 1
-	l := 0
+	c, l := 1, 0
 	for i := fst + 1; i < len(*tks); i++ {
 		tk := (*tks)[i]
 		if tk.T == fract.Brace {
@@ -457,11 +441,7 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int
 		l++
 	}
 	rg := tks.Sub(fst+1, l)
-	// Bracket content is empty?
-	if noChk && rg == nil {
-		fract.IPanic((*tks)[fst], obj.SyntaxPanic, "Brackets content are empty!")
-	}
-	/* Remove range from original tokens. */
+	// Remove range from original tokens.
 	tks.Rem(fst, (fst+l+1)-fst+1)
 	if rg == nil {
 		return nil, fst
@@ -612,12 +592,12 @@ func conditionalProcesses(tks obj.Tokens, opr string) []obj.Tokens {
 // ApplyBuildInFunctions to parser source.
 func (p *Parser) AddBuiltInFuncs() {
 	p.funcs = append(p.funcs,
-		obj.Func{ // print function.
-			Name:              "print",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 2,
-			Params: []obj.Param{{
+		Func{ // print function.
+			name:              "print",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 2,
+			params: []obj.Param{{
 				Name: "value",
 				Default: obj.Value{
 					D: []obj.Data{
@@ -632,12 +612,12 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			}},
-		}, obj.Func{ // input function.
-			Name:              "input",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 1,
-			Params: []obj.Param{{
+		}, Func{ // input function.
+			name:              "input",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 1,
+			params: []obj.Param{{
 				Name: "message",
 				Default: obj.Value{
 					D: []obj.Data{
@@ -645,31 +625,31 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			}},
-		}, obj.Func{ // exit function.
-			Name:              "exit",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 1,
-			Params: []obj.Param{{
+		}, Func{ // exit function.
+			name:              "exit",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 1,
+			params: []obj.Param{{
 				Name: "code",
 				Default: obj.Value{
 					D: []obj.Data{{D: "0"}},
 				},
 			}},
-		}, obj.Func{ // len function.
-			Name:              "len",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 0,
-			Params: []obj.Param{
+		}, Func{ // len function.
+			name:              "len",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 0,
+			params: []obj.Param{
 				{Name: "object"},
 			},
-		}, obj.Func{ // range function.
-			Name:              "range",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 1,
-			Params: []obj.Param{
+		}, Func{ // range function.
+			name:              "range",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 1,
+			params: []obj.Param{
 				{Name: "start"},
 				{Name: "to"},
 				{
@@ -679,38 +659,38 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			},
-		}, obj.Func{ // calloc function.
-			Name:              "calloc",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 0,
-			Params: []obj.Param{
+		}, Func{ // calloc function.
+			name:              "calloc",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 0,
+			params: []obj.Param{
 				{Name: "size"},
 			},
-		}, obj.Func{ // realloc function.
-			Name:              "realloc",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 0,
-			Params: []obj.Param{
+		}, Func{ // realloc function.
+			name:              "realloc",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 0,
+			params: []obj.Param{
 				{Name: "base"},
 				{Name: "size"},
 			},
-		}, obj.Func{ // memset function.
-			Name:              "memset",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 0,
-			Params: []obj.Param{
+		}, Func{ // memset function.
+			name:              "memset",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 0,
+			params: []obj.Param{
 				{Name: "mem"},
 				{Name: "val"},
 			},
-		}, obj.Func{ // string function.
-			Name:              "string",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 1,
-			Params: []obj.Param{
+		}, Func{ // string function.
+			name:              "string",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 1,
+			params: []obj.Param{
 				{Name: "object"},
 				{
 					Name: "type",
@@ -721,12 +701,12 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			},
-		}, obj.Func{ // int function.
-			Name:              "int",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 1,
-			Params: []obj.Param{
+		}, Func{ // int function.
+			name:              "int",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 1,
+			params: []obj.Param{
 				{Name: "object"},
 				{
 					Name: "type",
@@ -737,20 +717,20 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			},
-		}, obj.Func{ // float function.
-			Name:              "float",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 0,
-			Params: []obj.Param{
+		}, Func{ // float function.
+			name:              "float",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 0,
+			params: []obj.Param{
 				{Name: "object"},
 			},
-		}, obj.Func{ // append function.
-			Name:              "append",
-			Protected:         true,
-			Tks:               nil,
-			DefaultParamCount: 0,
-			Params: []obj.Param{
+		}, Func{ // append function.
+			name:              "append",
+			protected:         true,
+			tks:               nil,
+			defaultParamCount: 0,
+			params: []obj.Param{
 				{Name: "dest"},
 				{Name: "src", Params: true},
 			},
@@ -851,16 +831,17 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 	case fract.Macro: // Macro.
 		return p.procMacro(tks)
 	case fract.Defer: // Defer.
-		if l := len(tks); l < 2 {
-			fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")
-		} else if tks[1].T != fract.Name {
-			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-		} else if l < 3 {
-			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-		} else if tks[2].T != fract.Brace || tks[2].V != "(" {
-			fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
-		}
-		defers = append(defers, p.funcCallModel(tks[1:]))
+	// TODO: Update compatibility to new function system.
+	/*if l := len(tks); l < 2 {
+		fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")
+	} else if tks[1].T != fract.Name {
+		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
+	} else if l < 3 {
+		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
+	} else if tks[2].T != fract.Brace || tks[2].V != "(" {
+		fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
+	}
+	defers = append(defers, p.funcCallModel(tks[1:]))*/
 	default:
 		fract.IPanic(fst, obj.SyntaxPanic, "Invalid syntax!")
 	}
