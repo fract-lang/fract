@@ -36,7 +36,7 @@ import (
 
 // Returns ns of command.
 func ns(cmd string) string {
-	i := strings.Index(cmd, " ")
+	i := strings.IndexByte(cmd, ' ')
 	if i == -1 {
 		return cmd
 	}
@@ -45,7 +45,7 @@ func ns(cmd string) string {
 
 // Remove namespace from command.
 func remns(cmd string) string {
-	i := strings.Index(cmd, " ")
+	i := strings.IndexByte(cmd, ' ')
 	if i == -1 {
 		return ""
 	}

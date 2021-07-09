@@ -293,7 +293,7 @@ func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
 	if name.Val[0] == '-' { // Ignore minus.
 		name.Val = name.Val[1:]
 	}
-	if i := strings.Index(name.Val, "."); i != -1 {
+	if i := strings.IndexByte(name.Val, '.'); i != -1 {
 		if p.importIndexByName(name.Val[:i]) == -1 {
 			fract.IPanic(name, obj.NamePanic, "'"+name.Val[:i]+"' is not defined!")
 		}
@@ -322,7 +322,7 @@ func (p *Parser) varIndexByName(name obj.Token) (int, *Parser) {
 	if name.Val[0] == '-' { // Ignore minus.
 		name.Val = name.Val[1:]
 	}
-	if i := strings.Index(name.Val, "."); i != -1 {
+	if i := strings.IndexByte(name.Val, '.'); i != -1 {
 		if iindex := p.importIndexByName(name.Val[:i]); iindex == -1 {
 			fract.IPanic(name, obj.NamePanic, "'"+name.Val[:i]+"' is not defined!")
 		} else {

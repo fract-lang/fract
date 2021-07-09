@@ -230,7 +230,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 	var f obj.Func
 	if namei == -1 {
 		name := name
-		if j := strings.Index(name.Val, "."); j != -1 {
+		if j := strings.IndexByte(name.Val, '.'); j != -1 {
 			if p.importIndexByName(name.Val[:j]) == -1 {
 				fract.IPanic(name, obj.NamePanic, "'"+name.Val[:j]+"' is not defined!")
 			}
