@@ -97,9 +97,9 @@ func (c funcCall) call() obj.Value {
 	c.src.funcCount--
 	c.src.funcTempVars = old
 	c.src.i = namei
-	if b.E.Msg != "" {
+	if b.P.M != "" {
 		defers = defers[:dlen]
-		panic(fmt.Errorf(b.E.Msg))
+		panic(b.P.M)
 	}
 	for i := len(defers) - 1; i >= dlen; i-- {
 		defers[i].call()
@@ -171,9 +171,9 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	var paramSet bool
 	l := *i.index - *i.lstComma
 	if l < 1 {
-		fract.Error(i.tk, "Value is not defined!")
+		fract.IPanic(i.tk, obj.SyntaxPanic, "Value is not given!")
 	} else if *i.count >= len(i.f.Params) {
-		fract.Error(i.tk, "Argument overflow!")
+		fract.IPanic(i.tk, obj.SyntaxPanic, "Argument overflow!")
 	}
 	param := i.f.Params[*i.count]
 	v := obj.Var{Name: param.Name}
@@ -183,13 +183,13 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	if l >= 2 && isParamSet(vtks) {
 		l -= 2
 		if l < 1 {
-			fract.Error(i.tk, "Value is not defined!")
+			fract.IPanic(i.tk, obj.SyntaxPanic, "Value is not given!")
 		}
 		for _, pr := range i.f.Params {
 			if pr.Name == i.tk.Val {
 				for _, name := range *i.names {
 					if name == i.tk.Val {
-						fract.Error(i.tk, "Keyword argument repeated!")
+						fract.IPanic(i.tk, obj.SyntaxPanic, "Keyword argument repeated!")
 					}
 				}
 				*i.count++
@@ -206,10 +206,10 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 				return retv
 			}
 		}
-		fract.Error(i.tk, "Parameter is not defined in this name: "+i.tk.Val)
+		fract.IPanic(i.tk, obj.NamePanic, "Parameter is not defined in this name: "+i.tk.Val)
 	}
 	if paramSet {
-		fract.Error(i.tk, "After the parameter has been given a special value, all parameters must be shown privately!")
+		fract.IPanic(i.tk, obj.SyntaxPanic, "After the parameter has been given a special value, all parameters must be shown privately!")
 	}
 	*i.count++
 	*i.names = append(*i.names, v.Name)
@@ -232,7 +232,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 		name := name
 		if j := strings.Index(name.Val, "."); j != -1 {
 			if p.importIndexByName(name.Val[:j]) == -1 {
-				fract.Error(name, "'"+name.Val[:j]+"' is not defined!")
+				fract.IPanic(name, obj.NamePanic, "'"+name.Val[:j]+"' is not defined!")
 			}
 			src = p.Imports[p.importIndexByName(name.Val[:j])].Src
 			name.Val = name.Val[j+1:]
@@ -254,7 +254,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 			}
 		}
 		if name.F != nil {
-			fract.Error(name, "Function is not defined in this name: "+name.Val)
+			fract.IPanic(name, obj.NamePanic, "Function is not defined in this name: "+name.Val)
 		}
 	} else {
 		f = src.funcs[namei]
@@ -300,7 +300,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 	// All parameters is not defined?
 	if count < len(f.Params)-f.DefaultParamCount {
 		var sb strings.Builder
-		sb.WriteString("All required positional parameters is not defined:")
+		sb.WriteString("All required positional arguments is not given:")
 		for _, p := range f.Params {
 			if p.Default.D != nil {
 				break
@@ -314,7 +314,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 			}
 			sb.WriteString(msg)
 		}
-		fract.Error(name, sb.String()[:sb.Len()-1])
+		fract.IPanic(name, obj.PlainPanic, sb.String()[:sb.Len()-1])
 	}
 	// Check default values.
 	for ; count < len(f.Params); count++ {
@@ -342,17 +342,17 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	name := tks[1]
 	// Name is not name?
 	if name.T != fract.Name {
-		fract.Error(name, "This is not a valid name!")
+		fract.IPanic(name, obj.SyntaxPanic, "Invalid name!")
 	} else if strings.Contains(name.Val, ".") {
-		fract.Error(name, "Names is cannot include dot!")
+		fract.IPanic(name, obj.SyntaxPanic, "Names is cannot include dot!")
 	}
 	// Name is already defined?
 	if line := p.definedName(name); line != -1 {
-		fract.Error(name, "\""+name.Val+"\" is already defined at line: "+fmt.Sprint(line))
+		fract.IPanic(name, obj.NamePanic, "\""+name.Val+"\" is already defined at line: "+fmt.Sprint(line))
 	}
 	// Function parentheses are not defined?
 	if tkslen < 4 {
-		fract.Error(name, "Where is the function parentheses?")
+		fract.IPanic(name, obj.SyntaxPanic, "Function parentheses is not found!")
 	}
 	p.i++
 	f := obj.Func{
@@ -363,7 +363,7 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	}
 	dtToken := tks[tkslen-1]
 	if dtToken.T != fract.Brace || dtToken.Val != ")" {
-		fract.Error(dtToken, "Invalid syntax!")
+		fract.IPanic(dtToken, obj.SyntaxPanic, "Invalid syntax!")
 	}
 	if paramtks := tks.Sub(3, tkslen-4); paramtks != nil {
 		ptks := *paramtks
@@ -376,7 +376,7 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 				if pr.T == fract.Params {
 					continue
 				} else if pr.T != fract.Name {
-					fract.Error(pr, "Parameter name is not found!")
+					fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 				}
 				lstp = obj.Param{
 					Name:   pr.Val,
@@ -405,11 +405,11 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 						}
 					}
 					if i-start < 1 {
-						fract.Error(ptks[start-1], "Value is not defined!")
+						fract.IPanic(ptks[start-1], obj.SyntaxPanic, "Value is not given!")
 					}
 					lstp.Default = p.procVal(*ptks.Sub(start, i-start))
 					if lstp.Params && !lstp.Default.Arr {
-						fract.Error(pr, "Params parameter is can only take array values!")
+						fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
 					}
 					f.Params[len(f.Params)-1] = lstp
 					f.DefaultParamCount++
@@ -417,14 +417,14 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 					continue
 				}
 				if lstp.Default.D == nil && defaultDef {
-					fract.Error(pr, "All parameters after a given parameter with a default value must take a default value!")
+					fract.IPanic(pr, obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
 				} else if pr.T != fract.Comma {
-					fract.Error(pr, "Comma is not found!")
+					fract.IPanic(pr, obj.SyntaxPanic, "Comma is not found!")
 				}
 			}
 		}
 		if lstp.Default.D == nil && defaultDef {
-			fract.Error(tks[len(tks)-1], "All parameters after a given parameter with a default value must take a default value!")
+			fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
 		}
 	}
 	p.skipBlock(false)

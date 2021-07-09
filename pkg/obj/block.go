@@ -3,17 +3,15 @@ package obj
 // Code block instance.
 type Block struct {
 	Try   func()
-	Catch func(Exception)
-	E     Exception
+	Catch func(Panic)
+	P     Panic
 }
 
 func (b *Block) catch() {
 	if r := recover(); r != nil {
-		b.E = Exception{
-			Msg: r.(error).Error(),
-		}
+		b.P = r.(Panic)
 		if b.Catch != nil {
-			b.Catch(b.E)
+			b.Catch(b.P)
 		}
 	}
 }

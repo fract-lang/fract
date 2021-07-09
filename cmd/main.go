@@ -100,7 +100,7 @@ func interpret() {
 			if first := tokens[0]; first.T == fract.End {
 				c--
 				if c < 0 {
-					fract.Error(first, "The extra block end defined!")
+					fract.IPanic(first, obj.SyntaxPanic, "The extra block end defined!")
 				}
 			} else if parser.IsBlock(tokens) {
 				c++
@@ -114,12 +114,12 @@ func interpret() {
 	}
 }
 
-func catch(e obj.Exception) {
-	if e.Msg == "" {
+func catch(e obj.Panic) {
+	if e.M == "" {
 		return
 	}
 	fmt.Println("Fract is panicked, sorry this is a problem with Fract!")
-	fmt.Println(e.Msg)
+	fmt.Println(e.M)
 }
 
 func help(cmd string) {
@@ -168,7 +168,7 @@ func make(cmd string) {
 	p.AddBuiltInFuncs()
 	(&obj.Block{
 		Try: p.Interpret,
-		Catch: func(e obj.Exception) {
+		Catch: func(e obj.Panic) {
 			os.Exit(0)
 		},
 	}).Do()

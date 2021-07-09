@@ -8,7 +8,7 @@ import (
 // procTryCatch process try-catch blocks and returns keyword state.
 func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 	if len(tks) > 1 {
-		fract.Error(tks[1], "Invalid syntax!")
+		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 	}
 	fract.TryCount++
 	var (
@@ -40,7 +40,7 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			}
 			defers = defers[:dlen]
 		},
-		Catch: func(e obj.Exception) {
+		Catch: func(cp obj.Panic) {
 			p.loopCount = 0
 			fract.TryCount--
 			p.vars = p.vars[:vlen]
@@ -71,7 +71,7 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			}
 			// Catch block.
 			if len(tks) > 1 {
-				fract.Error(tks[1], "Invalid syntax!")
+				fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 			}
 			for {
 				p.i++

@@ -57,7 +57,7 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 	// In.
 	if opr.Val == "in" {
 		if !v1.Arr && v1.D[0].T != obj.VStr {
-			fract.Error(opr, "Value is not enumerable!")
+			fract.IPanic(opr, obj.ValuePanic, "Value is not enumerable!")
 		}
 		if v1.Arr {
 			dt := v0.String()
@@ -71,7 +71,7 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 				dt := v1.D[0].String()
 				for _, d := range v0.D {
 					if d.T != obj.VStr {
-						fract.Error(opr, "All datas is not string!")
+						fract.IPanic(opr, obj.ValuePanic, "All values is not string!")
 					}
 					if strings.Contains(dt, d.String()) {
 						return true
@@ -79,7 +79,7 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 				}
 			} else {
 				if v1.D[0].T != obj.VStr {
-					fract.Error(opr, "All datas is not string!")
+					fract.IPanic(opr, obj.ValuePanic, "All datas is not string!")
 				}
 				if strings.Contains(v1.D[0].String(), v1.D[0].String()) {
 					return true
@@ -92,7 +92,7 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 	if !v0.Arr || !v1.Arr {
 		d0, d1 := v0.D[0], v1.D[0]
 		if (d0.T == obj.VStr && d1.T != obj.VStr) || (d0.T != obj.VStr && d1.T == obj.VStr) {
-			fract.Error(opr, "The in keyword should use with string or enumerable data types!")
+			fract.IPanic(opr, obj.ValuePanic, "The in keyword should use with string or enumerable data types!")
 		}
 		return compVals(opr.Val, d0, d1)
 	}
@@ -138,9 +138,9 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 				}
 				// Operator is first or last?
 				if i == 0 {
-					fract.Error(and[0], "Comparison values are missing!")
+					fract.IPanic(and[0], obj.SyntaxPanic, "Comparison values are missing!")
 				} else if i == len(and)-1 {
-					fract.Error(and[len(and)-1], "Comparison values are missing!")
+					fract.IPanic(and[len(and)-1], obj.SyntaxPanic, "Comparison values are missing!")
 				}
 				if !comp(
 					p.procVal(*and.Sub(0, i)), p.procVal(*and.Sub(i+1, len(and)-i-1)), opr) {
@@ -160,9 +160,9 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 		}
 		// Operator is first or last?
 		if i == 0 {
-			fract.Error(or[0], "Comparison values are missing!")
+			fract.IPanic(or[0], obj.SyntaxPanic, "Comparison values are missing!")
 		} else if i == len(or)-1 {
-			fract.Error(or[len(or)-1], "Comparison values are missing!")
+			fract.IPanic(or[len(or)-1], obj.SyntaxPanic, "Comparison values are missing!")
 		}
 		if comp(p.procVal(*or.Sub(0, i)), p.procVal(*or.Sub(i+1, len(or)-i-1)), opr) {
 			return "true"
@@ -176,7 +176,7 @@ func arith(tks obj.Token, d obj.Data) string {
 	ret := d.String()
 	switch d.T {
 	case obj.VFunc:
-		fract.Error(tks, "\""+ret+"\" is not compatible with arithmetic processes!")
+		fract.IPanic(tks, obj.ArithmeticPanic, "\""+ret+"\" is not compatible with arithmetic processes!")
 	}
 	return ret
 }
@@ -258,7 +258,7 @@ func solve(opr obj.Token, a, b float64) float64 {
 		r = a * b
 	case "/", "//": // Division.
 		if a == 0 || b == 0 {
-			fract.Error(opr, "Divide by zero!")
+			fract.Panic(opr, obj.DivideByZeroPanic, "Divide by zero!")
 		}
 		r = a / b
 		if opr.Val == "//" {
@@ -276,16 +276,16 @@ func solve(opr obj.Token, a, b float64) float64 {
 		r = math.Mod(a, b)
 	case "<<": // Left shift.
 		if b < 0 {
-			fract.Error(opr, "Shifter is cannot should be negative!")
+			fract.IPanic(opr, obj.ArithmeticPanic, "Shifter is cannot should be negative!")
 		}
 		r = float64(int(a) << int(b))
 	case ">>": // Right shift.
 		if b < 0 {
-			fract.Error(opr, "Shifter is cannot should be negative!")
+			fract.IPanic(opr, obj.ArithmeticPanic, "Shifter is cannot should be negative!")
 		}
 		r = float64(int(a) >> int(b))
 	default:
-		fract.Error(opr, "Operator is invalid!")
+		fract.IPanic(opr, obj.SyntaxPanic, "Operator is invalid!")
 	}
 	return r
 }
@@ -337,7 +337,7 @@ func solveProc(p process) obj.Value {
 					}
 				}
 			default:
-				fract.Error(p.opr, "This operator is not defined for string types!")
+				fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
 			}
 			return v
 		}
@@ -350,10 +350,10 @@ func solveProc(p process) obj.Value {
 					return v
 				}
 				if len(p.fv.D[0].String()) != len(p.sv.D) && (len(p.fv.D[0].String()) != 1 && len(p.sv.D) != 1) {
-					fract.Error(p.s[0], "Array element count is not one or equals to first array!")
+					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Array element count is not one or equals to first array!")
 				}
 				if strings.Contains(p.sv.D[0].String(), ".") {
-					fract.Error(p.s[0], "Only string and integer values cannot concatenate string values!")
+					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
 				}
 				r, _ := strconv.ParseInt(p.sv.D[0].String(), 10, 64)
 				rn := rune(r)
@@ -365,13 +365,13 @@ func solveProc(p process) obj.Value {
 					case "-":
 						sb.WriteByte(byte(r - rn))
 					default:
-						fract.Error(p.opr, "This operator is not defined for string types!")
+						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
 					}
 				}
 				v.D[0].D = sb.String()
 			} else {
 				if p.sv.D[0].T != obj.VInt {
-					fract.Error(p.s[0], "Only string and integer values cannot concatenate string values!")
+					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
 				}
 				var sb strings.Builder
 				rs, _ := strconv.ParseInt(p.sv.D[0].String(), 10, 64)
@@ -383,7 +383,7 @@ func solveProc(p process) obj.Value {
 					case "-":
 						sb.WriteByte(byte(r - rn))
 					default:
-						fract.Error(p.opr, "This operator is not defined for string types!")
+						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
 					}
 				}
 				v.D[0].D = sb.String()
@@ -395,10 +395,10 @@ func solveProc(p process) obj.Value {
 					return v
 				}
 				if len(p.fv.D[0].String()) != len(p.sv.D) && (len(p.fv.D[0].String()) != 1 && len(p.sv.D) != 1) {
-					fract.Error(p.s[0], "Array element count is not one or equals to first array!")
+					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Array element count is not one or equals to first array!")
 				}
 				if strings.Contains(p.fv.D[0].String(), ".") {
-					fract.Error(p.s[0], "Only string and integer values cannot concatenate string values!")
+					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
 				}
 				rs, _ := strconv.ParseInt(p.fv.D[0].String(), 10, 64)
 				rn := rune(rs)
@@ -410,13 +410,13 @@ func solveProc(p process) obj.Value {
 					case "-":
 						sb.WriteByte(byte(r - rn))
 					default:
-						fract.Error(p.opr, "This operator is not defined for string types!")
+						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
 					}
 				}
 				v.D[0].D = sb.String()
 			} else {
 				if p.fv.D[0].T != obj.VInt {
-					fract.Error(p.f[0], "Only string and integer values cannot concatenate string values!")
+					fract.IPanic(p.f[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
 				}
 				var sb strings.Builder
 				rs, _ := strconv.ParseInt(p.fv.D[0].String(), 10, 64)
@@ -428,7 +428,7 @@ func solveProc(p process) obj.Value {
 					case "-":
 						sb.WriteByte(byte(r - rn))
 					default:
-						fract.Error(p.opr, "This operator is not defined for string types!")
+						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
 					}
 				}
 				v.D[0].D = sb.String()
@@ -447,7 +447,7 @@ func solveProc(p process) obj.Value {
 			return v
 		}
 		if len(p.fv.D) != len(p.sv.D) && (len(p.fv.D) != 1 && len(p.sv.D) != 1) {
-			fract.Error(p.s[0], "Array element count is not one or equals to first array!")
+			fract.IPanic(p.s[0], obj.ArithmeticPanic, "Array element count is not one or equals to first array!")
 		}
 		if len(p.fv.D) == 1 || len(p.sv.D) == 1 {
 			f, s := p.fv, p.sv
@@ -575,7 +575,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		if tk.T == fract.Name {
 			vi, t, src := p.defByName(tk)
 			if vi == -1 {
-				fract.Error(tk, "Variable is not defined in this name: "+tk.Val)
+				fract.IPanic(tk, obj.NamePanic, "Variable is not defined in this name: "+tk.Val)
 			}
 			switch t {
 			case 'f': // Function.
@@ -632,16 +632,16 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		case "[":
 			vi, t, src := p.defByName(tk)
 			if vi == -1 || t != 'v' {
-				fract.Error(tk, "Variable is not defined in this name: "+tk.Val)
+				fract.IPanic(tk, obj.NamePanic, "Variable is not defined in this name: "+tk.Val)
 			}
 			vtks := tks[2:]
 			// Index value is empty?
 			if vtks == nil {
-				fract.Error(tk, "Index is not defined!")
+				fract.IPanic(tk, obj.SyntaxPanic, "Index is not given!")
 			}
 			v := src.vars[vi]
 			if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
-				fract.Error(tk, "Index accessor is cannot used with non-array variables!")
+				fract.IPanic(tk, obj.ValuePanic, "Index accessor is cannot used with non-array variables!")
 			}
 			val := p.procVal(vtks)
 			i := indexes(v.Val, val, tk)
@@ -666,7 +666,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		case "(":
 			v := p.funcCall(tks)
 			if nilch && v.D == nil {
-				fract.Error(tk, "Function is not return any value!")
+				fract.IPanic(tk, obj.ValuePanic, "Function is not return any value!")
 			}
 			r = applyMinus(minus, v)
 		}
@@ -701,7 +701,7 @@ func (p *Parser) procArrayVal(tks obj.Tokens) obj.Value {
 		} else if t.T == fract.Comma && bc == 0 {
 			lst := tks.Sub(comma, j-comma)
 			if lst == nil {
-				fract.Error(fst, "Value is not defined!")
+				fract.IPanic(fst, obj.SyntaxPanic, "Value is not given!")
 			}
 			val := p.procVal(*lst)
 			if val.Arr {
@@ -715,7 +715,7 @@ func (p *Parser) procArrayVal(tks obj.Tokens) obj.Value {
 	if comma < len(tks)-1 {
 		lst := tks.Sub(comma, len(tks)-comma-1)
 		if lst == nil {
-			fract.Error(fst, "Value is not defined!")
+			fract.IPanic(fst, obj.SyntaxPanic, "Value is not given!")
 		}
 		val := p.procVal(*lst)
 		if val.Arr {
@@ -765,28 +765,28 @@ func (p *Parser) procListComprehension(tks obj.Tokens) obj.Value {
 		ltks = tks[len(stks)+1 : len(tks)-1]
 	}
 	if len(ltks) < 2 {
-		fract.Error(ltks[0], "Variable name is not defined!")
+		fract.IPanic(ltks[0], obj.SyntaxPanic, "Variable name is not given!")
 	}
 	nametk := ltks[1]
 	// Name is not name?
 	if nametk.T != fract.Name {
-		fract.Error(nametk, "This is not a valid name!")
+		fract.IPanic(nametk, obj.SyntaxPanic, "This is not a valid name!")
 	}
 	if ln := p.definedName(nametk); ln != -1 {
-		fract.Error(nametk, "\""+nametk.Val+"\" is already defined at line: "+fmt.Sprint(ln))
+		fract.IPanic(nametk, obj.NamePanic, "\""+nametk.Val+"\" is already defined at line: "+fmt.Sprint(ln))
 	}
 	if len(ltks) < 3 {
-		fract.Errorc(ltks[0].F, ltks[0].Ln, ltks[1].Col+len(ltks[1].Val), "Value is not defined!")
+		fract.IPanicC(ltks[0].F, ltks[0].Ln, ltks[1].Col+len(ltks[1].Val), obj.SyntaxPanic, "Value is not given!")
 	}
 	if vtks, inTk := ltks.Sub(3, len(ltks)-3), ltks[2]; vtks != nil {
 		ltks = *vtks
 	} else {
-		fract.Error(inTk, "Value is not defined!")
+		fract.IPanic(inTk, obj.SyntaxPanic, "Value is not given!")
 	}
 	varr := p.procVal(ltks)
 	// Type is not array?
 	if !varr.Arr && varr.D[0].T != obj.VStr {
-		fract.Error(ltks[0], "Foreach loop must defined array value!")
+		fract.IPanic(ltks[0], obj.ValuePanic, "Foreach loop must defined array value!")
 	}
 	p.vars = append(p.vars, obj.Var{Name: nametk.Val, Val: obj.Value{}})
 	vlen := len(p.vars)

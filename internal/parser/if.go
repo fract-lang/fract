@@ -12,7 +12,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 	// Condition is empty?
 	if ctks == nil {
 		first := tks[0]
-		fract.Errorc(first.F, first.Ln, first.Col+len(first.Val), "Condition is empty!")
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Condition is empty!")
 	}
 	s := p.procCondition(*ctks)
 	vlen := len(p.vars)
@@ -31,7 +31,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			// Condition is empty?
 			if ctks == nil {
 				first := tks[0]
-				fract.Errorc(first.F, first.Ln, first.Col+len(first.Val), "Condition is empty!")
+				fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Condition is empty!")
 			}
 			if s == "true" {
 				p.skipBlock(false)
@@ -72,7 +72,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			continue
 		} else if first.T == fract.Else { // Else block.
 			if len(tks) > 1 {
-				fract.Error(first, "Else block is not take any arguments!")
+				fract.IPanic(first, obj.SyntaxPanic, "Else block is not take any arguments!")
 			}
 			if s == "true" {
 				p.skipBlock(false)

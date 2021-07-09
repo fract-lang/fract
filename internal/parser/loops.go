@@ -50,7 +50,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 						continue
 					} else if tks[0].T == fract.Else { // Else block.
 						if len(tks) > 1 {
-							fract.Error(tks[0], "Else block is not take any arguments!")
+							fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
 						}
 						p.skipBlock(false)
 						p.i--
@@ -88,7 +88,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 					continue
 				} else if tks[0].T == fract.Else { // Else block.
 					if len(tks) > 1 {
-						fract.Error(tks[0], "Else block is not take any arguments!")
+						fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
 					}
 					if c == "true" {
 						p.skipBlock(false)
@@ -154,38 +154,38 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	nametk := tks[0]
 	// Name is not name?
 	if nametk.T != fract.Name {
-		fract.Error(nametk, "This is not a valid name!")
+		fract.IPanic(nametk, obj.SyntaxPanic, "This is not a valid name!")
 	}
 	if ln := p.definedName(nametk); ln != -1 {
-		fract.Error(nametk, "\""+nametk.Val+"\" is already defined at line: "+fmt.Sprint(ln))
+		fract.IPanic(nametk, obj.NamePanic, "\""+nametk.Val+"\" is already defined at line: "+fmt.Sprint(ln))
 	}
 	// Element name?
 	ename := ""
 	if tks[1].T == fract.Comma {
 		if len(tks) < 3 || tks[2].T != fract.Name {
-			fract.Error(tks[1], "Element name is not defined!")
+			fract.IPanic(tks[1], obj.SyntaxPanic, "Element name is not defined!")
 		}
 		if tks[2].Val != "_" {
 			ename = tks[2].Val
 			if ln := p.definedName(tks[2]); ln != -1 {
-				fract.Error(tks[2], "\""+ename+"\" is already defined at line: "+fmt.Sprint(ln))
+				fract.IPanic(tks[2], obj.NamePanic, "\""+ename+"\" is already defined at line: "+fmt.Sprint(ln))
 			}
 		}
 		if len(tks)-3 == 0 {
 			tks[2].Col += len(tks[2].Val)
-			fract.Error(tks[2], "Value is not defined!")
+			fract.IPanic(tks[2], obj.SyntaxPanic, "Value is not given!")
 		}
 		tks = tks[2:]
 	}
 	if vtks, inTk := tks.Sub(2, len(tks)-2), tks[1]; vtks != nil {
 		tks = *vtks
 	} else {
-		fract.Error(inTk, "Value is not defined!")
+		fract.IPanic(inTk, obj.SyntaxPanic, "Value is not given!")
 	}
 	v := p.procVal(tks)
 	// Type is not array?
 	if !v.Arr && v.D[0].T != obj.VStr {
-		fract.Error(tks[0], "Foreach loop must defined array value!")
+		fract.IPanic(tks[0], obj.ValuePanic, "Foreach loop must defined array value!")
 	}
 	// Empty array?
 	if v.Arr && len(v.D) == 0 || v.D[0].T == obj.VStr && v.D[0].D == "" {
@@ -197,7 +197,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 				return kws
 			} else if tks[0].T == fract.Else { // Else block.
 				if len(tks) > 1 {
-					fract.Error(tks[0], "Else block is not take any arguments!")
+					fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
 				}
 				for {
 					p.i++
@@ -274,7 +274,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			continue
 		} else if tks[0].T == fract.Else { // Else block.
 			if len(tks) > 1 {
-				fract.Error(tks[0], "Else block is not take any arguments!")
+				fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
 			}
 			p.skipBlock(false)
 			p.i--

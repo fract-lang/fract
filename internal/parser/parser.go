@@ -95,11 +95,11 @@ func (p *Parser) ready() {
 	for i, tks := range p.Tks {
 		if fst := tks[0]; fst.T == fract.End {
 			if len(tks) > 1 {
-				fract.Error(tks[1], "Invalid syntax!")
+				fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 			}
 			bc--
 			if bc < 0 {
-				fract.Error(fst, "The extra block end defined!")
+				fract.IPanic(fst, obj.SyntaxPanic, "The extra block end defined!")
 			}
 		} else if fst.T == fract.Macro {
 			if IsBlock(tks) {
@@ -109,11 +109,11 @@ func (p *Parser) ready() {
 				}
 			} else if tks[1].T == fract.End {
 				if len(tks) > 2 {
-					fract.Error(tks[2], "Invalid syntax!")
+					fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
 				}
 				mbc--
 				if mbc < 0 {
-					fract.Error(fst, "The extra block end defined!")
+					fract.IPanic(fst, obj.SyntaxPanic, "The extra block end defined!")
 				}
 			}
 		} else if IsBlock(tks) {
@@ -124,7 +124,7 @@ func (p *Parser) ready() {
 		}
 	}
 	if bc > 0 || mbc > 0 { // Check blocks.
-		fract.Error(p.Tks[lst][0], "Block is expected ending...")
+		fract.IPanic(p.Tks[lst][0], obj.SyntaxPanic, "Block is expected ending...")
 	}
 }
 
@@ -184,11 +184,11 @@ func indexes(arr, val obj.Value, tk obj.Token) []int {
 		var i []int
 		for _, d := range val.D {
 			if d.T != obj.VInt {
-				fract.Error(tk, "Only integer values can used in index access!")
+				fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 			}
 			pos, err := strconv.Atoi(d.String())
 			if err != nil {
-				fract.Error(tk, "Value out of range!")
+				fract.IPanic(tk, obj.OutOfRangePanic, "Value out of range!")
 			}
 			if arr.Arr {
 				pos = procIndex(len(arr.D), pos)
@@ -196,18 +196,18 @@ func indexes(arr, val obj.Value, tk obj.Token) []int {
 				pos = procIndex(len(arr.D[0].String()), pos)
 			}
 			if pos == -1 {
-				fract.Error(tk, "Index is out of range!")
+				fract.IPanic(tk, obj.OutOfRangePanic, "Index is out of range!")
 			}
 			i = append(i, pos)
 		}
 		return i
 	}
 	if val.D[0].T != obj.VInt {
-		fract.Error(tk, "Only integer values can used in index access!")
+		fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 	}
 	pos, err := strconv.Atoi(val.String())
 	if err != nil {
-		fract.Error(tk, "Value out of range!")
+		fract.IPanic(tk, obj.OutOfRangePanic, "Value out of range!")
 	}
 	if arr.Arr {
 		pos = procIndex(len(arr.D), pos)
@@ -215,7 +215,7 @@ func indexes(arr, val obj.Value, tk obj.Token) []int {
 		pos = procIndex(len(arr.D[0].String()), pos)
 	}
 	if pos == -1 {
-		fract.Error(tk, "Index is out of range!")
+		fract.IPanic(tk, obj.OutOfRangePanic, "Index is out of range!")
 	}
 	return []int{pos}
 }
@@ -295,7 +295,7 @@ func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
 	}
 	if i := strings.Index(name.Val, "."); i != -1 {
 		if p.importIndexByName(name.Val[:i]) == -1 {
-			fract.Error(name, "'"+name.Val[:i]+"' is not defined!")
+			fract.IPanic(name, obj.NamePanic, "'"+name.Val[:i]+"' is not defined!")
 		}
 		p = p.Imports[p.importIndexByName(name.Val[:i])].Src
 		name.Val = name.Val[i+1:]
@@ -324,7 +324,7 @@ func (p *Parser) varIndexByName(name obj.Token) (int, *Parser) {
 	}
 	if i := strings.Index(name.Val, "."); i != -1 {
 		if iindex := p.importIndexByName(name.Val[:i]); iindex == -1 {
-			fract.Error(name, "'"+name.Val[:i]+"' is not defined!")
+			fract.IPanic(name, obj.NamePanic, "'"+name.Val[:i]+"' is not defined!")
 		} else {
 			p = p.Imports[iindex].Src
 		}
@@ -357,7 +357,7 @@ func (p *Parser) importIndexByName(name string) int {
 // Check arithmetic processes validity.
 func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 	if tks[len(tks)-1].T == fract.Operator {
-		fract.Error(tks[len(tks)-1], "Operator overflow!")
+		fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "Operator overflow!")
 	}
 	var (
 		procs []obj.Tokens
@@ -369,7 +369,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 		switch t := tks[i]; t.T {
 		case fract.Operator:
 			if !opr {
-				fract.Error(t, "Operator spam!")
+				fract.IPanic(t, obj.SyntaxPanic, "Operator overflow!")
 			}
 			opr = false
 			if b > 0 {
@@ -388,17 +388,17 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				}
 			}
 			if b == 0 && t.T == fract.Comma {
-				fract.Error(t, "Invalid syntax!")
+				fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 			}
 			if i > 0 {
 				if lt := tks[i-1]; (lt.T == fract.Name || lt.T == fract.Value) && (t.T == fract.Name || t.T == fract.Value) {
-					fract.Error(t, "Invalid syntax!")
+					fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 				}
 			}
 			part = append(part, t)
 			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.Val != "[" && t.Val != "(" && t.Val != "{") && i < len(tks)-1
 		default:
-			fract.Error(t, "Invalid syntax!")
+			fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 		}
 	}
 	if len(part) != 0 {
@@ -457,7 +457,7 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int
 	rg := tks.Sub(fst+1, l)
 	// Bracket content is empty?
 	if noChk && rg == nil {
-		fract.Error((*tks)[fst], "Brackets content are empty!")
+		fract.IPanic((*tks)[fst], obj.SyntaxPanic, "Brackets content are empty!")
 	}
 	/* Remove range from original tokens. */
 	tks.Rem(fst, (fst+l+1)-fst+1)
@@ -587,13 +587,13 @@ func conditionalProcesses(tks obj.Tokens, opr string) []obj.Tokens {
 	i := nextConditionOpr(tks, last, opr)
 	for i != -1 {
 		if i-last == 0 {
-			fract.Error(tks[last], "Where is the condition?")
+			fract.IPanic(tks[last], obj.SyntaxPanic, "Condition expression is cannot given!")
 		}
 		exps = append(exps, *tks.Sub(last, i-last))
 		last = i + 1
 		i = nextConditionOpr(tks, last, opr) // Find next.
 		if i == len(tks)-1 {
-			fract.Error(tks[len(tks)-1], "Operator defined, but for what?")
+			fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "Operator overflow!")
 		}
 	}
 	if last != len(tks) {
@@ -791,7 +791,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		}
 	case fract.Protected: // Protected declaration.
 		if len(tks) < 2 {
-			fract.Error(fst, "Protected but what is it protected?")
+			fract.IPanic(fst, obj.SyntaxPanic, "Define is not given!")
 		}
 		second := tks[1]
 		tks = tks[1:]
@@ -801,7 +801,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		case fract.Func: // Function definition.
 			p.funcdec(tks, true)
 		default:
-			fract.Error(second, "Syntax error, you can protect only deletable objects!")
+			fract.IPanic(second, obj.SyntaxPanic, "Can protect only deletable objects!")
 		}
 	case fract.Var: // Variable definition.
 		p.vardec(tks, false)
@@ -816,17 +816,17 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		return state
 	case fract.Break: // Break loop.
 		if p.loopCount == 0 {
-			fract.Error(fst, "Break keyword only used in loops!")
+			fract.IPanic(fst, obj.SyntaxPanic, "Break keyword only used in loops!")
 		}
 		return fract.LOOPBreak
 	case fract.Continue: // Continue loop.
 		if p.loopCount == 0 {
-			fract.Error(fst, "Continue keyword only used in loops!")
+			fract.IPanic(fst, obj.SyntaxPanic, "Continue keyword only used in loops!")
 		}
 		return fract.LOOPContinue
 	case fract.Ret: // Return.
 		if p.funcCount == 0 {
-			fract.Error(fst, "Return keyword only used in functions!")
+			fract.IPanic(fst, obj.SyntaxPanic, "Return keyword only used in functions!")
 		}
 		if len(tks) > 1 {
 			value := p.procVal(tks[1:])
@@ -845,17 +845,17 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		return p.procMacro(tks)
 	case fract.Defer: // Defer.
 		if l := len(tks); l < 2 {
-			fract.Error(tks[0], "Function is not defined!")
+			fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")
 		} else if tks[1].T != fract.Name {
-			fract.Error(tks[1], "Invalid syntax!")
+			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 		} else if l < 3 {
-			fract.Error(tks[1], "Invalid syntax!")
+			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 		} else if tks[2].T != fract.Brace || tks[2].Val != "(" {
-			fract.Error(tks[2], "Invalid syntax!")
+			fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
 		}
 		defers = append(defers, p.funcCallModel(tks[1:]))
 	default:
-		fract.Error(fst, "Invalid syntax!")
+		fract.IPanic(fst, obj.SyntaxPanic, "Invalid syntax!")
 	}
 	return fract.None
 }

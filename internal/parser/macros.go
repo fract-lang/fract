@@ -13,7 +13,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 	// Condition is empty?
 	if ctks == nil {
 		first := tks[0]
-		fract.Errorc(first.F, first.Ln, first.Col+len(first.Val), "Condition is empty!")
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Condition is not given!")
 	}
 	vars := p.vars
 	funcs := p.funcs
@@ -44,7 +44,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 				// Condition is empty?
 				if ctks == nil {
 					first := tks[0]
-					fract.Errorc(first.F, first.Ln, first.Col+len(first.Val), "Condition is empty!")
+					fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.ValuePanic, "Condition is empty!")
 				}
 				if state == "true" {
 					p.skipBlock(false)
@@ -92,7 +92,7 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 				continue
 			} else if first.T == fract.Else { // Else block.
 				if len(tks) > 1 {
-					fract.Error(first, "Else block is not take any arguments!")
+					fract.IPanic(first, obj.SyntaxPanic, "Else block is not take any arguments!")
 				}
 				if state == "true" {
 					p.skipBlock(false)
@@ -157,7 +157,7 @@ func (p *Parser) procMacro(tks []obj.Token) uint8 {
 		switch tks[0].Val {
 		case "pragma":
 			if len(tks) != 2 || tks[1].T != fract.Name {
-				fract.Error(tks[0], "Invalid pragma syntax!")
+				fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid pragma syntax!")
 			}
 			switch tks[1].Val {
 			case "enofi":
@@ -165,13 +165,13 @@ func (p *Parser) procMacro(tks []obj.Token) uint8 {
 					p.loopCount = 0
 				}
 			default:
-				fract.Error(tks[1], "Invalid pragma!")
+				fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid pragma!")
 			}
 		default:
-			fract.Error(tks[0], "Invalid macro!")
+			fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid macro!")
 		}
 	default:
-		fract.Error(tks[0], "Invalid macro!")
+		fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid macro!")
 	}
 	return fract.None
 }

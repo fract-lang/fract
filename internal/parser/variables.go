@@ -19,31 +19,31 @@ type varinfo struct {
 func (p *Parser) varadd(md varinfo, tks obj.Tokens) {
 	name := tks[0]
 	if strings.Contains(name.Val, ".") {
-		fract.Error(name, "Names is cannot include dot!")
+		fract.IPanic(name, obj.SyntaxPanic, "Names is cannot include dot!")
 	} else if name.Val == "_" {
-		fract.Error(name, "Ignore operator is cannot be variable name!")
+		fract.IPanic(name, obj.SyntaxPanic, "Ignore operator is cannot be variable name!")
 	}
 	// Name is already defined?
 	if ln := p.definedName(name); ln != -1 {
-		fract.Error(name, "\""+name.Val+"\" is already defined at line: "+fmt.Sprint(ln))
+		fract.IPanic(name, obj.NamePanic, "\""+name.Val+"\" is already defined at line: "+fmt.Sprint(ln))
 	}
 	tksLen := len(tks)
 	// Setter is not defined?
 	if tksLen < 2 {
-		fract.Errorc(name.F, name.Ln, name.Col+len(name.Val), "Setter is not found!")
+		fract.IPanicC(name.F, name.Ln, name.Col+len(name.Val), obj.SyntaxPanic, "Setter is not found!")
 	}
 	setter := tks[1]
 	// Setter is not a setter operator?
 	if setter.T != fract.Operator && setter.Val != "=" {
-		fract.Error(setter, "This is not a setter operator: "+setter.Val)
+		fract.IPanic(setter, obj.SyntaxPanic, "This is not a setter operator: "+setter.Val)
 	}
 	// Value is not defined?
 	if tksLen < 3 {
-		fract.Errorc(setter.F, setter.Ln, setter.Col+len(setter.Val), "Value is not defined!")
+		fract.IPanicC(setter.F, setter.Ln, setter.Col+len(setter.Val), obj.SyntaxPanic, "Value is not given!")
 	}
 	v := p.procVal(*tks.Sub(2, tksLen-2))
 	if v.D == nil {
-		fract.Error(tks[2], "Invalid value!")
+		fract.IPanic(tks[2], obj.ValuePanic, "Invalid value!")
 	}
 	if p.funcTempVars != -1 {
 		p.funcTempVars++
@@ -64,7 +64,7 @@ func (p *Parser) vardec(tks obj.Tokens, protected bool) {
 	// Name is not defined?
 	if len(tks) < 2 {
 		first := tks[0]
-		fract.Errorc(first.F, first.Ln, first.Col+len(first.Val), "Name is not found!")
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Name is not given!")
 	}
 	md := varinfo{
 		constant:  tks[0].Val == "const",
@@ -101,7 +101,7 @@ func (p *Parser) vardec(tks obj.Tokens, protected bool) {
 			p.varadd(md, tks[lst:])
 		}
 	} else {
-		fract.Error(pre, "Invalid syntax!")
+		fract.IPanic(pre, obj.SyntaxPanic, "Invalid syntax!")
 	}
 }
 
@@ -110,18 +110,18 @@ func (p *Parser) varset(tks obj.Tokens) {
 	name := tks[0]
 	// Name is not name?
 	if name.T != fract.Name {
-		fract.Error(name, "This is not a valid name!")
+		fract.IPanic(name, obj.SyntaxPanic, "Invalid name!")
 	} else if name.Val == "_" {
-		fract.Error(name, "Ignore operator is cannot set!")
+		fract.IPanic(name, obj.SyntaxPanic, "Ignore operator is cannot set!")
 	}
 	j, _ := p.varIndexByName(name)
 	if j == -1 {
-		fract.Error(name, "Variable is not defined in this name: "+name.Val)
+		fract.IPanic(name, obj.NamePanic, "Variable is not defined in this name: "+name.Val)
 	}
 	v := p.vars[j]
 	// Check const state.
 	if v.Const {
-		fract.Error(tks[1], "Values is cannot changed of constant defines!")
+		fract.IPanic(tks[1], obj.SyntaxPanic, "Values is cannot changed of constant defines!")
 	}
 	var (
 		setpos []int
@@ -131,7 +131,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 	if setter.T == fract.Brace && setter.Val == "[" {
 		// Variable is not array?
 		if !v.Val.Arr && v.Val.D[0].T != obj.VStr {
-			fract.Error(setter, "Variable is not array!")
+			fract.IPanic(setter, obj.ValuePanic, "Variable is not array!")
 		}
 		bc := 1
 		// Find close bracket.
@@ -150,7 +150,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 			vtks := tks.Sub(2, j-2)
 			// Index value is empty?
 			if vtks == nil {
-				fract.Error(setter, "Index is not defined!")
+				fract.IPanic(setter, obj.SyntaxPanic, "Index is not given!")
 			}
 			tks.Rem(1, j)
 			setpos = indexes(v.Val, p.procVal(*vtks), tks[0])
@@ -160,11 +160,11 @@ func (p *Parser) varset(tks obj.Tokens) {
 	setter = tks[1]
 	// Value are not defined?
 	if len(tks) < 3 {
-		fract.Errorc(setter.F, setter.Ln, setter.Col+len(setter.Val), "Value is not defined!")
+		fract.IPanicC(setter.F, setter.Ln, setter.Col+len(setter.Val), obj.SyntaxPanic, "Value is not given!")
 	}
 	val := p.procVal(*tks.Sub(2, len(tks)-2))
 	if val.D == nil {
-		fract.Error(tks[2], "Invalid value!")
+		fract.IPanic(tks[2], obj.ValuePanic, "Invalid value!")
 	}
 	if setpos != nil {
 		for _, pos := range setpos {
@@ -182,9 +182,9 @@ func (p *Parser) varset(tks obj.Tokens) {
 					v.Val.D[pos] = d
 				} else {
 					if val.D[0].T != obj.VStr {
-						fract.Error(setter, "Value type is not string!")
+						fract.IPanic(setter, obj.ValuePanic, "Value type is not string!")
 					} else if len(val.D[0].String()) > 1 {
-						fract.Error(setter, "Value length is should be maximum one!")
+						fract.IPanic(setter, obj.ValuePanic, "Value length is should be maximum one!")
 					}
 					bytes := []byte(v.Val.D[0].String())
 					if val.D[0].D == "" {
@@ -231,9 +231,9 @@ func (p *Parser) varset(tks obj.Tokens) {
 						sv:  val,
 					})
 					if val.D[0].T != obj.VStr {
-						fract.Error(setter, "Value type is not string!")
+						fract.IPanic(setter, obj.ValuePanic, "Value type is not string!")
 					} else if len(val.D[0].String()) > 1 {
-						fract.Error(setter, "Value length is should be maximum one!")
+						fract.IPanic(setter, obj.ValuePanic, "Value length is should be maximum one!")
 					}
 					bytes := []byte(v.Val.D[0].String())
 					if val.D[0].D == "" {

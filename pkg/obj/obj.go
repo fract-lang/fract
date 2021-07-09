@@ -4,10 +4,6 @@ import (
 	"os"
 )
 
-type Exception struct {
-	Msg string
-}
-
 // Func instance.
 type Func struct {
 	Name              string

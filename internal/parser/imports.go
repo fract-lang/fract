@@ -18,7 +18,7 @@ func (p *Parser) Import() {
 		switch tks := p.Tks[p.i]; tks[0].T {
 		case fract.Protected: // Protected declaration.
 			if len(tks) < 2 {
-				fract.Error(tks[0], "Protected but what is it protected?")
+				fract.IPanic(tks[0], obj.SyntaxPanic, "Define is not given!")
 			}
 			second := tks[1]
 			tks = tks[1:]
@@ -27,7 +27,7 @@ func (p *Parser) Import() {
 			} else if second.T == fract.Func { // Function definition.
 				p.funcdec(tks, true)
 			} else {
-				fract.Error(second, "Syntax error, you can protect only deletable objects!")
+				fract.IPanic(second, obj.SyntaxPanic, "Can protect only deletable objects!")
 			}
 		case fract.Var: // Variable definition.
 			p.vardec(tks, false)
@@ -59,30 +59,30 @@ type importInfo struct {
 
 func (p *Parser) procImport(tks obj.Tokens) {
 	if len(tks) == 1 {
-		fract.Error(tks[0], "Imported but what?")
+		fract.IPanic(tks[0], obj.SyntaxPanic, "Import path is not given!")
 	}
 	if tks[1].T != fract.Name && (tks[1].T != fract.Value || tks[1].Val[0] != '"' && tks[1].Val[0] != '.') {
-		fract.Error(tks[1], "Import path should be string or standard path!")
+		fract.IPanic(tks[1], obj.ValuePanic, "Import path should be string or standard path!")
 	}
 	j := 1
 	if len(tks) > 2 {
 		if tks[1].T == fract.Name {
 			j = 2
 		} else {
-			fract.Error(tks[1], "Alias is should be name!")
+			fract.IPanic(tks[1], obj.NamePanic, "Alias is should be a invalid name!")
 		}
 	}
 	if j == 1 && len(tks) != 2 {
-		fract.Error(tks[2], "Invalid syntax!")
+		fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
 	} else if j == 2 && len(tks) != 3 {
-		fract.Error(tks[3], "Invalid syntax!")
+		fract.IPanic(tks[3], obj.SyntaxPanic, "Invalid syntax!")
 	}
 	src := new(Parser)
 	src.AddBuiltInFuncs()
 	var imppath string
 	if tks[j].T == fract.Name {
 		if !strings.HasPrefix(tks[j].Val, "std") {
-			fract.Error(tks[j], "Standard import should be starts with 'std' directory.")
+			fract.IPanic(tks[j], obj.ValuePanic, "Standard import should be starts with 'std' directory.")
 		}
 		switch tks[j].Val {
 		default:
@@ -95,11 +95,11 @@ func (p *Parser) procImport(tks obj.Tokens) {
 	info, err := os.Stat(imppath)
 	// Exists directory?
 	if imppath != "" && (err != nil || !info.IsDir()) {
-		fract.Error(tks[j], "Directory not found/access!")
+		fract.IPanic(tks[j], obj.PlainPanic, "Directory not found/access!")
 	}
 	infos, err := ioutil.ReadDir(imppath)
 	if err != nil {
-		fract.Error(tks[1], "There is a problem on import: "+err.Error())
+		fract.IPanic(tks[1], obj.PlainPanic, "There is a problem on import: "+err.Error())
 	}
 	// TODO: Improve naming.
 	var name string
@@ -111,7 +111,7 @@ func (p *Parser) procImport(tks obj.Tokens) {
 	// Check name.
 	for _, imp := range p.Imports {
 		if imp.Name == name {
-			fract.Error(tks[1], "\""+name+"\" is already defined!")
+			fract.IPanic(tks[1], obj.NamePanic, "\""+name+"\" is already defined!")
 		}
 	}
 	for _, i := range infos {
