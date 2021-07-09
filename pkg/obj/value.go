@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
+
+	"github.com/fract-lang/fract/pkg/arithmetic"
 )
 
 const (
@@ -66,6 +68,30 @@ func (d Data) Format() string {
 		}
 	}
 	return dt
+}
+
+func (d Data) Equals(dt Data) bool {
+	return (d.T == VStr && d.D == dt.D) || (d.T != VStr && arithmetic.Value(d.String()) == arithmetic.Value(dt.String()))
+}
+
+func (d Data) NotEquals(dt Data) bool {
+	return (d.T == VStr && d.D != dt.D) || (d.T != VStr && arithmetic.Value(d.String()) != arithmetic.Value(dt.String()))
+}
+
+func (d Data) Greater(dt Data) bool {
+	return (d.T == VStr && d.String() > dt.String()) || (d.T != VStr && arithmetic.Value(d.String()) > arithmetic.Value(dt.String()))
+}
+
+func (d Data) Less(dt Data) bool {
+	return (d.T == VStr && d.String() < dt.String()) || (d.T != VStr && arithmetic.Value(d.String()) < arithmetic.Value(dt.String()))
+}
+
+func (d Data) GreaterEquals(dt Data) bool {
+	return (d.T == VStr && d.String() >= dt.String()) || (d.T != VStr && arithmetic.Value(d.String()) >= arithmetic.Value(dt.String()))
+}
+
+func (d Data) LessEquals(dt Data) bool {
+	return (d.T == VStr && d.String() <= dt.String()) || (d.T != VStr && arithmetic.Value(d.String()) <= arithmetic.Value(dt.String()))
 }
 
 // Value intance.

@@ -22,16 +22,17 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			for {
 				p.i++
 				tks := p.Tks[p.i]
-				if tks[0].T == fract.End { // Block is ended.
-					break
-				} else if tks[0].T == fract.Catch { // Catch.
+				switch tks[0].T {
+				case fract.End: // Block is ended.
+					goto end
+				case fract.Catch: // Catch block.
 					p.skipBlock(false)
-					break
 				}
 				if kws = p.process(tks); kws != fract.None {
 					p.skipBlock(false)
 				}
 			}
+		end:
 			fract.TryCount--
 			p.vars = p.vars[:vlen]
 			p.funcs = p.funcs[:flen]

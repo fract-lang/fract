@@ -10,7 +10,7 @@ func (p *Parser) procDel(tks obj.Tokens) {
 	// Value is not defined?
 	if tkslen < 2 {
 		first := tks[0]
-		fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Define(s) is not given!")
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Define(s) is not given!")
 	}
 	comma := false
 	for j := 1; j < tkslen; j++ {
@@ -31,7 +31,7 @@ func (p *Parser) procDel(tks obj.Tokens) {
 		if pos == -1 {
 			pos, src := p.funcIndexByName(t)
 			if pos == -1 {
-				fract.IPanic(t, obj.NamePanic, "\""+t.Val+"\" is not defined!")
+				fract.IPanic(t, obj.NamePanic, "\""+t.V+"\" is not defined!")
 			}
 			// Protected?
 			if src.funcs[pos].Protected {

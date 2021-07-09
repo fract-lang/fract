@@ -12,7 +12,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 	// Condition is empty?
 	if ctks == nil {
 		first := tks[0]
-		fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Condition is empty!")
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Condition is empty!")
 	}
 	s := p.procCondition(*ctks)
 	vlen := len(p.vars)
@@ -22,16 +22,16 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 	for {
 		p.i++
 		tks := p.Tks[p.i]
-		first := tks[0]
-		if first.T == fract.End { // Block is ended.
+		switch tks[0].T {
+		case fract.End: // Block is ended.
 			goto end
-		} else if first.T == fract.ElseIf { // Else if block.
+		case fract.ElseIf: // Else if block.
 			tkslen = len(tks)
 			ctks := tks.Sub(1, tkslen-1)
 			// Condition is empty?
 			if ctks == nil {
 				first := tks[0]
-				fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Condition is empty!")
+				fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Condition is empty!")
 			}
 			if s == "true" {
 				p.skipBlock(false)
@@ -42,19 +42,19 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			for {
 				p.i++
 				tks := p.Tks[p.i]
-				first := tks[0]
-				if first.T == fract.End { // Block is ended.
+				switch tks[0].T {
+				case fract.End: // Block is ended.
 					goto end
-				} else if first.T == fract.If { // If block.
+				case fract.If: // If block.
 					if s == "true" && kws == fract.None {
 						p.procIf(tks)
 					} else {
 						p.skipBlock(true)
 					}
 					continue
-				} else if first.T == fract.ElseIf || first.T == fract.Else { // Else if or else block.
+				case fract.ElseIf, fract.Else: // Else if or else block.
 					p.i--
-					break
+					goto elifend
 				}
 				// Condition is true?
 				if s == "true" && kws == fract.None {
@@ -65,14 +65,15 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 					p.skipBlock(true)
 				}
 			}
+		elifend:
 			if s == "true" {
 				p.skipBlock(false)
 				goto end
 			}
 			continue
-		} else if first.T == fract.Else { // Else block.
+		case fract.Else: // Else block.
 			if len(tks) > 1 {
-				fract.IPanic(first, obj.SyntaxPanic, "Else block is not take any arguments!")
+				fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
 			}
 			if s == "true" {
 				p.skipBlock(false)
@@ -82,10 +83,10 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 			for {
 				p.i++
 				tks := p.Tks[p.i]
-				first := tks[0]
-				if first.T == fract.End { // Block is ended.
+				switch tks[0].T {
+				case fract.End: // Block is ended.
 					goto end
-				} else if first.T == fract.If { // If block.
+				case fract.If: // If block.
 					if kws == fract.None {
 						p.procIf(tks)
 					} else {

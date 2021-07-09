@@ -15,6 +15,19 @@ func prockws(kws uint8) uint8 {
 	return kws
 }
 
+// Process new kws state.
+func pkws(p *Parser, kws uint8, brk *bool) {
+	switch kws {
+	case fract.LOOPBreak, fract.FUNCReturn: // Break loop or return.
+		*brk = true
+		p.skipBlock(false)
+		p.i--
+	case fract.LOOPContinue: // Continue next.
+		p.skipBlock(false)
+		p.i--
+	}
+}
+
 // procLoop process loops and returns keyword state.
 func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	// Content is empty?
@@ -57,14 +70,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 						continue
 					}
 					kws = p.process(tks)
-					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
-						brk = true
-						p.skipBlock(false)
-						p.i--
-					} else if kws == fract.LOOPContinue { // Continue loop?
-						p.skipBlock(false)
-						p.i--
-					}
+					pkws(p, kws, &brk)
 				}
 			}
 			/* Interpret/skip block. */
@@ -114,14 +120,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 							return prockws(kws)
 						}
 						kws = p.process(tks)
-						if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
-							brk = true
-							p.skipBlock(false)
-							p.i--
-						} else if kws == fract.LOOPContinue { // Continue loop?
-							p.skipBlock(false)
-							p.i--
-						}
+						pkws(p, kws, &brk)
 					}
 				}
 				// Condition is true?
@@ -157,7 +156,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		fract.IPanic(nametk, obj.SyntaxPanic, "This is not a valid name!")
 	}
 	if ln := p.definedName(nametk); ln != -1 {
-		fract.IPanic(nametk, obj.NamePanic, "\""+nametk.Val+"\" is already defined at line: "+fmt.Sprint(ln))
+		fract.IPanic(nametk, obj.NamePanic, "\""+nametk.V+"\" is already defined at line: "+fmt.Sprint(ln))
 	}
 	// Element name?
 	ename := ""
@@ -165,14 +164,14 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		if len(tks) < 3 || tks[2].T != fract.Name {
 			fract.IPanic(tks[1], obj.SyntaxPanic, "Element name is not defined!")
 		}
-		if tks[2].Val != "_" {
-			ename = tks[2].Val
+		if tks[2].V != "_" {
+			ename = tks[2].V
 			if ln := p.definedName(tks[2]); ln != -1 {
 				fract.IPanic(tks[2], obj.NamePanic, "\""+ename+"\" is already defined at line: "+fmt.Sprint(ln))
 			}
 		}
 		if len(tks)-3 == 0 {
-			tks[2].Col += len(tks[2].Val)
+			tks[2].Col += len(tks[2].V)
 			fract.IPanic(tks[2], obj.SyntaxPanic, "Value is not given!")
 		}
 		tks = tks[2:]
@@ -210,22 +209,15 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 						return prockws(kws)
 					}
 					kws = p.process(tks)
-					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
-						brk = true
-						p.skipBlock(false)
-						p.i--
-					} else if kws == fract.LOOPContinue { // Continue loop?
-						p.skipBlock(false)
-						p.i--
-					}
+					pkws(p, kws, &brk)
 				}
 			}
 			p.skipBlock(true)
 		}
 	}
 	p.vars = append(p.vars,
-		obj.Var{Name: nametk.Val, Val: obj.Value{D: []obj.Data{{D: "0", T: obj.VInt}}}},
-		obj.Var{Name: ename, Val: obj.Value{}},
+		obj.Var{Name: nametk.V, V: obj.Value{D: []obj.Data{{D: "0", T: obj.VInt}}}},
+		obj.Var{Name: ename, V: obj.Value{}},
 	)
 	vlen := len(p.vars)
 	index := &p.vars[vlen-2]
@@ -242,9 +234,9 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	}
 	if element.Name != "" {
 		if v.Arr {
-			element.Val.D = []obj.Data{v.D[0]}
+			element.V.D = []obj.Data{v.D[0]}
 		} else {
-			element.Val.D = []obj.Data{{D: string(v.D[0].String()[0]), T: obj.VStr}}
+			element.V.D = []obj.Data{{D: string(v.D[0].String()[0]), T: obj.VStr}}
 		}
 	}
 	// Interpret block.
@@ -262,13 +254,13 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			}
 			p.i = iindex
 			if index.Name != "" {
-				index.Val.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInt}}
+				index.V.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInt}}
 			}
 			if element.Name != "" {
 				if v.Arr {
-					element.Val.D = []obj.Data{v.D[j]}
+					element.V.D = []obj.Data{v.D[j]}
 				} else {
-					element.Val.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VStr}}
+					element.V.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VStr}}
 				}
 			}
 			continue
@@ -281,14 +273,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			continue
 		}
 		kws = p.process(tks)
-		if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
-			brk = true
-			p.skipBlock(false)
-			p.i--
-		} else if kws == fract.LOOPContinue { // Continue next?
-			p.skipBlock(false)
-			p.i--
-		}
+		pkws(p, kws, &brk)
 	}
 	// Remove loop variables.
 	p.vars = vars[:len(vars)-2]

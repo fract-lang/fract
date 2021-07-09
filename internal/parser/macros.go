@@ -13,38 +13,35 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 	// Condition is empty?
 	if ctks == nil {
 		first := tks[0]
-		fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.SyntaxPanic, "Condition is not given!")
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Condition is not given!")
 	}
 	vars := p.vars
 	funcs := p.funcs
 	p.vars = []obj.Var{{
 		Name: "OS",
-		Val:  obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VStr}}},
+		V:    obj.Value{D: []obj.Data{{D: runtime.GOOS, T: obj.VStr}}},
 	}, {
 		Name: "ARCH",
-		Val: obj.Value{
-			D: []obj.Data{{D: runtime.GOARCH, T: obj.VStr}},
-		},
+		V:    obj.Value{D: []obj.Data{{D: runtime.GOARCH, T: obj.VStr}}},
 	}}
 	state := p.procCondition(*ctks)
 	kws := fract.None
-	/* Interpret/skip block. */
+	// Interpret/skip block.
 	for {
 		p.i++
 		tks := p.Tks[p.i]
-		first := tks[0]
-		if first.T == fract.Macro {
+		if tks[0].T == fract.Macro {
 			tks := tks[1:]
-			first = tks[0]
-			if first.T == fract.End { // Block is ended.
+			switch tks[0].T {
+			case fract.End: // Block is ended.
 				goto end
-			} else if first.T == fract.ElseIf { // Else if block.
+			case fract.ElseIf: // Else if block.
 				tlen = len(tks)
 				ctks := tks.Sub(1, tlen-1)
 				// Condition is empty?
 				if ctks == nil {
 					first := tks[0]
-					fract.IPanicC(first.F, first.Ln, first.Col+len(first.Val), obj.ValuePanic, "Condition is empty!")
+					fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.ValuePanic, "Condition is empty!")
 				}
 				if state == "true" {
 					p.skipBlock(false)
@@ -55,22 +52,21 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 				for {
 					p.i++
 					tks := p.Tks[p.i]
-					first := tks[0]
-					if first.T == fract.Macro {
+					if tks[0].T == fract.Macro {
 						tks := tks[1:]
-						first = tks[0]
-						if first.T == fract.End { // Block is ended.
+						switch tks[0].T {
+						case fract.End: // Block is ended.
 							goto end
-						} else if first.T == fract.If { // If block.
+						case fract.If: // If block.
 							if state == "true" && kws == fract.None {
 								p.procMacroIf(tks)
 							} else {
 								p.skipBlock(true)
 							}
 							continue
-						} else if first.T == fract.ElseIf || first.T == fract.Else { // Else if or else block.
+						case fract.ElseIf, fract.Else: // Else if or else block.
 							p.i--
-							break
+							goto elifend
 						}
 					}
 					// Condition is true?
@@ -85,14 +81,15 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 						p.skipBlock(true)
 					}
 				}
+			elifend:
 				if state == "true" {
 					p.skipBlock(false)
 					goto end
 				}
 				continue
-			} else if first.T == fract.Else { // Else block.
+			case fract.Else: // Else block.
 				if len(tks) > 1 {
-					fract.IPanic(first, obj.SyntaxPanic, "Else block is not take any arguments!")
+					fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
 				}
 				if state == "true" {
 					p.skipBlock(false)
@@ -105,10 +102,10 @@ func (p *Parser) procMacroIf(tks obj.Tokens) uint8 {
 					first := tks[0]
 					if first.T == fract.Macro {
 						tks = tks[1:]
-						first = tks[0]
-						if first.T == fract.End { // Block is ended.
+						switch tks[0].T {
+						case fract.End: // Block is ended.
 							goto end
-						} else if first.T == fract.If { // If block.
+						case fract.If: // If block.
 							if kws == fract.None {
 								p.procMacroIf(tks)
 							} else {
@@ -154,12 +151,12 @@ func (p *Parser) procMacro(tks []obj.Token) uint8 {
 	case fract.If:
 		return p.procMacroIf(tks)
 	case fract.Name:
-		switch tks[0].Val {
+		switch tks[0].V {
 		case "pragma":
 			if len(tks) != 2 || tks[1].T != fract.Name {
 				fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid pragma syntax!")
 			}
-			switch tks[1].Val {
+			switch tks[1].V {
 			case "enofi":
 				if p.loopCount == -1 {
 					p.loopCount = 0

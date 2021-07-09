@@ -18,7 +18,7 @@ type Func struct {
 type Var struct {
 	Name      string
 	Ln        int // Line of define.
-	Val       Value
+	V         Value
 	Const     bool
 	Mut       bool
 	Protected bool
@@ -27,7 +27,7 @@ type Var struct {
 // Token instance.
 type Token struct {
 	F   *File
-	Val string
+	V   string
 	T   uint8
 	Ln  int
 	Col int

@@ -269,16 +269,16 @@ func (p *Parser) defByName(name obj.Token) (int, rune, *Parser) {
 
 // Returns index of name is exist name, returns -1 if not.
 func (p *Parser) definedName(name obj.Token) int {
-	if name.Val[0] == '-' { // Ignore minus.
-		name.Val = name.Val[1:]
+	if name.V[0] == '-' { // Ignore minus.
+		name.V = name.V[1:]
 	}
 	for _, f := range p.funcs {
-		if f.Name == name.Val {
+		if f.Name == name.V {
 			return f.Ln
 		}
 	}
 	for _, v := range p.vars {
-		if v.Name == name.Val {
+		if v.Name == name.V {
 			return v.Ln
 		}
 	}
@@ -290,24 +290,24 @@ func (p *Parser) definedName(name obj.Token) int {
 
 // funcIndexByName returns index of function by name.
 func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
-	if name.Val[0] == '-' { // Ignore minus.
-		name.Val = name.Val[1:]
+	if name.V[0] == '-' { // Ignore minus.
+		name.V = name.V[1:]
 	}
-	if i := strings.IndexByte(name.Val, '.'); i != -1 {
-		if p.importIndexByName(name.Val[:i]) == -1 {
-			fract.IPanic(name, obj.NamePanic, "'"+name.Val[:i]+"' is not defined!")
+	if i := strings.IndexByte(name.V, '.'); i != -1 {
+		if p.importIndexByName(name.V[:i]) == -1 {
+			fract.IPanic(name, obj.NamePanic, "'"+name.V[:i]+"' is not defined!")
 		}
-		p = p.Imports[p.importIndexByName(name.Val[:i])].Src
-		name.Val = name.Val[i+1:]
+		p = p.Imports[p.importIndexByName(name.V[:i])].Src
+		name.V = name.V[i+1:]
 		for i, current := range p.funcs {
-			if (current.Tks == nil || unicode.IsUpper(rune(current.Name[0]))) && current.Name == name.Val {
+			if (current.Tks == nil || unicode.IsUpper(rune(current.Name[0]))) && current.Name == name.V {
 				return i, p
 			}
 		}
 		return -1, nil
 	}
 	for j, f := range p.funcs {
-		if f.Name == name.Val {
+		if f.Name == name.V {
 			return j, p
 		}
 	}
@@ -319,25 +319,25 @@ func (p *Parser) funcIndexByName(name obj.Token) (int, *Parser) {
 
 // varIndexByName returns index of variable by name.
 func (p *Parser) varIndexByName(name obj.Token) (int, *Parser) {
-	if name.Val[0] == '-' { // Ignore minus.
-		name.Val = name.Val[1:]
+	if name.V[0] == '-' { // Ignore minus.
+		name.V = name.V[1:]
 	}
-	if i := strings.IndexByte(name.Val, '.'); i != -1 {
-		if iindex := p.importIndexByName(name.Val[:i]); iindex == -1 {
-			fract.IPanic(name, obj.NamePanic, "'"+name.Val[:i]+"' is not defined!")
+	if i := strings.IndexByte(name.V, '.'); i != -1 {
+		if iindex := p.importIndexByName(name.V[:i]); iindex == -1 {
+			fract.IPanic(name, obj.NamePanic, "'"+name.V[:i]+"' is not defined!")
 		} else {
 			p = p.Imports[iindex].Src
 		}
-		name.Val = name.Val[i+1:]
+		name.V = name.V[i+1:]
 		for i, v := range p.vars {
-			if (v.Ln == -1 || unicode.IsUpper(rune(v.Name[0]))) && v.Name == name.Val {
+			if (v.Ln == -1 || unicode.IsUpper(rune(v.Name[0]))) && v.Name == name.V {
 				return i, p
 			}
 		}
 		return -1, nil
 	}
 	for j, v := range p.vars {
-		if v.Name == name.Val {
+		if v.Name == name.V {
 			return j, p
 		}
 	}
@@ -381,9 +381,10 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 			}
 		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In:
 			if t.T == fract.Brace {
-				if t.Val == "(" || t.Val == "[" || t.Val == "{" {
+				switch t.V {
+				case "(", "[", "{":
 					b++
-				} else {
+				default:
 					b--
 				}
 			}
@@ -396,7 +397,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				}
 			}
 			part = append(part, t)
-			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.Val != "[" && t.Val != "(" && t.Val != "{") && i < len(tks)-1
+			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.V != "[" && t.V != "(" && t.V != "{") && i < len(tks)-1
 		default:
 			fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 		}
@@ -417,7 +418,7 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int
 		for i, t := range *tks {
 			if t.T == fract.Name {
 				n = true
-			} else if !n && t.T == fract.Brace && t.Val == ob {
+			} else if !n && t.T == fract.Brace && t.V == ob {
 				fst = i
 				break
 			} else {
@@ -426,7 +427,7 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int
 		}
 	} else {
 		for i, t := range *tks {
-			if t.T == fract.Brace && t.Val == ob {
+			if t.T == fract.Brace && t.V == ob {
 				fst = i
 				break
 			}
@@ -443,9 +444,10 @@ func decomposeBrace(tks *obj.Tokens, ob, cb string, noChk bool) (obj.Tokens, int
 	for i := fst + 1; i < len(*tks); i++ {
 		tk := (*tks)[i]
 		if tk.T == fract.Brace {
-			if tk.Val == ob {
+			switch tk.V {
+			case ob:
 				c++
-			} else if tk.Val == cb {
+			case cb:
 				c--
 			}
 			if c == 0 {
@@ -503,7 +505,7 @@ func IsBlock(tks obj.Tokens) bool {
 func nextopr(tks []obj.Tokens) int {
 	high, mid, low := -1, -1, -1
 	for i, tslc := range tks {
-		switch tslc[0].Val {
+		switch tslc[0].V {
 		case "<<", ">>":
 			return i
 		case "**":
@@ -539,19 +541,21 @@ func findConditionOpr(tks obj.Tokens) (int, obj.Token) {
 	bc := 0
 	for i, t := range tks {
 		if t.T == fract.Brace {
-			if t.Val == "{" || t.Val == "[" || t.Val == "(" {
+			switch t.V {
+			case "{", "[", "(":
 				bc++
-			} else {
+			default:
 				bc--
 			}
 		}
 		if bc > 0 {
 			continue
 		}
-		if (t.T == fract.Operator && (t.Val == "&&" || t.Val == "||" ||
-			t.Val == "==" || t.Val == "<>" || t.Val == ">" || t.Val == "<" ||
-			t.Val == ">=" || t.Val == "<=")) || t.T == fract.In {
-			return i, t
+		if t.T == fract.Operator {
+			switch t.V {
+			case "&&", "||", "==", "<>", ">", "<", "<=", ">=":
+				return i, t
+			}
 		}
 	}
 	var tk obj.Token
@@ -564,16 +568,17 @@ func nextConditionOpr(tks obj.Tokens, pos int, opr string) int {
 	for ; pos < len(tks); pos++ {
 		t := tks[pos]
 		if t.T == fract.Brace {
-			if t.Val == "{" || t.Val == "[" || t.Val == "(" {
+			switch t.V {
+			case "{", "[", "(":
 				bc++
-			} else {
+			default:
 				bc--
 			}
 		}
 		if bc > 0 {
 			continue
 		}
-		if t.T == fract.Operator && t.Val == opr {
+		if t.T == fract.Operator && t.V == opr {
 			return pos
 		}
 	}
@@ -766,20 +771,22 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 			bc := 0
 			for _, t := range tks {
 				if t.T == fract.Brace {
-					if t.Val == "{" || t.Val == "[" || t.Val == "(" {
+					switch t.V {
+					case " {", "[", "(":
 						bc++
-					} else {
+					default:
 						bc--
 					}
 				}
 				if bc > 0 {
 					continue
 				}
-				if t.T == fract.Operator &&
-					(t.Val == "=" || t.Val == "+=" || t.Val == "-=" || t.Val == "*=" || t.Val == "/=" || t.Val == "%=" ||
-						t.Val == "^=" || t.Val == "<<=" || t.Val == ">>=" || t.Val == "|=" || t.Val == "&=") { // Variable setting.
-					p.varset(tks)
-					return fract.None
+				if t.T == fract.Operator {
+					switch t.V {
+					case "=", "+=", "-=", "*=", "/=", "%=", "^=", "<<=", ">>=", "|=", "&=":
+						p.varset(tks)
+						return fract.None
+					}
 				}
 			}
 		}
@@ -850,7 +857,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 		} else if l < 3 {
 			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-		} else if tks[2].T != fract.Brace || tks[2].Val != "(" {
+		} else if tks[2].T != fract.Brace || tks[2].V != "(" {
 			fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
 		}
 		defers = append(defers, p.funcCallModel(tks[1:]))

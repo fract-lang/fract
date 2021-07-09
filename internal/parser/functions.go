@@ -110,7 +110,7 @@ func (c funcCall) call() obj.Value {
 
 // isParamSet Argument type is param set?
 func isParamSet(tks obj.Tokens) bool {
-	return tks[0].T == fract.Name && tks[1].Val == "="
+	return tks[0].T == fract.Name && tks[1].V == "="
 }
 
 // paramsArgVals decompose and returns params values.
@@ -118,14 +118,18 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
 	retv := obj.Value{D: []obj.Data{}, Arr: true}
 	bc := 0
 	for ; *i < len(tks); *i++ {
-		tk := tks[*i]
-		if tk.T == fract.Brace {
-			if tk.Val == "(" || tk.Val == "{" || tk.Val == "[" {
+		switch tk := tks[*i]; tk.T {
+		case fract.Brace:
+			switch tk.V {
+			case "{", "[", "(":
 				bc++
-			} else {
+			default:
 				bc--
 			}
-		} else if tk.T == fract.Comma && bc == 0 {
+		case fract.Comma:
+			if bc != 0 {
+				break
+			}
 			vtks := tks.Sub(*lstComma, *i-*lstComma)
 			if isParamSet(*vtks) {
 				*i -= 4
@@ -186,27 +190,27 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 			fract.IPanic(i.tk, obj.SyntaxPanic, "Value is not given!")
 		}
 		for _, pr := range i.f.Params {
-			if pr.Name == i.tk.Val {
+			if pr.Name == i.tk.V {
 				for _, name := range *i.names {
-					if name == i.tk.Val {
+					if name == i.tk.V {
 						fract.IPanic(i.tk, obj.SyntaxPanic, "Keyword argument repeated!")
 					}
 				}
 				*i.count++
 				paramSet = true
-				*i.names = append(*i.names, i.tk.Val)
-				retv := obj.Var{Name: i.tk.Val}
+				*i.names = append(*i.names, i.tk.V)
+				retv := obj.Var{Name: i.tk.V}
 				//Parameter is params typed?
 				if pr.Params {
 					*i.lstComma += 2
-					retv.Val = p.paramsArgVals(i.tks, i.index, i.lstComma)
+					retv.V = p.paramsArgVals(i.tks, i.index, i.lstComma)
 				} else {
-					retv.Val = p.procVal(vtks[2:])
+					retv.V = p.procVal(vtks[2:])
 				}
 				return retv
 			}
 		}
-		fract.IPanic(i.tk, obj.NamePanic, "Parameter is not defined in this name: "+i.tk.Val)
+		fract.IPanic(i.tk, obj.NamePanic, "Parameter is not defined in this name: "+i.tk.V)
 	}
 	if paramSet {
 		fract.IPanic(i.tk, obj.SyntaxPanic, "After the parameter has been given a special value, all parameters must be shown privately!")
@@ -215,9 +219,9 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	*i.names = append(*i.names, v.Name)
 	// Parameter is params typed?
 	if param.Params {
-		v.Val = p.paramsArgVals(i.tks, i.index, i.lstComma)
+		v.V = p.paramsArgVals(i.tks, i.index, i.lstComma)
 	} else {
-		v.Val = p.procVal(vtks)
+		v.V = p.procVal(vtks)
 	}
 	return v
 }
@@ -230,31 +234,31 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 	var f obj.Func
 	if namei == -1 {
 		name := name
-		if j := strings.IndexByte(name.Val, '.'); j != -1 {
-			if p.importIndexByName(name.Val[:j]) == -1 {
-				fract.IPanic(name, obj.NamePanic, "'"+name.Val[:j]+"' is not defined!")
+		if j := strings.IndexByte(name.V, '.'); j != -1 {
+			if p.importIndexByName(name.V[:j]) == -1 {
+				fract.IPanic(name, obj.NamePanic, "'"+name.V[:j]+"' is not defined!")
 			}
-			src = p.Imports[p.importIndexByName(name.Val[:j])].Src
-			name.Val = name.Val[j+1:]
+			src = p.Imports[p.importIndexByName(name.V[:j])].Src
+			name.V = name.V[j+1:]
 			for _, v := range src.vars {
-				if unicode.IsUpper(rune(v.Name[0])) && v.Name == name.Val && !v.Val.Arr && v.Val.D[0].T == obj.VFunc {
+				if unicode.IsUpper(rune(v.Name[0])) && v.Name == name.V && !v.V.Arr && v.V.D[0].T == obj.VFunc {
 					name.F = nil
-					f = v.Val.D[0].D.(obj.Func)
+					f = v.V.D[0].D.(obj.Func)
 					break
 				}
 			}
 		} else {
 			for _, current := range p.vars {
-				if current.Name == name.Val && !current.Val.Arr && current.Val.D[0].T == obj.VFunc {
+				if current.Name == name.V && !current.V.Arr && current.V.D[0].T == obj.VFunc {
 					name.F = nil
-					f = current.Val.D[0].D.(obj.Func)
+					f = current.V.D[0].D.(obj.Func)
 					src = p
 					break
 				}
 			}
 		}
 		if name.F != nil {
-			fract.IPanic(name, obj.NamePanic, "Function is not defined in this name: "+name.Val)
+			fract.IPanic(name, obj.NamePanic, "Function is not defined in this name: "+name.V)
 		}
 	} else {
 		f = src.funcs[namei]
@@ -278,14 +282,18 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 			bc = 0
 		)
 		for *inf.index = 0; *inf.index < len(tks); *inf.index++ {
-			inf.tk = tks[*inf.index]
-			if inf.tk.T == fract.Brace {
-				if inf.tk.Val == "(" || inf.tk.Val == "{" || inf.tk.Val == "[" {
+			switch inf.tk = tks[*inf.index]; inf.tk.T {
+			case fract.Brace:
+				switch inf.tk.V {
+				case "{", "[", "(":
 					bc++
-				} else {
+				default:
 					bc--
 				}
-			} else if inf.tk.T == fract.Comma && bc == 0 {
+			case fract.Comma:
+				if bc != 0 {
+					break
+				}
 				args = append(args, p.procFuncArg(inf))
 				*inf.lstComma = *inf.index + 1
 			}
@@ -320,7 +328,7 @@ func (p *Parser) funcCallModel(tks obj.Tokens) funcCall {
 	for ; count < len(f.Params); count++ {
 		p := f.Params[count]
 		if p.Default.D != nil {
-			args = append(args, obj.Var{Name: p.Name, Val: p.Default})
+			args = append(args, obj.Var{Name: p.Name, V: p.Default})
 		}
 	}
 	return funcCall{
@@ -343,12 +351,12 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	// Name is not name?
 	if name.T != fract.Name {
 		fract.IPanic(name, obj.SyntaxPanic, "Invalid name!")
-	} else if strings.Contains(name.Val, ".") {
+	} else if strings.Contains(name.V, ".") {
 		fract.IPanic(name, obj.SyntaxPanic, "Names is cannot include dot!")
 	}
 	// Name is already defined?
 	if line := p.definedName(name); line != -1 {
-		fract.IPanic(name, obj.NamePanic, "\""+name.Val+"\" is already defined at line: "+fmt.Sprint(line))
+		fract.IPanic(name, obj.NamePanic, "\""+name.V+"\" is already defined at line: "+fmt.Sprint(line))
 	}
 	// Function parentheses are not defined?
 	if tkslen < 4 {
@@ -356,13 +364,13 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	}
 	p.i++
 	f := obj.Func{
-		Name:      name.Val,
+		Name:      name.V,
 		Ln:        p.i,
 		Params:    []obj.Param{},
 		Protected: protected,
 	}
 	dtToken := tks[tkslen-1]
-	if dtToken.T != fract.Brace || dtToken.Val != ")" {
+	if dtToken.T != fract.Brace || dtToken.V != ")" {
 		fract.IPanic(dtToken, obj.SyntaxPanic, "Invalid syntax!")
 	}
 	if paramtks := tks.Sub(3, tkslen-4); paramtks != nil {
@@ -373,31 +381,30 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		for i := 0; i < len(ptks); i++ {
 			pr := ptks[i]
 			if pname {
-				if pr.T == fract.Params {
+				switch pr.T {
+				case fract.Params:
 					continue
-				} else if pr.T != fract.Name {
+				case fract.Name:
 					fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 				}
-				lstp = obj.Param{
-					Name:   pr.Val,
-					Params: i > 0 && ptks[i-1].T == fract.Params,
-				}
+				lstp = obj.Param{Name: pr.V, Params: i > 0 && ptks[i-1].T == fract.Params}
 				f.Params = append(f.Params, lstp)
 				pname = false
 				continue
 			} else {
 				pname = true
 				// Default value definition?
-				if pr.Val == "=" {
+				if pr.V == "=" {
 					bc := 0
 					i++
 					start := i
 					for ; i < len(ptks); i++ {
 						pr = ptks[i]
 						if pr.T == fract.Brace {
-							if pr.Val == "{" || pr.Val == "(" || pr.Val == "[" {
+							switch pr.V {
+							case "{", "[", "(":
 								bc++
-							} else {
+							default:
 								bc--
 							}
 						} else if pr.T == fract.Comma {

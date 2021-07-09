@@ -22,11 +22,12 @@ func (p *Parser) Import() {
 			}
 			second := tks[1]
 			tks = tks[1:]
-			if second.T == fract.Var { // Variable definition.
+			switch second.T {
+			case fract.Var: // Variable definition.
 				p.vardec(tks, true)
-			} else if second.T == fract.Func { // Function definition.
+			case fract.Func: // Function definition.
 				p.funcdec(tks, true)
-			} else {
+			default:
 				fract.IPanic(second, obj.SyntaxPanic, "Can protect only deletable objects!")
 			}
 		case fract.Var: // Variable definition.
@@ -61,7 +62,7 @@ func (p *Parser) procImport(tks obj.Tokens) {
 	if len(tks) == 1 {
 		fract.IPanic(tks[0], obj.SyntaxPanic, "Import path is not given!")
 	}
-	if tks[1].T != fract.Name && (tks[1].T != fract.Value || tks[1].Val[0] != '"' && tks[1].Val[0] != '.') {
+	if tks[1].T != fract.Name && (tks[1].T != fract.Value || tks[1].V[0] != '"' && tks[1].V[0] != '.') {
 		fract.IPanic(tks[1], obj.ValuePanic, "Import path should be string or standard path!")
 	}
 	j := 1
@@ -81,12 +82,12 @@ func (p *Parser) procImport(tks obj.Tokens) {
 	src.AddBuiltInFuncs()
 	var imppath string
 	if tks[j].T == fract.Name {
-		if !strings.HasPrefix(tks[j].Val, "std") {
+		if !strings.HasPrefix(tks[j].V, "std") {
 			fract.IPanic(tks[j], obj.ValuePanic, "Standard import should be starts with 'std' directory.")
 		}
-		switch tks[j].Val {
+		switch tks[j].V {
 		default:
-			imppath = strings.ReplaceAll(tks[j].Val, ".", string(os.PathSeparator))
+			imppath = strings.ReplaceAll(tks[j].V, ".", string(os.PathSeparator))
 		}
 	} else {
 		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.procVal(obj.Tokens{tks[j]}).D[0].String()
@@ -106,7 +107,7 @@ func (p *Parser) procImport(tks obj.Tokens) {
 	if j == 1 {
 		name = info.Name()
 	} else {
-		name = tks[1].Val
+		name = tks[1].V
 	}
 	// Check name.
 	for _, imp := range p.Imports {
