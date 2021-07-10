@@ -123,7 +123,7 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 					if comp(p.procVal(and), T, opr) {
 						return "true"
 					}
-					continue
+					return "false"
 				}
 				// Operator is first or last?
 				if i == 0 {
@@ -131,7 +131,7 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 				} else if i == len(and)-1 {
 					fract.IPanic(and[len(and)-1], obj.SyntaxPanic, "Comparison values are missing!")
 				}
-				if !comp(p.procVal(*and.Sub(0, i)), p.procVal(*and.Sub(i+1, len(and)-i-1)), opr) {
+				if !comp(p.procVal(and[:i]), p.procVal(*and.Sub(i+1, len(and)-i-1)), opr) {
 					return "false"
 				}
 			}
@@ -152,7 +152,7 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 		} else if i == len(or)-1 {
 			fract.IPanic(or[len(or)-1], obj.SyntaxPanic, "Comparison values are missing!")
 		}
-		if comp(p.procVal(*or.Sub(0, i)), p.procVal(*or.Sub(i+1, len(or)-i-1)), opr) {
+		if comp(p.procVal(or[:i]), p.procVal(*or.Sub(i+1, len(or)-i-1)), opr) {
 			return "true"
 		}
 	}
