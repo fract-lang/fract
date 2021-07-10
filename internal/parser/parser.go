@@ -828,17 +828,39 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 	case fract.Macro: // Macro.
 		return p.procMacro(tks)
 	case fract.Defer: // Defer.
-	// TODO: Update compatibility to new function system.
-	/*if l := len(tks); l < 2 {
-		fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")
-	} else if tks[1].T != fract.Name {
-		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-	} else if l < 3 {
-		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-	} else if tks[2].T != fract.Brace || tks[2].V != "(" {
-		fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
-	}
-	defers = append(defers, p.funcCallModel(tks[1:]))*/
+		if l := len(tks); l < 2 {
+			fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")
+		} else if t := tks[l-1]; t.T != fract.Brace && t.V != ")" {
+			fract.IPanicC(tks[0].F, tks[0].Ln, tks[0].Col+len(tks[0].V), obj.SyntaxPanic, "Invalid syntax!")
+		}
+		var vtks obj.Tokens
+		bc := 0
+		for i := len(tks) - 1; i >= 0; i-- {
+			t := tks[i]
+			if t.T != fract.Brace {
+				continue
+			}
+			switch t.V {
+			case ")":
+				bc++
+			case "(":
+				bc--
+			}
+			if bc > 0 {
+				continue
+			}
+			vtks = tks[1:i]
+			break
+		}
+		if len(vtks) == 0 && bc == 0 {
+			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
+		}
+		// Function call.
+		v := p.procValPart(false, vtks)
+		if v.Arr || v.D[0].T != obj.VFunc {
+			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
+		}
+		defers = append(defers, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]))
 	default:
 		fract.IPanic(fst, obj.SyntaxPanic, "Invalid syntax!")
 	}
