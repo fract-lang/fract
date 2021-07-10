@@ -512,6 +512,29 @@ print("END")
 
 <#
 
+#>
+
+# Concurrency.
+func x()
+	for _, i in range(0, 100)
+		print(i, fin=' ')
+	end
+	print()
+	ret 'END!'
+end
+
+go x()
+go x()
+go x()
+go print(x())
+
+for _, a in range(1000, 100)
+	print(a, fin=' ')
+end
+print()
+
+<#
+
 # List comprehension.
 print([x*100 for x in range(1, 100)])
 print([x*100 for x in range(1, 100), x <= 50])

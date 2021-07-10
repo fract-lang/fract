@@ -500,6 +500,9 @@ func (l *Lex) Token() obj.Token {
 	case isKeyword(ln, "false"): // False.
 		tk.V = "false"
 		tk.T = fract.Value
+	case isKeyword(ln, "go"): // Concurrency.
+		tk.V = "go"
+		tk.T = fract.Go
 	case strings.HasPrefix(ln, "#>"): // Range comment open.
 		l.RangeComment = true
 		tk.V = "#>"

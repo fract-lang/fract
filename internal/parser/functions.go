@@ -58,35 +58,35 @@ func (c funcCall) call() obj.Value {
 		return retv
 	}
 	// Process block.
-	vars := c.f.src.vars
 	dlen := len(defers)
-	old := c.f.src.funcTempVars
-	if c.f.src.funcTempVars == -1 {
-		c.f.src.funcTempVars = 0
+	p := Parser{
+		vars:         nil,
+		funcs:        c.f.src.funcs,
+		funcTempVars: c.f.src.funcTempVars,
+		loopCount:    0,
+		funcCount:    1,
+		i:            -1,
+		Tks:          c.f.tks,
 	}
-	if c.f.src.funcTempVars == 0 {
-		c.f.src.vars = append(c.args, c.f.src.vars...)
+	if p.funcTempVars == -1 {
+		p.funcTempVars = 0
+	}
+	if p.funcTempVars == 0 {
+		p.vars = append(c.args, c.f.src.vars...)
 	} else {
-		c.f.src.vars = append(c.args, c.f.src.vars[:len(c.f.src.vars)-c.f.src.funcTempVars]...)
+		p.vars = append(c.args, c.f.src.vars[:len(c.f.src.vars)-p.funcTempVars]...)
 	}
-	c.f.src.funcCount++
-	c.f.src.funcTempVars = len(c.args)
-	flen := len(c.f.src.funcs)
-	namei := c.f.src.i
-	lc := c.f.src.loopCount
-	c.f.src.loopCount = 0
-	itks := c.f.src.Tks
-	c.f.src.Tks = c.f.tks
-	c.f.src.i = -1
+	p.funcTempVars = len(c.args)
 	// Interpret block.
 	b := obj.Block{
 		Try: func() {
 			for {
-				c.f.src.i++
-				tks := c.f.src.Tks[c.f.src.i]
+				p.i++
+				tks := p.Tks[p.i]
 				if tks[0].T == fract.End { // Block is ended.
 					break
-				} else if c.f.src.process(tks) == fract.FUNCReturn {
+				} else if p.process(tks) == fract.FUNCReturn {
+					c.f.src.retVal = p.retVal
 					if c.f.src.retVal == nil {
 						break
 					}
@@ -98,15 +98,6 @@ func (c funcCall) call() obj.Value {
 		},
 	}
 	b.Do()
-	c.f.src.Tks = itks
-	// Remove temporary functions.
-	c.f.src.funcs = c.f.src.funcs[:flen]
-	// Remove temporary variables.
-	c.f.src.vars = vars
-	c.f.src.loopCount = lc
-	c.f.src.funcCount--
-	c.f.src.funcTempVars = old
-	c.f.src.i = namei
 	if b.P.M != "" {
 		defers = defers[:dlen]
 		panic(b.P.M)

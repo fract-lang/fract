@@ -33,6 +33,7 @@ const (
 	Params              uint8 = 33
 	Macro               uint8 = 34
 	Defer               uint8 = 35
+	Go                  uint8 = 36
 
 	LOOPBreak    uint8 = 1
 	LOOPContinue uint8 = 2

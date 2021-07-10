@@ -60,7 +60,7 @@ func input(msg string) string {
 	return s.Text()
 }
 
-var p *parser.Parser = nil
+var p *parser.Parser
 
 func interpret() {
 	for {

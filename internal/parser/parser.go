@@ -807,7 +807,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		p.procImport(tks)
 	case fract.Macro: // Macro.
 		return p.procMacro(tks)
-	case fract.Defer: // Defer.
+	case fract.Defer, fract.Go: // Deferred or concurrent function calls.
 		if l := len(tks); l < 2 {
 			fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")
 		} else if t := tks[l-1]; t.T != fract.Brace && t.V != ")" {
@@ -840,7 +840,11 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		if v.Arr || v.D[0].T != obj.VFunc {
 			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 		}
-		defers = append(defers, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]))
+		if fst.T == fract.Defer {
+			defers = append(defers, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]))
+		} else {
+			go p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]).call()
+		}
 	default:
 		fract.IPanic(fst, obj.SyntaxPanic, "Invalid syntax!")
 	}
