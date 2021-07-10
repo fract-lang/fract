@@ -488,22 +488,18 @@ func solveProc(p process) obj.Value {
 }
 
 // applyMinus operator.
-func applyMinus(minus bool, v obj.Value) obj.Value {
-	if !minus {
+func applyMinus(minus obj.Token, v obj.Value) obj.Value {
+	if minus.V[0] != '-' {
 		return v
 	}
 	val := obj.Value{Arr: v.Arr, D: append([]obj.Data{}, v.D...)}
-	if val.Arr {
-		for i, d := range val.D {
-			switch d.T {
-			case obj.VBool, obj.VFloat, obj.VInt:
-				val.D[i].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Value(d.String()))
-			}
+	for i, d := range val.D {
+		switch d.T {
+		case obj.VBool, obj.VFloat, obj.VInt:
+			val.D[i].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Value(d.String()))
+		default:
+			fract.IPanic(minus, obj.ArithmeticPanic, "Bad operand type for unary!")
 		}
-		return val
-	}
-	if d := val.D[0]; d.T == obj.VBool || d.T == obj.VFloat || d.T == obj.VInt {
-		val.D[0].D = fmt.Sprintf(fract.FloatFormat, -arithmetic.Value(d.String()))
 	}
 	return val
 }
@@ -541,13 +537,10 @@ func (p *Parser) selectArrayElems(v obj.Value, indexes []int) obj.Value {
 // Process value part.
 func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 	var (
-		r     = obj.Value{}
-		tk    = tks[0]
-		minus = tk.T == fract.Name && tk.V[0] == '-'
+		r  = obj.Value{}
+		tk = tks[0]
 	)
 	if len(tks) == 1 {
-		tk := tks[0]
-		minus := tk.T == fract.Name && tk.V[0] == '-'
 		if tk.T == fract.Name {
 			vi, t, src := p.defByName(tk)
 			if vi == -1 {
@@ -562,7 +555,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 				if !v.Mut { //! Immutability.
 					val.D = append(make([]obj.Data, 0), v.V.D...)
 				}
-				r = applyMinus(minus, val)
+				r = applyMinus(tk, val)
 			}
 			return r
 		}
@@ -595,10 +588,10 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		if tk.T != fract.None {
 			if tk.V == "true" || tk.V == "false" {
 				r.D[0].T = obj.VBool
-				r = applyMinus(minus, r)
+				r = applyMinus(tk, r)
 			} else if tk.T == obj.VFloat { // Float?
 				r.D[0].T = obj.VFloat
-				r = applyMinus(minus, r)
+				r = applyMinus(tk, r)
 			}
 		}
 		return r
@@ -630,14 +623,14 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 				if len(tks) == 0 {
 					fract.IPanic(tk, obj.SyntaxPanic, "Invalid syntax!")
 				}
-				return applyMinus(minus, p.procVal(tks))
+				return applyMinus(tk, p.procVal(tks))
 			}
 			// Function call.
 			v := p.procValPart(nilch, vtks)
 			if v.Arr || v.D[0].T != obj.VFunc {
 				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 			}
-			r = applyMinus(minus, p.funcCall(v.D[0].D.(Func), tks[len(vtks):]))
+			r = applyMinus(tk, p.funcCall(v.D[0].D.(Func), tks[len(vtks):]))
 		case "]":
 			var vtks obj.Tokens
 			for ; i >= 0; i-- {
@@ -658,13 +651,13 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 				break
 			}
 			if len(vtks) == 0 && bc == 0 {
-				return applyMinus(minus, p.procEnumerableVal(tks))
+				return applyMinus(tk, p.procEnumerableVal(tks))
 			}
 			v := p.procValPart(nilch, vtks)
 			if !v.Arr && v.D[0].T != obj.VStr {
 				fract.IPanic(tk, obj.ValuePanic, "Index accessor is cannot used with non-array variables!")
 			}
-			r = applyMinus(minus, p.selectArrayElems(v, indexes(v, p.procVal(tks[len(vtks):]), tk)))
+			r = applyMinus(tk, p.selectArrayElems(v, indexes(v, p.procVal(tks[len(vtks):]), tk)))
 		}
 	}
 	return r
