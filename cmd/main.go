@@ -64,7 +64,7 @@ var p *parser.Parser = nil
 
 func interpret() {
 	for {
-		p.L.F.Lns = parser.Lines([]string{input(">> ")})
+		p.L.F.Lns = []string{input(">> ")}
 	reTokenize:
 		p.Tks = nil
 	reTokenizeUnNil:
@@ -80,7 +80,7 @@ func interpret() {
 			tks := p.L.Next()
 			// Check multiline comment.
 			if p.L.RangeComment {
-				p.L.F.Lns = append(p.L.F.Lns, parser.Lines([]string{input(" | ")})...)
+				p.L.F.Lns = append(p.L.F.Lns, []string{input(" | ")}...)
 				goto reTokenizeUnNil
 			}
 			// cacheTokens are empty?
@@ -89,7 +89,7 @@ func interpret() {
 			}
 			// Check parentheses.
 			if p.L.Braces > 0 || p.L.Brackets > 0 || p.L.Parentheses > 0 {
-				p.L.F.Lns = append(p.L.F.Lns, parser.Lines([]string{input(" | ")})...)
+				p.L.F.Lns = append(p.L.F.Lns, []string{input(" | ")}...)
 				goto reTokenize
 			}
 			p.Tks = append(p.Tks, tks)
@@ -107,7 +107,7 @@ func interpret() {
 			}
 		}
 		if c > 0 { // Check blocks.
-			p.L.F.Lns = append(p.L.F.Lns, parser.Lines([]string{input(" | ")})...)
+			p.L.F.Lns = append(p.L.F.Lns, []string{input(" | ")}...)
 			goto reTokenize
 		}
 		p.Interpret()

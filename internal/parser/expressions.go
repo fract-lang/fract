@@ -630,7 +630,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 			if v.Arr || v.D[0].T != obj.VFunc {
 				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 			}
-			r = applyMinus(tk, p.funcCall(v.D[0].D.(function), tks[len(vtks):]))
+			r = applyMinus(tk, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]).call())
 		case "]":
 			var vtks obj.Tokens
 			for ; i >= 0; i-- {

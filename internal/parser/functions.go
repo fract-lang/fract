@@ -315,11 +315,6 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 	}
 }
 
-// funcCall call function and returns returned value.
-func (p *Parser) funcCall(f function, tks obj.Tokens) obj.Value {
-	return p.funcCallModel(f, tks).call()
-}
-
 // Process function declaration.
 func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	tkslen := len(tks)

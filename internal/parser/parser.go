@@ -16,25 +16,6 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-// File returns instance of source file by path.
-func File(fp string) *obj.File {
-	f, _ := os.Open(fp)
-	bytes, _ := os.ReadFile(fp)
-	return &obj.File{
-		Lns: Lines(strings.Split(string(bytes), "\n")),
-		P:   fp,
-		F:   f,
-	}
-}
-
-// Lines returns ready lines processed to lexing.
-func Lines(lns []string) []string {
-	for i, ln := range lns {
-		lns[i] = strings.TrimRightFunc(ln, func(r rune) bool { return r == '\r' })
-	}
-	return lns
-}
-
 var (
 	defers []funcCall
 )
@@ -56,12 +37,17 @@ type Parser struct {
 
 // New returns instance of parser related to file.
 func New(fp string) *Parser {
+	f, _ := os.Open(fp)
+	bytes, _ := os.ReadFile(fp)
+	sf := &obj.File{P: fp, F: f}
+	if runtime.GOOS == "linux" {
+		sf.Lns = strings.Split(string(bytes), "\r\n")
+	} else {
+		sf.Lns = strings.Split(string(bytes), "\n")
+	}
 	return &Parser{
 		funcTempVars: -1,
-		L: &lex.Lex{
-			F:  File(fp),
-			Ln: 1,
-		},
+		L:            &lex.Lex{F: sf, Ln: 1},
 	}
 }
 
@@ -70,11 +56,7 @@ func NewStdin() *Parser {
 	return &Parser{
 		funcTempVars: -1,
 		L: &lex.Lex{
-			F: &obj.File{
-				P:   "<stdin>",
-				F:   nil,
-				Lns: nil,
-			},
+			F:  &obj.File{P: "<stdin>"},
 			Ln: 1,
 		},
 	}
@@ -157,7 +139,6 @@ func (p *Parser) Interpret() {
 		// Interpret all lines.
 		for p.i = 0; p.i < len(p.Tks); p.i++ {
 			p.process(p.Tks[p.i])
-			runtime.GC()
 		}
 		goto end
 	}
@@ -170,7 +151,6 @@ func (p *Parser) Interpret() {
 	// Interpret all lines.
 	for p.i = 0; p.i < len(p.Tks); p.i++ {
 		p.process(p.Tks[p.i])
-		runtime.GC()
 	}
 end:
 	for i := len(defers) - 1; i >= 0; i-- {
