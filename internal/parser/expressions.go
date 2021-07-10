@@ -135,7 +135,7 @@ func (p *Parser) procCondition(tks obj.Tokens) string {
 					return "false"
 				}
 			}
-			continue
+			return "true"
 		}
 		i, opr := findConditionOpr(or)
 		// Operator is not found?
@@ -544,7 +544,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		if tk.T == fract.Name {
 			vi, t, src := p.defByName(tk)
 			if vi == -1 {
-				fract.IPanic(tk, obj.NamePanic, "Variable is not defined in this name: "+tk.V)
+				fract.IPanic(tk, obj.NamePanic, "Name is not defined: "+tk.V)
 			}
 			switch t {
 			case 'f': // Function.
@@ -630,7 +630,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 			if v.Arr || v.D[0].T != obj.VFunc {
 				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 			}
-			r = applyMinus(tk, p.funcCall(v.D[0].D.(Func), tks[len(vtks):]))
+			r = applyMinus(tk, p.funcCall(v.D[0].D.(function), tks[len(vtks):]))
 		case "]":
 			var vtks obj.Tokens
 			for ; i >= 0; i-- {

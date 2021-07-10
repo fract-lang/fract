@@ -154,7 +154,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 			if vtks == nil {
 				fract.IPanic(setter, obj.SyntaxPanic, "Index is not given!")
 			}
-			tks.Rem(1, j)
+			tks = append(obj.Tokens{tks[1]}, tks[j+1:]...)
 			setpos = indexes(v.V, p.procVal(*vtks), tks[0])
 			break
 		}

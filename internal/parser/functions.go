@@ -9,8 +9,8 @@ import (
 	"github.com/fract-lang/fract/pkg/obj"
 )
 
-// Func instance.
-type Func struct {
+// function instance.
+type function struct {
 	name              string
 	src               *Parser
 	ln                int          // Line of define.
@@ -22,7 +22,7 @@ type Func struct {
 
 // Instance for function calls.
 type funcCall struct {
-	f     Func
+	f     function
 	errTk obj.Token
 	args  []obj.Var
 }
@@ -73,6 +73,8 @@ func (c funcCall) call() obj.Value {
 	c.f.src.funcTempVars = len(c.args)
 	flen := len(c.f.src.funcs)
 	namei := c.f.src.i
+	lc := c.f.src.loopCount
+	c.f.src.loopCount = 0
 	itks := c.f.src.Tks
 	c.f.src.Tks = c.f.tks
 	c.f.src.i = -1
@@ -101,6 +103,7 @@ func (c funcCall) call() obj.Value {
 	c.f.src.funcs = c.f.src.funcs[:flen]
 	// Remove temporary variables.
 	c.f.src.vars = vars
+	c.f.src.loopCount = lc
 	c.f.src.funcCount--
 	c.f.src.funcTempVars = old
 	c.f.src.i = namei
@@ -168,7 +171,7 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
 }
 
 type funcArgInfo struct {
-	f        Func
+	f        function
 	names    *[]string
 	tks      obj.Tokens
 	tk       obj.Token
@@ -234,7 +237,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 }
 
 // Process function call model and initialize model instance.
-func (p *Parser) funcCallModel(f Func, tks obj.Tokens) funcCall {
+func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 	var (
 		names []string
 		args  []obj.Var
@@ -313,7 +316,7 @@ func (p *Parser) funcCallModel(f Func, tks obj.Tokens) funcCall {
 }
 
 // funcCall call function and returns returned value.
-func (p *Parser) funcCall(f Func, tks obj.Tokens) obj.Value {
+func (p *Parser) funcCall(f function, tks obj.Tokens) obj.Value {
 	return p.funcCallModel(f, tks).call()
 }
 
@@ -336,7 +339,7 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		fract.IPanic(name, obj.SyntaxPanic, "Function parentheses is not found!")
 	}
 	p.i++
-	f := Func{
+	f := function{
 		name:      name.V,
 		ln:        p.i,
 		params:    []obj.Param{},
@@ -359,6 +362,7 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 				case fract.Params:
 					continue
 				case fract.Name:
+				default:
 					fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 				}
 				lstp = obj.Param{Name: pr.V, Params: i > 0 && ptks[i-1].T == fract.Params}

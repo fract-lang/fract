@@ -42,7 +42,7 @@ var (
 // Parser of Fract.
 type Parser struct {
 	vars         []obj.Var
-	funcs        []Func
+	funcs        []function
 	funcTempVars int // Count of function temporary variables.
 	loopCount    int
 	funcCount    int
@@ -356,9 +356,6 @@ func (p *Parser) importIndexByName(name string) int {
 
 // Check arithmetic processes validity.
 func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
-	if tks[len(tks)-1].T == fract.Operator {
-		fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "Operator overflow!")
-	}
 	var (
 		procs []obj.Tokens
 		part  obj.Tokens
@@ -592,7 +589,7 @@ func conditionalProcesses(tks obj.Tokens, opr string) []obj.Tokens {
 // ApplyBuildInFunctions to parser source.
 func (p *Parser) AddBuiltInFuncs() {
 	p.funcs = append(p.funcs,
-		Func{ // print function.
+		function{ // print function.
 			name:              "print",
 			protected:         true,
 			tks:               nil,
@@ -612,7 +609,7 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			}},
-		}, Func{ // input function.
+		}, function{ // input function.
 			name:              "input",
 			protected:         true,
 			tks:               nil,
@@ -625,7 +622,7 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			}},
-		}, Func{ // exit function.
+		}, function{ // exit function.
 			name:              "exit",
 			protected:         true,
 			tks:               nil,
@@ -636,7 +633,7 @@ func (p *Parser) AddBuiltInFuncs() {
 					D: []obj.Data{{D: "0"}},
 				},
 			}},
-		}, Func{ // len function.
+		}, function{ // len function.
 			name:              "len",
 			protected:         true,
 			tks:               nil,
@@ -644,7 +641,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []obj.Param{
 				{Name: "object"},
 			},
-		}, Func{ // range function.
+		}, function{ // range function.
 			name:              "range",
 			protected:         true,
 			tks:               nil,
@@ -659,7 +656,7 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			},
-		}, Func{ // calloc function.
+		}, function{ // calloc function.
 			name:              "calloc",
 			protected:         true,
 			tks:               nil,
@@ -667,7 +664,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []obj.Param{
 				{Name: "size"},
 			},
-		}, Func{ // realloc function.
+		}, function{ // realloc function.
 			name:              "realloc",
 			protected:         true,
 			tks:               nil,
@@ -676,7 +673,7 @@ func (p *Parser) AddBuiltInFuncs() {
 				{Name: "base"},
 				{Name: "size"},
 			},
-		}, Func{ // memset function.
+		}, function{ // memset function.
 			name:              "memset",
 			protected:         true,
 			tks:               nil,
@@ -685,7 +682,7 @@ func (p *Parser) AddBuiltInFuncs() {
 				{Name: "mem"},
 				{Name: "val"},
 			},
-		}, Func{ // string function.
+		}, function{ // string function.
 			name:              "string",
 			protected:         true,
 			tks:               nil,
@@ -701,7 +698,7 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			},
-		}, Func{ // int function.
+		}, function{ // int function.
 			name:              "int",
 			protected:         true,
 			tks:               nil,
@@ -717,7 +714,7 @@ func (p *Parser) AddBuiltInFuncs() {
 					},
 				},
 			},
-		}, Func{ // float function.
+		}, function{ // float function.
 			name:              "float",
 			protected:         true,
 			tks:               nil,
@@ -725,7 +722,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []obj.Param{
 				{Name: "object"},
 			},
-		}, Func{ // append function.
+		}, function{ // append function.
 			name:              "append",
 			protected:         true,
 			tks:               nil,
@@ -802,17 +799,17 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		p.loopCount--
 		return state
 	case fract.Break: // Break loop.
-		if p.loopCount == 0 {
+		if p.loopCount < 1 {
 			fract.IPanic(fst, obj.SyntaxPanic, "Break keyword only used in loops!")
 		}
 		return fract.LOOPBreak
 	case fract.Continue: // Continue loop.
-		if p.loopCount == 0 {
+		if p.loopCount < 1 {
 			fract.IPanic(fst, obj.SyntaxPanic, "Continue keyword only used in loops!")
 		}
 		return fract.LOOPContinue
 	case fract.Ret: // Return.
-		if p.funcCount == 0 {
+		if p.funcCount < 1 {
 			fract.IPanic(fst, obj.SyntaxPanic, "Return keyword only used in functions!")
 		}
 		if len(tks) > 1 {

@@ -123,9 +123,11 @@ func (p *Parser) procImport(tks obj.Tokens) {
 		isrc := New(imppath + string(os.PathSeparator) + i.Name())
 		isrc.loopCount = -1 //! Tag as import source.
 		isrc.Import()
+		isrc.loopCount = 0
 		src.funcs = append(src.funcs, isrc.funcs...)
 		src.vars = append(src.vars, isrc.vars...)
 		src.Imports = append(src.Imports, isrc.Imports...)
+		isrc.AddBuiltInFuncs()
 	}
 	p.Imports = append(p.Imports,
 		importInfo{
