@@ -2,27 +2,33 @@
 
 # Simple calculator in Fract
 
-print("Welcome to Fract simple calculator!")
-print("**** Operations ****")
-print("1 - Add")
-print("2 - Subtract")
-print("3 - Multiple")
-print("4 - Divide")
-print("0 - Exit")
+print('Welcome to Fract simple calculator!')
+print('**** Operations ****')
+print('1 - Add')
+print('2 - Subtract')
+print('3 - Multiple')
+print('4 - Divide')
+print('0 - Exit')
 
-for
-	const choice = input("Select your operation: ")
-	if choice == "0"; break
-	elif choice == "1" || choice == "2" || choice == "3" || choice == "4"
+for {
+	const choice = input('Select your operation: ')
+	if choice == '0' {
+		break
+	} else if choice in ['1', '2', '3', '4'] {
 		const (
-			first  = float(input("Enter first number: "))
-			second = float(input("Enter second number: "))
+			first  = float(input('Enter first number: '))
+			second = float(input('Enter second number: '))
 		)
-		if choice == "1";   print(first + second)
-		elif choice == "2"; print(first - second)
-		elif choice == "3"; print(first * second)
-		else;               print(first / second)
-		end
-	else; print("Invalid choice!")
-	end
-end
+		if choice == '1' {
+			print(first + second)
+		} else if choice == '2' {
+			print(first - second)
+		} else if choice == '3' {
+			print(first * second)
+		} else {
+			print(first / second)
+		}
+	} else {
+		print('Invalid choice!')
+	}
+}

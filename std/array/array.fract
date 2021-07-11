@@ -11,125 +11,125 @@
 #
 
 # Returns true if element is contained in array, returns false if not.
-protected func Contains(array, element, start=0)
-	if start < 0 || start >= len(array)
+protected func Contains(array, element, start=0) {
+	if start < 0 || start >= len(array) {
 		ret false
-	end
-	for _, index in range(start, len(array) - start - 1)
-		if array[index] == element
+	}
+	for _, index in range(start, len(array) - start - 1) {
+		if array[index] == element {
 			ret true
-		end
-	end
+		}
+	}
 	ret false
-end
+}
 
 # Returns index if element is found in array, returns -1 if not.
-protected func Index(array, element, start=0)
-	if start < 0 || start >= len(array)
+protected func Index(array, element, start=0) {
+	if start < 0 || start >= len(array) {
 		ret -1
-	end
-	for _, index in range(start, len(array) - start - 1)
-		if array[index] == element
+	}
+	for _, index in range(start, len(array) - start - 1) {
+		if array[index] == element {
 			ret index
-		end
-	end
+		}
+	}
 	ret -1
-end
+}
 
 # Returns maximum of array.
-protected func Max(array)
+protected func Max(array) {
 	var length = len(array)
-	if length == 0
+	if length == 0 {
 		ret 0
-	end
+	}
 	var max = array[0]
-	for _, element in array
-		if max < element
+	for _, element in array {
+		if max < element {
 			max = element
-		end
-	end
+		}
+	}
 	ret max
-end
+}
 
 # Returns mean of array.
-protected func Mean(array)
+protected func Mean(array) {
 	var total = 0
-	for _, element in array
+	for _, element in array {
 		total += element
-	end
+	}
 	ret total / len(array)
-end
+}
 
 # Returns minimum of array.
-protected func Min(array)
+protected func Min(array) {
 	var length = len(array)
-	if length == 0
+	if length == 0 {
 		ret 0
-	end
+	}
 	var min = array[0]
-	for _, element in array
-		if min > element
+	for _, element in array {
+		if min > element {
 			min = element
-		end
-	end
+		}
+	}
 	ret min
-end
+}
 
 # Returns reversed array.
-protected func Reverse(array)
+protected func Reverse(array) {
 	const arlen = len(array)
-	for index in range(0, arlen / 2)
+	for index in range(0, arlen / 2) {
 		const cache = array[index]
 		array[index] = array[arlen - index - 1]
 		array[arlen - index - 1] = cache
-	end
+	}
 	ret array
-end
+}
 
 # Returns sorted array.
-protected func Sort(array)
+protected func Sort(array) {
 	# BUBBLE SORT
 	const length  = len(array) - 2
-	for _, i in range(0, length)
+	for _, i in range(0, length) {
 		var updated = false
-		for _, j in range(0, length - i)
-			if array[j] > array[j + 1]
+		for _, j in range(0, length - i) {
+			if array[j] > array[j + 1] {
 				updated = true
 				const cache = array[j]
 				array[j] = array[j + 1]
 				array[j + 1] = cache
-			end
-		end
-		if updated == false
+			}
+		}
+		if updated == false {
 			break
-		end
-	end
+		}
+	}
 	ret array
-end
+}
 
 # Returns subbed array.
-protected func Sub(array, start, length)
-	if start < 0 || length < 0
+protected func Sub(array, start, length) {
+	if start < 0 || length < 0 {
 		ret []
-	end
+	}
 	const arrlen = len(array)
-	if start > arrlen
+	if start > arrlen {
 		ret []
-	elif start + length > arrlen
+	} else if start + length > arrlen {
 		length = arrlen - start
-	end
+	}
 	var newArray = []
-	for _, index in range(start, length + start - 1)
+	for _, index in range(start, length + start - 1) {
 		newArray = append(newArray, array[index])
-	end
+	}
 	ret newArray
-end
+}
 
 # Returns sum of all array elements.
-protected func Sum(array)
+protected func Sum(array) {
 	var total = 0
-	for _, element in array
+	for _, element in array {
 		total += element
-	end
+	}
 	ret total
-end
+}

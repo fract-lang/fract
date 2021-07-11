@@ -13,8 +13,8 @@ import (
 type function struct {
 	name              string
 	src               *Parser
-	ln                int          // Line of define.
-	tks               []obj.Tokens // Block content of function.
+	ln                int // Line of define.
+	tks               []obj.Tokens
 	params            []obj.Param
 	defaultParamCount int
 	protected         bool
@@ -65,7 +65,7 @@ func (c funcCall) call() obj.Value {
 		funcTempVars: c.f.src.funcTempVars,
 		loopCount:    0,
 		funcCount:    1,
-		i:            -1,
+		i:            0,
 		Tks:          c.f.tks,
 	}
 	if p.funcTempVars == -1 {
@@ -80,12 +80,8 @@ func (c funcCall) call() obj.Value {
 	// Interpret block.
 	b := obj.Block{
 		Try: func() {
-			for {
-				p.i++
-				tks := p.Tks[p.i]
-				if tks[0].T == fract.End { // Block is ended.
-					break
-				} else if p.process(tks) == fract.FUNCReturn {
+			for _, tks := range p.Tks {
+				if p.process(tks) == fract.FUNCReturn {
 					c.f.src.retVal = p.retVal
 					if c.f.src.retVal == nil {
 						break
@@ -320,11 +316,9 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	if line := p.definedName(name); line != -1 {
 		fract.IPanic(name, obj.NamePanic, "\""+name.V+"\" is already defined at line: "+fmt.Sprint(line))
 	}
-	// Function parentheses are not defined?
-	if tkslen < 4 {
-		fract.IPanic(name, obj.SyntaxPanic, "Function parentheses is not found!")
+	if tkslen < 3 {
+		fract.IPanicC(name.F, name.Ln, name.Col+len(name.V), obj.SyntaxPanic, "Invalid syntax!")
 	}
-	p.i++
 	f := function{
 		name:      name.V,
 		ln:        p.i,
@@ -332,26 +326,37 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		protected: protected,
 		src:       p,
 	}
-	dtToken := tks[tkslen-1]
-	if dtToken.T != fract.Brace || dtToken.V != ")" {
-		fract.IPanic(dtToken, obj.SyntaxPanic, "Invalid syntax!")
-	}
-	if paramtks := tks.Sub(3, tkslen-4); paramtks != nil {
-		ptks := *paramtks
-		// Decompose function parameters.
+	// Decompose function parameters.
+	if tks[2].V == "(" {
 		pname, defaultDef := true, false
+		bc := 1
 		var lstp obj.Param
-		for i := 0; i < len(ptks); i++ {
-			pr := ptks[i]
+		for i := 3; i < len(tks); i++ {
+			pr := tks[i]
+			if pr.T == fract.Brace {
+				switch pr.V {
+				case "(":
+					bc++
+				case ")":
+					bc--
+				}
+			}
+			if bc < 1 {
+				tks = tks[i+1:]
+				break
+			}
 			if pname {
 				switch pr.T {
 				case fract.Params:
 					continue
 				case fract.Name:
 				default:
+					if i == 3 && tks[i].V == ")" {
+						continue
+					}
 					fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 				}
-				lstp = obj.Param{Name: pr.V, Params: i > 0 && ptks[i-1].T == fract.Params}
+				lstp = obj.Param{Name: pr.V, Params: i > 0 && tks[i-1].T == fract.Params}
 				f.params = append(f.params, lstp)
 				pname = false
 				continue
@@ -362,8 +367,8 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 					bc := 0
 					i++
 					start := i
-					for ; i < len(ptks); i++ {
-						pr = ptks[i]
+					for ; i < len(tks); i++ {
+						pr = tks[i]
 						if pr.T == fract.Brace {
 							switch pr.V {
 							case "{", "[", "(":
@@ -376,9 +381,9 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 						}
 					}
 					if i-start < 1 {
-						fract.IPanic(ptks[start-1], obj.SyntaxPanic, "Value is not given!")
+						fract.IPanic(tks[start-1], obj.SyntaxPanic, "Value is not given!")
 					}
-					lstp.Default = p.procVal(*ptks.Sub(start, i-start))
+					lstp.Default = p.procVal(*tks.Sub(start, i-start))
 					if lstp.Params && !lstp.Default.Arr {
 						fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
 					}
@@ -397,9 +402,10 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		if lstp.Default.D == nil && defaultDef {
 			fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
 		}
+	} else {
+		tks = tks[2:]
 	}
-	p.skipBlock(false)
-	f.tks = p.Tks[f.ln : p.i+1]
+	f.tks = p.getBlock(tks)
 	f.ln = name.Ln
 	p.funcs = append(p.funcs, f)
 }

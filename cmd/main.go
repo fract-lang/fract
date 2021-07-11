@@ -94,22 +94,6 @@ func interpret() {
 			}
 			p.Tks = append(p.Tks, tks)
 		}
-		// Change blocks.
-		c := 0
-		for _, tokens := range p.Tks {
-			if first := tokens[0]; first.T == fract.End {
-				c--
-				if c < 0 {
-					fract.IPanic(first, obj.SyntaxPanic, "The extra block end defined!")
-				}
-			} else if parser.IsBlock(tokens) {
-				c++
-			}
-		}
-		if c > 0 { // Check blocks.
-			p.L.F.Lns = append(p.L.F.Lns, []string{input(" | ")}...)
-			goto reTokenize
-		}
 		p.Interpret()
 	}
 }

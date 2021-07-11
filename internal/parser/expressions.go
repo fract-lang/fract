@@ -60,24 +60,25 @@ func comp(v0, v1 obj.Value, opr obj.Token) bool {
 					return true
 				}
 			}
-		} else { // String.
-			if v0.Arr {
-				dt := v1.D[0].String()
-				for _, d := range v0.D {
-					if d.T != obj.VStr {
-						fract.IPanic(opr, obj.ValuePanic, "All values is not string!")
-					}
-					if strings.Contains(dt, d.String()) {
-						return true
-					}
+			return false
+		}
+		// String.
+		if v0.Arr {
+			dt := v1.D[0].String()
+			for _, d := range v0.D {
+				if d.T != obj.VStr {
+					fract.IPanic(opr, obj.ValuePanic, "All values is not string!")
 				}
-			} else {
-				if v1.D[0].T != obj.VStr {
-					fract.IPanic(opr, obj.ValuePanic, "All datas is not string!")
-				}
-				if strings.Contains(v1.D[0].String(), v1.D[0].String()) {
+				if strings.Contains(dt, d.String()) {
 					return true
 				}
+			}
+		} else {
+			if v1.D[0].T != obj.VStr {
+				fract.IPanic(opr, obj.ValuePanic, "All datas is not string!")
+			}
+			if strings.Contains(v1.D[0].String(), v0.D[0].String()) {
+				return true
 			}
 		}
 		return false

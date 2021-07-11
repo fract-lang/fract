@@ -7,9 +7,6 @@ import (
 
 // procTryCatch process try-catch blocks and returns keyword state.
 func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
-	if len(tks) > 1 {
-		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-	}
 	fract.TryCount++
 	var (
 		vlen = len(p.vars)
@@ -19,20 +16,14 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 	)
 	(&obj.Block{
 		Try: func() {
-			for {
-				p.i++
-				tks := p.Tks[p.i]
-				switch tks[0].T {
-				case fract.End: // Block is ended.
-					goto end
-				case fract.Catch: // Catch block.
-					p.skipBlock(false)
-				}
+			for _, tks := range p.getBlock(tks[1:]) {
 				if kws = p.process(tks); kws != fract.None {
-					p.skipBlock(false)
+					break
 				}
 			}
-		end:
+			if p.Tks[p.i+1][0].T == fract.Catch {
+				p.i++
+			}
 			fract.TryCount--
 			p.vars = p.vars[:vlen]
 			p.funcs = p.funcs[:flen]
@@ -47,41 +38,15 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			p.vars = p.vars[:vlen]
 			p.funcs = p.funcs[:flen]
 			defers = defers[:dlen]
-			c := 0
-			for {
-				p.i++
-				tks = p.Tks[p.i]
-				if tks[0].T == fract.End {
-					c--
-					if c < 0 {
-						break
-					}
-				} else if IsBlock(tks) {
-					c++
-				}
-				if c > 0 {
-					continue
-				}
-				if tks[0].T == fract.Catch {
-					break
-				}
-			}
-			// Ended block.
-			if c < 0 {
+			p.i++
+			tks = p.Tks[p.i]
+			if tks[0].T != fract.Catch {
+				p.i--
 				return
 			}
-			// Catch block.
-			if len(tks) > 1 {
-				fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-			}
-			for {
-				p.i++
-				tks := p.Tks[p.i]
-				if tks[0].T == fract.End { // Block is ended.
-					break
-				}
+			for _, tks := range p.getBlock(tks[1:]) {
 				if kws = p.process(tks); kws != fract.None {
-					p.skipBlock(false)
+					break
 				}
 			}
 			p.vars = p.vars[:vlen]

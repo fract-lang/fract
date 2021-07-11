@@ -1,22 +1,22 @@
 #pragma enofi
 
 # PRIME NUMBER BETWEEN 1 an 100
-for _, x in range(2, 100)
-	if x == 2
+for _, x in range(2, 100) {
+	if x ==  2 {
 		print(x)
 		continue
-	elif x < 2 || x % 2 == 0
+    } else if x < 2 || x % 2 == 0 {
 		continue
-	end
-
+	}
 	var prime = true
-	for _, y in range(2, x - 1)
-		if x % y == 0
+	for _, y in range(2, x - 1) {
+		if x % y == 0 {
 			prime = false
 			break
-		end
-	end
-	if prime
+		}
+	}
+	if prime {
 		print(x)
-	end
-end
+	}
+}
+

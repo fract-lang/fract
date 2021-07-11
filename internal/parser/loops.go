@@ -15,135 +15,63 @@ func prockws(kws uint8) uint8 {
 	return kws
 }
 
-// Process new kws state.
-func pkws(p *Parser, kws uint8, brk *bool) {
-	switch kws {
-	case fract.LOOPBreak, fract.FUNCReturn: // Break loop or return.
-		*brk = true
-		p.skipBlock(false)
-		p.i--
-	case fract.LOOPContinue: // Continue next.
-		p.skipBlock(false)
-		p.i--
-	}
-}
-
 // procLoop process loops and returns keyword state.
 func (p *Parser) procLoop(tks obj.Tokens) uint8 {
-	// Content is empty?
-	if vtokens := tks.Sub(1, len(tks)-1); vtokens == nil {
-		tks = nil
-	} else {
-		tks = *vtokens
-	}
+	bi := findBlock(tks)
+	btks, tks := p.getBlock(tks[bi:]), tks[1:bi]
 	flen := len(p.funcs)
 	brk := false
 	kws := fract.None
-	iindex := p.i
 	//*************
 	//    WHILE
 	//*************
-	if tks == nil || len(tks) >= 1 {
-		if tks == nil || len(tks) == 1 || len(tks) >= 1 && tks[1].T != fract.In && tks[1].T != fract.Comma {
+	if len(tks) == 0 || len(tks) >= 1 {
+		if len(tks) == 0 || len(tks) == 1 || len(tks) >= 1 && tks[1].T != fract.In && tks[1].T != fract.Comma {
 			vlen := len(p.vars)
-			/* Infinity loop. */
-			if tks == nil {
-				for {
-					p.i++
-					tks := p.Tks[p.i]
-					if tks[0].T == fract.End { // Block is ended.
-						// Remove temporary variables.
-						p.vars = p.vars[:vlen]
-						// Remove temporary functions.
-						p.funcs = p.funcs[:flen]
-						if brk {
-							return prockws(kws)
-						}
-						p.i = iindex
-						continue
-					} else if tks[0].T == fract.Else { // Else block.
-						if len(tks) > 1 {
-							fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
-						}
-						p.skipBlock(false)
-						p.i--
-						continue
-					}
+			// Infinity loop.
+			if len(tks) == 0 {
+			infinity:
+				for _, tks := range btks {
 					kws = p.process(tks)
-					pkws(p, kws, &brk)
+					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return.
+						return prockws(kws)
+					} else if kws == fract.LOOPContinue { // Continue loop.
+						break
+					}
 				}
+				// Remove temporary variables.
+				p.vars = p.vars[:vlen]
+				// Remove temporary functions.
+				p.funcs = p.funcs[:flen]
+				goto infinity
 			}
-			/* Interpret/skip block. */
-			ctks := tks
-			c := p.procCondition(ctks)
-			_else := c == "false"
-			for {
-				p.i++
-				tks := p.Tks[p.i]
-
-				if tks[0].T == fract.End { // Block is ended.
-					// Remove temporary variables.
-					p.vars = p.vars[:vlen]
-					// Remove temporary functions.
-					p.funcs = p.funcs[:flen]
-					c = p.procCondition(ctks)
-					if brk || c != "true" {
-						return prockws(kws)
-					}
-					p.i = iindex
-					continue
-				} else if tks[0].T == fract.Else { // Else block.
-					if len(tks) > 1 {
-						fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
-					}
-					if c == "true" {
-						p.skipBlock(false)
-						p.i--
-						continue
-					}
-					// Remove temporary variables.
-					p.vars = p.vars[:vlen]
-					// Remove temporary functions.
-					p.funcs = p.funcs[:flen]
-					if !_else {
-						p.skipBlock(false)
-						return prockws(kws)
-					}
-					for {
-						p.i++
-						tks = p.Tks[p.i]
-						if tks[0].T == fract.End { // Block is ended.
-							// Remove temporary variables.
-							p.vars = p.vars[:vlen]
-							// Remove temporary functions.
-							p.funcs = p.funcs[:flen]
-							return prockws(kws)
-						}
-						kws = p.process(tks)
-						pkws(p, kws, &brk)
-					}
-				}
+		while:
+			// Interpret/skip block.
+			c := p.procCondition(tks)
+			for _, tks := range btks {
 				// Condition is true?
 				if c == "true" {
 					kws = p.process(tks)
-					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return?
+					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return.
 						brk = true
-						p.skipBlock(false)
-						p.i--
-					} else if kws == fract.LOOPContinue { // Continue loop?
-						p.skipBlock(false)
-						p.i--
+						break
+					} else if kws == fract.LOOPContinue { // Continue loop.
+						break
 					}
 				} else {
-					if _else {
-						p.skipBlock(true)
-						continue
-					}
 					brk = true
-					p.skipBlock(false)
-					p.i--
+					break
 				}
 			}
+			// Remove temporary variables.
+			p.vars = p.vars[:vlen]
+			// Remove temporary functions.
+			p.funcs = p.funcs[:flen]
+			c = p.procCondition(tks)
+			if brk || c != "true" {
+				return prockws(kws)
+			}
+			goto while
 		}
 	}
 
@@ -186,35 +114,6 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	if !v.Arr && v.D[0].T != obj.VStr {
 		fract.IPanic(tks[0], obj.ValuePanic, "Foreach loop must defined array value!")
 	}
-	// Empty array?
-	if v.Arr && len(v.D) == 0 || v.D[0].T == obj.VStr && v.D[0].D == "" {
-		vlen := len(p.vars)
-		for {
-			p.i++
-			tks := p.Tks[p.i]
-			if tks[0].T == fract.End { // Block is ended.
-				return kws
-			} else if tks[0].T == fract.Else { // Else block.
-				if len(tks) > 1 {
-					fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
-				}
-				for {
-					p.i++
-					tks = p.Tks[p.i]
-					if tks[0].T == fract.End { // Block is ended.
-						// Remove temporary variables.
-						p.vars = p.vars[:vlen]
-						// Remove temporary functions.
-						p.funcs = p.funcs[:flen]
-						return prockws(kws)
-					}
-					kws = p.process(tks)
-					pkws(p, kws, &brk)
-				}
-			}
-			p.skipBlock(true)
-		}
-	}
 	p.vars = append(p.vars,
 		obj.Var{Name: nametk.V, V: obj.Value{D: []obj.Data{{D: "0", T: obj.VInt}}}},
 		obj.Var{Name: ename, V: obj.Value{}},
@@ -241,39 +140,33 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	}
 	// Interpret block.
 	for j := 0; j < length; {
-		p.i++
-		tks := p.Tks[p.i]
-		if tks[0].T == fract.End { // Block is ended.
-			// Remove temporary variables.
-			p.vars = vars
-			// Remove temporary functions.
-			p.funcs = p.funcs[:flen]
-			j++
-			if brk || (v.Arr && j == len(v.D) || !v.Arr && j == len(v.D[0].String())) {
+		for _, tks := range btks {
+			kws = p.process(tks)
+			if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return.
+				brk = true
+				break
+			} else if kws == fract.LOOPContinue { // Continue loop.
 				break
 			}
-			p.i = iindex
-			if index.Name != "" {
-				index.V.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInt}}
-			}
-			if element.Name != "" {
-				if v.Arr {
-					element.V.D = []obj.Data{v.D[j]}
-				} else {
-					element.V.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VStr}}
-				}
-			}
-			continue
-		} else if tks[0].T == fract.Else { // Else block.
-			if len(tks) > 1 {
-				fract.IPanic(tks[0], obj.SyntaxPanic, "Else block is not take any arguments!")
-			}
-			p.skipBlock(false)
-			p.i--
-			continue
 		}
-		kws = p.process(tks)
-		pkws(p, kws, &brk)
+		// Remove temporary variables.
+		p.vars = vars
+		// Remove temporary functions.
+		p.funcs = p.funcs[:flen]
+		j++
+		if brk || (v.Arr && j == len(v.D) || !v.Arr && j == len(v.D[0].String())) {
+			break
+		}
+		if index.Name != "" {
+			index.V.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInt}}
+		}
+		if element.Name != "" {
+			if v.Arr {
+				element.V.D = []obj.Data{v.D[j]}
+			} else {
+				element.V.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VStr}}
+			}
+		}
 	}
 	// Remove loop variables.
 	p.vars = vars[:len(vars)-2]

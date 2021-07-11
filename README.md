@@ -20,13 +20,10 @@
 + Efficient and performance, powerfull Go backend
 + Language level concurrency
 + Unicode support
-+ Macros and pragmas
++ Pragmas
 
 ## Interactive Shell
 <img src="https://github.com/fract-lang/resources/blob/main/preview/fract_cli.gif?raw=true">
-
-## FizzBuzz
-<img src="https://github.com/fract-lang/resources/blob/main/preview/fizzbuzz.png">
 
 ## How to compile?
 Fract is written in Go. <br>

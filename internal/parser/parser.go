@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"unicode"
@@ -40,10 +39,9 @@ func New(fp string) *Parser {
 	f, _ := os.Open(fp)
 	bytes, _ := os.ReadFile(fp)
 	sf := &obj.File{P: fp, F: f}
-	if runtime.GOOS == "linux" {
-		sf.Lns = strings.Split(string(bytes), "\r\n")
-	} else {
-		sf.Lns = strings.Split(string(bytes), "\n")
+	sf.Lns = strings.Split(string(bytes), "\n")
+	for i, ln := range sf.Lns {
+		sf.Lns[i] = strings.TrimRightFunc(ln, unicode.IsSpace)
 	}
 	return &Parser{
 		funcTempVars: -1,
@@ -69,44 +67,6 @@ func (p *Parser) ready() {
 		if ctks := p.L.Next(); ctks != nil {
 			p.Tks = append(p.Tks, ctks)
 		}
-	}
-	// Change blocks.
-	bc := 0
-	mbc := 0
-	lst := -1
-	for i, tks := range p.Tks {
-		if fst := tks[0]; fst.T == fract.End {
-			if len(tks) > 1 {
-				fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
-			}
-			bc--
-			if bc < 0 {
-				fract.IPanic(fst, obj.SyntaxPanic, "The extra block end defined!")
-			}
-		} else if fst.T == fract.Macro {
-			if IsBlock(tks) {
-				mbc++
-				if mbc == 1 {
-					lst = i
-				}
-			} else if tks[1].T == fract.End {
-				if len(tks) > 2 {
-					fract.IPanic(tks[2], obj.SyntaxPanic, "Invalid syntax!")
-				}
-				mbc--
-				if mbc < 0 {
-					fract.IPanic(fst, obj.SyntaxPanic, "The extra block end defined!")
-				}
-			}
-		} else if IsBlock(tks) {
-			bc++
-			if bc == 1 {
-				lst = i
-			}
-		}
-	}
-	if bc > 0 || mbc > 0 { // Check blocks.
-		fract.IPanic(p.Tks[lst][0], obj.SyntaxPanic, "Block is expected ending...")
 	}
 }
 
@@ -200,35 +160,95 @@ func indexes(arr, val obj.Value, tk obj.Token) []int {
 	return []int{pos}
 }
 
-// skipBlock skip to block end.
-func (p *Parser) skipBlock(blk bool) {
-	if blk {
-		if IsBlock(p.Tks[p.i]) {
-			p.i++
-		} else {
-			return
-		}
+// IsBlock returns true if tokens is block start, return false if not.
+func IsBlock(tks obj.Tokens) bool {
+	if tks[0].T != fract.Macro {
+		return false
 	}
-	c := 1
-	p.i--
-	for {
-		p.i++
-		tks := p.Tks[p.i]
-		if fst := tks[0]; fst.T == fract.End {
-			c--
-		} else if fst.T == fract.Macro {
-			if IsBlock(tks) {
-				c++
-			} else if tks[1].T == fract.End {
-				c--
+	return tks[1].T == fract.If
+}
+
+// Find start index of block.
+func findBlock(tks obj.Tokens) int {
+	bc := 0
+	for i, t := range tks {
+		switch t.V {
+		case "[", "(":
+			bc++
+		case "]", ")":
+			bc--
+		case "{":
+			if bc == 0 {
+				return i
 			}
-		} else if IsBlock(tks) {
-			c++
-		}
-		if c == 0 {
-			return
 		}
 	}
+	fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid syntax!")
+	return -1
+}
+
+// Get a block.
+func (p *Parser) getBlock(tks obj.Tokens) []obj.Tokens {
+	if len(tks) == 0 {
+		p.i++
+		tks = p.Tks[p.i]
+	}
+	if tks[0].T != fract.Brace && tks[0].V != "{" {
+		fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid syntax!")
+	}
+	bc := 0
+	for i, t := range tks {
+		if t.T == fract.Brace {
+			switch t.V {
+			case "{":
+				bc++
+			case "}":
+				bc--
+			}
+		}
+		if bc == 0 {
+			if i < len(tks)-1 {
+				p.Tks = append(p.Tks[:p.i+1], append([]obj.Tokens{tks[i+1:]}, p.Tks[p.i+1:]...)...)
+			}
+			tks = tks[1 : i+1]
+			break
+		}
+	}
+	var btks []obj.Tokens
+	if len(tks) == 1 {
+		return btks
+	}
+	ln := tks[0].Ln
+	lst := 0
+	for j, t := range tks {
+		if t.T == fract.Brace {
+			switch t.V {
+			case "{", "[", "(":
+				bc++
+			default:
+				bc--
+				ln = t.Ln
+			}
+		}
+		if t.T == fract.StatementTerminator {
+			btks = append(btks, tks[lst:j])
+			lst = j + 1
+			ln = t.Ln
+			continue
+		}
+		if bc > 0 {
+			continue
+		}
+		if ln < t.Ln {
+			btks = append(btks, tks[lst:j])
+			lst = j
+			ln = t.Ln
+		}
+	}
+	if len(tks) != lst {
+		btks = append(btks, tks[lst:len(tks)-1])
+	}
+	return btks
 }
 
 // TYPES
@@ -374,7 +394,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				}
 			}
 			part = append(part, t)
-			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.V != "[" && t.V != "(" && t.V != "{") && i < len(tks)-1
+			opr = t.T != fract.Comma && t.T != fract.Brace && i < len(tks)-1
 		default:
 			fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 		}
@@ -441,22 +461,6 @@ func procIndex(len, i int) int {
 	return i
 }
 
-// IsBlock returns true if tokens is block start, return false if not.
-func IsBlock(tks obj.Tokens) bool {
-	if tks[0].T == fract.Macro { // Remove macro token.
-		tks = tks[1:]
-	}
-	switch tks[0].T {
-	case fract.If, fract.Loop, fract.Func, fract.Try:
-		return true
-	case fract.Protected:
-		if len(tks) > 1 && tks[1].T == fract.Func {
-			return true
-		}
-	}
-	return false
-}
-
 // nextopr find index of priority operator and returns index of operator
 // if found, returns -1 if not.
 func nextopr(tks []obj.Tokens) int {
@@ -508,11 +512,14 @@ func findConditionOpr(tks obj.Tokens) (int, obj.Token) {
 		if bc > 0 {
 			continue
 		}
-		if t.T == fract.Operator {
+		switch t.T {
+		case fract.Operator:
 			switch t.V {
 			case "&&", "||", "==", "<>", ">", "<", "<=", ">=":
 				return i, t
 			}
+		case fract.In:
+			return i, t
 		}
 	}
 	var tk obj.Token
@@ -572,7 +579,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		function{ // print function.
 			name:              "print",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 2,
 			params: []obj.Param{{
 				Name: "value",
@@ -592,7 +598,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // input function.
 			name:              "input",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 1,
 			params: []obj.Param{{
 				Name: "message",
@@ -605,7 +610,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // exit function.
 			name:              "exit",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 1,
 			params: []obj.Param{{
 				Name: "code",
@@ -616,7 +620,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // len function.
 			name:              "len",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 0,
 			params: []obj.Param{
 				{Name: "object"},
@@ -624,7 +627,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // range function.
 			name:              "range",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 1,
 			params: []obj.Param{
 				{Name: "start"},
@@ -639,7 +641,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // calloc function.
 			name:              "calloc",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 0,
 			params: []obj.Param{
 				{Name: "size"},
@@ -647,7 +648,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // realloc function.
 			name:              "realloc",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 0,
 			params: []obj.Param{
 				{Name: "base"},
@@ -656,7 +656,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // memset function.
 			name:              "memset",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 0,
 			params: []obj.Param{
 				{Name: "mem"},
@@ -665,7 +664,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // string function.
 			name:              "string",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 1,
 			params: []obj.Param{
 				{Name: "object"},
@@ -681,7 +679,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // int function.
 			name:              "int",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 1,
 			params: []obj.Param{
 				{Name: "object"},
@@ -697,7 +694,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // float function.
 			name:              "float",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 0,
 			params: []obj.Param{
 				{Name: "object"},
@@ -705,7 +701,6 @@ func (p *Parser) AddBuiltInFuncs() {
 		}, function{ // append function.
 			name:              "append",
 			protected:         true,
-			tks:               nil,
 			defaultParamCount: 0,
 			params: []obj.Param{
 				{Name: "dest"},

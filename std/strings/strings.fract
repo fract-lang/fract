@@ -11,23 +11,23 @@
 #
 
 # Converts the first character to uppercase.
-protected func Capitalize(str)
-	if str == ''
+protected func Capitalize(str) {
+	if str == '' {
 		ret str
-	end
-	if IsLetter(str[0]) && IsLower(str[0])
+	}
+	if IsLetter(str[0]) && IsLower(str[0]) {
 		str[0] = Upper(str[0])
-	end
+	}
 	ret str
-end
+}
 
 # A string is considered a valid identifier if it only contains alphanumeric letters (a-z) and (0-9),
 # or underscores (_). A valid identifier cannot start with a number, or contain any spaces.
-protected func IsIdentifier(str)
-	if str == ''
+protected func IsIdentifier(str) {
+	if str == '' {
 		ret false
-	end
-	func isNumericChar(char)
+	}
+	func isNumericChar(char) {
 		ret (
 			char == '0' ||
 			char == '1' ||
@@ -40,128 +40,125 @@ protected func IsIdentifier(str)
 			char == '8' ||
 			char == '9'
 		)
-	end
-	if isNumericChar(str[0])
+	}
+	if isNumericChar(str[0]) {
 		ret false
-	end
-	for _, char in str
-		if char <> '_' && IsLetter(char) == false && isNumericChar(char) == false
+	}
+	for _, char in str {
+		if char <> '_' && IsLetter(char) == false && isNumericChar(char) == false {
 			ret false
-		end
-	end
+		}
+	}
 	ret true
-end
+}
 
 # Returns true if char is letter, false if not.
-protected func IsLetter(char)
+protected func IsLetter(char) {
 	ret (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')
-end
+}
 
 # Returns true if string is lowercase, false if not.
-protected func IsLower(str)
-	for _, char in str
-		if IsLetter(char) == false
-			ret false
-		end
-		const code = int(char, type='strcode')
-		if code < 97 || code > 122
-			ret false
-		end
-	else
+protected func IsLower(str) {
+	if str == '' {
 		ret false
-	end
+	}
+	for _, char in str {
+		if IsLetter(char) == false {
+			ret false
+		}
+		const code = int(char, type='strcode')
+		if code < 97 || code > 122 {
+			ret false
+		}
+	}
 	ret true
-end
+}
 
 # Check if all the characters in the text are whitespaces.
-protected func IsSpace(str)
-	for _, char in str
-		if char <> '\t' && char <> ' ' && char <> '\v' && char <> '\n' && char <> '\r' && char <> '\f'
-			ret false
-		end
-	else
+protected func IsSpace(str) {
+	if str == '' {
 		ret false
-	end
+	}
+	for _, char in str {
+		if char <> '\t' && char <> ' ' && char <> '\v' && char <> '\n' && char <> '\r' && char <> '\f' {
+			ret false
+		}
+	}
 	ret true
-end
+}
 
 # Returns true if string is uppercase, false if not.
-protected func IsUpper(str)
-	for _, char in str
-		if IsLetter(char) == false
-			ret false
-		end
-		const code = int(char, type='strcode')
-		if code < 65 || code > 90
-			ret false
-		end
-	else
+protected func IsUpper(str) {
+	if str == '' {
 		ret false
-	end
+	}
+	for _, char in str {
+		if IsLetter(char) == false {
+			ret false
+		}
+		const code = int(char, type='strcode')
+		if code < 65 || code > 90 {
+			ret false
+		}
+	}
 	ret true
-end
+}
 
 # Returns strings as lowercase.
-protected func Lower(str)
-	for index, char in str
-		if IsLetter(char) == false
+protected func Lower(str) {
+	for index, char in str {
+		if IsLetter(char) == false {
 			continue
-		end
-		if IsUpper(char)
+		}
+		if IsUpper(char) {
 			str[index] = char + 32
-  	end
-	else
-		ret ''
-	end
+		}
+	}
 	ret str
-end
+}
 
 # Returns subbed string.
-protected func Substring(str, start, length)
-	if start < 0 || length < 0
+protected func Substring(str, start, length) {
+	if start < 0 || length < 0 {
 		ret ''
-	end
+	}
 	const strlen = len(str)
-	if start >= strlen
+	if start >= strlen {
 		ret ''
-	elif start + length > strlen
+	} else if start + length > strlen {
 		length = strlen - start
-	end
+	}
 	var newStr = ''
-	for _, index in range(start, length + start - 1)
+	for _, index in range(start, length + start - 1) {
 		newStr += str[index]
-	end
+	}
 	ret newStr
-end
+}
 
 # Swaps cases, lowercase becomes uppercase and vice versa.
-protected func SwapCase(str)
-	for index, char in str
-		if IsLetter(char) == false
+protected func SwapCase(str) {
+	for index, char in str {
+		if IsLetter(char) == false {
 			continue
-		end
-		if IsLower(char)
+		}
+		if IsLower(char) {
 			str[index] = char - 32
-		elif IsUpper(char)
+		} else if IsUpper(char) {
 			str[index] = char + 32
-		end
-	else
-		ret ''
-	end
+		}
+	}
 	ret str
-end
+}
 
 # Returns strings as uppercase.
-protected func Upper(str)
-	for index, char in str
-		if IsLetter(char) == false
+protected func Upper(str) {
+	for index, char in str {
+		if IsLetter(char) == false {
 			continue
-		end
-		if IsLower(char)
+		}
+		if IsLower(char) {
 			str[index] = char - 32
-		end
-	else
-		ret ''
-	end
+		}
+	}
 	ret str
-end
+}

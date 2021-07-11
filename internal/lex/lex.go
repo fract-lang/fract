@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
@@ -67,8 +68,13 @@ tokenize:
 	}
 	// Tokenize line.
 	tk := l.Token()
-	for tk.T != fract.None &&
-		tk.T != fract.StatementTerminator {
+	for tk.T != fract.None {
+		if tk.T == fract.StatementTerminator {
+			if l.Parentheses == 0 && l.Braces == 0 && l.Brackets == 0 {
+				break
+			}
+			l.Ln++
+		}
 		if !l.RangeComment && tk.T != fract.Ignore {
 			tks = append(tks, tk)
 			l.lastTk = tk
@@ -217,7 +223,7 @@ func (l *Lex) Token() obj.Token {
 	ln := fln[l.Col-1:]
 	// Skip spaces.
 	for i, c := range ln {
-		if c == ' ' || c == '\t' {
+		if unicode.IsSpace(c) {
 			l.Col++
 			continue
 		}
@@ -250,10 +256,8 @@ func (l *Lex) Token() obj.Token {
 		(l.lastTk.V == "" || l.lastTk.T == fract.Operator ||
 			(l.lastTk.T == fract.Brace && l.lastTk.V != "]") ||
 			l.lastTk.T == fract.StatementTerminator || l.lastTk.T == fract.Loop ||
-			l.lastTk.T == fract.Comma || l.lastTk.T == fract.In ||
-			l.lastTk.T == fract.If || l.lastTk.T == fract.ElseIf ||
-			l.lastTk.T == fract.Else || l.lastTk.T == fract.Ret)) ||
-		isKeyword(ln, "NaN"): // Numeric value.
+			l.lastTk.T == fract.Comma || l.lastTk.T == fract.In || l.lastTk.T == fract.If ||
+			l.lastTk.T == fract.Else || l.lastTk.T == fract.Ret)) || isKeyword(ln, "NaN"): // Numeric value.
 		if chk == "" {
 			chk = "NaN"
 			l.Col += 3
@@ -437,9 +441,6 @@ func (l *Lex) Token() obj.Token {
 	case strings.HasPrefix(ln, "..."): // Params.
 		tk.V = "..."
 		tk.T = fract.Params
-	case isKeyword(ln, "end"): // End of block.
-		tk.V = "end"
-		tk.T = fract.End
 	case isKeyword(ln, "var"): // Variable.
 		tk.V = "var"
 		tk.T = fract.Var
@@ -461,9 +462,6 @@ func (l *Lex) Token() obj.Token {
 	case isKeyword(ln, "if"): // If.
 		tk.V = "if"
 		tk.T = fract.If
-	case isKeyword(ln, "elif"): // Else if.
-		tk.V = "elif"
-		tk.T = fract.ElseIf
 	case isKeyword(ln, "else"): // Else.
 		tk.V = "else"
 		tk.T = fract.Else

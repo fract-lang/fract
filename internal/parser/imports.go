@@ -46,8 +46,6 @@ func (p *Parser) Import() {
 			if p.loopCount != -1 { // Breaked import.
 				return
 			}
-		default:
-			p.skipBlock(true)
 		}
 	}
 }
@@ -129,9 +127,5 @@ func (p *Parser) procImport(tks obj.Tokens) {
 		src.Imports = append(src.Imports, isrc.Imports...)
 		isrc.AddBuiltInFuncs()
 	}
-	p.Imports = append(p.Imports,
-		importInfo{
-			Name: name,
-			Src:  src,
-		})
+	p.Imports = append(p.Imports, importInfo{Name: name, Src: src})
 }

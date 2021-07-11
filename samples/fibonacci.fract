@@ -1,20 +1,21 @@
 #pragma enofi
 
 var (
-	nterms = int(input("How many terms: "))
+	nterms = int(input('How many terms: '))
 	n1     = 0
 	n2     = 1
 	count  = 0
 )
-if nterms <= 0; print("Please enter a positive integer!")
-else
-	print("Fibonacci sequence;")
-	for count < nterms
+if nterms <= 0 {
+	print('Please enter a positive integer!')
+} else {
+	print('Fibonacci sequence;')
+	for count < nterms {
 		print(n1)
 		const nth = n1 + n2
 		# update values
 		n1 = n2
 		n2 = nth
 		count += 1
-	end
-end
+	}
+}
