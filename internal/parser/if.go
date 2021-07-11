@@ -18,7 +18,6 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 	vlen := len(p.vars)
 	flen := len(p.funcs)
 	kws := fract.None
-	// Interpret/skip block.
 	for _, tks := range btks {
 		// Condition is true?
 		if s == "true" && kws == fract.None {
@@ -45,14 +44,13 @@ rep:
 		btks, ctks = p.getBlock(tks[bi:]), tks[2:bi]
 		// Condition is empty?
 		if len(ctks) == 0 {
-			first := tks[0]
+			first := tks[1]
 			fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Condition is empty!")
 		}
 		if s == "true" {
 			goto rep
 		}
 		s = p.procCondition(ctks)
-		// Interpret/skip block.
 		for _, tks := range btks {
 			// Condition is true?
 			if s == "true" && kws == fract.None {
@@ -69,7 +67,6 @@ rep:
 	if s == "true" {
 		goto end
 	}
-	// Interpret/skip block.
 	for _, tks := range btks {
 		// Condition is true?
 		if kws == fract.None {

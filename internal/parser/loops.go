@@ -22,6 +22,8 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	flen := len(p.funcs)
 	brk := false
 	kws := fract.None
+	ptks := p.Tks
+	pi := p.i
 	//*************
 	//    WHILE
 	//*************
@@ -31,9 +33,12 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			// Infinity loop.
 			if len(tks) == 0 {
 			infinity:
-				for _, tks := range btks {
-					kws = p.process(tks)
+				p.Tks = btks
+				for p.i = 0; p.i < len(p.Tks); p.i++ {
+					kws = p.process(p.Tks[p.i])
 					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return.
+						p.Tks = ptks
+						p.i = pi
 						return prockws(kws)
 					} else if kws == fract.LOOPContinue { // Continue loop.
 						break
@@ -48,10 +53,11 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		while:
 			// Interpret/skip block.
 			c := p.procCondition(tks)
-			for _, tks := range btks {
+			p.Tks = btks
+			for p.i = 0; p.i < len(p.Tks); p.i++ {
 				// Condition is true?
 				if c == "true" {
-					kws = p.process(tks)
+					kws = p.process(p.Tks[p.i])
 					if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return.
 						brk = true
 						break
@@ -69,12 +75,13 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			p.funcs = p.funcs[:flen]
 			c = p.procCondition(tks)
 			if brk || c != "true" {
+				p.Tks = ptks
+				p.i = pi
 				return prockws(kws)
 			}
 			goto while
 		}
 	}
-
 	//*************
 	//   FOREACH
 	//*************
@@ -139,9 +146,10 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		}
 	}
 	// Interpret block.
-	for j := 0; j < length; {
-		for _, tks := range btks {
-			kws = p.process(tks)
+	for j := 1; ; j++ {
+		p.Tks = btks
+		for p.i = 0; p.i < len(p.Tks); p.i++ {
+			kws = p.process(p.Tks[p.i])
 			if kws == fract.LOOPBreak || kws == fract.FUNCReturn { // Break loop or return.
 				brk = true
 				break
@@ -153,8 +161,7 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		p.vars = vars
 		// Remove temporary functions.
 		p.funcs = p.funcs[:flen]
-		j++
-		if brk || (v.Arr && j == len(v.D) || !v.Arr && j == len(v.D[0].String())) {
+		if brk || j >= length {
 			break
 		}
 		if index.Name != "" {
@@ -168,6 +175,8 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			}
 		}
 	}
+	p.Tks = ptks
+	p.i = pi
 	// Remove loop variables.
 	p.vars = vars[:len(vars)-2]
 	return prockws(kws)

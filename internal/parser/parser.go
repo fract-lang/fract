@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -745,7 +744,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		// Print value if live interpreting.
 		if v := p.procVal(tks); fract.InteractiveSh {
 			if v.Print() {
-				fmt.Println()
+				println()
 			}
 		}
 	case fract.Protected: // Protected declaration.

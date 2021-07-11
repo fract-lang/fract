@@ -65,8 +65,7 @@ func (c funcCall) call() obj.Value {
 		funcTempVars: c.f.src.funcTempVars,
 		loopCount:    0,
 		funcCount:    1,
-		i:            0,
-		Tks:          c.f.tks,
+		Tks:          c.f.tks[:len(c.f.tks):len(c.f.tks)],
 	}
 	if p.funcTempVars == -1 {
 		p.funcTempVars = 0
@@ -80,8 +79,8 @@ func (c funcCall) call() obj.Value {
 	// Interpret block.
 	b := obj.Block{
 		Try: func() {
-			for _, tks := range p.Tks {
-				if p.process(tks) == fract.FUNCReturn {
+			for p.i = 0; p.i < len(p.Tks); p.i++ {
+				if p.process(p.Tks[p.i]) == fract.FUNCReturn {
 					c.f.src.retVal = p.retVal
 					if c.f.src.retVal == nil {
 						break
