@@ -737,6 +737,9 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 					case "=", "+=", "-=", "*=", "/=", "%=", "^=", "<<=", ">>=", "|=", "&=":
 						p.varset(tks)
 						return fract.None
+					case ":=":
+						p.varsdec(tks)
+						return fract.None
 					}
 				}
 			}

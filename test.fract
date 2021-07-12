@@ -1,5 +1,12 @@
+/*
 try {} ; ; protected func a() {
     print('TEST'); if false { ret 0 } else { ret 1 }
 }
 
 print(a())
+*/
+
+
+# Short variable declaration.
+a := [1, 100, 1000, 10000]
+print(a)

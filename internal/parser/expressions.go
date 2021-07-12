@@ -537,7 +537,8 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		}
 		return r
 	}
-	if i, tk := len(tks)-1, tks[len(tks)-1]; tk.T == fract.Brace {
+	switch i, tk := len(tks)-1, tks[len(tks)-1]; tk.T {
+	case fract.Brace:
 		bc := 0
 		switch tk.V {
 		case ")":

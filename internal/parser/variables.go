@@ -10,6 +10,7 @@ import (
 
 // Metadata of variable declaration.
 type varinfo struct {
+	sdec      bool
 	constant  bool
 	mut       bool
 	protected bool
@@ -34,8 +35,8 @@ func (p *Parser) varadd(md varinfo, tks obj.Tokens) {
 	}
 	setter := tks[1]
 	// Setter is not a setter operator?
-	if setter.T != fract.Operator && setter.V != "=" {
-		fract.IPanic(setter, obj.SyntaxPanic, "This is not a setter operator: "+setter.V)
+	if setter.T != fract.Operator || (setter.V != "=" && !md.sdec || setter.V != ":=" && md.sdec) {
+		fract.IPanic(setter, obj.SyntaxPanic, "Invalid setter operator: "+setter.V)
 	}
 	// Value is not defined?
 	if tksLen < 3 {
@@ -104,6 +105,21 @@ func (p *Parser) vardec(tks obj.Tokens, protected bool) {
 	} else {
 		fract.IPanic(pre, obj.SyntaxPanic, "Invalid syntax!")
 	}
+}
+
+// Process short variable declaration.
+func (p *Parser) varsdec(tks obj.Tokens) {
+	// Name is not defined?
+	if len(tks) < 2 {
+		first := tks[0]
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Name is not given!")
+	}
+	if tks[0].T != fract.Name {
+		fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid syntax!")
+	}
+	var md varinfo
+	md.sdec = true
+	p.varadd(md, tks)
 }
 
 // Process variable set statement.

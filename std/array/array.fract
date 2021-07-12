@@ -38,11 +38,10 @@ protected func Index(array, element, start=0) {
 
 # Returns maximum of array.
 protected func Max(array) {
-	var length = len(array)
-	if length == 0 {
+	if len(array) == 0 {
 		ret 0
 	}
-	var max = array[0]
+	max := array[0]
 	for _, element in array {
 		if max < element {
 			max = element
@@ -53,7 +52,7 @@ protected func Max(array) {
 
 # Returns mean of array.
 protected func Mean(array) {
-	var total = 0
+	total := 0
 	for _, element in array {
 		total += element
 	}
@@ -62,11 +61,10 @@ protected func Mean(array) {
 
 # Returns minimum of array.
 protected func Min(array) {
-	var length = len(array)
-	if length == 0 {
+	if len(array) == 0 {
 		ret 0
 	}
-	var min = array[0]
+	min := array[0]
 	for _, element in array {
 		if min > element {
 			min = element
@@ -91,7 +89,7 @@ protected func Sort(array) {
 	# BUBBLE SORT
 	const length  = len(array) - 2
 	for _, i in range(0, length) {
-		var updated = false
+		updated := false
 		for _, j in range(0, length - i) {
 			if array[j] > array[j + 1] {
 				updated = true
@@ -118,7 +116,7 @@ protected func Sub(array, start, length) {
 	} else if start + length > arrlen {
 		length = arrlen - start
 	}
-	var newArray = []
+	newArray := []
 	for _, index in range(start, length + start - 1) {
 		newArray = append(newArray, array[index])
 	}
@@ -127,7 +125,7 @@ protected func Sub(array, start, length) {
 
 # Returns sum of all array elements.
 protected func Sum(array) {
-	var total = 0
+	total := 0
 	for _, element in array {
 		total += element
 	}

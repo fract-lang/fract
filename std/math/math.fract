@@ -43,7 +43,7 @@ protected func Fact(x) {
 
 # Returns the floor of x as an integral.
 protected func Floor(n) {
-	var intN = int(n)
+	intN := int(n)
 	if n - intN >= 0 {
 		ret intN
 	}
@@ -55,7 +55,7 @@ protected func IsNaN(x) { ret x <> x }
 
 # Returns true if object is numeric, returns false if not.
 protected func IsNumeric(object) {
-	var result = float(object)
+	result := float(object)
 	ret result <> 0 || result == 0 && (object == 0 || object == '0')
 }
 

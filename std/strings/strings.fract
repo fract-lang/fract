@@ -128,7 +128,7 @@ protected func Substring(str, start, length) {
 	} else if start + length > strlen {
 		length = strlen - start
 	}
-	var newStr = ''
+	newStr := ''
 	for _, index in range(start, length + start - 1) {
 		newStr += str[index]
 	}
