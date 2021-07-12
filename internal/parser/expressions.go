@@ -249,7 +249,7 @@ func readyData(p process, d obj.Data) obj.Data {
 
 // solveProc solve arithmetic process.
 func solveProc(p process) obj.Value {
-	v := obj.Value{D: []obj.Data{{}}}
+	v := obj.Value{D: []obj.Data{{D: "0", T: obj.VInt}}}
 	// String?
 	if (len(p.fv.D) != 0 && p.fv.D[0].T == obj.VStr) || (len(p.sv.D) != 0 && p.sv.D[0].T == obj.VStr) {
 		if p.fv.D[0].T == p.sv.D[0].T { // Both string?
@@ -288,96 +288,52 @@ func solveProc(p process) obj.Value {
 		}
 
 		v.D[0].T = obj.VStr
-		if p.fv.D[0].T == obj.VStr {
-			if p.sv.Arr {
-				if len(p.sv.D) == 0 {
-					v.D = p.fv.D
-					return v
-				}
-				if len(p.fv.D[0].String()) != len(p.sv.D) && (len(p.fv.D[0].String()) != 1 && len(p.sv.D) != 1) {
-					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Array element count is not one or equals to first array!")
-				}
-				if strings.Contains(p.sv.D[0].String(), ".") {
-					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
-				}
-				r, _ := strconv.ParseInt(p.sv.D[0].String(), 10, 64)
-				rn := rune(r)
-				var sb strings.Builder
-				for _, r := range p.fv.D[0].String() {
-					switch p.opr.V {
-					case "+":
-						sb.WriteByte(byte(r + rn))
-					case "-":
-						sb.WriteByte(byte(r - rn))
-					default:
-						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
-					}
-				}
-				v.D[0].D = sb.String()
-			} else {
-				if p.sv.D[0].T != obj.VInt {
-					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
-				}
-				var sb strings.Builder
-				rs, _ := strconv.ParseInt(p.sv.D[0].String(), 10, 64)
-				rn := rune(rs)
-				for _, r := range p.fv.D[0].String() {
-					switch p.opr.V {
-					case "+":
-						sb.WriteByte(byte(r + rn))
-					case "-":
-						sb.WriteByte(byte(r - rn))
-					default:
-						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
-					}
-				}
-				v.D[0].D = sb.String()
+		if p.sv.D[0].T == obj.VStr {
+			p.fv, p.sv = p.sv, p.fv
+		}
+		if p.sv.Arr {
+			if len(p.sv.D) == 0 {
+				v.D = p.fv.D
+				return v
 			}
+			if len(p.fv.D[0].String()) != len(p.sv.D) && (len(p.fv.D[0].String()) != 1 && len(p.sv.D) != 1) {
+				fract.IPanic(p.s[0], obj.ArithmeticPanic, "Array element count is not one or equals to first array!")
+			}
+			if strings.Contains(p.sv.D[0].String(), ".") {
+				fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
+			}
+			r, _ := strconv.ParseInt(p.sv.D[0].String(), 10, 64)
+			rn := rune(r)
+			var sb strings.Builder
+			for _, r := range p.fv.D[0].String() {
+				switch p.opr.V {
+				case "+":
+					sb.WriteByte(byte(r + rn))
+				case "-":
+					sb.WriteByte(byte(r - rn))
+				default:
+					fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
+				}
+			}
+			v.D[0].D = sb.String()
 		} else {
-			if p.fv.Arr {
-				if len(p.fv.D) == 0 {
-					v.D = p.sv.D
-					return v
-				}
-				if len(p.fv.D[0].String()) != len(p.sv.D) && (len(p.fv.D[0].String()) != 1 && len(p.sv.D) != 1) {
-					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Array element count is not one or equals to first array!")
-				}
-				if strings.Contains(p.fv.D[0].String(), ".") {
-					fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
-				}
-				rs, _ := strconv.ParseInt(p.fv.D[0].String(), 10, 64)
-				rn := rune(rs)
-				var sb strings.Builder
-				for _, r := range p.sv.D[0].String() {
-					switch p.opr.V {
-					case "+":
-						sb.WriteByte(byte(r + rn))
-					case "-":
-						sb.WriteByte(byte(r - rn))
-					default:
-						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
-					}
-				}
-				v.D[0].D = sb.String()
-			} else {
-				if p.fv.D[0].T != obj.VInt {
-					fract.IPanic(p.f[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
-				}
-				var sb strings.Builder
-				rs, _ := strconv.ParseInt(p.fv.D[0].String(), 10, 64)
-				rn := rune(rs)
-				for _, r := range p.sv.D[0].String() {
-					switch p.opr.V {
-					case "+":
-						sb.WriteByte(byte(r + rn))
-					case "-":
-						sb.WriteByte(byte(r - rn))
-					default:
-						fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
-					}
-				}
-				v.D[0].D = sb.String()
+			if p.sv.D[0].T != obj.VInt {
+				fract.IPanic(p.s[0], obj.ArithmeticPanic, "Only string and integer values can concatenate string values!")
 			}
+			var s string
+			rs, _ := strconv.ParseInt(p.sv.D[0].String(), 10, 64)
+			rn := byte(rs)
+			for _, r := range p.fv.D[0].String() {
+				switch p.opr.V {
+				case "+":
+					s += string(byte(r) + rn)
+				case "-":
+					s += string(byte(r) - rn)
+				default:
+					fract.IPanic(p.opr, obj.ArithmeticPanic, "This operator is not defined for string types!")
+				}
+			}
+			v.D[0].D = s
 		}
 		return v
 	}
@@ -848,7 +804,7 @@ func (p *Parser) procVal(tks obj.Tokens) obj.Value {
 	if len(procs) == 1 {
 		return p.procValPart(false, procs[0])
 	}
-	v := obj.Value{D: []obj.Data{{}}}
+	var v obj.Value
 	var opr process
 	j := nextopr(procs)
 	for j != -1 {
@@ -858,11 +814,15 @@ func (p *Parser) procVal(tks obj.Tokens) obj.Value {
 		opr.s = procs[j+1]
 		opr.sv = p.procValPart(true, opr.s)
 		rv := solveProc(opr)
-		opr.opr.V = "+"
-		opr.s = procs[j+1]
-		opr.fv = v
-		opr.sv = rv
-		v = solveProc(opr)
+		if v.D != nil {
+			opr.opr.V = "+"
+			opr.s = procs[j+1]
+			opr.fv = v
+			opr.sv = rv
+			v = solveProc(opr)
+		} else {
+			v = rv
+		}
 		// Remove computed processes.
 		procs = append(procs[:j-1], procs[j+2:]...)
 		// Find next operator.

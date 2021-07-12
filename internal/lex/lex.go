@@ -109,7 +109,6 @@ tokenize:
 
 var (
 	numericRgx = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
-	nameRgx    = *regexp.MustCompile(`^(-|)([A-z])([a-zA-Z0-9_]+)?(\.([a-zA-Z0-9_]+))*([[:punct:]]|\s|$)`)
 	macroRgx   = *regexp.MustCompile(`^#(\s+|$)`)
 )
 
@@ -122,7 +121,29 @@ func isKeyword(ln, kw string) bool {
 func isMacro(ln string) bool { return !macroRgx.MatchString(ln) }
 
 // getName returns name if next token is name, returns empty string if not.
-func getName(ln string) string { return nameRgx.FindString(ln) }
+func getName(ln string) string {
+	if ln == "" {
+		return ln
+	}
+	for i, r := range ln {
+		if r == '-' && i == 0 {
+			continue
+		} else if r == '.' && i > 0 {
+			continue
+		} else if r >= '0' && r <= '9' && i > 0 {
+			continue
+		} else if r == '_' {
+			continue
+		} else if unicode.IsLetter(r) {
+			continue
+		}
+		if i > 0 {
+			return ln[:i]
+		}
+		return ""
+	}
+	return ln
+}
 
 // getNumeric returns numeric if next token is numeric, returns empty string if not.
 func getNumeric(ln string) string { return numericRgx.FindString(ln) }
@@ -263,9 +284,7 @@ func (l *Lex) Token() obj.Token {
 			l.Col += 3
 		} else {
 			// Remove punct.
-			if lst := chk[len(chk)-1]; lst != '0' && lst != '1' &&
-				lst != '2' && lst != '3' && lst != '4' && lst != '5' &&
-				lst != '6' && lst != '7' && lst != '8' && lst != '9' {
+			if lst := chk[len(chk)-1]; lst < '0' || lst > '9' {
 				chk = chk[:len(chk)-1]
 			}
 			l.Col += len(chk)
