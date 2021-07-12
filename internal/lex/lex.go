@@ -264,7 +264,7 @@ func (l *Lex) Token() obj.Token {
 	// ************
 
 	if l.RangeComment { // Range comment.
-		if strings.HasPrefix(ln, "<#") { // Range comment close.
+		if strings.HasPrefix(ln, "*/") { // Range comment close.
 			l.RangeComment = false
 			l.Col += 2 // len("<#")
 			tk.T = fract.Ignore
@@ -305,6 +305,22 @@ func (l *Lex) Token() obj.Token {
 		tk.V = chk
 		tk.T = fract.Value
 		return tk
+	case strings.HasPrefix(ln, "//"): // Singleline comment.
+		l.F.Lns[l.Ln-1] = l.F.Lns[l.Ln-1][:l.Col-1] // Remove comment from original line.
+		return tk
+	case strings.HasPrefix(ln, "/*"): // Range comment open.
+		l.RangeComment = true
+		tk.V = "/*"
+		tk.T = fract.Ignore
+	case ln[0] == '#': // Macro.
+		if isMacro(ln) {
+			tk.V = "#"
+			tk.T = fract.Macro
+		}
+	case ln[0] == '\'': // String.
+		l.lexstr(&tk, '\'', fln)
+	case ln[0] == '"': // String.
+		l.lexstr(&tk, '"', fln)
 	case ln[0] == ';': // Statement terminator.
 		tk.V = ";"
 		tk.T = fract.StatementTerminator
@@ -345,12 +361,6 @@ func (l *Lex) Token() obj.Token {
 	case strings.HasPrefix(ln, "&="): // And assignment.
 		tk.V = "&="
 		tk.T = fract.Operator
-	case strings.HasPrefix(ln, "//"): // Integer division.
-		tk.V = "//"
-		tk.T = fract.Operator
-	case strings.HasPrefix(ln, "\\\\"): // Integer divide with bigger.
-		tk.V = "\\\\"
-		tk.T = fract.Operator
 	case ln[0] == '+': // Addition.
 		tk.V = "+"
 		tk.T = fract.Operator
@@ -375,9 +385,6 @@ func (l *Lex) Token() obj.Token {
 		tk.T = fract.Operator
 	case ln[0] == '%': // Mod.
 		tk.V = "%"
-		tk.T = fract.Operator
-	case ln[0] == '\\': // Divisin with bigger.
-		tk.V = "\\"
 		tk.T = fract.Operator
 	case ln[0] == '(': // Open parentheses.
 		l.Parentheses++
@@ -520,22 +527,6 @@ func (l *Lex) Token() obj.Token {
 	case isKeyword(ln, "go"): // Concurrency.
 		tk.V = "go"
 		tk.T = fract.Go
-	case strings.HasPrefix(ln, "#>"): // Range comment open.
-		l.RangeComment = true
-		tk.V = "#>"
-		tk.T = fract.Ignore
-	case ln[0] == '#': // Singleline comment or macro.
-		if isMacro(ln) {
-			tk.V = "#"
-			tk.T = fract.Macro
-		} else {
-			l.F.Lns[l.Ln-1] = l.F.Lns[l.Ln-1][:l.Col-1] // Remove comment from original line.
-			return tk
-		}
-	case ln[0] == '\'': // String.
-		l.lexstr(&tk, '\'', fln)
-	case ln[0] == '"': // String.
-		l.lexstr(&tk, '"', fln)
 	default: // Alternates
 		/* Check variable name. */
 		if chk := getName(ln); chk != "" { // Name.

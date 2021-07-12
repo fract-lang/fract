@@ -182,18 +182,6 @@ type process struct {
 // solve process.
 func solve(opr obj.Token, a, b float64) float64 {
 	var r float64
-	if opr.V == "\\" || opr.V == "\\\\" { // Divide with bigger.
-		if opr.V == "\\" {
-			opr.V = "/"
-		} else {
-			opr.V = "//"
-		}
-		if a < b {
-			cache := a
-			a = b
-			b = cache
-		}
-	}
 	switch opr.V {
 	case "+": // Addition.
 		r = a + b
@@ -206,9 +194,6 @@ func solve(opr obj.Token, a, b float64) float64 {
 			fract.Panic(opr, obj.DivideByZeroPanic, "Divide by zero!")
 		}
 		r = a / b
-		if opr.V == "//" {
-			r = math.RoundToEven(r)
-		}
 	case "|": // Binary or.
 		r = float64(int(a) | int(b))
 	case "&": // Binary and.
@@ -239,8 +224,7 @@ func solve(opr obj.Token, a, b float64) float64 {
 func readyData(p process, d obj.Data) obj.Data {
 	if p.fv.D[0].T == obj.VStr || p.sv.D[0].T == obj.VStr {
 		d.T = obj.VStr
-	} else if p.opr.V == "/" || p.opr.V == "\\" ||
-		p.fv.D[0].T == obj.VFloat || p.sv.D[0].T == obj.VFloat {
+	} else if p.opr.V == "/" || p.fv.D[0].T == obj.VFloat || p.sv.D[0].T == obj.VFloat {
 		d.T = obj.VFloat
 		return d
 	}
