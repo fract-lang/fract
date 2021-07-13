@@ -109,7 +109,7 @@ tokenize:
 
 var (
 	numericRgx = *regexp.MustCompile(`^(-|)((\d+((\.\d+)|(\.\d+)?(e|E)(\-|\+)\d+)?)|(0x[[:xdigit:]]+))(\s|[[:punct:]]|$)`)
-	nameRgx    = *regexp.MustCompile(`^(-|)([\p{L}])([\p{L}0-9_]+)?(\.([\p{L}0-9_]+))*([[:punct:]]|\s|$)`)
+	nameRgx    = *regexp.MustCompile(`^(-|)([\p{L}|_])([\p{L}0-9_]+)?(\.([\p{L}0-9_]+))*([[:punct:]]|\s|$)`)
 )
 
 // isKeyword returns true if part is keyword, false if not.
