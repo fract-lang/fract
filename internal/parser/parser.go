@@ -580,49 +580,40 @@ func (p *Parser) AddBuiltInFuncs() {
 			protected:         true,
 			defaultParamCount: 2,
 			params: []obj.Param{{
-				Name: "value",
-				Default: obj.Value{
-					D: []obj.Data{
-						{D: "", T: obj.VStr},
-					},
-				},
-			}, {
-				Name: "fin",
-				Default: obj.Value{
-					D: []obj.Data{
-						{D: "\n", T: obj.VStr},
-					},
-				},
+				Name:    "value",
+				Params:  true,
+				Default: obj.Value{D: []obj.Data{{D: "", T: obj.VStr}}},
+			}},
+		}, function{ // println function.
+			name:              "println",
+			protected:         true,
+			defaultParamCount: 2,
+			params: []obj.Param{{
+				Name:    "value",
+				Params:  true,
+				Default: obj.Value{Arr: true, D: []obj.Data{{D: "", T: obj.VStr}}},
 			}},
 		}, function{ // input function.
 			name:              "input",
 			protected:         true,
 			defaultParamCount: 1,
 			params: []obj.Param{{
-				Name: "message",
-				Default: obj.Value{
-					D: []obj.Data{
-						{D: "", T: obj.VStr},
-					},
-				},
+				Name:    "message",
+				Default: obj.Value{D: []obj.Data{{D: "", T: obj.VStr}}},
 			}},
 		}, function{ // exit function.
 			name:              "exit",
 			protected:         true,
 			defaultParamCount: 1,
 			params: []obj.Param{{
-				Name: "code",
-				Default: obj.Value{
-					D: []obj.Data{{D: "0"}},
-				},
+				Name:    "code",
+				Default: obj.Value{D: []obj.Data{{D: "0"}}},
 			}},
 		}, function{ // len function.
 			name:              "len",
 			protected:         true,
 			defaultParamCount: 0,
-			params: []obj.Param{
-				{Name: "object"},
-			},
+			params:            []obj.Param{{Name: "object"}},
 		}, function{ // range function.
 			name:              "range",
 			protected:         true,
@@ -631,35 +622,25 @@ func (p *Parser) AddBuiltInFuncs() {
 				{Name: "start"},
 				{Name: "to"},
 				{
-					Name: "step",
-					Default: obj.Value{
-						D: []obj.Data{{D: "1", T: obj.VInt}},
-					},
+					Name:    "step",
+					Default: obj.Value{D: []obj.Data{{D: "1", T: obj.VInt}}},
 				},
 			},
 		}, function{ // calloc function.
 			name:              "calloc",
 			protected:         true,
 			defaultParamCount: 0,
-			params: []obj.Param{
-				{Name: "size"},
-			},
+			params:            []obj.Param{{Name: "size"}},
 		}, function{ // realloc function.
 			name:              "realloc",
 			protected:         true,
 			defaultParamCount: 0,
-			params: []obj.Param{
-				{Name: "base"},
-				{Name: "size"},
-			},
+			params:            []obj.Param{{Name: "base"}, {Name: "size"}},
 		}, function{ // memset function.
 			name:              "memset",
 			protected:         true,
 			defaultParamCount: 0,
-			params: []obj.Param{
-				{Name: "mem"},
-				{Name: "val"},
-			},
+			params:            []obj.Param{{Name: "mem"}, {Name: "val"}},
 		}, function{ // string function.
 			name:              "string",
 			protected:         true,
@@ -667,12 +648,8 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []obj.Param{
 				{Name: "object"},
 				{
-					Name: "type",
-					Default: obj.Value{
-						D: []obj.Data{
-							{D: "parse", T: obj.VStr},
-						},
-					},
+					Name:    "type",
+					Default: obj.Value{D: []obj.Data{{D: "parse", T: obj.VStr}}},
 				},
 			},
 		}, function{ // int function.
@@ -682,29 +659,20 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []obj.Param{
 				{Name: "object"},
 				{
-					Name: "type",
-					Default: obj.Value{
-						D: []obj.Data{
-							{D: "parse", T: obj.VStr},
-						},
-					},
+					Name:    "type",
+					Default: obj.Value{D: []obj.Data{{D: "parse", T: obj.VStr}}},
 				},
 			},
 		}, function{ // float function.
 			name:              "float",
 			protected:         true,
 			defaultParamCount: 0,
-			params: []obj.Param{
-				{Name: "object"},
-			},
+			params:            []obj.Param{{Name: "object"}},
 		}, function{ // append function.
 			name:              "append",
 			protected:         true,
 			defaultParamCount: 0,
-			params: []obj.Param{
-				{Name: "dest"},
-				{Name: "src", Params: true},
-			},
+			params:            []obj.Param{{Name: "dest"}, {Name: "src", Params: true}},
 		},
 	)
 }

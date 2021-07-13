@@ -34,6 +34,8 @@ func (c funcCall) call() obj.Value {
 		switch c.f.name {
 		case "print":
 			built_in.Print(c.errTk, c.args)
+		case "println":
+			built_in.Println(c.errTk, c.args)
 		case "input":
 			return built_in.Input(c.args)
 		case "len":
@@ -106,7 +108,7 @@ func (c funcCall) call() obj.Value {
 
 // isParamSet Argument type is param set?
 func isParamSet(tks obj.Tokens) bool {
-	return tks[0].T == fract.Name && tks[1].V == "="
+	return len(tks) >= 2 && tks[0].T == fract.Name && tks[1].V == "="
 }
 
 // paramsArgVals decompose and returns params values.
@@ -231,42 +233,41 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 		tk    = tks[0]
 	)
 	// Decompose arguments.
-	if tks, _ = decomposeBrace(&tks, "(", ")"); tks != nil {
-		var (
-			inf = funcArgInfo{
-				f:        f,
-				names:    &names,
-				tk:       tk,
-				tks:      tks,
-				count:    &count,
-				index:    new(int),
-				lstComma: new(int),
-			}
-			bc = 0
-		)
-		for *inf.index = 0; *inf.index < len(tks); *inf.index++ {
-			switch inf.tk = tks[*inf.index]; inf.tk.T {
-			case fract.Brace:
-				switch inf.tk.V {
-				case "{", "[", "(":
-					bc++
-				default:
-					bc--
-				}
-			case fract.Comma:
-				if bc != 0 {
-					break
-				}
-				args = append(args, p.procFuncArg(inf))
-				*inf.lstComma = *inf.index + 1
-			}
+	tks, _ = decomposeBrace(&tks, "(", ")")
+	var (
+		inf = funcArgInfo{
+			f:        f,
+			names:    &names,
+			tk:       tk,
+			tks:      tks,
+			count:    &count,
+			index:    new(int),
+			lstComma: new(int),
 		}
-		if *inf.lstComma < len(tks) {
-			inf.tk = tks[*inf.lstComma]
-			tkslen := len(tks)
-			inf.index = &tkslen
+		bc = 0
+	)
+	for *inf.index = 0; *inf.index < len(tks); *inf.index++ {
+		switch inf.tk = tks[*inf.index]; inf.tk.T {
+		case fract.Brace:
+			switch inf.tk.V {
+			case "{", "[", "(":
+				bc++
+			default:
+				bc--
+			}
+		case fract.Comma:
+			if bc != 0 {
+				break
+			}
 			args = append(args, p.procFuncArg(inf))
+			*inf.lstComma = *inf.index + 1
 		}
+	}
+	if *inf.lstComma < len(tks) {
+		inf.tk = tks[*inf.lstComma]
+		tkslen := len(tks)
+		inf.index = &tkslen
+		args = append(args, p.procFuncArg(inf))
 	}
 	// All parameters is not defined?
 	if count < len(f.params)-f.defaultParamCount {

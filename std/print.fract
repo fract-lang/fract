@@ -11,10 +11,10 @@
 #
 
 protected func Print(object) {
-	print(string(object, type="object"), fin='')
+	print(string(object, type='object'))
 }
 
 protected func Println(object) {
 	Print(object)
-	print()
+	println()
 }

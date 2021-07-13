@@ -108,7 +108,8 @@ tokenize:
 }
 
 var (
-	numericRgx = *regexp.MustCompile(`^(-|)(([0-9]+((\.[0-9]+)|(\.[0-9]+)?(e|E)(\-|\+)[0-9]+)?)|(0x[A-f0-9]+))(\s|[[:punct:]]|$)`)
+	numericRgx = *regexp.MustCompile(`^(-|)((\d+((\.\d+)|(\.\d+)?(e|E)(\-|\+)\d+)?)|(0x[[:xdigit:]]+))(\s|[[:punct:]]|$)`)
+	nameRgx    = *regexp.MustCompile(`^(-|)([\p{L}])([\p{L}0-9_]+)?(\.([\p{L}0-9_]+))*([[:punct:]]|\s|$)`)
 	macroRgx   = *regexp.MustCompile(`^#(\s+|$)`)
 )
 
@@ -121,29 +122,7 @@ func isKeyword(ln, kw string) bool {
 func isMacro(ln string) bool { return !macroRgx.MatchString(ln) }
 
 // getName returns name if next token is name, returns empty string if not.
-func getName(ln string) string {
-	if ln == "" {
-		return ln
-	}
-	for i, r := range ln {
-		if r == '-' && i == 0 {
-			continue
-		} else if r == '.' && i > 0 {
-			continue
-		} else if r >= '0' && r <= '9' && i > 0 {
-			continue
-		} else if r == '_' {
-			continue
-		} else if unicode.IsLetter(r) {
-			continue
-		}
-		if i > 0 {
-			return ln[:i]
-		}
-		return ""
-	}
-	return ln
-}
+func getName(ln string) string { return nameRgx.FindString(ln) }
 
 // getNumeric returns numeric if next token is numeric, returns empty string if not.
 func getNumeric(ln string) string { return numericRgx.FindString(ln) }

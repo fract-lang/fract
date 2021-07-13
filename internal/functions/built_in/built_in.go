@@ -123,8 +123,15 @@ func Print(tk obj.Token, args []obj.Var) {
 	if args[0].V.D == nil {
 		fract.Panic(tk, obj.ValuePanic, "Value is not printable!")
 	}
-	args[0].V.Print()
-	args[1].V.Print()
+	for _, d := range args[0].V.D {
+		fmt.Print(d)
+	}
+}
+
+// Print values to cli with new line.
+func Println(tk obj.Token, args []obj.Var) {
+	Print(tk, args)
+	println()
 }
 
 // Range returns array by parameters.
