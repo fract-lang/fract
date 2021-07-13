@@ -117,6 +117,21 @@ end:
 	}
 }
 
+// Process pragma.
+func (p *Parser) procPragma(tks []obj.Token) {
+	if tks[1].T != fract.Name {
+		fract.IPanic(tks[0], obj.SyntaxPanic, "Invalid pragma!")
+	}
+	switch tks[1].V {
+	case "enofi":
+		if p.loopCount == -1 {
+			p.loopCount = 0
+		}
+	default:
+		fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid pragma!")
+	}
+}
+
 // Process array indexes for access to elements.
 func indexes(arr, val obj.Value, tk obj.Token) []int {
 	if val.Arr {
@@ -375,7 +390,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				procs = append(procs, obj.Tokens{t})
 				part = obj.Tokens{}
 			}
-		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In:
+		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In, fract.Func:
 			if t.T == fract.Brace {
 				switch t.V {
 				case "(", "[", "{":
@@ -771,7 +786,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 	case fract.Import: // Import.
 		p.procImport(tks)
 	case fract.Macro: // Macro.
-		return p.procMacro(tks)
+		p.procPragma(tks)
 	case fract.Defer, fract.Go: // Deferred or concurrent function calls.
 		if l := len(tks); l < 2 {
 			fract.IPanic(tks[0], obj.SyntaxPanic, "Function is not given!")

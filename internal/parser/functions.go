@@ -302,6 +302,84 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 	}
 }
 
+// Decompose function parameters.
+func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
+	pname, defaultDef := true, false
+	bc := 1
+	var lstp obj.Param
+	for i := 1; i < len(tks); i++ {
+		pr := tks[i]
+		if pr.T == fract.Brace {
+			switch pr.V {
+			case "(":
+				bc++
+			case ")":
+				bc--
+			}
+		}
+		if bc < 1 {
+			tks = tks[i+1:]
+			break
+		}
+		if pname {
+			switch pr.T {
+			case fract.Params:
+				continue
+			case fract.Name:
+			default:
+				if i == 3 && tks[i].V == ")" {
+					continue
+				}
+				fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
+			}
+			lstp = obj.Param{Name: pr.V, Params: i > 0 && tks[i-1].T == fract.Params}
+			f.params = append(f.params, lstp)
+			pname = false
+			continue
+		} else {
+			pname = true
+			// Default value definition?
+			if pr.V == "=" {
+				bc := 0
+				i++
+				start := i
+				for ; i < len(tks); i++ {
+					pr = tks[i]
+					if pr.T == fract.Brace {
+						switch pr.V {
+						case "{", "[", "(":
+							bc++
+						default:
+							bc--
+						}
+					} else if pr.T == fract.Comma {
+						break
+					}
+				}
+				if i-start < 1 {
+					fract.IPanic(tks[start-1], obj.SyntaxPanic, "Value is not given!")
+				}
+				lstp.Default = p.procVal(*tks.Sub(start, i-start))
+				if lstp.Params && !lstp.Default.Arr {
+					fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
+				}
+				f.params[len(f.params)-1] = lstp
+				f.defaultParamCount++
+				defaultDef = true
+				continue
+			}
+			if lstp.Default.D == nil && defaultDef {
+				fract.IPanic(pr, obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
+			} else if pr.T != fract.Comma {
+				fract.IPanic(pr, obj.SyntaxPanic, "Comma is not found!")
+			}
+		}
+	}
+	if lstp.Default.D == nil && defaultDef {
+		fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
+	}
+}
+
 // Process function declaration.
 func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	tkslen := len(tks)
@@ -322,86 +400,12 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	f := function{
 		name:      name.V,
 		ln:        p.i,
-		params:    []obj.Param{},
 		protected: protected,
 		src:       p,
 	}
 	// Decompose function parameters.
 	if tks[2].V == "(" {
-		pname, defaultDef := true, false
-		bc := 1
-		var lstp obj.Param
-		for i := 3; i < len(tks); i++ {
-			pr := tks[i]
-			if pr.T == fract.Brace {
-				switch pr.V {
-				case "(":
-					bc++
-				case ")":
-					bc--
-				}
-			}
-			if bc < 1 {
-				tks = tks[i+1:]
-				break
-			}
-			if pname {
-				switch pr.T {
-				case fract.Params:
-					continue
-				case fract.Name:
-				default:
-					if i == 3 && tks[i].V == ")" {
-						continue
-					}
-					fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
-				}
-				lstp = obj.Param{Name: pr.V, Params: i > 0 && tks[i-1].T == fract.Params}
-				f.params = append(f.params, lstp)
-				pname = false
-				continue
-			} else {
-				pname = true
-				// Default value definition?
-				if pr.V == "=" {
-					bc := 0
-					i++
-					start := i
-					for ; i < len(tks); i++ {
-						pr = tks[i]
-						if pr.T == fract.Brace {
-							switch pr.V {
-							case "{", "[", "(":
-								bc++
-							default:
-								bc--
-							}
-						} else if pr.T == fract.Comma {
-							break
-						}
-					}
-					if i-start < 1 {
-						fract.IPanic(tks[start-1], obj.SyntaxPanic, "Value is not given!")
-					}
-					lstp.Default = p.procVal(*tks.Sub(start, i-start))
-					if lstp.Params && !lstp.Default.Arr {
-						fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
-					}
-					f.params[len(f.params)-1] = lstp
-					f.defaultParamCount++
-					defaultDef = true
-					continue
-				}
-				if lstp.Default.D == nil && defaultDef {
-					fract.IPanic(pr, obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
-				} else if pr.T != fract.Comma {
-					fract.IPanic(pr, obj.SyntaxPanic, "Comma is not found!")
-				}
-			}
-		}
-		if lstp.Default.D == nil && defaultDef {
-			fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
-		}
+		p.setFuncParams(&f, tks[2:])
 	} else {
 		tks = tks[2:]
 	}

@@ -1,4 +1,4 @@
-#pragma enofi
+#enofi
 
 var (
 	nterms = int(input('How many terms: '))

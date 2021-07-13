@@ -1,4 +1,4 @@
-#pragma enofi
+#enofi
 
 # PRIME NUMBER BETWEEN 1 an 100
 for _, x in range(2, 100) {

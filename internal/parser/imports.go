@@ -42,7 +42,7 @@ func (p *Parser) Import() {
 			p.funcs = append(p.funcs, src.funcs...)
 			p.Imports = append(p.Imports, src.Imports...)
 		case fract.Macro: // Macro.
-			p.procMacro(tks)
+			p.procPragma(tks)
 			if p.loopCount != -1 { // Breaked import.
 				return
 			}

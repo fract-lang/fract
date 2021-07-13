@@ -6,7 +6,12 @@ try {} ; ; protected func a() {
 println(a())
 */
 
+/*
+// Short variable declaration.
+a := [1, 100, 1000, 10000]
+println(a)
+*/
 
-# Short variable declaration.
-çaça := [1, 100, 1000, 10000]
-println(çaça)
+// Anonymous functions.
+b := func(x) { println('Hello ', x, '!') }
+b('Fract')

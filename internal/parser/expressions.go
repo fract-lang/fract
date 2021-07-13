@@ -481,6 +481,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 		r  = obj.Value{}
 		tk = tks[0]
 	)
+	// Single value.
 	if len(tks) == 1 {
 		if tk.T == fract.Name {
 			vi, t, src := p.defByName(tk)
@@ -498,15 +499,11 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 				}
 				r = applyMinus(tk, val)
 			}
-			return r
-		}
-		//* Single value.
-		if strings.HasPrefix(tk.V, "object.") {
-			r.Arr = false
-			r.D = []obj.Data{{D: tk.V, T: obj.VFunc}}
-			return r
-		}
-		if (tk.T == fract.Value && tk.V != "true" && tk.V != "false") && tk.V[0] != '\'' && tk.V[0] != '"' {
+		} else if tk.V[0] == '\'' || tk.V[0] == '"' { // String?
+			r.D = []obj.Data{{D: tk.V[1 : len(tk.V)-1], T: obj.VStr}}
+		} else if tk.T == fract.Value && tk.V == "true" || tk.V == "false" {
+			r.D = []obj.Data{{D: tk.V, T: obj.VBool}}
+		} else if tk.T == fract.Value {
 			if strings.Contains(tk.V, ".") || strings.ContainsAny(tk.V, "eE") {
 				tk.T = obj.VFloat
 			} else {
@@ -517,23 +514,11 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 				val, _ := prs.Float64()
 				tk.V = fmt.Sprint(val)
 			}
-		}
-		r.Arr = false
-		if tk.V[0] == '\'' || tk.V[0] == '"' { // String?
-			r.D = []obj.Data{{D: tk.V[1 : len(tk.V)-1], T: obj.VStr}}
-			tk.T = fract.None // Skip type check.
+			r.D = []obj.Data{{D: tk.V, T: tk.T}}
+		} else if strings.HasPrefix(tk.V, "object.") {
+			r.D = []obj.Data{{D: tk.V, T: obj.VFunc}}
 		} else {
-			r.D = []obj.Data{{D: tk.V}}
-		}
-		//* Type check.
-		if tk.T != fract.None {
-			if tk.V == "true" || tk.V == "false" {
-				r.D[0].T = obj.VBool
-				r = applyMinus(tk, r)
-			} else if tk.T == obj.VFloat { // Float?
-				r.D[0].T = obj.VFloat
-				r = applyMinus(tk, r)
-			}
+			fract.IPanic(tk, obj.ValuePanic, "Invalid value!")
 		}
 		return r
 	}
@@ -572,7 +557,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 			if v.Arr || v.D[0].T != obj.VFunc {
 				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 			}
-			r = applyMinus(tk, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]).call())
+			return applyMinus(tk, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]).call())
 		case "]":
 			var vtks obj.Tokens
 			for ; i >= 0; i-- {
@@ -599,9 +584,49 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 			if !v.Arr && v.D[0].T != obj.VStr {
 				fract.IPanic(tk, obj.ValuePanic, "Index accessor is cannot used with non-array variables!")
 			}
-			r = applyMinus(tk, p.selectArrayElems(v, indexes(v, p.procVal(tks[len(vtks):]), tk)))
+			return applyMinus(tk, p.selectArrayElems(v, indexes(v, p.procVal(tks[len(vtks):]), tk)))
+		case "}":
+			var vtks obj.Tokens
+			for ; i >= 0; i-- {
+				t := tks[i]
+				if t.T != fract.Brace {
+					continue
+				}
+				switch t.V {
+				case "}":
+					bc++
+				case "{":
+					bc--
+				}
+				if bc > 0 {
+					continue
+				}
+				vtks = tks[:i]
+				break
+			}
+			l := len(vtks)
+			if l == 0 && bc == 0 {
+				fract.IPanic(tk, obj.SyntaxPanic, "Invalid syntax!")
+			} else if vtks[0].T != fract.Func {
+				fract.IPanic(tk, obj.SyntaxPanic, "Invalid syntax!")
+			} else if l > 1 && (vtks[1].T != fract.Brace || vtks[1].V != "(") {
+				fract.IPanic(vtks[1], obj.SyntaxPanic, "Invalid syntax!")
+			} else if l > 1 && (vtks[l-1].T != fract.Brace || vtks[l-1].V != ")") {
+				fract.IPanic(vtks[l-1], obj.SyntaxPanic, "Invalid syntax!")
+			}
+			f := function{
+				name: "anonymous",
+				src:  p,
+				tks:  p.getBlock(tks[len(vtks):]),
+			}
+			if l > 1 {
+				p.setFuncParams(&f, vtks[1:])
+			}
+			r.D = []obj.Data{{D: f, T: obj.VFunc}}
+			return r
 		}
 	}
+	fract.IPanic(tk, obj.ValuePanic, "Invalid value!")
 	return r
 }
 

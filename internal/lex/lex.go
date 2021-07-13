@@ -110,16 +110,12 @@ tokenize:
 var (
 	numericRgx = *regexp.MustCompile(`^(-|)((\d+((\.\d+)|(\.\d+)?(e|E)(\-|\+)\d+)?)|(0x[[:xdigit:]]+))(\s|[[:punct:]]|$)`)
 	nameRgx    = *regexp.MustCompile(`^(-|)([\p{L}])([\p{L}0-9_]+)?(\.([\p{L}0-9_]+))*([[:punct:]]|\s|$)`)
-	macroRgx   = *regexp.MustCompile(`^#(\s+|$)`)
 )
 
 // isKeyword returns true if part is keyword, false if not.
 func isKeyword(ln, kw string) bool {
 	return regexp.MustCompile("^" + kw + `(\s+|$|[[:punct:]])`).MatchString(ln)
 }
-
-// isMacro returns true if part is macro, false if not.
-func isMacro(ln string) bool { return !macroRgx.MatchString(ln) }
 
 // getName returns name if next token is name, returns empty string if not.
 func getName(ln string) string { return nameRgx.FindString(ln) }
@@ -200,7 +196,7 @@ func (l *Lex) lexname(tk *obj.Token, chk string) bool {
 			tk.T = fract.Ignore
 			return false
 		}
-		l.Error("What you mean?")
+		l.Error("Invalid token!")
 	}
 	tk.V = chk
 	tk.T = fract.Name
@@ -292,10 +288,8 @@ func (l *Lex) Token() obj.Token {
 		tk.V = "/*"
 		tk.T = fract.Ignore
 	case ln[0] == '#': // Macro.
-		if isMacro(ln) {
-			tk.V = "#"
-			tk.T = fract.Macro
-		}
+		tk.V = "#"
+		tk.T = fract.Macro
 	case ln[0] == '\'': // String.
 		l.lexstr(&tk, '\'', fln)
 	case ln[0] == '"': // String.
@@ -518,7 +512,7 @@ func (l *Lex) Token() obj.Token {
 				tk.T = fract.Ignore
 				return tk
 			}
-			l.Error("What you mean?")
+			l.Error("Invalid token!")
 		}
 	}
 
