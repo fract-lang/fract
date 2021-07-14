@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fract-lang/fract/internal/functions/built_in"
+	"github.com/fract-lang/fract/functions/built_in"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
+	"github.com/fract-lang/fract/pkg/value"
 )
 
 // function instance.
@@ -15,9 +16,16 @@ type function struct {
 	src               *Parser
 	ln                int // Line of define.
 	tks               []obj.Tokens
-	params            []obj.Param
+	params            []param
 	defaultParamCount int
 	protected         bool
+}
+
+// param instance.
+type param struct {
+	defval value.Val
+	name   string
+	params bool
 }
 
 // Instance for function calls.
@@ -27,8 +35,8 @@ type funcCall struct {
 	args  []obj.Var
 }
 
-func (c funcCall) call() obj.Value {
-	var retv obj.Value
+func (c funcCall) call() value.Val {
+	var retv value.Val
 	// Is built-in function?
 	if c.f.tks == nil {
 		switch c.f.name {
@@ -112,8 +120,8 @@ func isParamSet(tks obj.Tokens) bool {
 }
 
 // paramsArgVals decompose and returns params values.
-func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
-	retv := obj.Value{D: []obj.Data{}, Arr: true}
+func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
+	retv := value.Val{D: []value.Data{}, Arr: true}
 	bc := 0
 	for ; *i < len(tks); *i++ {
 		switch tk := tks[*i]; tk.T {
@@ -135,7 +143,7 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
 			}
 			v := p.procVal(*vtks)
 			if v.Arr {
-				retv.D = append(retv.D, obj.Data{D: v.D, T: obj.VArray})
+				retv.D = append(retv.D, value.Data{D: v.D, T: value.Array})
 			} else {
 				retv.D = append(retv.D, v.D...)
 			}
@@ -150,7 +158,7 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) obj.Value {
 		}
 		v := p.procVal(vtks)
 		if v.Arr {
-			retv.D = append(retv.D, obj.Data{D: v.D, T: obj.VArray})
+			retv.D = append(retv.D, value.Data{D: v.D, T: value.Array})
 		} else {
 			retv.D = append(retv.D, v.D...)
 		}
@@ -178,7 +186,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 		fract.IPanic(i.tk, obj.SyntaxPanic, "Argument overflow!")
 	}
 	param := i.f.params[*i.count]
-	v := obj.Var{Name: param.Name}
+	v := obj.Var{Name: param.name}
 	vtks := *i.tks.Sub(*i.lstComma, l)
 	i.tk = vtks[0]
 	// Check param set.
@@ -188,7 +196,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 			fract.IPanic(i.tk, obj.SyntaxPanic, "Value is not given!")
 		}
 		for _, pr := range i.f.params {
-			if pr.Name == i.tk.V {
+			if pr.name == i.tk.V {
 				for _, name := range *i.names {
 					if name == i.tk.V {
 						fract.IPanic(i.tk, obj.SyntaxPanic, "Keyword argument repeated!")
@@ -199,7 +207,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 				*i.names = append(*i.names, i.tk.V)
 				retv := obj.Var{Name: i.tk.V}
 				//Parameter is params typed?
-				if pr.Params {
+				if pr.params {
 					*i.lstComma += 2
 					retv.V = p.paramsArgVals(i.tks, i.index, i.lstComma)
 				} else {
@@ -216,7 +224,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	*i.count++
 	*i.names = append(*i.names, v.Name)
 	// Parameter is params typed?
-	if param.Params {
+	if param.params {
 		v.V = p.paramsArgVals(i.tks, i.index, i.lstComma)
 	} else {
 		v.V = p.procVal(vtks)
@@ -274,12 +282,12 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 		var sb strings.Builder
 		sb.WriteString("All required positional arguments is not given:")
 		for _, p := range f.params {
-			if p.Default.D != nil {
+			if p.defval.D != nil {
 				break
 			}
-			msg := " '" + p.Name + "',"
+			msg := " '" + p.name + "',"
 			for _, name := range names {
-				if p.Name == name {
+				if p.name == name {
 					msg = ""
 					break
 				}
@@ -291,8 +299,8 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 	// Check default values.
 	for ; count < len(f.params); count++ {
 		p := f.params[count]
-		if p.Default.D != nil {
-			args = append(args, obj.Var{Name: p.Name, V: p.Default})
+		if p.defval.D != nil {
+			args = append(args, obj.Var{Name: p.name, V: p.defval})
 		}
 	}
 	return funcCall{
@@ -306,7 +314,7 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 	pname, defaultDef := true, false
 	bc := 1
-	var lstp obj.Param
+	var lstp param
 	for i := 1; i < len(*tks); i++ {
 		pr := (*tks)[i]
 		if pr.T == fract.Brace {
@@ -332,7 +340,7 @@ func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 				}
 				fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 			}
-			lstp = obj.Param{Name: pr.V, Params: i > 0 && (*tks)[i-1].T == fract.Params}
+			lstp = param{name: pr.V, params: i > 0 && (*tks)[i-1].T == fract.Params}
 			f.params = append(f.params, lstp)
 			pname = false
 			continue
@@ -359,8 +367,8 @@ func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 				if i-start < 1 {
 					fract.IPanic((*tks)[start-1], obj.SyntaxPanic, "Value is not given!")
 				}
-				lstp.Default = p.procVal(*tks.Sub(start, i-start))
-				if lstp.Params && !lstp.Default.Arr {
+				lstp.defval = p.procVal(*tks.Sub(start, i-start))
+				if lstp.params && !lstp.defval.Arr {
 					fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
 				}
 				f.params[len(f.params)-1] = lstp
@@ -368,14 +376,14 @@ func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 				defaultDef = true
 				continue
 			}
-			if lstp.Default.D == nil && defaultDef {
+			if lstp.defval.D == nil && defaultDef {
 				fract.IPanic(pr, obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
 			} else if pr.T != fract.Comma {
 				fract.IPanic(pr, obj.SyntaxPanic, "Comma is not found!")
 			}
 		}
 	}
-	if lstp.Default.D == nil && defaultDef {
+	if lstp.defval.D == nil && defaultDef {
 		fract.IPanic((*tks)[len(*tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
 	}
 }

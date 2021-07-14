@@ -1,4 +1,4 @@
-package lex
+package lexer
 
 import (
 	"fmt"
@@ -12,8 +12,8 @@ import (
 	"github.com/fract-lang/fract/pkg/str"
 )
 
-// Lex of Fract.
-type Lex struct {
+// Lexer of Fract.
+type Lexer struct {
 	lastTk obj.Token
 
 	F            *obj.File
@@ -26,8 +26,8 @@ type Lex struct {
 	Parentheses  int
 }
 
-// Error thrown exception.
-func (l Lex) Error(msg string) {
+// error thrown exception.
+func (l Lexer) error(msg string) {
 	fmt.Printf("File: %s\nPosition: %d:%d\n", l.F.P, l.Ln, l.Col)
 	if !l.RangeComment { // Ignore multiline comment error.
 		fmt.Println("    " + strings.ReplaceAll(l.F.Lns[l.Ln-1], "\t", " "))
@@ -39,11 +39,11 @@ func (l Lex) Error(msg string) {
 
 // Check expected bracket or like and returns true if require retokenize, returns false if not.
 // Thrown exception is syntax error.
-func (l *Lex) checkExpected(msg string) bool {
+func (l *Lexer) checkExpected(msg string) bool {
 	if l.Fin {
 		if l.F.P != "<stdin>" {
 			l.Ln-- // Subtract for correct line number.
-			l.Error(msg)
+			l.error(msg)
 		}
 		return false
 	}
@@ -51,7 +51,7 @@ func (l *Lex) checkExpected(msg string) bool {
 }
 
 // Next lex next line.
-func (l *Lex) Next() obj.Tokens {
+func (l *Lexer) Next() obj.Tokens {
 	var tks obj.Tokens
 	// If file is finished?
 	if l.Fin {
@@ -124,14 +124,14 @@ func getName(ln string) string { return nameRgx.FindString(ln) }
 func getNumeric(ln string) string { return numericRgx.FindString(ln) }
 
 // Process string espace sequence.
-func (l *Lex) strseq(sb *strings.Builder, fln string) bool {
+func (l *Lexer) strseq(sb *strings.Builder, fln string) bool {
 	// Is not espace sequence?
 	if fln[l.Col-1] != '\\' {
 		return false
 	}
 	l.Col++
 	if l.Col >= len(fln)+1 {
-		l.Error("Charray literal is not defined full!")
+		l.error("Charray literal is not defined full!")
 	}
 	switch fln[l.Col-1] {
 	case '\\':
@@ -155,12 +155,12 @@ func (l *Lex) strseq(sb *strings.Builder, fln string) bool {
 	case 'v':
 		sb.WriteByte('\v')
 	default:
-		l.Error("Invalid escape sequence!")
+		l.error("Invalid escape sequence!")
 	}
 	return true
 }
 
-func (l *Lex) lexstr(tk *obj.Token, quote byte, fln string) {
+func (l *Lexer) lexstr(tk *obj.Token, quote byte, fln string) {
 	sb := new(strings.Builder)
 	sb.WriteByte(quote)
 	l.Col++
@@ -175,13 +175,13 @@ func (l *Lex) lexstr(tk *obj.Token, quote byte, fln string) {
 	}
 	tk.V = sb.String()
 	if tk.V[len(tk.V)-1] != quote {
-		l.Error("Close quote is not found!")
+		l.error("Close quote is not found!")
 	}
 	tk.T = fract.Value
 	l.Col -= sb.Len() - 1
 }
 
-func (l *Lex) lexname(tk *obj.Token, chk string) bool {
+func (l *Lexer) lexname(tk *obj.Token, chk string) bool {
 	// Remove punct.
 	if chk[len(chk)-1] != '_' && chk[len(chk)-1] != '.' {
 		r, _ := regexp.MatchString(`(\s|[[:punct:]])$`, chk)
@@ -196,7 +196,7 @@ func (l *Lex) lexname(tk *obj.Token, chk string) bool {
 			tk.T = fract.Ignore
 			return false
 		}
-		l.Error("Invalid token!")
+		l.error("Invalid token!")
 	}
 	tk.V = chk
 	tk.T = fract.Name
@@ -204,7 +204,7 @@ func (l *Lex) lexname(tk *obj.Token, chk string) bool {
 }
 
 // Generate next token.
-func (l *Lex) Token() obj.Token {
+func (l *Lexer) Token() obj.Token {
 	tk := obj.Token{T: fract.None, F: l.F}
 
 	fln := l.F.Lns[l.Ln-1] // Full line.
@@ -366,7 +366,7 @@ func (l *Lex) Token() obj.Token {
 	case ln[0] == ')': // Close parentheses.
 		l.Parentheses--
 		if l.Parentheses < 0 {
-			l.Error("The extra parentheses are closed!")
+			l.error("The extra parentheses are closed!")
 		}
 		tk.V = ")"
 		tk.T = fract.Brace
@@ -377,7 +377,7 @@ func (l *Lex) Token() obj.Token {
 	case ln[0] == '}': // Close brace.
 		l.Braces--
 		if l.Braces < 0 {
-			l.Error("The extra brace are closed!")
+			l.error("The extra brace are closed!")
 		}
 		tk.V = "}"
 		tk.T = fract.Brace
@@ -388,7 +388,7 @@ func (l *Lex) Token() obj.Token {
 	case ln[0] == ']': // Close bracket.
 		l.Brackets--
 		if l.Brackets < 0 {
-			l.Error("The extra bracket are closed!")
+			l.error("The extra bracket are closed!")
 		}
 		tk.V = "]"
 		tk.T = fract.Brace
@@ -512,7 +512,7 @@ func (l *Lex) Token() obj.Token {
 				tk.T = fract.Ignore
 				return tk
 			}
-			l.Error("Invalid token!")
+			l.error("Invalid token!")
 		}
 	}
 

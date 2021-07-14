@@ -5,6 +5,7 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
+	"github.com/fract-lang/fract/pkg/value"
 )
 
 // prockws returns return value of kwstate.
@@ -123,12 +124,12 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	}
 	v := p.procVal(tks)
 	// Type is not array?
-	if !v.Arr && v.D[0].T != obj.VStr {
+	if !v.Arr && v.D[0].T != value.Str {
 		fract.IPanic(tks[0], obj.ValuePanic, "Foreach loop must defined array value!")
 	}
 	p.vars = append(p.vars,
-		obj.Var{Name: nametk.V, V: obj.Value{D: []obj.Data{{D: "0", T: obj.VInt}}}},
-		obj.Var{Name: ename, V: obj.Value{}},
+		obj.Var{Name: nametk.V, V: value.Val{D: []value.Data{{D: "0", T: value.Int}}}},
+		obj.Var{Name: ename, V: value.Val{}},
 	)
 	vlen := len(p.vars)
 	index := &p.vars[vlen-2]
@@ -145,9 +146,9 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	}
 	if element.Name != "" {
 		if v.Arr {
-			element.V.D = []obj.Data{v.D[0]}
+			element.V.D = []value.Data{v.D[0]}
 		} else {
-			element.V.D = []obj.Data{{D: string(v.D[0].String()[0]), T: obj.VStr}}
+			element.V.D = []value.Data{{D: string(v.D[0].String()[0]), T: value.Str}}
 		}
 	}
 	// Interpret block.
@@ -172,13 +173,13 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 			break
 		}
 		if index.Name != "" {
-			index.V.D = []obj.Data{{D: fmt.Sprint(j), T: obj.VInt}}
+			index.V.D = []value.Data{{D: fmt.Sprint(j), T: value.Int}}
 		}
 		if element.Name != "" {
 			if v.Arr {
-				element.V.D = []obj.Data{v.D[j]}
+				element.V.D = []value.Data{v.D[j]}
 			} else {
-				element.V.D = []obj.Data{{D: string(v.D[0].String()[j]), T: obj.VStr}}
+				element.V.D = []value.Data{{D: string(v.D[0].String()[j]), T: value.Str}}
 			}
 		}
 	}

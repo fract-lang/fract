@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fract-lang/fract/pkg/arithmetic"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
+	"github.com/fract-lang/fract/pkg/value"
 )
 
 // Exit from application with code.
@@ -17,7 +17,7 @@ func Exit(tk obj.Token, args []obj.Var) {
 	c := args[0].V
 	if c.Arr {
 		fract.Panic(tk, obj.ValuePanic, "Array is not a valid value!")
-	} else if c.D[0].T != obj.VInt {
+	} else if c.D[0].T != value.Int {
 		fract.Panic(tk, obj.ValuePanic, "Exit code is only be integer!")
 	}
 	ec, _ := strconv.ParseInt(c.D[0].String(), 10, 64)
@@ -25,84 +25,84 @@ func Exit(tk obj.Token, args []obj.Var) {
 }
 
 // Float convert object to float.
-func Float(parameters []obj.Var) obj.Value {
-	return obj.Value{D: []obj.Data{
-		{D: fmt.Sprintf(fract.FloatFormat, arithmetic.Value(parameters[0].V.D[0].String())), T: obj.VFloat},
+func Float(parameters []obj.Var) value.Val {
+	return value.Val{D: []value.Data{
+		{D: fmt.Sprintf(fract.FloatFormat, value.Conv(parameters[0].V.D[0].String())), T: value.Float},
 	}}
 }
 
 // Input returns input from command-line.
-func Input(args []obj.Var) obj.Value {
+func Input(args []obj.Var) value.Val {
 	args[0].V.Print()
 	//! Don't use fmt.Scanln
 	s := bufio.NewScanner(os.Stdin)
 	s.Scan()
-	return obj.Value{
-		D: []obj.Data{{D: s.Text(), T: obj.VStr}},
+	return value.Val{
+		D: []value.Data{{D: s.Text(), T: value.Str}},
 	}
 }
 
 // Int convert object to integer.
-func Int(args []obj.Var) obj.Value {
+func Int(args []obj.Var) value.Val {
 	switch args[1].V.D[0].D { // Cast type.
 	case "strcode":
-		var v obj.Value
+		var v value.Val
 		for _, byt := range []byte(args[0].V.D[0].String()) {
-			v.D = append(v.D, obj.Data{D: fmt.Sprint(byt), T: obj.VInt})
+			v.D = append(v.D, value.Data{D: fmt.Sprint(byt), T: value.Int})
 		}
 		v.Arr = len(v.D) > 1
 		return v
 	default: // Object.
-		return obj.Value{
-			D: []obj.Data{{D: fmt.Sprint(int(arithmetic.Value(args[0].V.D[0].String()))), T: obj.VInt}},
+		return value.Val{
+			D: []value.Data{{D: fmt.Sprint(int(value.Conv(args[0].V.D[0].String()))), T: value.Int}},
 		}
 	}
 }
 
 // Len returns length of object.
-func Len(args []obj.Var) obj.Value {
+func Len(args []obj.Var) value.Val {
 	arg := args[0].V
 	if arg.Arr {
-		return obj.Value{D: []obj.Data{{D: fmt.Sprint(len(arg.D))}}}
-	} else if arg.D[0].T == obj.VStr {
-		return obj.Value{D: []obj.Data{{D: fmt.Sprint(len(arg.D[0].String()))}}}
+		return value.Val{D: []value.Data{{D: fmt.Sprint(len(arg.D))}}}
+	} else if arg.D[0].T == value.Str {
+		return value.Val{D: []value.Data{{D: fmt.Sprint(len(arg.D[0].String()))}}}
 	}
-	return obj.Value{D: []obj.Data{{D: "0"}}}
+	return value.Val{D: []value.Data{{D: "0"}}}
 }
 
 // Calloc array by size.
-func Calloc(tk obj.Token, args []obj.Var) obj.Value {
+func Calloc(tk obj.Token, args []obj.Var) value.Val {
 	sz := args[0].V
 	if sz.Arr {
 		fract.Panic(tk, obj.ValuePanic, "Array is not a valid value!")
-	} else if sz.D[0].T != obj.VInt {
+	} else if sz.D[0].T != value.Int {
 		fract.Panic(tk, obj.ValuePanic, "Size is only be integer!")
 	}
 	szv, _ := strconv.Atoi(sz.D[0].String())
 	if szv < 0 {
 		fract.Panic(tk, obj.ValuePanic, "Size should be minimum zero!")
 	}
-	v := obj.Value{Arr: true}
+	v := value.Val{Arr: true}
 	if szv > 0 {
 		var index int
 		for ; index < szv; index++ {
-			v.D = append(v.D, obj.Data{D: "0", T: obj.VInt})
+			v.D = append(v.D, value.Data{D: "0", T: value.Int})
 		}
 	} else {
-		v.D = []obj.Data{}
+		v.D = []value.Data{}
 	}
 	return v
 }
 
 // Realloc array by size.
-func Realloc(tk obj.Token, args []obj.Var) obj.Value {
+func Realloc(tk obj.Token, args []obj.Var) value.Val {
 	szv, _ := strconv.Atoi(args[1].V.D[0].String())
 	if szv < 0 {
 		fract.Panic(tk, obj.ValuePanic, "Size should be minimum zero!")
 	}
 	var (
 		b = args[0].V.D
-		v = obj.Value{Arr: true}
+		v = value.Val{Arr: true}
 		c = 0
 	)
 	if len(b) <= szv {
@@ -113,7 +113,7 @@ func Realloc(tk obj.Token, args []obj.Var) obj.Value {
 		return v
 	}
 	for ; c <= szv; c++ {
-		v.D = append(v.D, obj.Data{D: "0", T: obj.VInt})
+		v.D = append(v.D, value.Data{D: "0", T: value.Int})
 	}
 	return v
 }
@@ -135,7 +135,7 @@ func Println(tk obj.Token, args []obj.Var) {
 }
 
 // Range returns array by parameters.
-func Range(tk obj.Token, args []obj.Var) obj.Value {
+func Range(tk obj.Token, args []obj.Var) value.Val {
 	start := args[0].V
 	to := args[1].V
 	step := args[2].V
@@ -146,36 +146,36 @@ func Range(tk obj.Token, args []obj.Var) obj.Value {
 	} else if step.Arr {
 		fract.Panic(tk, obj.ValuePanic, "\"step\" argument should be numeric!")
 	}
-	if start.D[0].T != obj.VInt && start.D[0].T != obj.VFloat || to.D[0].T != obj.VInt &&
-		to.D[0].T != obj.VFloat || step.D[0].T != obj.VInt && step.D[0].T != obj.VFloat {
+	if start.D[0].T != value.Int && start.D[0].T != value.Float || to.D[0].T != value.Int &&
+		to.D[0].T != value.Float || step.D[0].T != value.Int && step.D[0].T != value.Float {
 		fract.Panic(tk, obj.ValuePanic, "Values should be integer or float!")
 	}
 	startV, _ := strconv.ParseFloat(start.D[0].String(), 64)
 	toV, _ := strconv.ParseFloat(to.D[0].String(), 64)
 	stepV, _ := strconv.ParseFloat(step.D[0].String(), 64)
 	if stepV <= 0 {
-		return obj.Value{
+		return value.Val{
 			D:   nil,
 			Arr: true,
 		}
 	}
 	var t uint8
-	if start.D[0].T == obj.VFloat || to.D[0].T == obj.VFloat || step.D[0].T == obj.VFloat {
-		t = obj.VFloat
+	if start.D[0].T == value.Float || to.D[0].T == value.Float || step.D[0].T == value.Float {
+		t = value.Float
 	}
-	rv := obj.Value{
-		D:   []obj.Data{},
+	rv := value.Val{
+		D:   []value.Data{},
 		Arr: true,
 	}
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
-			d := obj.Data{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
+			d := value.Data{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
 			d.D = d.Format()
 			rv.D = append(rv.D, d)
 		}
 	} else {
 		for ; startV >= toV; startV -= stepV {
-			d := obj.Data{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
+			d := value.Data{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
 			d.D = d.Format()
 			rv.D = append(rv.D, d)
 		}
@@ -184,7 +184,7 @@ func Range(tk obj.Token, args []obj.Var) obj.Value {
 }
 
 // String convert object to string.
-func String(args []obj.Var) obj.Value {
+func String(args []obj.Var) value.Val {
 	switch args[1].V.D[0].D {
 	case "parse":
 		str := ""
@@ -202,37 +202,37 @@ func String(args []obj.Var) obj.Value {
 		} else {
 			str = args[0].V.D[0].String()
 		}
-		return obj.Value{
-			D: []obj.Data{{D: str, T: obj.VStr}},
+		return value.Val{
+			D: []value.Data{{D: str, T: value.Str}},
 		}
 	case "bytecode":
 		v := args[0].V
 		var sb strings.Builder
 		for _, d := range v.D {
-			if d.T != obj.VInt {
+			if d.T != value.Int {
 				sb.WriteByte(' ')
 			}
 			r, _ := strconv.ParseInt(d.String(), 10, 32)
 			sb.WriteByte(byte(r))
 		}
-		return obj.Value{
-			D: []obj.Data{{D: sb.String(), T: obj.VStr}},
+		return value.Val{
+			D: []value.Data{{D: sb.String(), T: value.Str}},
 		}
 	default: // Object.
-		return obj.Value{
-			D: []obj.Data{{D: fmt.Sprint(args[0].V), T: obj.VStr}},
+		return value.Val{
+			D: []value.Data{{D: fmt.Sprint(args[0].V), T: value.Str}},
 		}
 	}
 }
 
 // Append source values to destination array.
-func Append(tk obj.Token, args []obj.Var) obj.Value {
+func Append(tk obj.Token, args []obj.Var) value.Val {
 	src := args[0].V
 	if !src.Arr {
 		fract.Panic(tk, obj.ValuePanic, "\"src\" must be array!")
 	}
 	for _, d := range args[1].V.D {
-		src.D = append(src.D, obj.Data{D: d.D, T: d.T})
+		src.D = append(src.D, value.Data{D: d.D, T: d.T})
 	}
 	return src
 }

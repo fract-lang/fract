@@ -9,9 +9,10 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/fract-lang/fract/internal/lex"
+	"github.com/fract-lang/fract/lexer"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
+	"github.com/fract-lang/fract/pkg/value"
 )
 
 var (
@@ -26,9 +27,9 @@ type Parser struct {
 	loopCount    int
 	funcCount    int
 	i            int
-	retVal       *obj.Value // Pointer of last return value.
+	retVal       *value.Val // Pointer of last return value.
 
-	L       *lex.Lex
+	L       *lexer.Lexer
 	Tks     []obj.Tokens // All Tokens of code file.
 	Imports []importInfo
 }
@@ -44,7 +45,7 @@ func New(fp string) *Parser {
 	}
 	return &Parser{
 		funcTempVars: -1,
-		L:            &lex.Lex{F: sf, Ln: 1},
+		L:            &lexer.Lexer{F: sf, Ln: 1},
 	}
 }
 
@@ -52,7 +53,7 @@ func New(fp string) *Parser {
 func NewStdin() *Parser {
 	return &Parser{
 		funcTempVars: -1,
-		L: &lex.Lex{
+		L: &lexer.Lexer{
 			F:  &obj.File{P: "<stdin>"},
 			Ln: 1,
 		},
@@ -133,11 +134,11 @@ func (p *Parser) procPragma(tks []obj.Token) {
 }
 
 // Process array indexes for access to elements.
-func indexes(arr, val obj.Value, tk obj.Token) []int {
+func indexes(arr, val value.Val, tk obj.Token) []int {
 	if val.Arr {
 		var i []int
 		for _, d := range val.D {
-			if d.T != obj.VInt {
+			if d.T != value.Int {
 				fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 			}
 			pos, err := strconv.Atoi(d.String())
@@ -156,7 +157,7 @@ func indexes(arr, val obj.Value, tk obj.Token) []int {
 		}
 		return i
 	}
-	if val.D[0].T != obj.VInt {
+	if val.D[0].T != value.Int {
 		fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 	}
 	pos, err := strconv.Atoi(val.String())
@@ -594,100 +595,100 @@ func (p *Parser) AddBuiltInFuncs() {
 			name:              "print",
 			protected:         true,
 			defaultParamCount: 2,
-			params: []obj.Param{{
-				Name:    "value",
-				Params:  true,
-				Default: obj.Value{D: []obj.Data{{D: "", T: obj.VStr}}},
+			params: []param{{
+				name:   "value",
+				params: true,
+				defval: value.Val{D: []value.Data{{D: "", T: value.Str}}},
 			}},
 		}, function{ // println function.
 			name:              "println",
 			protected:         true,
 			defaultParamCount: 2,
-			params: []obj.Param{{
-				Name:    "value",
-				Params:  true,
-				Default: obj.Value{Arr: true, D: []obj.Data{{D: "", T: obj.VStr}}},
+			params: []param{{
+				name:   "value",
+				params: true,
+				defval: value.Val{Arr: true, D: []value.Data{{D: "", T: value.Str}}},
 			}},
 		}, function{ // input function.
 			name:              "input",
 			protected:         true,
 			defaultParamCount: 1,
-			params: []obj.Param{{
-				Name:    "message",
-				Default: obj.Value{D: []obj.Data{{D: "", T: obj.VStr}}},
+			params: []param{{
+				name:   "message",
+				defval: value.Val{D: []value.Data{{D: "", T: value.Str}}},
 			}},
 		}, function{ // exit function.
 			name:              "exit",
 			protected:         true,
 			defaultParamCount: 1,
-			params: []obj.Param{{
-				Name:    "code",
-				Default: obj.Value{D: []obj.Data{{D: "0"}}},
+			params: []param{{
+				name:   "code",
+				defval: value.Val{D: []value.Data{{D: "0"}}},
 			}},
 		}, function{ // len function.
 			name:              "len",
 			protected:         true,
 			defaultParamCount: 0,
-			params:            []obj.Param{{Name: "object"}},
+			params:            []param{{name: "object"}},
 		}, function{ // range function.
 			name:              "range",
 			protected:         true,
 			defaultParamCount: 1,
-			params: []obj.Param{
-				{Name: "start"},
-				{Name: "to"},
+			params: []param{
+				{name: "start"},
+				{name: "to"},
 				{
-					Name:    "step",
-					Default: obj.Value{D: []obj.Data{{D: "1", T: obj.VInt}}},
+					name:   "step",
+					defval: value.Val{D: []value.Data{{D: "1", T: value.Int}}},
 				},
 			},
 		}, function{ // calloc function.
 			name:              "calloc",
 			protected:         true,
 			defaultParamCount: 0,
-			params:            []obj.Param{{Name: "size"}},
+			params:            []param{{name: "size"}},
 		}, function{ // realloc function.
 			name:              "realloc",
 			protected:         true,
 			defaultParamCount: 0,
-			params:            []obj.Param{{Name: "base"}, {Name: "size"}},
+			params:            []param{{name: "base"}, {name: "size"}},
 		}, function{ // memset function.
 			name:              "memset",
 			protected:         true,
 			defaultParamCount: 0,
-			params:            []obj.Param{{Name: "mem"}, {Name: "val"}},
+			params:            []param{{name: "mem"}, {name: "val"}},
 		}, function{ // string function.
 			name:              "string",
 			protected:         true,
 			defaultParamCount: 1,
-			params: []obj.Param{
-				{Name: "object"},
+			params: []param{
+				{name: "object"},
 				{
-					Name:    "type",
-					Default: obj.Value{D: []obj.Data{{D: "parse", T: obj.VStr}}},
+					name:   "type",
+					defval: value.Val{D: []value.Data{{D: "parse", T: value.Str}}},
 				},
 			},
 		}, function{ // int function.
 			name:              "int",
 			protected:         true,
 			defaultParamCount: 1,
-			params: []obj.Param{
-				{Name: "object"},
+			params: []param{
+				{name: "object"},
 				{
-					Name:    "type",
-					Default: obj.Value{D: []obj.Data{{D: "parse", T: obj.VStr}}},
+					name:   "type",
+					defval: value.Val{D: []value.Data{{D: "parse", T: value.Str}}},
 				},
 			},
 		}, function{ // float function.
 			name:              "float",
 			protected:         true,
 			defaultParamCount: 0,
-			params:            []obj.Param{{Name: "object"}},
+			params:            []param{{name: "object"}},
 		}, function{ // append function.
 			name:              "append",
 			protected:         true,
 			defaultParamCount: 0,
-			params:            []obj.Param{{Name: "dest"}, {Name: "src", Params: true}},
+			params:            []param{{name: "dest"}, {name: "src", params: true}},
 		},
 	)
 }
@@ -817,7 +818,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		}
 		// Function call.
 		v := p.procValPart(false, vtks)
-		if v.Arr || v.D[0].T != obj.VFunc {
+		if v.Arr || v.D[0].T != value.Func {
 			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 		}
 		if fst.T == fract.Defer {

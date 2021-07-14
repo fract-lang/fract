@@ -28,7 +28,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fract-lang/fract/internal/parser"
+	"github.com/fract-lang/fract/parser"
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
 	"github.com/fract-lang/fract/pkg/str"

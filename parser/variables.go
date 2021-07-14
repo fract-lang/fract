@@ -6,6 +6,7 @@ import (
 
 	"github.com/fract-lang/fract/pkg/fract"
 	"github.com/fract-lang/fract/pkg/obj"
+	"github.com/fract-lang/fract/pkg/value"
 )
 
 // Metadata of variable declaration.
@@ -147,7 +148,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 	// Array setter?
 	if setter.T == fract.Brace && setter.V == "[" {
 		// Variable is not array?
-		if !v.V.Arr && v.V.D[0].T != obj.VStr {
+		if !v.V.Arr && v.V.D[0].T != value.Str {
 			fract.IPanic(setter, obj.ValuePanic, "Variable is not array!")
 		}
 		bc := 1
@@ -189,10 +190,10 @@ func (p *Parser) varset(tks obj.Tokens) {
 			switch setter.V {
 			case "=": // =
 				if v.V.Arr {
-					d := obj.Data{}
+					d := value.Data{}
 					if val.Arr {
 						d.D = val.D
-						d.T = obj.VArray
+						d.T = value.Array
 					} else {
 						d.D = val.D[0].D
 						d.T = val.D[0].T
@@ -200,7 +201,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 					v.V.D[pos] = d
 					break
 				}
-				if val.D[0].T != obj.VStr {
+				if val.D[0].T != value.Str {
 					fract.IPanic(setter, obj.ValuePanic, "Value type is not string!")
 				} else if len(val.D[0].String()) > 1 {
 					fract.IPanic(setter, obj.ValuePanic, "Value length is should be maximum one!")
@@ -216,13 +217,13 @@ func (p *Parser) varset(tks obj.Tokens) {
 				if v.V.Arr {
 					var (
 						pv = v.V.D[pos]
-						fv = obj.Value{}
+						fv = value.Val{}
 					)
-					if pv.T == obj.VArray {
+					if pv.T == value.Array {
 						fv.Arr = true
-						fv.D = pv.D.([]obj.Data)
+						fv.D = pv.D.([]value.Data)
 					} else {
-						fv.D = []obj.Data{pv}
+						fv.D = []value.Data{pv}
 					}
 					val := solveProc(process{
 						opr: obj.Token{V: string(setter.V[:len(setter.V)-1])},
@@ -231,10 +232,10 @@ func (p *Parser) varset(tks obj.Tokens) {
 						s:   obj.Tokens{setter},
 						sv:  val,
 					})
-					d := obj.Data{}
+					d := value.Data{}
 					if val.Arr {
 						d.D = val.D
-						d.T = obj.VArray
+						d.T = value.Array
 					} else {
 						d.D = val.D[0].D
 						d.T = val.D[0].T
@@ -245,11 +246,11 @@ func (p *Parser) varset(tks obj.Tokens) {
 				val = solveProc(process{
 					opr: obj.Token{V: string(setter.V[:len(setter.V)-1])},
 					f:   tks,
-					fv:  obj.Value{D: []obj.Data{v.V.D[pos]}},
+					fv:  value.Val{D: []value.Data{v.V.D[pos]}},
 					s:   obj.Tokens{setter},
 					sv:  val,
 				})
-				if val.D[0].T != obj.VStr {
+				if val.D[0].T != value.Str {
 					fract.IPanic(setter, obj.ValuePanic, "Value type is not string!")
 				} else if len(val.D[0].String()) > 1 {
 					fract.IPanic(setter, obj.ValuePanic, "Value length is should be maximum one!")
