@@ -303,12 +303,12 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 }
 
 // Decompose function parameters.
-func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
+func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 	pname, defaultDef := true, false
 	bc := 1
 	var lstp obj.Param
-	for i := 1; i < len(tks); i++ {
-		pr := tks[i]
+	for i := 1; i < len(*tks); i++ {
+		pr := (*tks)[i]
 		if pr.T == fract.Brace {
 			switch pr.V {
 			case "(":
@@ -318,7 +318,7 @@ func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
 			}
 		}
 		if bc < 1 {
-			tks = tks[i+1:]
+			*tks = (*tks)[i+1:]
 			break
 		}
 		if pname {
@@ -327,12 +327,12 @@ func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
 				continue
 			case fract.Name:
 			default:
-				if i == 3 && tks[i].V == ")" {
+				if i == 3 && (*tks)[i].V == ")" {
 					continue
 				}
 				fract.IPanic(pr, obj.SyntaxPanic, "Parameter name is not found!")
 			}
-			lstp = obj.Param{Name: pr.V, Params: i > 0 && tks[i-1].T == fract.Params}
+			lstp = obj.Param{Name: pr.V, Params: i > 0 && (*tks)[i-1].T == fract.Params}
 			f.params = append(f.params, lstp)
 			pname = false
 			continue
@@ -343,8 +343,8 @@ func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
 				bc := 0
 				i++
 				start := i
-				for ; i < len(tks); i++ {
-					pr = tks[i]
+				for ; i < len(*tks); i++ {
+					pr = (*tks)[i]
 					if pr.T == fract.Brace {
 						switch pr.V {
 						case "{", "[", "(":
@@ -357,7 +357,7 @@ func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
 					}
 				}
 				if i-start < 1 {
-					fract.IPanic(tks[start-1], obj.SyntaxPanic, "Value is not given!")
+					fract.IPanic((*tks)[start-1], obj.SyntaxPanic, "Value is not given!")
 				}
 				lstp.Default = p.procVal(*tks.Sub(start, i-start))
 				if lstp.Params && !lstp.Default.Arr {
@@ -376,7 +376,7 @@ func (p *Parser) setFuncParams(f *function, tks obj.Tokens) {
 		}
 	}
 	if lstp.Default.D == nil && defaultDef {
-		fract.IPanic(tks[len(tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
+		fract.IPanic((*tks)[len(*tks)-1], obj.SyntaxPanic, "All parameters after a given parameter with a default value must take a default value!")
 	}
 }
 
@@ -405,7 +405,8 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	}
 	// Decompose function parameters.
 	if tks[2].V == "(" {
-		p.setFuncParams(&f, tks[2:])
+		tks = tks[2:]
+		p.setFuncParams(&f, &tks)
 	} else {
 		tks = tks[2:]
 	}

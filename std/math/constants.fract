@@ -1,14 +1,14 @@
-# Copyright 2021, MIT License.
-#
-# Authors
-# ----------------
-# Mertcan Davulcu
-#
-#
-# Description
-# ----------------
-# Mathematical constants.
-#
+// Copyright 2021, MIT License.
+//
+// Authors
+// ----------------
+// Mertcan Davulcu
+//
+//
+// Description
+// ----------------
+// Mathematical constants.
+//
 
 protected const (
 	E   = 2.71828182845904523536028747135266249775724709369995957496696763

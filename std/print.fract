@@ -1,14 +1,14 @@
-# Copyright 2021, MIT License.
-#
-# Authors
-# ----------------
-# Mertcan Davulcu
-#
-#
-# Description
-# ----------------
-# Prints object as object string to cli.
-#
+// Copyright 2021, MIT License.
+//
+// Authors
+// ----------------
+// Mertcan Davulcu
+//
+//
+// Description
+// ----------------
+// Prints object as object string to cli.
+//
 
 protected func Print(object) {
 	print(string(object, type='object'))

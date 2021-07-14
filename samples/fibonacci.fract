@@ -13,7 +13,7 @@ if nterms <= 0 {
 	for count < nterms {
 		print(n1)
 		const nth = n1 + n2
-		# update values
+		// update values
 		n1 = n2
 		n2 = nth
 		count += 1

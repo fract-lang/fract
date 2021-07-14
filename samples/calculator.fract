@@ -1,6 +1,6 @@
 #enofi
 
-# Simple calculator in Fract
+// Simple calculator in Fract
 
 print('Welcome to Fract simple calculator!')
 print('**** Operations ****')

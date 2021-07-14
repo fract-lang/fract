@@ -1,16 +1,16 @@
-# Copyright 2021, MIT License.
-#
-# Authors
-# ----------------
-# Mertcan Davulcu
-#
-#
-# Description
-# ----------------
-# Array utilities.
-#
+// Copyright 2021, MIT License.
+//
+// Authors
+// ----------------
+// Mertcan Davulcu
+//
+//
+// Description
+// ----------------
+// Array utilities.
+//
 
-# Returns true if element is contained in array, returns false if not.
+// Returns true if element is contained in array, returns false if not.
 protected func Contains(array, element, start=0) {
 	if start < 0 || start >= len(array) {
 		ret false
@@ -23,7 +23,7 @@ protected func Contains(array, element, start=0) {
 	ret false
 }
 
-# Returns index if element is found in array, returns -1 if not.
+// Returns index if element is found in array, returns -1 if not.
 protected func Index(array, element, start=0) {
 	if start < 0 || start >= len(array) {
 		ret -1
@@ -36,7 +36,7 @@ protected func Index(array, element, start=0) {
 	ret -1
 }
 
-# Returns maximum of array.
+// Returns maximum of array.
 protected func Max(array) {
 	if len(array) == 0 {
 		ret 0
@@ -50,7 +50,7 @@ protected func Max(array) {
 	ret max
 }
 
-# Returns mean of array.
+// Returns mean of array.
 protected func Mean(array) {
 	total := 0
 	for _, element in array {
@@ -59,7 +59,7 @@ protected func Mean(array) {
 	ret total / len(array)
 }
 
-# Returns minimum of array.
+// Returns minimum of array.
 protected func Min(array) {
 	if len(array) == 0 {
 		ret 0
@@ -73,7 +73,7 @@ protected func Min(array) {
 	ret min
 }
 
-# Returns reversed array.
+// Returns reversed array.
 protected func Reverse(array) {
 	const arlen = len(array)
 	for index in range(0, arlen / 2) {
@@ -84,9 +84,9 @@ protected func Reverse(array) {
 	ret array
 }
 
-# Returns sorted array.
+// Returns sorted array.
 protected func Sort(array) {
-	# BUBBLE SORT
+	// BUBBLE SORT
 	const length  = len(array) - 2
 	for _, i in range(0, length) {
 		updated := false
@@ -105,7 +105,7 @@ protected func Sort(array) {
 	ret array
 }
 
-# Returns subbed array.
+// Returns subbed array.
 protected func Sub(array, start, length) {
 	if start < 0 || length < 0 {
 		ret []
@@ -123,7 +123,7 @@ protected func Sub(array, start, length) {
 	ret newArray
 }
 
-# Returns sum of all array elements.
+// Returns sum of all array elements.
 protected func Sum(array) {
 	total := 0
 	for _, element in array {

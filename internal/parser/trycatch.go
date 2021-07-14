@@ -11,6 +11,7 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 	var (
 		vlen = len(p.vars)
 		flen = len(p.funcs)
+		ilen = len(p.Imports)
 		dlen = len(defers)
 		kws  = fract.None
 	)
@@ -27,6 +28,7 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			fract.TryCount--
 			p.vars = p.vars[:vlen]
 			p.funcs = p.funcs[:flen]
+			p.Imports = p.Imports[:ilen]
 			for index := len(defers) - 1; index >= dlen; index-- {
 				defers[index].call()
 			}
@@ -37,6 +39,7 @@ func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
 			fract.TryCount--
 			p.vars = p.vars[:vlen]
 			p.funcs = p.funcs[:flen]
+			p.Imports = p.Imports[:ilen]
 			defers = defers[:dlen]
 			p.i++
 			tks = p.Tks[p.i]

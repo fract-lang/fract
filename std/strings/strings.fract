@@ -1,16 +1,16 @@
-# Copyright 2021, MIT License.
-#
-# Authors
-# ----------------
-# Mertcan Davulcu
-#
-#
-# Description
-# ----------------
-# String utilities.
-#
+// Copyright 2021, MIT License.
+//
+// Authors
+// ----------------
+// Mertcan Davulcu
+//
+//
+// Description
+// ----------------
+// String utilities.
+//
 
-# Converts the first character to uppercase.
+// Converts the first character to uppercase.
 protected func Capitalize(str) {
 	if str == '' {
 		ret str
@@ -21,8 +21,8 @@ protected func Capitalize(str) {
 	ret str
 }
 
-# A string is considered a valid identifier if it only contains alphanumeric letters (a-z) and (0-9),
-# or underscores (_). A valid identifier cannot start with a number, or contain any spaces.
+// A string is considered a valid identifier if it only contains alphanumeric letters (a-z) and (0-9),
+// or underscores (_). A valid identifier cannot start with a number, or contain any spaces.
 protected func IsIdentifier(str) {
 	if str == '' {
 		ret false
@@ -52,12 +52,12 @@ protected func IsIdentifier(str) {
 	ret true
 }
 
-# Returns true if char is letter, false if not.
+// Returns true if char is letter, false if not.
 protected func IsLetter(char) {
 	ret (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')
 }
 
-# Returns true if string is lowercase, false if not.
+// Returns true if string is lowercase, false if not.
 protected func IsLower(str) {
 	if str == '' {
 		ret false
@@ -74,7 +74,7 @@ protected func IsLower(str) {
 	ret true
 }
 
-# Check if all the characters in the text are whitespaces.
+// Check if all the characters in the text are whitespaces.
 protected func IsSpace(str) {
 	if str == '' {
 		ret false
@@ -87,7 +87,7 @@ protected func IsSpace(str) {
 	ret true
 }
 
-# Returns true if string is uppercase, false if not.
+// Returns true if string is uppercase, false if not.
 protected func IsUpper(str) {
 	if str == '' {
 		ret false
@@ -104,7 +104,7 @@ protected func IsUpper(str) {
 	ret true
 }
 
-# Returns strings as lowercase.
+// Returns strings as lowercase.
 protected func Lower(str) {
 	for index, char in str {
 		if IsLetter(char) == false {
@@ -117,7 +117,7 @@ protected func Lower(str) {
 	ret str
 }
 
-# Returns subbed string.
+// Returns subbed string.
 protected func Substring(str, start, length) {
 	if start < 0 || length < 0 {
 		ret ''
@@ -135,7 +135,7 @@ protected func Substring(str, start, length) {
 	ret newStr
 }
 
-# Swaps cases, lowercase becomes uppercase and vice versa.
+// Swaps cases, lowercase becomes uppercase and vice versa.
 protected func SwapCase(str) {
 	for index, char in str {
 		if IsLetter(char) == false {
@@ -150,7 +150,7 @@ protected func SwapCase(str) {
 	ret str
 }
 
-# Returns strings as uppercase.
+// Returns strings as uppercase.
 protected func Upper(str) {
 	for index, char in str {
 		if IsLetter(char) == false {

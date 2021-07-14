@@ -1,16 +1,16 @@
-# Copyright 2021, MIT License.
-#
-# Authors
-# ----------------
-# Mertcan Davulcu
-#
-#
-# Description
-# ----------------
-# Math utilities.
-#
+// Copyright 2021, MIT License.
+//
+// Authors
+// ----------------
+// Mertcan Davulcu
+//
+//
+// Description
+// ----------------
+// Math utilities.
+//
 
-# Returns absolute of value.
+// Returns absolute of value.
 protected func Abs(x) {
 	if x < 0 {
 		ret -x
@@ -18,7 +18,7 @@ protected func Abs(x) {
 	ret x
 }
 
-# Returns the smallest (closest to negative infinity).
+// Returns the smallest (closest to negative infinity).
 protected func Ceil(x) {
 	if x - int(x) == 0 {
 		ret x
@@ -28,10 +28,10 @@ protected func Ceil(x) {
 	ret int(x)
 }
 
-# Returns radians to degrees.
+// Returns radians to degrees.
 protected func Degrees(radians) { ret radians * 57.295780 }
 
-# Returns factorial of number.
+// Returns factorial of number.
 protected func Fact(x) {
 	if x < 0 {
 		ret NaN
@@ -41,7 +41,7 @@ protected func Fact(x) {
 	ret x * Fact(x - 1)
 }
 
-# Returns the floor of x as an integral.
+// Returns the floor of x as an integral.
 protected func Floor(n) {
 	intN := int(n)
 	if n - intN >= 0 {
@@ -50,16 +50,16 @@ protected func Floor(n) {
 	ret intN - 1
 }
 
-# Returns true if number is NaN, false if not.
+// Returns true if number is NaN, false if not.
 protected func IsNaN(x) { ret x <> x }
 
-# Returns true if object is numeric, returns false if not.
+// Returns true if object is numeric, returns false if not.
 protected func IsNumeric(object) {
 	result := float(object)
 	ret result <> 0 || result == 0 && (object == 0 || object == '0')
 }
 
-# Returns maximum number.
+// Returns maximum number.
 protected func Max(x, y) {
 	if x > y {
 		ret x

@@ -620,7 +620,8 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) obj.Value {
 				tks:  p.getBlock(tks[len(vtks):]),
 			}
 			if l > 1 {
-				p.setFuncParams(&f, vtks[1:])
+				vtks = vtks[1:]
+				p.setFuncParams(&f, &vtks)
 			}
 			r.D = []obj.Data{{D: f, T: obj.VFunc}}
 			return r

@@ -17,6 +17,7 @@ func (p *Parser) procIf(tks obj.Tokens) uint8 {
 	s := p.procCondition(ctks)
 	vlen := len(p.vars)
 	flen := len(p.funcs)
+	ilen := len(p.Imports)
 	kws := fract.None
 	for _, tks := range btks {
 		// Condition is true?
@@ -78,5 +79,6 @@ rep:
 end:
 	p.vars = p.vars[:vlen]
 	p.funcs = p.funcs[:flen]
+	p.Imports = p.Imports[:ilen]
 	return kws
 }
