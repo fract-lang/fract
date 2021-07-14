@@ -12,15 +12,27 @@
 
 </div>
 
-## Key features of Fract
+## Key features
 + Simplicity: easy to learn, can be learned in less than an hour
 + Safety: no null, no undefined values, immutability by default
 + Unreachable codes are not included in debugging
-+ Memory consumption is low, does not overload
-+ Efficient and performance, powerfull Go backend
++ Efficient and performance
 + Language level concurrency
-+ Unicode support
 + Pragmas
+
+## What look like Fract code?
+
+```go
+func fib(a, b) {
+    val := a + b
+    println(val)
+    if val < 1000 {
+        fib(b, val)
+    }
+}
+
+fib(0, 1)
+```
 
 ## Interactive Shell
 <img src="https://github.com/fract-lang/resources/blob/main/preview/fract_cli.gif?raw=true">
@@ -31,7 +43,7 @@ Run one of the scripts ``scripts/brun.bat`` or ``scripts/brun.sh`` to compile. <
 Also can be write manually: ``go build cmd/main.go``
 
 <h2 id="contributing">Contributing</h2>
-Thanks for you want ontributing to Fract!
+Thanks for you want contributing to Fract!
 <br>
 The Fract project use issues for only bug reports and proposals.
 <br><br>
