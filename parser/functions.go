@@ -72,6 +72,7 @@ func (c funcCall) call() value.Val {
 	p := Parser{
 		vars:         nil,
 		funcs:        c.f.src.funcs,
+		Imports:      c.f.src.Imports,
 		funcTempVars: c.f.src.funcTempVars,
 		loopCount:    0,
 		funcCount:    1,

@@ -15,3 +15,5 @@ println(a)
 // Anonymous functions.
 b := func(x) { println('Hello ', x, '!') }
 b('Fract')
+
+
