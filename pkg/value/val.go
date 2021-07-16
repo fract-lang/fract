@@ -4,18 +4,19 @@ import (
 	"fmt"
 )
 
+const (
+	Single uint8 = 0
+)
+
 // Val intance.
 type Val struct {
-	D   []Data
-	Arr bool
+	D []Data // Data.
+	T uint8  // Type.
 }
 
 func (v *Val) String() string {
 	if v.D == nil {
 		return ""
-	}
-	if v.Arr {
-		return stringArray(v.D)
 	}
 	return v.D[0].Format()
 }

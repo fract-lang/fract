@@ -122,7 +122,7 @@ func isParamSet(tks obj.Tokens) bool {
 
 // paramsArgVals decompose and returns params values.
 func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
-	retv := value.Val{D: []value.Data{}, Arr: true}
+	retv := value.Val{D: []value.Data{}, T: value.Array}
 	bc := 0
 	for ; *i < len(tks); *i++ {
 		switch tk := tks[*i]; tk.T {
@@ -143,8 +143,8 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
 				return retv
 			}
 			v := p.procVal(*vtks)
-			if v.Arr {
-				retv.D = append(retv.D, value.Data{D: v.D, T: value.Array})
+			if v.T == value.Array || v.T == value.Map {
+				retv.D = append(retv.D, value.Data{D: v.D, T: v.T})
 			} else {
 				retv.D = append(retv.D, v.D...)
 			}
@@ -158,8 +158,8 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
 			return retv
 		}
 		v := p.procVal(vtks)
-		if v.Arr {
-			retv.D = append(retv.D, value.Data{D: v.D, T: value.Array})
+		if v.T == value.Array || v.T == value.Map {
+			retv.D = append(retv.D, value.Data{D: v.D, T: v.T})
 		} else {
 			retv.D = append(retv.D, v.D...)
 		}
@@ -369,7 +369,7 @@ func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 					fract.IPanic((*tks)[start-1], obj.SyntaxPanic, "Value is not given!")
 				}
 				lstp.defval = p.procVal(*tks.Sub(start, i-start))
-				if lstp.params && !lstp.defval.Arr {
+				if lstp.params && lstp.defval.T != value.Array {
 					fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
 				}
 				f.params[len(f.params)-1] = lstp

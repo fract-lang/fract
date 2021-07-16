@@ -66,7 +66,7 @@ protected func IsLower(str) {
 		if IsLetter(char) == false {
 			ret false
 		}
-		const code = int(char, type='strcode')
+		const code = int(char, type='strcode')[0]
 		if code < 97 || code > 122 {
 			ret false
 		}
@@ -96,7 +96,7 @@ protected func IsUpper(str) {
 		if IsLetter(char) == false {
 			ret false
 		}
-		const code = int(char, type='strcode')
+		const code = int(char, type='strcode')[0]
 		if code < 65 || code > 90 {
 			ret false
 		}

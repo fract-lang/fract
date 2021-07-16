@@ -1,6 +1,7 @@
 package value
 
 import (
+	"fmt"
 	"math/big"
 	"strings"
 )
@@ -15,8 +16,8 @@ func (d Data) String() string {
 	switch d.T {
 	case Func:
 		return "object.function"
-	case Array:
-		return stringArray(d.D.([]Data))
+	case Array, Map:
+		return fmt.Sprint(d.D)
 	default:
 		if d.D == nil {
 			return ""

@@ -148,8 +148,8 @@ func (p *Parser) varset(tks obj.Tokens) {
 	// Array setter?
 	if setter.T == fract.Brace && setter.V == "[" {
 		// Variable is not array?
-		if !v.V.Arr && v.V.D[0].T != value.Str {
-			fract.IPanic(setter, obj.ValuePanic, "Variable is not array!")
+		if v.V.T != value.Array && v.V.T != value.Map && v.V.D[0].T != value.Str {
+			fract.IPanic(setter, obj.ValuePanic, "Variable is not enumerable!")
 		}
 		bc := 1
 		// Find close bracket.
@@ -189,9 +189,10 @@ func (p *Parser) varset(tks obj.Tokens) {
 		for _, pos := range setpos {
 			switch setter.V {
 			case "=": // =
-				if v.V.Arr {
+				if v.V.T == value.Array {
 					d := value.Data{}
-					if val.Arr {
+					// TODO: Add Map.
+					if val.T == value.Array {
 						d.D = val.D
 						d.T = value.Array
 					} else {
@@ -214,13 +215,13 @@ func (p *Parser) varset(tks obj.Tokens) {
 				}
 				v.V.D[0].D = string(bytes)
 			default: // Other assignments.
-				if v.V.Arr {
+				if v.V.T == value.Array {
 					var (
 						pv = v.V.D[pos]
 						fv = value.Val{}
 					)
 					if pv.T == value.Array {
-						fv.Arr = true
+						fv.T = value.Array
 						fv.D = pv.D.([]value.Data)
 					} else {
 						fv.D = []value.Data{pv}
@@ -233,7 +234,8 @@ func (p *Parser) varset(tks obj.Tokens) {
 						sv:  val,
 					})
 					d := value.Data{}
-					if val.Arr {
+					// TODO: Add Map.
+					if val.T == value.Array {
 						d.D = val.D
 						d.T = value.Array
 					} else {

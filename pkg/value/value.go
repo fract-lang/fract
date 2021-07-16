@@ -2,7 +2,6 @@ package value
 
 import (
 	"strconv"
-	"strings"
 )
 
 const (
@@ -12,6 +11,7 @@ const (
 	Bool  uint8 = 3
 	Func  uint8 = 4
 	Array uint8 = 5
+	Map   uint8 = 6
 )
 
 // Parse string to arithmetic value.
@@ -25,16 +25,4 @@ func Conv(v string) float64 {
 		f, _ := strconv.ParseFloat(v, 64)
 		return f
 	}
-}
-
-func stringArray(src []Data) string {
-	if len(src) == 0 {
-		return "[]"
-	}
-	var sb strings.Builder
-	sb.WriteByte('[')
-	for _, d := range src {
-		sb.WriteString(d.Format() + " ")
-	}
-	return sb.String()[:sb.Len()-1] + "]"
 }

@@ -12,8 +12,14 @@ a := [1, 100, 1000, 10000]
 println(a)
 */
 
+/*
 // Anonymous functions.
 b := func(x) { println('Hello ', x, '!') }
 b('Fract')
+*/
 
-
+// Maps.
+a := range(10, 50, step=10)
+println(a)
+b := {'Name': 'Mertcan', 'Surname': 'Davulcu'}
+println(b)

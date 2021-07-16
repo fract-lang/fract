@@ -253,7 +253,8 @@ func (l *Lexer) Token() obj.Token {
 			(l.lastTk.T == fract.Brace && l.lastTk.V != "]") ||
 			l.lastTk.T == fract.StatementTerminator || l.lastTk.T == fract.Loop ||
 			l.lastTk.T == fract.Comma || l.lastTk.T == fract.In || l.lastTk.T == fract.If ||
-			l.lastTk.T == fract.Else || l.lastTk.T == fract.Ret)) || isKeyword(ln, "NaN"): // Numeric value.
+			l.lastTk.T == fract.Else || l.lastTk.T == fract.Ret || l.lastTk.T == fract.Colon)) ||
+		isKeyword(ln, "NaN"): // Numeric value.
 		if chk == "" {
 			chk = "NaN"
 			l.Col += 3
@@ -347,6 +348,9 @@ func (l *Lexer) Token() obj.Token {
 		}
 		tk.V = "-"
 		tk.T = fract.Operator
+	case ln[0] == ':': // Colon.
+		tk.V = ":"
+		tk.T = fract.Colon
 	case strings.HasPrefix(ln, "**"): // Exponentiation.
 		tk.V = "**"
 		tk.T = fract.Operator

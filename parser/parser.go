@@ -133,9 +133,10 @@ func (p *Parser) procPragma(tks []obj.Token) {
 	}
 }
 
-// Process array indexes for access to elements.
+// Process enumerable indexes for access to elements.
 func indexes(arr, val value.Val, tk obj.Token) []int {
-	if val.Arr {
+	// TODO: Add Map.
+	if val.T == value.Array {
 		var i []int
 		for _, d := range val.D {
 			if d.T != value.Int {
@@ -145,7 +146,7 @@ func indexes(arr, val value.Val, tk obj.Token) []int {
 			if err != nil {
 				fract.IPanic(tk, obj.OutOfRangePanic, "Value out of range!")
 			}
-			if arr.Arr {
+			if arr.T == value.Array {
 				pos = procIndex(len(arr.D), pos)
 			} else {
 				pos = procIndex(len(arr.D[0].String()), pos)
@@ -164,7 +165,7 @@ func indexes(arr, val value.Val, tk obj.Token) []int {
 	if err != nil {
 		fract.IPanic(tk, obj.OutOfRangePanic, "Value out of range!")
 	}
-	if arr.Arr {
+	if arr.T == value.Array {
 		pos = procIndex(len(arr.D), pos)
 	} else {
 		pos = procIndex(len(arr.D[0].String()), pos)
@@ -391,7 +392,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				procs = append(procs, obj.Tokens{t})
 				part = obj.Tokens{}
 			}
-		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In, fract.Func:
+		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In, fract.Func, fract.Colon:
 			if t.T == fract.Brace {
 				switch t.V {
 				case "(", "[", "{":
@@ -607,7 +608,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []param{{
 				name:   "value",
 				params: true,
-				defval: value.Val{Arr: true, D: []value.Data{{D: "", T: value.Str}}},
+				defval: value.Val{T: value.Array, D: []value.Data{{D: "", T: value.Str}}},
 			}},
 		}, function{ // input function.
 			name:              "input",
@@ -818,7 +819,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		}
 		// Function call.
 		v := p.procValPart(false, vtks)
-		if v.Arr || v.D[0].T != value.Func {
+		if v.T != value.Single || v.D[0].T != value.Func {
 			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 		}
 		if fst.T == fract.Defer {
