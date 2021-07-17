@@ -146,6 +146,8 @@ func arith(tks obj.Token, d value.Val) string {
 	switch d.T {
 	case value.Func:
 		fract.IPanic(tks, obj.ArithmeticPanic, "\""+ret+"\" is not compatible with arithmetic processes!")
+	case value.Map:
+		fract.IPanic(tks, obj.ArithmeticPanic, "\"object.map\" is not compatible with arithmetic processes!")
 	}
 	return ret
 }
@@ -434,10 +436,10 @@ func (p *Parser) selectEnum(v value.Val, tk obj.Token, s interface{}) value.Val 
 			r.D = append(r.D.([]value.Val), v.D.([]value.Val)[pos])
 		}
 	case value.Map:
-		m := v.D.(map[interface{}]value.Val)
+		m := v.D.(value.MapModel)
 		switch t := s.(type) {
-		case []interface{}:
-			rm := map[interface{}]value.Val{}
+		case []value.Val:
+			rm := value.MapModel{}
 			for _, k := range t {
 				d, ok := m[k]
 				if !ok {
@@ -446,7 +448,7 @@ func (p *Parser) selectEnum(v value.Val, tk obj.Token, s interface{}) value.Val 
 				rm[k] = d
 			}
 			r = value.Val{D: rm, T: value.Map}
-		case interface{}:
+		case value.Val:
 			d, ok := m[t]
 			if !ok {
 				fract.IPanic(tk, obj.ValuePanic, "Key is not exists!")
@@ -660,7 +662,7 @@ func (p *Parser) procMapVal(tks obj.Tokens) value.Val {
 	fst := tks[0]
 	comma := 1
 	bc := 0
-	m := map[interface{}]value.Val{}
+	m := value.MapModel{}
 	for j := 1; j < len(tks)-1; j++ {
 		switch t := tks[j]; t.T {
 		case fract.Brace:
@@ -701,17 +703,17 @@ func (p *Parser) procMapVal(tks obj.Tokens) value.Val {
 					}
 					key := p.procVal((*lst)[:i])
 					if key.T == value.Array {
-						_, ok := m[key.D]
+						_, ok := m[key]
 						if ok {
 							fract.IPanic(tk, obj.ValuePanic, "Key is already defined!")
 						}
-						m[key.D] = p.procVal((*lst)[i+1:])
+						m[key] = p.procVal((*lst)[i+1:])
 					} else {
-						_, ok := m[key.D]
+						_, ok := m[key]
 						if ok {
 							fract.IPanic(tk, obj.ValuePanic, "Key is already defined!")
 						}
-						m[key.D] = p.procVal((*lst)[i+1:])
+						m[key] = p.procVal((*lst)[i+1:])
 					}
 					comma = j + 1
 					lst = nil
@@ -750,17 +752,17 @@ func (p *Parser) procMapVal(tks obj.Tokens) value.Val {
 		}
 		key := p.procVal(lst[:i])
 		if key.T == value.Array {
-			_, ok := m[key.D]
+			_, ok := m[key]
 			if ok {
 				fract.IPanic(lst[i], obj.ValuePanic, "Key is already defined!")
 			}
-			m[key.D] = p.procVal(lst[i+1:])
+			m[key] = p.procVal(lst[i+1:])
 		} else {
-			_, ok := m[key.D]
+			_, ok := m[key]
 			if ok {
 				fract.IPanic(lst[i], obj.ValuePanic, "Key is already defined!")
 			}
-			m[key.D] = p.procVal(lst[i+1:])
+			m[key] = p.procVal(lst[i+1:])
 		}
 		lst = nil
 	}
@@ -834,20 +836,14 @@ func (p *Parser) procListComprehension(tks obj.Tokens) value.Val {
 	}
 	// Interpret block.
 	v := value.Val{D: []value.Val{}, T: value.Array}
-	for j := 0; j < varr.Len(); j++ {
-		if element.Name != "" {
-			// TODO: Add Map.
-			if v.T == value.Array {
-				element.V = varr.D.([]value.Val)[j]
-			} else {
-				element.V = value.Val{D: string(varr.String()[j]), T: value.Str}
-			}
-		}
+	l := loop{enum: varr}
+	l.run(func() {
+		element.V = l.b
 		if ftks == nil || p.procCondition(ftks) == "true" {
 			val := p.procVal(stks)
 			v.D = append(v.D.([]value.Val), val)
 		}
-	}
+	})
 	p.vars = p.vars[:vlen-1] // Remove variables.
 	return v
 }

@@ -16,7 +16,7 @@ type Val struct {
 func (d Val) String() string {
 	switch d.T {
 	case Func:
-		return "object.function"
+		return "object.func"
 	case Array:
 		return fmt.Sprint(d.D)
 	case Map:
@@ -61,7 +61,7 @@ func (v Val) Print() bool {
 // Is enumerable?
 func (v Val) IsEnum() bool {
 	switch v.T {
-	case Array, Map:
+	case Str, Array, Map:
 		return true
 	default:
 		return false
@@ -76,7 +76,7 @@ func (v Val) Len() int {
 	case Array:
 		return len(v.D.([]Val))
 	case Map:
-		return len(v.D.(map[interface{}]Val))
+		return len(v.D.(MapModel))
 	}
 	return 0
 }

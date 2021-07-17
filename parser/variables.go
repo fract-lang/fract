@@ -204,20 +204,20 @@ func (p *Parser) varset(tks obj.Tokens) {
 	}
 	switch v.V.T {
 	case value.Map:
-		m := v.V.D.(map[interface{}]value.Val)
+		m := v.V.D.(value.MapModel)
 		switch setter.V {
 		case "=":
 			switch t := s.(type) {
-			case []interface{}:
+			case []value.Val:
 				for _, k := range t {
 					m[k] = val
 				}
-			case interface{}:
+			case value.Val:
 				m[t] = val
 			}
 		default: // Other assignments.
 			switch t := s.(type) {
-			case []interface{}:
+			case []value.Val:
 				for _, s := range t {
 					d, ok := m[s]
 					if !ok {
@@ -232,7 +232,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 						sv:  val,
 					})
 				}
-			case interface{}:
+			case value.Val:
 				d, ok := m[t]
 				if !ok {
 					m[t] = val

@@ -135,18 +135,14 @@ func (p *Parser) procPragma(tks []obj.Token) {
 
 // Process enumerable selections for access to elements.
 func selections(enum, val value.Val, tk obj.Token) interface{} {
-	if val.T != value.Array && val.IsEnum() {
+	if val.T != value.Array && val.T != value.Str && val.IsEnum() {
 		fract.IPanic(tk, obj.ValuePanic, "Element selector is can only be array or single value!")
 	}
 	if enum.T == value.Map {
 		if val.T == value.Array {
-			var i []interface{}
-			for _, d := range val.D.([]value.Val) {
-				i = append(i, d.D)
-			}
-			return i
+			return val.D.([]value.Val)
 		}
-		return val.D
+		return val
 	}
 
 	// Array, String.

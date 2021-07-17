@@ -14,6 +14,8 @@ const (
 	Map   uint8 = 6
 )
 
+type MapModel map[Val]Val
+
 // Parse string to arithmetic value.
 func Conv(v string) float64 {
 	switch v {

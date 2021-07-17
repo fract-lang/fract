@@ -8,6 +8,49 @@ import (
 	"github.com/fract-lang/fract/pkg/value"
 )
 
+// Loop.
+type loop struct {
+	a    value.Val
+	b    value.Val
+	enum value.Val
+	end  bool
+}
+
+func (l *loop) run(b func()) {
+	switch l.enum.T {
+	case value.Array:
+		l.a.T = value.Int
+		for i, e := range l.enum.D.([]value.Val) {
+			l.a.D = fmt.Sprint(i)
+			l.b = e
+			b()
+			if l.end {
+				break
+			}
+		}
+	case value.Str:
+		l.a.T = value.Int
+		l.b.T = value.Str
+		for i, e := range l.enum.D.(string) {
+			l.a.D = fmt.Sprint(i)
+			l.b.D = string(e)
+			b()
+			if l.end {
+				break
+			}
+		}
+	case value.Map:
+		for k, v := range l.enum.D.(value.MapModel) {
+			l.a = k
+			l.b = v
+			b()
+			if l.end {
+				break
+			}
+		}
+	}
+}
+
 // Returns kwstate's return format.
 func prockws(kws uint8) uint8 {
 	if kws != fract.FUNCReturn {
@@ -131,24 +174,15 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		obj.Var{Name: nametk.V, V: value.Val{D: "0", T: value.Int}},
 		obj.Var{Name: ename},
 	)
-	// TODO: Add Map.
 	vlen := len(p.vars)
 	index := &p.vars[vlen-2]
 	element := &p.vars[vlen-1]
 	vars := p.vars
-	if index.Name == "_" {
-		index.Name = ""
-	}
-	if element.Name != "" {
-		if v.T == value.Array {
-			element.V = v.D.([]value.Val)[0]
-		} else {
-			element.V = value.Val{D: string(v.String()[0]), T: value.Str}
-		}
-	}
 	// Interpret block.
-	length := v.Len()
-	for j := 1; ; j++ {
+	l := loop{enum: v}
+	l.run(func() {
+		index.V = l.a
+		element.V = l.b
 		p.Tks = btks
 		for p.i = 0; p.i < len(p.Tks); p.i++ {
 			kws = p.process(p.Tks[p.i])
@@ -165,20 +199,8 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 		p.funcs = p.funcs[:flen]
 		// Remove temporary imports.
 		p.Imports = p.Imports[:ilen]
-		if brk || j >= length {
-			break
-		}
-		if index.Name != "" {
-			index.V.D = fmt.Sprint(j)
-		}
-		if element.Name != "" {
-			if v.T == value.Array {
-				element.V = v.D.([]value.Val)[j]
-			} else {
-				element.V.D = string(v.String()[j])
-			}
-		}
-	}
+		l.end = brk
+	})
 	p.Tks = ptks
 	p.i = pi
 	// Remove loop variables.
