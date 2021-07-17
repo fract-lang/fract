@@ -3,6 +3,7 @@ package value
 import (
 	"fmt"
 	"math/big"
+	"reflect"
 	"strings"
 )
 
@@ -81,11 +82,11 @@ func (v Val) Len() int {
 }
 
 func (v Val) Equals(dt Val) bool {
-	return (v.T == Str && v.D == dt.D) || (v.T != Str && Conv(v.String()) == Conv(dt.String()))
+	return reflect.DeepEqual(v.D, dt.D)
 }
 
 func (v Val) NotEquals(dt Val) bool {
-	return (v.T == Str && v.D != dt.D) || (v.T != Str && Conv(v.String()) != Conv(dt.String()))
+	return !v.Equals(dt)
 }
 
 func (v Val) Greater(dt Val) bool {

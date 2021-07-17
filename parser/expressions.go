@@ -48,7 +48,6 @@ func compVals(opr string, d0, d1 value.Val) bool {
 
 // Compare values.
 func comp(v0, v1 value.Val, opr obj.Token) bool {
-	// TODO: Add Map.
 	// In.
 	if opr.V == "in" {
 		if v1.T != value.Array && v1.T != value.Str {
@@ -83,25 +82,6 @@ func comp(v0, v1 value.Val, opr obj.Token) bool {
 			}
 		}
 		return false
-	}
-	// Array comparison.
-	if v0.T == value.Array || v1.T == value.Array {
-		if (v0.T == value.Array && v1.T != value.Array) || (v0.T != value.Array && v1.T == value.Array) {
-			return false
-		}
-		if v0.Len() != v1.Len() {
-			return opr.V == "<>"
-		}
-		for i, d := range v0.D.([]value.Val) {
-			if !compVals(opr.V, d, v1.D.([]value.Val)[i]) {
-				return false
-			}
-		}
-		return true
-	}
-	// Single value comparison.
-	if (v0.T == value.Str && v1.T != value.Str) || (v0.T != value.Str && v1.T == value.Str) {
-		fract.IPanic(opr, obj.ValuePanic, "The in keyword should use with string or enumerable data types!")
 	}
 	return compVals(opr.V, v0, v1)
 }

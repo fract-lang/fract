@@ -142,10 +142,9 @@ func (p *Parser) varset(tks obj.Tokens) {
 		fract.IPanic(tks[1], obj.SyntaxPanic, "Values is cannot changed of constant defines!")
 	}
 	var (
-		setpos []int
+		s      interface{}
 		setter = tks[1]
 	)
-	// TODO: Add Map.
 	// Array setter?
 	if setter.T == fract.Brace && setter.V == "[" {
 		// Variable is not array?
@@ -173,7 +172,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 				fract.IPanic(setter, obj.SyntaxPanic, "Index is not given!")
 			}
 			tks = append(obj.Tokens{tks[1]}, tks[j+1:]...)
-			setpos = selections(v.V, p.procVal(*vtks), tks[0]).([]int)
+			s = selections(v.V, p.procVal(*vtks), tks[0])
 			break
 		}
 	}
@@ -186,14 +185,87 @@ func (p *Parser) varset(tks obj.Tokens) {
 	if val.D == nil {
 		fract.IPanic(tks[2], obj.ValuePanic, "Invalid value!")
 	}
-	if setpos != nil {
-		for _, pos := range setpos {
-			switch setter.V {
-			case "=": // =
-				if v.V.T == value.Array {
-					v.V.D.([]value.Val)[pos] = val
+	opr := obj.Token{V: string(setter.V[:len(setter.V)-1])}
+	if s == nil {
+		switch setter.V {
+		case "=": // =
+			v.V = val
+		default: // Other assignments.
+			v.V = solveProc(process{
+				opr: opr,
+				f:   tks,
+				fv:  v.V,
+				s:   obj.Tokens{setter},
+				sv:  val,
+			})
+		}
+		p.vars[j] = v
+		return
+	}
+	switch v.V.T {
+	case value.Map:
+		m := v.V.D.(map[interface{}]value.Val)
+		switch setter.V {
+		case "=":
+			switch t := s.(type) {
+			case []interface{}:
+				for _, k := range t {
+					m[k] = val
+				}
+			case interface{}:
+				m[t] = val
+			}
+		default: // Other assignments.
+			switch t := s.(type) {
+			case []interface{}:
+				for _, s := range t {
+					d, ok := m[s]
+					if !ok {
+						m[s] = val
+						continue
+					}
+					m[s] = solveProc(process{
+						opr: opr,
+						f:   tks,
+						fv:  d,
+						s:   obj.Tokens{setter},
+						sv:  val,
+					})
+				}
+			case interface{}:
+				d, ok := m[t]
+				if !ok {
+					m[t] = val
 					break
 				}
+				m[t] = solveProc(process{
+					opr: opr,
+					f:   tks,
+					fv:  d,
+					s:   obj.Tokens{setter},
+					sv:  val,
+				})
+			}
+		}
+	case value.Array:
+		for _, pos := range s.([]int) {
+			switch setter.V {
+			case "=":
+				v.V.D.([]value.Val)[pos] = val
+			default: // Other assignments.
+				v.V.D.([]value.Val)[pos] = solveProc(process{
+					opr: opr,
+					f:   tks,
+					fv:  v.V.D.([]value.Val)[pos],
+					s:   obj.Tokens{setter},
+					sv:  val,
+				})
+			}
+		}
+	case value.Str:
+		for _, pos := range s.([]int) {
+			switch setter.V {
+			case "=":
 				if val.T != value.Str {
 					fract.IPanic(setter, obj.ValuePanic, "Value type is not string!")
 				} else if len(val.String()) > 1 {
@@ -207,18 +279,8 @@ func (p *Parser) varset(tks obj.Tokens) {
 				}
 				v.V.D = string(bytes)
 			default: // Other assignments.
-				if v.V.T == value.Array {
-					v.V.D.([]value.Val)[pos] = solveProc(process{
-						opr: obj.Token{V: string(setter.V[:len(setter.V)-1])},
-						f:   tks,
-						fv:  v.V.D.([]value.Val)[pos],
-						s:   obj.Tokens{setter},
-						sv:  val,
-					})
-					break
-				}
 				val = solveProc(process{
-					opr: obj.Token{V: string(setter.V[:len(setter.V)-1])},
+					opr: opr,
 					f:   tks,
 					fv:  value.Val{D: v.V.D.(string)[pos], T: value.Int},
 					s:   obj.Tokens{setter},
@@ -237,19 +299,6 @@ func (p *Parser) varset(tks obj.Tokens) {
 				}
 				v.V.D = string(bytes)
 			}
-		}
-	} else {
-		switch setter.V {
-		case "=": // =
-			v.V = val
-		default: // Other assignments.
-			v.V = solveProc(process{
-				opr: obj.Token{V: string(setter.V[:len(setter.V)-1])},
-				f:   tks,
-				fv:  v.V,
-				s:   obj.Tokens{setter},
-				sv:  val,
-			})
 		}
 	}
 	p.vars[j] = v

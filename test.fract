@@ -19,5 +19,17 @@ b('Fract')
 */
 
 // Maps.
-b := {'Name': 'Mertcan', 'Surname': 'Davulcu'}
-println(b[['Name']])
+
+b := {'name': 'Mertcan', 'surname': 'Davulcu'}
+for key in b {
+    print(b, ' ')
+}
+println()
+exit()
+
+b['name'] = 'Mert'
+println(b)
+b['age'] = 20
+println(b)
+b[['ag', 'age']] -= 5
+println(b)

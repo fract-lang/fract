@@ -8,7 +8,7 @@ import (
 	"github.com/fract-lang/fract/pkg/value"
 )
 
-// prockws returns return value of kwstate.
+// Returns kwstate's return format.
 func prockws(kws uint8) uint8 {
 	if kws != fract.FUNCReturn {
 		return fract.None
@@ -16,7 +16,7 @@ func prockws(kws uint8) uint8 {
 	return kws
 }
 
-// procLoop process loops and returns keyword state.
+// Process loops and returns keyword state.
 func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	bi := findBlock(tks)
 	btks, tks := p.getBlock(tks[bi:]), tks[1:bi]
@@ -127,11 +127,11 @@ func (p *Parser) procLoop(tks obj.Tokens) uint8 {
 	if !v.IsEnum() {
 		fract.IPanic(tks[0], obj.ValuePanic, "Foreach loop must defined enumerable value!")
 	}
-	// TODO: Add Map.
 	p.vars = append(p.vars,
 		obj.Var{Name: nametk.V, V: value.Val{D: "0", T: value.Int}},
 		obj.Var{Name: ename},
 	)
+	// TODO: Add Map.
 	vlen := len(p.vars)
 	index := &p.vars[vlen-2]
 	element := &p.vars[vlen-1]
