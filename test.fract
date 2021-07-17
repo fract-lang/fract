@@ -19,7 +19,5 @@ b('Fract')
 */
 
 // Maps.
-a := range(10, 50, step=10)
-println(a)
 b := {'Name': 'Mertcan', 'Surname': 'Davulcu'}
-println(b)
+println(b[['Name']])

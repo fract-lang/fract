@@ -145,6 +145,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 		setpos []int
 		setter = tks[1]
 	)
+	// TODO: Add Map.
 	// Array setter?
 	if setter.T == fract.Brace && setter.V == "[" {
 		// Variable is not array?
@@ -172,7 +173,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 				fract.IPanic(setter, obj.SyntaxPanic, "Index is not given!")
 			}
 			tks = append(obj.Tokens{tks[1]}, tks[j+1:]...)
-			setpos = indexes(v.V, p.procVal(*vtks), tks[0])
+			setpos = selections(v.V, p.procVal(*vtks), tks[0]).([]int)
 			break
 		}
 	}

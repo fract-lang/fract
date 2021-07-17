@@ -133,10 +133,24 @@ func (p *Parser) procPragma(tks []obj.Token) {
 	}
 }
 
-// Process enumerable indexes for access to elements.
-func indexes(arr, val value.Val, tk obj.Token) []int {
-	// TODO: Add Map.
-	l := arr.Len()
+// Process enumerable selections for access to elements.
+func selections(enum, val value.Val, tk obj.Token) interface{} {
+	if val.T != value.Array && val.IsEnum() {
+		fract.IPanic(tk, obj.ValuePanic, "Element selector is can only be array or single value!")
+	}
+	if enum.T == value.Map {
+		if val.T == value.Array {
+			var i []interface{}
+			for _, d := range val.D.([]value.Val) {
+				i = append(i, d.D)
+			}
+			return i
+		}
+		return val.D
+	}
+
+	// Array, String.
+	l := enum.Len()
 	if val.T == value.Array {
 		var i []int
 		for _, d := range val.D.([]value.Val) {
@@ -377,7 +391,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				procs = append(procs, obj.Tokens{t})
 				part = obj.Tokens{}
 			}
-		case fract.Value, fract.Name, fract.Comma, fract.Brace, fract.Loop, fract.In, fract.Func, fract.Colon:
+		default:
 			if t.T == fract.Brace {
 				switch t.V {
 				case "(", "[", "{":
@@ -396,8 +410,6 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 			}
 			part = append(part, t)
 			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.V != "[" && t.V != "(" && t.V != "{") && i < len(tks)-1
-		default:
-			fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 		}
 	}
 	if len(part) != 0 {
@@ -803,7 +815,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 		}
 		// Function call.
-		v := p.procValPart(false, vtks)
+		v := p.procValPart(vtks)
 		if v.T != value.Func {
 			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 		}

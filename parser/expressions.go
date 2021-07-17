@@ -440,29 +440,50 @@ func applyMinus(minus obj.Token, v value.Val) value.Val {
 	return v
 }
 
-func (p *Parser) selectArrayElems(v value.Val, indexes []int) value.Val {
-	// TODO: Add Map.
+// Select enumerable object elements.
+func (p *Parser) selectEnum(v value.Val, tk obj.Token, s interface{}) value.Val {
 	var r value.Val
-	if v.T == value.Array {
-		r.D = []value.Val{}
-	} else {
-		r = value.Val{D: "", T: value.Str}
-	}
-	for _, pos := range indexes {
-		if v.T == value.Array {
+	switch v.T {
+	case value.Array:
+		i := s.([]int)
+		if len(i) == 1 {
+			return v.D.([]value.Val)[i[0]]
+		}
+		r = value.Val{D: []value.Val{}, T: value.Array}
+		for _, pos := range i {
 			r.D = append(r.D.([]value.Val), v.D.([]value.Val)[pos])
-		} else {
+		}
+	case value.Map:
+		m := v.D.(map[interface{}]value.Val)
+		switch t := s.(type) {
+		case []interface{}:
+			rm := map[interface{}]value.Val{}
+			for _, k := range t {
+				d, ok := m[k]
+				if !ok {
+					fract.IPanic(tk, obj.ValuePanic, "Key is not exists!")
+				}
+				rm[k] = d
+			}
+			r = value.Val{D: rm, T: value.Map}
+		case interface{}:
+			d, ok := m[t]
+			if !ok {
+				fract.IPanic(tk, obj.ValuePanic, "Key is not exists!")
+			}
+			return d
+		}
+	case value.Str:
+		r = value.Val{D: "", T: value.Str}
+		for _, pos := range s.([]int) {
 			r.D = r.String() + string(v.String()[pos])
 		}
-	}
-	if len(indexes) > 1 && r.T != value.Str || r.T == value.Array {
-		r.T = value.Array
 	}
 	return r
 }
 
 // Process value part.
-func (p *Parser) procValPart(nilch bool, tks obj.Tokens) value.Val {
+func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 	var (
 		r  = value.Val{}
 		tk = tks[0]
@@ -539,7 +560,7 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) value.Val {
 				return applyMinus(tk, p.procVal(tks))
 			}
 			// Function call.
-			v := p.procValPart(nilch, vtks)
+			v := p.procValPart(vtks)
 			if v.T != value.Func {
 				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 			}
@@ -566,11 +587,11 @@ func (p *Parser) procValPart(nilch bool, tks obj.Tokens) value.Val {
 			if len(vtks) == 0 && bc == 0 {
 				return applyMinus(tk, p.procEnumerableVal(tks))
 			}
-			v := p.procValPart(nilch, vtks)
+			v := p.procValPart(vtks)
 			if v.T != value.Array && v.T != value.Map && v.T != value.Str {
-				fract.IPanic(tk, obj.ValuePanic, "Index accessor is cannot used with not enumerable values!")
+				fract.IPanic(vtks[0], obj.ValuePanic, "Index accessor is cannot used with not enumerable values!")
 			}
-			return applyMinus(tk, p.selectArrayElems(v, indexes(v, p.procVal(tks[len(vtks)+1:len(tks)-1]), tk)))
+			return applyMinus(tk, p.selectEnum(v, tk, selections(v, p.procVal(tks[len(vtks)+1:len(tks)-1]), tk)))
 		case "}":
 			var vtks obj.Tokens
 			for ; i >= 0; i-- {
@@ -895,17 +916,17 @@ func (p *Parser) procVal(tks obj.Tokens) value.Val {
 	}
 	procs := arithmeticProcesses(tks)
 	if len(procs) == 1 {
-		return p.procValPart(false, procs[0])
+		return p.procValPart(procs[0])
 	}
 	var v value.Val
 	var opr process
 	j := nextopr(procs)
 	for j != -1 {
 		opr.f = procs[j-1]
-		opr.fv = p.procValPart(true, opr.f)
+		opr.fv = p.procValPart(opr.f)
 		opr.opr = procs[j][0]
 		opr.s = procs[j+1]
-		opr.sv = p.procValPart(true, opr.s)
+		opr.sv = p.procValPart(opr.s)
 		rv := solveProc(opr)
 		if v.D != nil {
 			opr.opr.V = "+"
@@ -929,7 +950,7 @@ func (p *Parser) procVal(tks obj.Tokens) value.Val {
 			} else {
 				opr.s = procs[j-1]
 			}
-			opr.fv = p.procValPart(true, opr.s)
+			opr.fv = p.procValPart(opr.s)
 			v = solveProc(opr)
 			break
 		}
