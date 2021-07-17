@@ -136,9 +136,10 @@ func (p *Parser) procPragma(tks []obj.Token) {
 // Process enumerable indexes for access to elements.
 func indexes(arr, val value.Val, tk obj.Token) []int {
 	// TODO: Add Map.
+	l := arr.Len()
 	if val.T == value.Array {
 		var i []int
-		for _, d := range val.D {
+		for _, d := range val.D.([]value.Val) {
 			if d.T != value.Int {
 				fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 			}
@@ -146,11 +147,7 @@ func indexes(arr, val value.Val, tk obj.Token) []int {
 			if err != nil {
 				fract.IPanic(tk, obj.OutOfRangePanic, "Value out of range!")
 			}
-			if arr.T == value.Array {
-				pos = procIndex(len(arr.D), pos)
-			} else {
-				pos = procIndex(len(arr.D[0].String()), pos)
-			}
+			pos = procIndex(l, pos)
 			if pos == -1 {
 				fract.IPanic(tk, obj.OutOfRangePanic, "Index is out of range!")
 			}
@@ -158,30 +155,18 @@ func indexes(arr, val value.Val, tk obj.Token) []int {
 		}
 		return i
 	}
-	if val.D[0].T != value.Int {
+	if val.T != value.Int {
 		fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 	}
 	pos, err := strconv.Atoi(val.String())
 	if err != nil {
 		fract.IPanic(tk, obj.OutOfRangePanic, "Value out of range!")
 	}
-	if arr.T == value.Array {
-		pos = procIndex(len(arr.D), pos)
-	} else {
-		pos = procIndex(len(arr.D[0].String()), pos)
-	}
+	pos = procIndex(l, pos)
 	if pos == -1 {
 		fract.IPanic(tk, obj.OutOfRangePanic, "Index is out of range!")
 	}
 	return []int{pos}
-}
-
-// IsBlock returns true if tokens is block start, return false if not.
-func IsBlock(tks obj.Tokens) bool {
-	if tks[0].T != fract.Macro {
-		return false
-	}
-	return tks[1].T == fract.If
 }
 
 // Find start index of block.
@@ -410,7 +395,7 @@ func arithmeticProcesses(tks obj.Tokens) []obj.Tokens {
 				}
 			}
 			part = append(part, t)
-			opr = t.T != fract.Comma && t.T != fract.Brace && i < len(tks)-1
+			opr = t.T != fract.Comma && (t.T != fract.Brace || t.T == fract.Brace && t.V != "[" && t.V != "(" && t.V != "{") && i < len(tks)-1
 		default:
 			fract.IPanic(t, obj.SyntaxPanic, "Invalid syntax!")
 		}
@@ -599,7 +584,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []param{{
 				name:   "value",
 				params: true,
-				defval: value.Val{D: []value.Data{{D: "", T: value.Str}}},
+				defval: value.Val{D: "", T: value.Str},
 			}},
 		}, function{ // println function.
 			name:              "println",
@@ -608,7 +593,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []param{{
 				name:   "value",
 				params: true,
-				defval: value.Val{T: value.Array, D: []value.Data{{D: "", T: value.Str}}},
+				defval: value.Val{D: []value.Val{{D: "", T: value.Str}}, T: value.Array},
 			}},
 		}, function{ // input function.
 			name:              "input",
@@ -616,7 +601,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			defaultParamCount: 1,
 			params: []param{{
 				name:   "message",
-				defval: value.Val{D: []value.Data{{D: "", T: value.Str}}},
+				defval: value.Val{D: "", T: value.Str},
 			}},
 		}, function{ // exit function.
 			name:              "exit",
@@ -624,7 +609,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			defaultParamCount: 1,
 			params: []param{{
 				name:   "code",
-				defval: value.Val{D: []value.Data{{D: "0"}}},
+				defval: value.Val{D: "0", T: value.Int},
 			}},
 		}, function{ // len function.
 			name:              "len",
@@ -640,7 +625,7 @@ func (p *Parser) AddBuiltInFuncs() {
 				{name: "to"},
 				{
 					name:   "step",
-					defval: value.Val{D: []value.Data{{D: "1", T: value.Int}}},
+					defval: value.Val{D: "1", T: value.Int},
 				},
 			},
 		}, function{ // calloc function.
@@ -666,7 +651,7 @@ func (p *Parser) AddBuiltInFuncs() {
 				{name: "object"},
 				{
 					name:   "type",
-					defval: value.Val{D: []value.Data{{D: "parse", T: value.Str}}},
+					defval: value.Val{D: "parse", T: value.Str},
 				},
 			},
 		}, function{ // int function.
@@ -677,7 +662,7 @@ func (p *Parser) AddBuiltInFuncs() {
 				{name: "object"},
 				{
 					name:   "type",
-					defval: value.Val{D: []value.Data{{D: "parse", T: value.Str}}},
+					defval: value.Val{D: "parse", T: value.Str},
 				},
 			},
 		}, function{ // float function.
@@ -819,13 +804,13 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 		}
 		// Function call.
 		v := p.procValPart(false, vtks)
-		if v.T != value.Single || v.D[0].T != value.Func {
+		if v.T != value.Func {
 			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 		}
 		if fst.T == fract.Defer {
-			defers = append(defers, p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]))
+			defers = append(defers, p.funcCallModel(v.D.(function), tks[len(vtks):]))
 		} else {
-			go p.funcCallModel(v.D[0].D.(function), tks[len(vtks):]).call()
+			go p.funcCallModel(v.D.(function), tks[len(vtks):]).call()
 		}
 	default:
 		fract.IPanic(fst, obj.SyntaxPanic, "Invalid syntax!")

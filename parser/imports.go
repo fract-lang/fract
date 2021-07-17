@@ -88,7 +88,7 @@ func (p *Parser) procImport(tks obj.Tokens) {
 			imppath = strings.ReplaceAll(tks[j].V, ".", string(os.PathSeparator))
 		}
 	} else {
-		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.procVal(obj.Tokens{tks[j]}).D[0].String()
+		imppath = tks[0].F.P[:strings.LastIndex(tks[0].F.P, string(os.PathSeparator))+1] + p.procVal(obj.Tokens{tks[j]}).String()
 	}
 	imppath = path.Join(fract.ExecPath, imppath)
 	info, err := os.Stat(imppath)

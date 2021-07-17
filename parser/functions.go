@@ -122,7 +122,8 @@ func isParamSet(tks obj.Tokens) bool {
 
 // paramsArgVals decompose and returns params values.
 func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
-	retv := value.Val{D: []value.Data{}, T: value.Array}
+	var data []value.Val
+	retv := value.Val{T: value.Array}
 	bc := 0
 	for ; *i < len(tks); *i++ {
 		switch tk := tks[*i]; tk.T {
@@ -140,14 +141,11 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
 			vtks := tks.Sub(*lstComma, *i-*lstComma)
 			if isParamSet(*vtks) {
 				*i -= 4
+				retv.D = data
 				return retv
 			}
 			v := p.procVal(*vtks)
-			if v.T == value.Array || v.T == value.Map {
-				retv.D = append(retv.D, value.Data{D: v.D, T: v.T})
-			} else {
-				retv.D = append(retv.D, v.D...)
-			}
+			data = append(data, v)
 			*lstComma = *i + 1
 		}
 	}
@@ -158,12 +156,9 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
 			return retv
 		}
 		v := p.procVal(vtks)
-		if v.T == value.Array || v.T == value.Map {
-			retv.D = append(retv.D, value.Data{D: v.D, T: v.T})
-		} else {
-			retv.D = append(retv.D, v.D...)
-		}
+		data = append(data, v)
 	}
+	retv.D = data
 	return retv
 }
 
