@@ -472,12 +472,14 @@ type valPartInfo struct {
 // Process value part.
 func (p *Parser) procValPart(i valPartInfo) value.Val {
 	if i.tks[0].T == fract.Var && i.tks[0].V == "mut" {
+		if len(i.tks) == 1 {
+			fract.IPanic(i.tks[0], obj.SyntaxPanic, "Value is not given!")
+		}
 		i.mut = true
 		i.tks = i.tks[1:]
 		return p.procValPart(i)
 	}
 	var (
-		r  = value.Val{}
 		tk = i.tks[0]
 	)
 	// Single value.
@@ -489,7 +491,7 @@ func (p *Parser) procValPart(i valPartInfo) value.Val {
 			}
 			switch t {
 			case 'f': // Function.
-				r = value.Val{D: src.funcs[vi], T: value.Func}
+				return value.Val{D: src.funcs[vi], T: value.Func}
 			case 'v': // Value.
 				v := src.vars[vi]
 				var val value.Val
@@ -498,12 +500,12 @@ func (p *Parser) procValPart(i valPartInfo) value.Val {
 				} else {
 					val = v.V
 				}
-				r = applyMinus(tk, val)
+				return applyMinus(tk, val)
 			}
 		} else if tk.V[0] == '\'' || tk.V[0] == '"' {
-			r = value.Val{D: tk.V[1 : len(tk.V)-1], T: value.Str}
+			return value.Val{D: tk.V[1 : len(tk.V)-1], T: value.Str}
 		} else if tk.V == "true" || tk.V == "false" {
-			r = value.Val{D: tk.V, T: value.Bool}
+			return value.Val{D: tk.V, T: value.Bool}
 		} else if tk.T == fract.Value {
 			if strings.Contains(tk.V, ".") || strings.ContainsAny(tk.V, "eE") {
 				tk.T = value.Float
@@ -515,13 +517,12 @@ func (p *Parser) procValPart(i valPartInfo) value.Val {
 				val, _ := prs.Float64()
 				tk.V = fmt.Sprint(val)
 			}
-			r = value.Val{D: tk.V, T: tk.T}
+			return value.Val{D: tk.V, T: tk.T}
 		} else if strings.HasPrefix(tk.V, "object.func") {
-			r = value.Val{D: tk.V, T: value.Func}
+			return value.Val{D: tk.V, T: value.Func}
 		} else {
 			fract.IPanic(tk, obj.ValuePanic, "Invalid value!")
 		}
-		return r
 	}
 	switch j, tk := len(i.tks)-1, i.tks[len(i.tks)-1]; tk.T {
 	case fract.Brace:
@@ -625,12 +626,11 @@ func (p *Parser) procValPart(i valPartInfo) value.Val {
 				vtks = vtks[1:]
 				p.setFuncParams(&f, &vtks)
 			}
-			r = value.Val{D: f, T: value.Func}
-			return r
+			return value.Val{D: f, T: value.Func}
 		}
 	}
 	fract.IPanic(tk, obj.ValuePanic, "Invalid value!")
-	return r
+	return value.Val{}
 }
 
 // Process array value.
