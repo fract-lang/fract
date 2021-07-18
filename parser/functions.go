@@ -415,6 +415,9 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 		tks = tks[2:]
 	}
 	f.tks = p.getBlock(tks)
+	if f.tks == nil {
+		f.tks = []obj.Tokens{}
+	}
 	f.ln = name.Ln
 	p.funcs = append(p.funcs, f)
 }

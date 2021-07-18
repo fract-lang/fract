@@ -5,13 +5,13 @@ import (
 )
 
 const (
-	Int   uint8 = 0
-	Float uint8 = 1
-	Str   uint8 = 2
-	Bool  uint8 = 3
-	Func  uint8 = 4
-	Array uint8 = 5
-	Map   uint8 = 6
+	Int   uint8 = 1
+	Float uint8 = 2
+	Str   uint8 = 3
+	Bool  uint8 = 4
+	Func  uint8 = 5
+	Array uint8 = 6
+	Map   uint8 = 7
 )
 
 type MapModel map[Val]Val

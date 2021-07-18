@@ -482,15 +482,17 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 				r = value.Val{D: src.funcs[vi], T: value.Func}
 			case 'v': // Value.
 				v := src.vars[vi]
-				val := v.V
+				var val value.Val
 				if !v.Mut { //! Immutability.
-					val.D = v.V.D
+					val = v.V.Immut()
+				} else {
+					val = v.V
 				}
 				r = applyMinus(tk, val)
 			}
-		} else if tk.V[0] == '\'' || tk.V[0] == '"' { // String?
+		} else if tk.V[0] == '\'' || tk.V[0] == '"' {
 			r = value.Val{D: tk.V[1 : len(tk.V)-1], T: value.Str}
-		} else if tk.T == fract.Value && tk.V == "true" || tk.V == "false" {
+		} else if tk.V == "true" || tk.V == "false" {
 			r = value.Val{D: tk.V, T: value.Bool}
 		} else if tk.T == fract.Value {
 			if strings.Contains(tk.V, ".") || strings.ContainsAny(tk.V, "eE") {
@@ -504,7 +506,7 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 				tk.V = fmt.Sprint(val)
 			}
 			r = value.Val{D: tk.V, T: tk.T}
-		} else if strings.HasPrefix(tk.V, "object.") {
+		} else if strings.HasPrefix(tk.V, "object.func") {
 			r = value.Val{D: tk.V, T: value.Func}
 		} else {
 			fract.IPanic(tk, obj.ValuePanic, "Invalid value!")
@@ -605,6 +607,9 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 				name: "anonymous",
 				src:  p,
 				tks:  p.getBlock(tks[len(vtks):]),
+			}
+			if f.tks == nil {
+				f.tks = []obj.Tokens{}
 			}
 			if l > 1 {
 				vtks = vtks[1:]
@@ -900,9 +905,15 @@ func (p *Parser) procVal(tks obj.Tokens) value.Val {
 	for j != -1 {
 		opr.f = procs[j-1]
 		opr.fv = p.procValPart(opr.f)
+		if opr.fv.T == fract.None {
+			fract.IPanic(opr.f[0], obj.ValuePanic, "Value is not given!")
+		}
 		opr.opr = procs[j][0]
 		opr.s = procs[j+1]
 		opr.sv = p.procValPart(opr.s)
+		if opr.sv.T == fract.None {
+			fract.IPanic(opr.s[0], obj.ValuePanic, "Value is not given!")
+		}
 		rv := solveProc(opr)
 		if v.D != nil {
 			opr.opr.V = "+"

@@ -13,6 +13,26 @@ type Val struct {
 	T uint8
 }
 
+// Returns immutable copy.
+func (d Val) Immut() Val {
+	v := Val{T: d.T}
+	switch d.T {
+	case Map:
+		c := MapModel{}
+		for k, v := range d.D.(MapModel) {
+			c[k] = v
+		}
+		v.D = c
+	case Array:
+		c := make([]Val, len(d.D.([]Val)))
+		copy(c, d.D.([]Val))
+		v.D = c
+	default:
+		v.D = d.D
+	}
+	return v
+}
+
 func (d Val) String() string {
 	switch d.T {
 	case Func:
