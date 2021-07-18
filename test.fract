@@ -30,5 +30,5 @@ for key in b {
     print(b[key], ' ')
 }
 println()
-del(b, 'ag')
+del(mut b, 'ag')
 println(b)

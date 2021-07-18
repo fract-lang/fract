@@ -811,7 +811,7 @@ func (p *Parser) process(tks obj.Tokens) uint8 {
 			fract.IPanic(tks[1], obj.SyntaxPanic, "Invalid syntax!")
 		}
 		// Function call.
-		v := p.procValPart(vtks)
+		v := p.procValPart(valPartInfo{tks: vtks})
 		if v.T != value.Func {
 			fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 		}

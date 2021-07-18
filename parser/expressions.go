@@ -464,14 +464,24 @@ func (p *Parser) selectEnum(v value.Val, tk obj.Token, s interface{}) value.Val 
 	return r
 }
 
+type valPartInfo struct {
+	tks obj.Tokens
+	mut bool // Force to mutability.
+}
+
 // Process value part.
-func (p *Parser) procValPart(tks obj.Tokens) value.Val {
+func (p *Parser) procValPart(i valPartInfo) value.Val {
+	if i.tks[0].T == fract.Var && i.tks[0].V == "mut" {
+		i.mut = true
+		i.tks = i.tks[1:]
+		return p.procValPart(i)
+	}
 	var (
 		r  = value.Val{}
-		tk = tks[0]
+		tk = i.tks[0]
 	)
 	// Single value.
-	if len(tks) == 1 {
+	if len(i.tks) == 1 {
 		if tk.T == fract.Name {
 			vi, t, src := p.defByName(tk)
 			if vi == -1 {
@@ -483,7 +493,7 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 			case 'v': // Value.
 				v := src.vars[vi]
 				var val value.Val
-				if !v.Mut { //! Immutability.
+				if !v.Mut && !i.mut { //! Immutability.
 					val = v.V.Immut()
 				} else {
 					val = v.V
@@ -513,14 +523,14 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 		}
 		return r
 	}
-	switch i, tk := len(tks)-1, tks[len(tks)-1]; tk.T {
+	switch j, tk := len(i.tks)-1, i.tks[len(i.tks)-1]; tk.T {
 	case fract.Brace:
 		bc := 0
 		switch tk.V {
 		case ")":
 			var vtks obj.Tokens
-			for ; i >= 0; i-- {
-				t := tks[i]
+			for ; j >= 0; j-- {
+				t := i.tks[j]
 				if t.T != fract.Brace {
 					continue
 				}
@@ -533,26 +543,26 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 				if bc > 0 {
 					continue
 				}
-				vtks = tks[:i]
+				vtks = i.tks[:j]
 				break
 			}
 			if len(vtks) == 0 && bc == 0 {
-				tk, tks = tks[0], tks[1:len(tks)-1]
-				if len(tks) == 0 {
+				tk, i.tks = i.tks[0], i.tks[1:len(i.tks)-1]
+				if len(i.tks) == 0 {
 					fract.IPanic(tk, obj.SyntaxPanic, "Invalid syntax!")
 				}
-				return applyMinus(tk, p.procVal(tks))
+				return applyMinus(tk, p.procVal(i.tks))
 			}
 			// Function call.
-			v := p.procValPart(vtks)
+			v := p.procValPart(valPartInfo{tks: vtks})
 			if v.T != value.Func {
-				fract.IPanic(tks[len(vtks)], obj.ValuePanic, "Value is not function!")
+				fract.IPanic(i.tks[len(vtks)], obj.ValuePanic, "Value is not function!")
 			}
-			return applyMinus(tk, p.funcCallModel(v.D.(function), tks[len(vtks):]).call())
+			return applyMinus(tk, p.funcCallModel(v.D.(function), i.tks[len(vtks):]).call())
 		case "]":
 			var vtks obj.Tokens
-			for ; i >= 0; i-- {
-				t := tks[i]
+			for ; j >= 0; j-- {
+				t := i.tks[j]
 				if t.T != fract.Brace {
 					continue
 				}
@@ -565,21 +575,21 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 				if bc > 0 {
 					continue
 				}
-				vtks = tks[:i]
+				vtks = i.tks[:j]
 				break
 			}
 			if len(vtks) == 0 && bc == 0 {
-				return applyMinus(tk, p.procEnumerableVal(tks))
+				return applyMinus(tk, p.procEnumerableVal(i.tks))
 			}
-			v := p.procValPart(vtks)
+			v := p.procValPart(valPartInfo{tks: vtks})
 			if v.T != value.Array && v.T != value.Map && v.T != value.Str {
 				fract.IPanic(vtks[0], obj.ValuePanic, "Index accessor is cannot used with not enumerable values!")
 			}
-			return applyMinus(tk, p.selectEnum(v, tk, selections(v, p.procVal(tks[len(vtks)+1:len(tks)-1]), tk)))
+			return applyMinus(tk, p.selectEnum(v, tk, selections(v, p.procVal(i.tks[len(vtks)+1:len(i.tks)-1]), tk)))
 		case "}":
 			var vtks obj.Tokens
-			for ; i >= 0; i-- {
-				t := tks[i]
+			for ; j >= 0; j-- {
+				t := i.tks[j]
 				if t.T != fract.Brace {
 					continue
 				}
@@ -592,12 +602,12 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 				if bc > 0 {
 					continue
 				}
-				vtks = tks[:i]
+				vtks = i.tks[:j]
 				break
 			}
 			l := len(vtks)
 			if l == 0 && bc == 0 || vtks[0].T != fract.Func {
-				return applyMinus(tk, p.procEnumerableVal(tks))
+				return applyMinus(tk, p.procEnumerableVal(i.tks))
 			} else if l > 1 && (vtks[1].T != fract.Brace || vtks[1].V != "(") {
 				fract.IPanic(vtks[1], obj.SyntaxPanic, "Invalid syntax!")
 			} else if l > 1 && (vtks[l-1].T != fract.Brace || vtks[l-1].V != ")") {
@@ -606,7 +616,7 @@ func (p *Parser) procValPart(tks obj.Tokens) value.Val {
 			f := function{
 				name: "anonymous",
 				src:  p,
-				tks:  p.getBlock(tks[len(vtks):]),
+				tks:  p.getBlock(i.tks[len(vtks):]),
 			}
 			if f.tks == nil {
 				f.tks = []obj.Tokens{}
@@ -897,20 +907,20 @@ func (p *Parser) procVal(tks obj.Tokens) value.Val {
 	}
 	procs := arithmeticProcesses(tks)
 	if len(procs) == 1 {
-		return p.procValPart(procs[0])
+		return p.procValPart(valPartInfo{tks: procs[0]})
 	}
 	var v value.Val
 	var opr process
 	j := nextopr(procs)
 	for j != -1 {
 		opr.f = procs[j-1]
-		opr.fv = p.procValPart(opr.f)
+		opr.fv = p.procValPart(valPartInfo{tks: opr.f})
 		if opr.fv.T == fract.None {
 			fract.IPanic(opr.f[0], obj.ValuePanic, "Value is not given!")
 		}
 		opr.opr = procs[j][0]
 		opr.s = procs[j+1]
-		opr.sv = p.procValPart(opr.s)
+		opr.sv = p.procValPart(valPartInfo{tks: opr.s})
 		if opr.sv.T == fract.None {
 			fract.IPanic(opr.s[0], obj.ValuePanic, "Value is not given!")
 		}
@@ -937,7 +947,7 @@ func (p *Parser) procVal(tks obj.Tokens) value.Val {
 			} else {
 				opr.s = procs[j-1]
 			}
-			opr.fv = p.procValPart(opr.s)
+			opr.fv = p.procValPart(valPartInfo{tks: opr.s})
 			v = solveProc(opr)
 			break
 		}
