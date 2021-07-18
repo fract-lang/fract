@@ -136,11 +136,11 @@ func Range(tk obj.Token, args []obj.Var) value.Val {
 	to := args[1].V
 	step := args[2].V
 	if start.T != value.Int && start.T != value.Float {
-		fract.Panic(tk, obj.ValuePanic, "\"start\" argument should be numeric!")
+		fract.Panic(tk, obj.ValuePanic, `"start" argument should be numeric!`)
 	} else if to.T != value.Int && to.T != value.Float {
-		fract.Panic(tk, obj.ValuePanic, "\"to\" argument should be numeric!")
+		fract.Panic(tk, obj.ValuePanic, `"to" argument should be numeric!`)
 	} else if step.T != value.Int && step.T != value.Float {
-		fract.Panic(tk, obj.ValuePanic, "\"step\" argument should be numeric!")
+		fract.Panic(tk, obj.ValuePanic, `"step" argument should be numeric!`)
 	}
 	if start.T != value.Int && start.T != value.Float || to.T != value.Int &&
 		to.T != value.Float || step.T != value.Int && step.T != value.Float {
@@ -222,4 +222,12 @@ func Append(tk obj.Token, args []obj.Var) value.Val {
 	}
 	src.D = data
 	return src
+}
+
+// Delete key from map.
+func Del(tk obj.Token, args []obj.Var) {
+	if args[0].V.T != value.Map {
+		fract.IPanic(tk, obj.ValuePanic, `"map" parameter is must be map!`)
+	}
+	delete(args[0].V.D.(value.MapModel), args[1].V)
 }

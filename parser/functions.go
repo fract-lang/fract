@@ -62,6 +62,8 @@ func (c funcCall) call() value.Val {
 			return built_in.Float(c.args)
 		case "append":
 			return built_in.Append(c.errTk, c.args)
+		case "del":
+			built_in.Del(c.errTk, c.args)
 		default:
 			built_in.Exit(c.errTk, c.args)
 		}

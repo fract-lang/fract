@@ -30,3 +30,5 @@ for key in b {
     print(b[key], ' ')
 }
 println()
+del(b, 'ag')
+println(b)

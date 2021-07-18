@@ -12,6 +12,15 @@ func (p *Parser) procDel(tks obj.Tokens) {
 		first := tks[0]
 		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Define(s) is not given!")
 	}
+	if tks[1].V == "(" {
+		fdel := function{
+			name:   "del",
+			src:    p,
+			params: []param{{name: "map"}, {name: "key"}},
+		}
+		p.funcCallModel(fdel, tks).call()
+		return
+	}
 	comma := false
 	for j := 1; j < tkslen; j++ {
 		t := tks[j]
