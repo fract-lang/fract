@@ -124,7 +124,7 @@ func isParamSet(tks obj.Tokens) bool {
 
 // paramsArgVals decompose and returns params values.
 func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
-	var data []value.Val
+	var data value.ArrayModel
 	retv := value.Val{T: value.Array}
 	bc := 0
 	for ; *i < len(tks); *i++ {

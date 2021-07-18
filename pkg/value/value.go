@@ -14,6 +14,7 @@ const (
 	Map   uint8 = 7
 )
 
+type ArrayModel []Val
 type MapModel map[Val]Val
 
 // Parse string to arithmetic value.

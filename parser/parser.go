@@ -140,7 +140,7 @@ func selections(enum, val value.Val, tk obj.Token) interface{} {
 	}
 	if enum.T == value.Map {
 		if val.T == value.Array {
-			return val.D.([]value.Val)
+			return val.D.(value.ArrayModel)
 		}
 		return val
 	}
@@ -149,7 +149,7 @@ func selections(enum, val value.Val, tk obj.Token) interface{} {
 	l := enum.Len()
 	if val.T == value.Array {
 		var i []int
-		for _, d := range val.D.([]value.Val) {
+		for _, d := range val.D.(value.ArrayModel) {
 			if d.T != value.Int {
 				fract.IPanic(tk, obj.ValuePanic, "Only integer values can used in index access!")
 			}
@@ -601,7 +601,7 @@ func (p *Parser) AddBuiltInFuncs() {
 			params: []param{{
 				name:   "value",
 				params: true,
-				defval: value.Val{D: []value.Val{{D: "", T: value.Str}}, T: value.Array},
+				defval: value.Val{D: value.ArrayModel{{D: "", T: value.Str}}, T: value.Array},
 			}},
 		}, function{ // input function.
 			name:              "input",

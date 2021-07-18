@@ -20,6 +20,7 @@ b('Fract')
 
 // Maps.
 b := {'name': 'Mertcan', 'surname': 'Davulcu'}
+println('name' in b)
 b['name'] = 'Mert'
 println(b)
 b['age'] = 20

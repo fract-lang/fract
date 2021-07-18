@@ -24,8 +24,8 @@ func (d Val) Immut() Val {
 		}
 		v.D = c
 	case Array:
-		c := make([]Val, len(d.D.([]Val)))
-		copy(c, d.D.([]Val))
+		c := make(ArrayModel, len(d.D.(ArrayModel)))
+		copy(c, d.D.(ArrayModel))
 		v.D = c
 	default:
 		v.D = d.D
@@ -94,7 +94,7 @@ func (v Val) Len() int {
 	case Str:
 		return len(v.D.(string))
 	case Array:
-		return len(v.D.([]Val))
+		return len(v.D.(ArrayModel))
 	case Map:
 		return len(v.D.(MapModel))
 	}

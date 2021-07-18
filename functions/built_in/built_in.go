@@ -43,7 +43,7 @@ func Input(args []obj.Var) value.Val {
 func Int(args []obj.Var) value.Val {
 	switch args[1].V.D { // Cast type.
 	case "strcode":
-		var v []value.Val
+		var v value.ArrayModel
 		for _, byt := range []byte(args[0].V.String()) {
 			v = append(v, value.Val{D: fmt.Sprint(byt), T: value.Int})
 		}
@@ -74,13 +74,13 @@ func Calloc(tk obj.Token, args []obj.Var) value.Val {
 	v := value.Val{T: value.Array}
 	if szv > 0 {
 		var index int
-		var data []value.Val
+		var data value.ArrayModel
 		for ; index < szv; index++ {
 			data = append(data, value.Val{D: "0", T: value.Int})
 		}
 		v.D = data
 	} else {
-		v.D = []value.Val{}
+		v.D = value.ArrayModel{}
 	}
 	return v
 }
@@ -95,8 +95,8 @@ func Realloc(tk obj.Token, args []obj.Var) value.Val {
 		fract.Panic(tk, obj.ValuePanic, "Size should be minimum zero!")
 	}
 	var (
-		data []value.Val
-		b    = args[0].V.D.([]value.Val)
+		data value.ArrayModel
+		b    = args[0].V.D.(value.ArrayModel)
 		v    = value.Val{T: value.Array}
 		c    = 0
 	)
@@ -119,7 +119,7 @@ func Print(tk obj.Token, args []obj.Var) {
 	if args[0].V.D == nil {
 		fract.Panic(tk, obj.ValuePanic, "Value is not printable!")
 	}
-	for _, d := range args[0].V.D.([]value.Val) {
+	for _, d := range args[0].V.D.(value.ArrayModel) {
 		fmt.Print(d)
 	}
 }
@@ -156,7 +156,7 @@ func Range(tk obj.Token, args []obj.Var) value.Val {
 	if start.T == value.Float || to.T == value.Float || step.T == value.Float {
 		t = value.Float
 	}
-	var data []value.Val
+	var data value.ArrayModel
 	if startV <= toV {
 		for ; startV <= toV; startV += stepV {
 			d := value.Val{D: fmt.Sprintf(fract.FloatFormat, startV), T: t}
@@ -179,7 +179,7 @@ func String(args []obj.Var) value.Val {
 	case "parse":
 		str := ""
 		if val := args[0].V; val.T == value.Array {
-			data := val.D.([]value.Val)
+			data := val.D.(value.ArrayModel)
 			if len(data) == 0 {
 				str = "[]"
 			} else {
@@ -197,7 +197,7 @@ func String(args []obj.Var) value.Val {
 	case "bytecode":
 		v := args[0].V
 		var sb strings.Builder
-		for _, d := range v.D.([]value.Val) {
+		for _, d := range v.D.(value.ArrayModel) {
 			if d.T != value.Int {
 				sb.WriteByte(' ')
 			}
@@ -216,7 +216,7 @@ func Append(tk obj.Token, args []obj.Var) value.Val {
 	if src.T != value.Array {
 		fract.Panic(tk, obj.ValuePanic, "\"src\" must be array!")
 	}
-	data := args[1].V.D.([]value.Val)
+	data := args[1].V.D.(value.ArrayModel)
 	for _, d := range data {
 		data = append(data, value.Val{D: d.D, T: d.T})
 	}

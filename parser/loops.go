@@ -20,7 +20,7 @@ func (l *loop) run(b func()) {
 	switch l.enum.T {
 	case value.Array:
 		l.a.T = value.Int
-		for i, e := range l.enum.D.([]value.Val) {
+		for i, e := range l.enum.D.(value.ArrayModel) {
 			l.a.D = fmt.Sprint(i)
 			l.b = e
 			b()

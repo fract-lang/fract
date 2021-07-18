@@ -50,22 +50,26 @@ func compVals(opr string, d0, d1 value.Val) bool {
 func comp(v0, v1 value.Val, opr obj.Token) bool {
 	// In.
 	if opr.V == "in" {
-		if v1.T != value.Array && v1.T != value.Str {
-			fract.IPanic(opr, obj.ValuePanic, "Value is can should be string or array!")
+		if v1.T != value.Array && v1.T != value.Str && v1.T != value.Map {
+			fract.IPanic(opr, obj.ValuePanic, "Value is can should be string, array or map!")
 		}
-		if v1.T == value.Array {
+		switch v1.T {
+		case value.Array:
 			dt := v0.String()
-			for _, d := range v1.D.([]value.Val) {
+			for _, d := range v1.D.(value.ArrayModel) {
 				if strings.Contains(d.String(), dt) {
 					return true
 				}
 			}
 			return false
+		case value.Map:
+			_, ok := v1.D.(value.MapModel)[v0]
+			return ok
 		}
 		// String.
 		if v0.T == value.Array {
 			dt := v1.String()
-			for _, d := range v0.D.([]value.Val) {
+			for _, d := range v0.D.(value.ArrayModel) {
 				if d.T != value.Str {
 					fract.IPanic(opr, obj.ValuePanic, "All values is not string!")
 				}
@@ -323,10 +327,10 @@ func solveProc(p process) value.Val {
 			if f.Len() != 1 {
 				f, s = s, f
 			}
-			ar := value.Conv(arith(p.opr, f.D.([]value.Val)[0]))
-			for i, d := range s.D.([]value.Val) {
+			ar := value.Conv(arith(p.opr, f.D.(value.ArrayModel)[0]))
+			for i, d := range s.D.(value.ArrayModel) {
 				if d.T == value.Array {
-					s.D.([]value.Val)[i] = readyData(p, value.Val{
+					s.D.(value.ArrayModel)[i] = readyData(p, value.Val{
 						D: solveProc(process{
 							f:   p.f,
 							fv:  s,
@@ -337,15 +341,15 @@ func solveProc(p process) value.Val {
 						T: value.Array,
 					})
 				} else {
-					s.D.([]value.Val)[i] = readyData(p, value.Val{
+					s.D.(value.ArrayModel)[i] = readyData(p, value.Val{
 						D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, ar, value.Conv(arith(p.opr, d)))),
 					})
 				}
 			}
 			v.D = s.D
 		} else {
-			for i, f := range p.fv.D.([]value.Val) {
-				s := p.sv.D.([]value.Val)[i]
+			for i, f := range p.fv.D.(value.ArrayModel) {
+				s := p.sv.D.(value.ArrayModel)[i]
 				if f.T == value.Array || s.T == value.Array {
 					proc := process{f: p.f, s: p.s, opr: p.opr}
 					if f.T == value.Array {
@@ -358,9 +362,9 @@ func solveProc(p process) value.Val {
 					} else {
 						proc.sv = value.Val{D: s}
 					}
-					p.fv.D.([]value.Val)[i] = readyData(p, value.Val{D: solveProc(proc).D, T: value.Array})
+					p.fv.D.(value.ArrayModel)[i] = readyData(p, value.Val{D: solveProc(proc).D, T: value.Array})
 				} else {
-					p.fv.D.([]value.Val)[i] = readyData(p, value.Val{
+					p.fv.D.(value.ArrayModel)[i] = readyData(p, value.Val{
 						D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, value.Conv(arith(p.opr, f)), value.Conv(s.String()))),
 					})
 				}
@@ -381,9 +385,9 @@ func solveProc(p process) value.Val {
 			f, s = s, f
 		}
 		ar := value.Conv(arith(p.opr, s))
-		for i, d := range f.D.([]value.Val) {
+		for i, d := range f.D.(value.ArrayModel) {
 			if d.T == value.Array {
-				f.D.([]value.Val)[i] = readyData(p, solveProc(process{
+				f.D.(value.ArrayModel)[i] = readyData(p, solveProc(process{
 					f:   p.f,
 					fv:  s,
 					s:   p.s,
@@ -391,7 +395,7 @@ func solveProc(p process) value.Val {
 					opr: p.opr,
 				}))
 			} else {
-				f.D.([]value.Val)[i] = readyData(p, value.Val{
+				f.D.(value.ArrayModel)[i] = readyData(p, value.Val{
 					D: fmt.Sprintf(fract.FloatFormat, solve(p.opr, value.Conv(arith(p.opr, d)), ar)),
 				})
 			}
@@ -411,10 +415,10 @@ func applyMinus(minus obj.Token, v value.Val) value.Val {
 	if minus.V[0] != '-' {
 		return v
 	}
-	for i, d := range v.D.([]value.Val) {
+	for i, d := range v.D.(value.ArrayModel) {
 		switch d.T {
 		case value.Bool, value.Float, value.Int:
-			v.D.([]value.Val)[i].D = fmt.Sprintf(fract.FloatFormat, -value.Conv(d.String()))
+			v.D.(value.ArrayModel)[i].D = fmt.Sprintf(fract.FloatFormat, -value.Conv(d.String()))
 		default:
 			fract.IPanic(minus, obj.ArithmeticPanic, "Bad operand type for unary!")
 		}
@@ -429,16 +433,16 @@ func (p *Parser) selectEnum(v value.Val, tk obj.Token, s interface{}) value.Val 
 	case value.Array:
 		i := s.([]int)
 		if len(i) == 1 {
-			return v.D.([]value.Val)[i[0]]
+			return v.D.(value.ArrayModel)[i[0]]
 		}
-		r = value.Val{D: []value.Val{}, T: value.Array}
+		r = value.Val{D: value.ArrayModel{}, T: value.Array}
 		for _, pos := range i {
-			r.D = append(r.D.([]value.Val), v.D.([]value.Val)[pos])
+			r.D = append(r.D.(value.ArrayModel), v.D.(value.ArrayModel)[pos])
 		}
 	case value.Map:
 		m := v.D.(value.MapModel)
 		switch t := s.(type) {
-		case []value.Val:
+		case value.ArrayModel:
 			rm := value.MapModel{}
 			for _, k := range t {
 				d, ok := m[k]
@@ -635,7 +639,7 @@ func (p *Parser) procValPart(i valPartInfo) value.Val {
 
 // Process array value.
 func (p *Parser) procArrayVal(tks obj.Tokens) value.Val {
-	v := value.Val{D: []value.Val{}, T: value.Array}
+	v := value.Val{D: value.ArrayModel{}, T: value.Array}
 	fst := tks[0]
 	comma := 1
 	bc := 0
@@ -657,7 +661,7 @@ func (p *Parser) procArrayVal(tks obj.Tokens) value.Val {
 				fract.IPanic(fst, obj.SyntaxPanic, "Value is not given!")
 			}
 			val := p.procVal(*lst)
-			v.D = append(v.D.([]value.Val), val)
+			v.D = append(v.D.(value.ArrayModel), val)
 			comma = j + 1
 		}
 	}
@@ -667,7 +671,7 @@ func (p *Parser) procArrayVal(tks obj.Tokens) value.Val {
 			fract.IPanic(fst, obj.SyntaxPanic, "Value is not given!")
 		}
 		val := p.procVal(*lst)
-		v.D = append(v.D.([]value.Val), val)
+		v.D = append(v.D.(value.ArrayModel), val)
 	}
 	return v
 }
@@ -850,13 +854,13 @@ func (p *Parser) procListComprehension(tks obj.Tokens) value.Val {
 		element.Name = ""
 	}
 	// Interpret block.
-	v := value.Val{D: []value.Val{}, T: value.Array}
+	v := value.Val{D: value.ArrayModel{}, T: value.Array}
 	l := loop{enum: varr}
 	l.run(func() {
 		element.V = l.b
 		if ftks == nil || p.procCondition(ftks) == "true" {
 			val := p.procVal(stks)
-			v.D = append(v.D.([]value.Val), val)
+			v.D = append(v.D.(value.ArrayModel), val)
 		}
 	})
 	p.vars = p.vars[:vlen-1] // Remove variables.
