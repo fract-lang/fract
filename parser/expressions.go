@@ -661,6 +661,7 @@ func (p *Parser) procArrayVal(tks obj.Tokens) value.Val {
 				fract.IPanic(fst, obj.SyntaxPanic, "Value is not given!")
 			}
 			val := p.procVal(*lst)
+			lst = nil
 			v.D = append(v.D.(value.ArrayModel), val)
 			comma = j + 1
 		}
@@ -671,6 +672,7 @@ func (p *Parser) procArrayVal(tks obj.Tokens) value.Val {
 			fract.IPanic(fst, obj.SyntaxPanic, "Value is not given!")
 		}
 		val := p.procVal(*lst)
+		lst = nil
 		v.D = append(v.D.(value.ArrayModel), val)
 	}
 	return v
@@ -956,5 +958,8 @@ func (p *Parser) procVal(tks obj.Tokens) value.Val {
 			break
 		}
 	}
+	procs = nil
+	opr.f = nil
+	opr.s = nil
 	return v
 }

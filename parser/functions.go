@@ -147,6 +147,7 @@ func (p *Parser) paramsArgVals(tks obj.Tokens, i, lstComma *int) value.Val {
 				return retv
 			}
 			v := p.procVal(*vtks)
+			vtks = nil
 			data = append(data, v)
 			*lstComma = *i + 1
 		}
@@ -227,6 +228,7 @@ func (p *Parser) procFuncArg(i funcArgInfo) obj.Var {
 	} else {
 		v.V = p.procVal(vtks)
 	}
+	vtks = nil
 	return v
 }
 
@@ -275,6 +277,10 @@ func (p *Parser) funcCallModel(f function, tks obj.Tokens) funcCall {
 		inf.index = &tkslen
 		args = append(args, p.procFuncArg(inf))
 	}
+	inf.count = nil
+	inf.index = nil
+	inf.lstComma = nil
+	inf.names = nil
 	// All parameters is not defined?
 	if count < len(f.params)-f.defaultParamCount {
 		var sb strings.Builder
@@ -324,7 +330,6 @@ func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 			}
 		}
 		if bc < 1 {
-			*tks = (*tks)[i+1:]
 			break
 		}
 		if pname {
@@ -365,7 +370,7 @@ func (p *Parser) setFuncParams(f *function, tks *obj.Tokens) {
 				if i-start < 1 {
 					fract.IPanic((*tks)[start-1], obj.SyntaxPanic, "Value is not given!")
 				}
-				lstp.defval = p.procVal(*tks.Sub(start, i-start))
+				lstp.defval = p.procVal((*tks)[start:i])
 				if lstp.params && lstp.defval.T != value.Array {
 					fract.IPanic(pr, obj.ValuePanic, "Params parameter is can only take array values!")
 				}
@@ -412,7 +417,8 @@ func (p *Parser) funcdec(tks obj.Tokens, protected bool) {
 	// Decompose function parameters.
 	if tks[2].V == "(" {
 		tks = tks[2:]
-		p.setFuncParams(&f, &tks)
+		r, _ := decomposeBrace(&tks, "(", ")")
+		p.setFuncParams(&f, &r)
 	} else {
 		tks = tks[2:]
 	}

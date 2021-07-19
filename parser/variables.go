@@ -173,6 +173,7 @@ func (p *Parser) varset(tks obj.Tokens) {
 			}
 			tks = append(obj.Tokens{tks[1]}, tks[j+1:]...)
 			s = selections(v.V, p.procVal(*vtks), tks[0])
+			vtks = nil
 			break
 		}
 	}

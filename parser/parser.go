@@ -687,7 +687,205 @@ func (p *Parser) AddBuiltInFuncs() {
 	)
 }
 
-// TODO: Add "match" keyword.
+// procIf process if-else if-else returns keyword state.
+func (p *Parser) procIf(tks obj.Tokens) uint8 {
+	bi := findBlock(tks)
+	btks, ctks := p.getBlock(tks[bi:]), tks[1:bi]
+	// Condition is empty?
+	if len(ctks) == 0 {
+		first := tks[0]
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Condition is empty!")
+	}
+	s := p.procCondition(ctks)
+	vlen := len(p.vars)
+	flen := len(p.funcs)
+	ilen := len(p.Imports)
+	kws := fract.None
+	for _, tks := range btks {
+		// Condition is true?
+		if s == "true" && kws == fract.None {
+			if kws = p.process(tks); kws != fract.None {
+				break
+			}
+		} else {
+			break
+		}
+	}
+rep:
+	p.i++
+	if p.i >= len(p.Tks) {
+		p.i--
+		goto end
+	}
+	tks = p.Tks[p.i]
+	if tks[0].T != fract.Else {
+		p.i--
+		goto end
+	}
+	if len(tks) > 1 && tks[1].T == fract.If { // Else if.
+		bi = findBlock(tks)
+		btks, ctks = p.getBlock(tks[bi:]), tks[2:bi]
+		// Condition is empty?
+		if len(ctks) == 0 {
+			first := tks[1]
+			fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Condition is empty!")
+		}
+		if s == "true" {
+			goto rep
+		}
+		s = p.procCondition(ctks)
+		for _, tks := range btks {
+			// Condition is true?
+			if s == "true" && kws == fract.None {
+				if kws = p.process(tks); kws != fract.None {
+					break
+				}
+			} else {
+				break
+			}
+		}
+		goto rep
+	}
+	btks = p.getBlock(tks[1:])
+	if s == "true" {
+		goto end
+	}
+	for _, tks := range btks {
+		// Condition is true?
+		if kws == fract.None {
+			if kws = p.process(tks); kws != fract.None {
+				break
+			}
+		}
+	}
+end:
+	p.vars = p.vars[:vlen]
+	p.funcs = p.funcs[:flen]
+	p.Imports = p.Imports[:ilen]
+	return kws
+}
+
+// procTryCatch process try-catch blocks and returns keyword state.
+func (p *Parser) procTryCatch(tks obj.Tokens) uint8 {
+	fract.TryCount++
+	var (
+		vlen = len(p.vars)
+		flen = len(p.funcs)
+		ilen = len(p.Imports)
+		dlen = len(defers)
+		kws  = fract.None
+	)
+	b := &obj.Block{
+		Try: func() {
+			for _, tks := range p.getBlock(tks[1:]) {
+				if kws = p.process(tks); kws != fract.None {
+					break
+				}
+			}
+			if p.Tks[p.i+1][0].T == fract.Catch {
+				p.i++
+			}
+			fract.TryCount--
+			p.vars = p.vars[:vlen]
+			p.funcs = p.funcs[:flen]
+			p.Imports = p.Imports[:ilen]
+			for index := len(defers) - 1; index >= dlen; index-- {
+				defers[index].call()
+			}
+			defers = defers[:dlen]
+		},
+		Catch: func(cp obj.Panic) {
+			p.loopCount = 0
+			fract.TryCount--
+			p.vars = p.vars[:vlen]
+			p.funcs = p.funcs[:flen]
+			p.Imports = p.Imports[:ilen]
+			defers = defers[:dlen]
+			p.i++
+			tks = p.Tks[p.i]
+			if tks[0].T != fract.Catch {
+				p.i--
+				return
+			}
+			for _, tks := range p.getBlock(tks[1:]) {
+				if kws = p.process(tks); kws != fract.None {
+					break
+				}
+			}
+			p.vars = p.vars[:vlen]
+			p.funcs = p.funcs[:flen]
+			for i := len(defers) - 1; i >= dlen; i-- {
+				defers[i].call()
+			}
+			defers = defers[:dlen]
+		},
+	}
+	b.Do()
+	b = nil
+	return kws
+}
+
+func (p *Parser) procDel(tks obj.Tokens) {
+	tkslen := len(tks)
+	// Value is not defined?
+	if tkslen < 2 {
+		first := tks[0]
+		fract.IPanicC(first.F, first.Ln, first.Col+len(first.V), obj.SyntaxPanic, "Define(s) is not given!")
+	}
+	if tks[1].V == "(" {
+		fdel := function{
+			name:   "del",
+			src:    p,
+			params: []param{{name: "map"}, {name: "key"}},
+		}
+		p.funcCallModel(fdel, tks).call()
+		fdel.params = nil
+		fdel.src = nil
+		return
+	}
+	comma := false
+	for j := 1; j < tkslen; j++ {
+		t := tks[j]
+		if comma {
+			if t.T != fract.Comma {
+				fract.IPanic(t, obj.SyntaxPanic, "Comma is not found!")
+			}
+			comma = false
+			continue
+		}
+		// Token is not a deletable object?
+		if t.T != fract.Name {
+			fract.IPanic(t, obj.MemoryPanic, "This is not deletable object!")
+		}
+		pos, src := p.varIndexByName(t)
+		// Name is not defined?
+		if pos == -1 {
+			pos, src := p.funcIndexByName(t)
+			if pos == -1 {
+				fract.IPanic(t, obj.NamePanic, "\""+t.V+"\" is not defined!")
+			}
+			// Protected?
+			if src.funcs[pos].protected {
+				fract.IPanic(t, obj.MemoryPanic, "Protected objects cannot be deleted manually from memory!")
+			}
+			f := &src.funcs[pos]
+			f.params = nil
+			f.src = nil
+			f.tks = nil
+			src.funcs = append(src.funcs[:pos], src.funcs[pos+1:]...)
+			continue
+		}
+		// Protected?
+		if src.vars[pos].Protected {
+			fract.IPanic(t, obj.MemoryPanic, "Protected objects cannot be deleted manually from memory!")
+		}
+		src.vars[pos].V.D = nil
+		src.vars = append(src.vars[:pos], src.vars[pos+1:]...)
+		comma = true
+	}
+}
+
+// TODO: Add match-case.
 //! A change added here(especially added a code block) must also be compatible with "imports.go" and
 //! add to "isBlock" function of parser.
 
